@@ -1,0 +1,5 @@
+,Montage,PlayRate,CanMove,FixedCamera
+1,AnimMontage'/Game/Character/Montages/Hammer/Frank_RPG_2Hand_Combo01_1_Montage.Frank_RPG_2Hand_Combo01_1_Montage',1.5,FALSE,TRUE
+2,AnimMontage'/Game/Character/Montages/Hammer/Frank_RPG_2Hand_Combo01_2_Montage.Frank_RPG_2Hand_Combo01_2_Montage',1.5,FALSE,TRUE
+3,AnimMontage'/Game/Character/Montages/Hammer/Frank_RPG_2Hand_Combo01_3_Montage.Frank_RPG_2Hand_Combo01_3_Montage',1.5,FALSE,TRUE
+4,AnimMontage'/Game/Character/Montages/Hammer/Frank_RPG_2Hand_Combo01_4_Montage.Frank_RPG_2Hand_Combo01_4_Montage',1.5,FALSE,TRUE

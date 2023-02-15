@@ -1,0 +1,4 @@
+,Montage,PlayRate,CanMove,FixedCamera
+1,AnimMontage'/Game/Character/Montages/Sword/Sword_Attack_1_Montage.Sword_Attack_1_Montage',1.5,FALSE,FALSE
+2,AnimMontage'/Game/Character/Montages/Sword/Sword_Attack_2_Montage.Sword_Attack_2_Montage',1.25,FALSE,FALSE
+3,AnimMontage'/Game/Character/Montages/Sword/Sword_Attack_3_Montage.Sword_Attack_3_Montage',1.5,FALSE,FALSE
