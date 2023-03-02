@@ -1,2 +1,2 @@
----,AttackType,Montage,PlayRate,CanMove,FixedCamera
-1,"Common","AnimMontage'/Game/Character/Montages/Warp/Warp_Montage.Warp_Montage'","2.500000","False","True"
+---,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
+1,Common,AnimMontage'/Game/Character/Montages/Warp/Warp_Montage.Warp_Montage',2.5,FALSE,TRUE,None,7

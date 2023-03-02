@@ -1,4 +1,4 @@
----,AttackType,Montage,PlayRate,CanMove,FixedCamera
-1,"Common","AnimMontage'/Game/Character/Montages/Sword/RandomPattern_Sword_1_Montage.RandomPattern_Sword_1_Montage'","1.250000","False","False"
-2,"Common","AnimMontage'/Game/Character/Montages/Sword/RandomPattern_Sword_2_Montage.RandomPattern_Sword_2_Montage'","1.250000","False","False"
-3,"Common","AnimMontage'/Game/Character/Montages/Sword/RandomPattern_Sword_3_Montage.RandomPattern_Sword_3_Montage'","1.250000","False","False"
+---,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
+1,"Common","AnimMontage'/Game/Character/Montages/Sword/RandomPattern_Sword_1_Montage.RandomPattern_Sword_1_Montage'","1.250000","False","False","None","0.000000"
+2,"Common","AnimMontage'/Game/Character/Montages/Sword/RandomPattern_Sword_2_Montage.RandomPattern_Sword_2_Montage'","1.250000","False","False","None","0.000000"
+3,"Common","AnimMontage'/Game/Character/Montages/Sword/RandomPattern_Sword_3_Montage.RandomPattern_Sword_3_Montage'","1.250000","False","False","None","0.000000"

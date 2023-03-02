@@ -1,2 +1,2 @@
----,AttackType,Montage,PlayRate,CanMove,FixedCamera
-1,"Common","AnimMontage'/Game/Character/Montages/Around/Around_Montage.Around_Montage'","1.250000","False","False"
+---,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
+1,Common,AnimMontage'/Game/Character/Montages/Around/Around_Montage.Around_Montage',1.25,FALSE,FALSE,None,5

@@ -1,5 +1,5 @@
----,AttackType,Montage,PlayRate,CanMove,FixedCamera
-1,"Common","AnimMontage'/Game/Character/Montages/Hammer/Frank_RPG_2Hand_Combo01_1_Montage.Frank_RPG_2Hand_Combo01_1_Montage'","1.500000","False","True"
-2,"Common","AnimMontage'/Game/Character/Montages/Hammer/Frank_RPG_2Hand_Combo01_2_Montage.Frank_RPG_2Hand_Combo01_2_Montage'","1.500000","False","True"
-3,"Common","AnimMontage'/Game/Character/Montages/Hammer/Frank_RPG_2Hand_Combo01_3_Montage.Frank_RPG_2Hand_Combo01_3_Montage'","1.500000","False","True"
-4,"Common","AnimMontage'/Game/Character/Montages/Hammer/Frank_RPG_2Hand_Combo01_4_Montage.Frank_RPG_2Hand_Combo01_4_Montage'","1.500000","False","True"
+---,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
+1,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_1_Montage.Hammer_Attack_1_Montage',1.5,FALSE,TRUE,None,3
+2,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_2_Montage.Hammer_Attack_2_Montage',1.5,FALSE,TRUE,None,3
+3,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_3_Montage.Hammer_Attack_3_Montage',1.5,FALSE,TRUE,None,3
+4,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_4_Montage.Hammer_Attack_4_Montage',1.5,FALSE,TRUE,None,5
