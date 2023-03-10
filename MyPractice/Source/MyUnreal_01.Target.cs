@@ -10,5 +10,9 @@ public class MyUnreal_01Target : TargetRules
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.AddRange( new string[] { "MyUnreal_01" } );
+
+		// Google Speech-to-Text-Plugin
+		bForceEnableExceptions = true;
+		bOverrideBuildEnvironment = true;
 	}
 }
