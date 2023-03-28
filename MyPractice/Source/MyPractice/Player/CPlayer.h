@@ -5,7 +5,7 @@
 
 UCLASS(BlueprintType, Blueprintable,
 	meta=(ShortTooltip="Base Class for any Action type"))
-class MYUNREAL_01_API UAction : public UObject
+class MYPRACTICE_API UAction : public UObject
 {
 	GENERATED_BODY()
 
@@ -36,7 +36,7 @@ public:
 };
 
 UCLASS()
-class MYUNREAL_01_API ACPlayer : public ACharacter
+class MYPRACTICE_API ACPlayer : public ACharacter
 {
 	GENERATED_BODY()
 	

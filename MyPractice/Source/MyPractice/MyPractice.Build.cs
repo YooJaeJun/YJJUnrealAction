@@ -1,10 +1,8 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 using UnrealBuildTool;
 
-public class MyUnreal_01 : ModuleRules
+public class MyPractice : ModuleRules
 {
-	public MyUnreal_01(ReadOnlyTargetRules Target) : base(Target)
+	public MyPractice(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
