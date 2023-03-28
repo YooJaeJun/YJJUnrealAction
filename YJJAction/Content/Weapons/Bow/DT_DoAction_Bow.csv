@@ -1,0 +1,2 @@
+---,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
+1,Common,AnimMontage'/Game/Character/Montages/Bow/AR_ShootAndDraw_Montage.AR_ShootAndDraw_Montage',1.5,TRUE,FALSE,None,3

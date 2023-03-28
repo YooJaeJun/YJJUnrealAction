@@ -1,0 +1,2 @@
+---,Damage,AttackType,Montage,PlayRate,CanMove,Launch,CC,HitStop,Sound,ShakeClass,Effect,EffectLocation,EffectScale
+1,"20.000000","Common","AnimMontage'/Game/Character/Montages/Common/HitReaction_Stop_Montage.HitReaction_Stop_Montage'","1.500000","False","0.000000","None","0.000000","SoundWave'/Game/Sounds/FireBurn.FireBurn'","None","None","(X=0.000000,Y=0.000000,Z=0.000000)","(X=1.000000,Y=1.000000,Z=1.000000)"

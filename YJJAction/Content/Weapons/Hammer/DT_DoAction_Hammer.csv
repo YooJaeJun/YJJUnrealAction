@@ -1,0 +1,5 @@
+---,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
+1,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_1_Montage.Hammer_Attack_1_Montage',1.5,FALSE,TRUE,None,3
+2,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_2_Montage.Hammer_Attack_2_Montage',1.5,FALSE,TRUE,None,3
+3,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_3_Montage.Hammer_Attack_3_Montage',1.5,FALSE,TRUE,None,3
+4,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_4_Montage.Hammer_Attack_4_Montage',1.5,FALSE,TRUE,None,5
