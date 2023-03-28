@@ -1,4 +1,0 @@
----,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
-1,Common,AnimMontage'/Game/Character/Montages/Fist/Fist_Attack_1_Montage.Fist_Attack_1_Montage',1.25,FALSE,TRUE,None,3
-2,Common,AnimMontage'/Game/Character/Montages/Fist/Fist_Attack_2_Montage.Fist_Attack_2_Montage',1.25,FALSE,TRUE,None,3
-3,Common,AnimMontage'/Game/Character/Montages/Fist/Fist_Attack_3_Montage.Fist_Attack_3_Montage',1.25,FALSE,TRUE,None,5
