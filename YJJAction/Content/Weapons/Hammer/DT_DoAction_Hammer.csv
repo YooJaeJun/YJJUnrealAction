@@ -1,5 +1,8 @@
----,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
-1,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_1_Montage.Hammer_Attack_1_Montage',1.5,FALSE,TRUE,None,3
-2,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_2_Montage.Hammer_Attack_2_Montage',1.5,FALSE,TRUE,None,3
-3,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_3_Montage.Hammer_Attack_3_Montage',1.5,FALSE,TRUE,None,3
-4,Common,AnimMontage'/Game/Character/Montages/Hammer/Hammer_Attack_4_Montage.Hammer_Attack_4_Montage',1.5,FALSE,TRUE,None,5
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Common","AnimMontage'/Game/Character/AnimationMontages/Hammer/Hammer_Attack_1_Montage.Hammer_Attack_1_Montage'","1.500000","False","True","None","SoundWave'/Game/Assets/Sounds/Weapons/Hammer/A_Hammer_Swing01.A_Hammer_Swing01'","False","3.000000","0.000000","0.000000","0.000000"
+2,"","Common","AnimMontage'/Game/Character/AnimationMontages/Hammer/Hammer_Attack_2_Montage.Hammer_Attack_2_Montage'","1.500000","False","True","None","SoundWave'/Game/Assets/Sounds/Weapons/Hammer/A_Hammer_Swing02.A_Hammer_Swing02'","False","3.000000","0.000000","0.000000","0.000000"
+3,"","Common","AnimMontage'/Game/Character/AnimationMontages/Hammer/Hammer_Attack_3_Montage.Hammer_Attack_3_Montage'","1.500000","False","True","None","SoundWave'/Game/Assets/Sounds/Weapons/Hammer/A_Hammer_Swing02.A_Hammer_Swing02'","False","3.000000","0.000000","0.000000","0.000000"
+4,"","Common","AnimMontage'/Game/Character/AnimationMontages/Hammer/Hammer_Attack_4_Montage.Hammer_Attack_4_Montage'","1.500000","False","True","None","SoundWave'/Game/Assets/Sounds/Weapons/Hammer/A_Hammer_Swing03.A_Hammer_Swing03'","False","5.000000","0.000000","0.000000","0.000000"
+5,"","DashAttack","AnimMontage'/Game/Character/AnimationMontages/Hammer/Hammer_DashAttack.Hammer_DashAttack'","1.500000","False","True","None","None","False","3.000000","0.000000","0.000000","0.000000"
+6,"","Skill","AnimMontage'/Game/Character/AnimationMontages/Hammer/Hammer_Skill01_WhirlWind_in_Place_Montage.Hammer_Skill01_WhirlWind_in_Place_Montage'","1.000000","False","False","None","SoundWave'/Game/Assets/Sounds/Weapons/Dual/Weapon_Draw_Metal_1.Weapon_Draw_Metal_1'","False","30.000000","0.000000","0.000000","0.000000"
+7,"","Skill","AnimMontage'/Game/Character/AnimationMontages/Hammer/Hammer_Skill02_Rolling_in_Place_Montage.Hammer_Skill02_Rolling_in_Place_Montage'","1.000000","False","True","None","SoundWave'/Game/Assets/Sounds/Weapons/Dual/Weapon_Draw_Metal_1.Weapon_Draw_Metal_1'","False","40.000000","0.000000","0.000000","0.000000"

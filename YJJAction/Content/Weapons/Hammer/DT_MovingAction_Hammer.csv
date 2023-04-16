@@ -1,0 +1,3 @@
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Dash","AnimMontage'/Game/Character/AnimationMontages/Dual/Dual_AirDash_4_Montage.Dual_AirDash_4_Montage'","0.800000","True","False","None","SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'","False","5.000000","0.000000","0.000000","0.000000"
+2,"","AirDash","AnimMontage'/Game/Character/AnimationMontages/Dual/Dual_AirDash_4_Montage.Dual_AirDash_4_Montage'","1.250000","True","False","ParticleSystem'/Game/Assets/Effects/AdvancedARPGCombat/DemoContent/Effects/Particles/P_Greystone_LeapAOE_Start.P_Greystone_LeapAOE_Start'","SoundWave'/Game/Assets/Sounds/Action/AirDash.AirDash'","True","10.000000","0.000000","0.000000","0.000000"

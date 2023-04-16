@@ -1,2 +1,2 @@
----,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
-1,Common,AnimMontage'/Game/Character/Montages/Warp/Warp_Montage.Warp_Montage',2.5,FALSE,TRUE,None,7
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Common","AnimMontage'/Game/Character/AnimationMontages/Warp/Warp_Montage.Warp_Montage'","2.500000","False","True","None","SoundWave'/Game/Assets/Sounds/Weapons/Warp/VR_teleport.VR_teleport'","False","30.000000","30.000000","0.000000","0.000000"

@@ -1,4 +1,4 @@
----,AttackType,Montage,PlayRate,CanMove,FixedCamera,Sound,Stamina
-1,"Common","AnimMontage'/Game/Character/Montages/Sword/RandomPattern_Sword_1_Montage.RandomPattern_Sword_1_Montage'","1.250000","False","False","None","0.000000"
-2,"Common","AnimMontage'/Game/Character/Montages/Sword/RandomPattern_Sword_2_Montage.RandomPattern_Sword_2_Montage'","1.250000","False","False","None","0.000000"
-3,"Common","AnimMontage'/Game/Character/Montages/Sword/RandomPattern_Sword_3_Montage.RandomPattern_Sword_3_Montage'","1.250000","False","False","None","0.000000"
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Common","AnimMontage'/Game/Character/AnimationMontages/Sword/RandomPattern_Sword_1_Montage.RandomPattern_Sword_1_Montage'","1.500000","False","False","None","SoundWave'/Game/Assets/Sounds/Weapons/Sword/A_Sword_Swing01.A_Sword_Swing01'","False","0.000000","0.000000","0.000000","0.000000"
+2,"","Common","AnimMontage'/Game/Character/AnimationMontages/Sword/RandomPattern_Sword_2_Montage.RandomPattern_Sword_2_Montage'","1.700000","False","False","None","SoundWave'/Game/Assets/Sounds/Weapons/Sword/A_Sword_Swing02.A_Sword_Swing02'","False","0.000000","0.000000","0.000000","0.000000"
+3,"","Common","AnimMontage'/Game/Character/AnimationMontages/Sword/RandomPattern_Sword_3_Montage.RandomPattern_Sword_3_Montage'","1.500000","False","False","None","SoundWave'/Game/Assets/Sounds/Weapons/Sword/A_Sword_Swing03.A_Sword_Swing03'","False","0.000000","0.000000","0.000000","0.000000"

@@ -1,2 +1,3 @@
----,Montage,PlayRate,UseControlRotation,CanMove
-1,"None","1.000000","True","True"
+---,Montage,PlayRate,UseControlRotation,CanMove,Sound
+1,"None","1.000000","True","True","SoundWave'/Game/Assets/Sounds/Weapons/Hammer/A_Hammer_Swing01.A_Hammer_Swing01'"
+2,"None","1.000000","True","True","SoundWave'/Game/Assets/Sounds/Weapons/Hammer/A_Hammer_Swing02.A_Hammer_Swing02'"
