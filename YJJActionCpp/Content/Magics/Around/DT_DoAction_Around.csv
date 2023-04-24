@@ -1,0 +1,2 @@
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Common","AnimMontage'/Game/Character/AnimationMontages/Around/Around_Montage.Around_Montage'","1.250000","True","False","None","SoundWave'/Game/Assets/Sounds/Weapons/Around/Around.Around'","False","15.000000","15.000000","0.000000","0.000000"

@@ -1,0 +1,2 @@
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Common","AnimMontage'/Game/Character/AnimationMontages/FireBall/FireBall_Montage.FireBall_Montage'","1.250000","True","False","None","SoundWave'/Game/Assets/Sounds/Weapons/FireBall/FireBall.FireBall'","False","20.000000","40.000000","0.000000","0.000000"

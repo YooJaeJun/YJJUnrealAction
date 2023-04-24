@@ -1,0 +1,2 @@
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Common","AnimMontage'/Game/Character/AnimationMontages/Bow/AR_ShootAndDraw_Montage.AR_ShootAndDraw_Montage'","1.500000","True","False","None","SoundWave'/Game/Assets/Sounds/Weapons/Bow/Bow.Bow'","False","3.000000","0.000000","0.000000","0.000000"

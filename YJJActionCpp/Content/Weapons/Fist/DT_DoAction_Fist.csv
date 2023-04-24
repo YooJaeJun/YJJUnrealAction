@@ -1,0 +1,4 @@
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Common","AnimMontage'/Game/Character/AnimationMontages/Fist/Fist_Attack_1_Montage.Fist_Attack_1_Montage'","1.250000","False","True","None","None","False","3.000000","0.000000","0.000000","0.000000"
+2,"","Common","AnimMontage'/Game/Character/AnimationMontages/Fist/Fist_Attack_2_Montage.Fist_Attack_2_Montage'","1.250000","False","True","None","None","False","3.000000","0.000000","0.000000","0.000000"
+3,"","Common","AnimMontage'/Game/Character/AnimationMontages/Fist/Fist_Attack_3_Montage.Fist_Attack_3_Montage'","1.250000","False","True","None","None","False","5.000000","0.000000","0.000000","0.000000"

@@ -1,0 +1,2 @@
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Common","AnimMontage'/Game/Assets/Characters/Animations/Wizard/Yondu_Montage.Yondu_Montage'","1.250000","True","False","None","SoundWave'/Game/Assets/Sounds/Weapons/Yondu/Whistle.Whistle'","False","20.000000","50.000000","0.000000","0.000000"

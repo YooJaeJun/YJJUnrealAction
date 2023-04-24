@@ -1,0 +1,3 @@
+---,Tag,AttackType,Montage,PlayRate,CanMove,FixedCamera,Effect,Sound,UseMotionTrail,Stamina,Mana,LaunchForward,LaunchUp
+1,"","Common","AnimMontage'/Game/Character/AnimationMontages/Shield/Guard_Montage_1.Guard_Montage_1'","1.500000","True","False","None","None","False","3.000000","0.000000","0.000000","0.000000"
+2,"","Common","AnimMontage'/Game/Character/AnimationMontages/Shield/Parrying_Montage.Parrying_Montage'","1.250000","False","False","None","None","False","3.000000","0.000000","0.000000","0.000000"
