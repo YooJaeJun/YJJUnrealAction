@@ -1,61 +1,55 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Character/CCharacter.h"
 #include "CPlayer.generated.h"
 
-UCLASS(BlueprintType, Blueprintable,
-	meta=(ShortTooltip="Base Class for any Action type"))
-class YJJACTIONCPP_API UAction : public UObject
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties) FString Text;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties) FKey ShortcutKey;
-};
-
-UENUM()
-enum Status
-{
-	Stopped UMETA(DisplayName = "Stopped"),
-	Moving UMETA(DisplayName = "Moving"),
-	Attacking UMETA(DisplayName = "Attacking"),
-};
-
-USTRUCT(Blueprintable)
-struct FColoredTexture
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
-		UTexture* Texture;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
-		FLinearColor Color;
-};
+class USpringArmComponent;
+class UCameraComponent;
+class USkeletalMeshComponent;
+class UCWeaponComponent;
+class UInputComponent;
+class UCAnimInstance_Character;
 
 UCLASS()
 class YJJACTIONCPP_API ACPlayer : public ACharacter
 {
 	GENERATED_BODY()
-	
-public:	
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+		FVector2D PitchRange = FVector2D(-40, +40);
+
+private:
+	UPROPERTY(VisibleAnywhere)
+		USpringArmComponent* SpringArm;
+
+	UPROPERTY(VisibleAnywhere)
+		UCameraComponent* Camera;
+
+private:
+	UPROPERTY(VisibleAnywhere)
+		UCWeaponComponent* WeaponComponent;
+
+public:
 	ACPlayer();
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Unit)
-		TSubclassOf<UObject> UClassOfPlayer;
+public:
+	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, meta = (MetaClass = "GameMode"), Category = Unit)
-		FStringClassReference UClassGameMode;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
-		FColoredTexture Texture;
+private:
+	void OnMoveForward(const float InAxisValue);
+	void OnMoveRight(const float InAxisValue);
+	void OnHorizontalLook(const float InAxisValue);
+	void OnVerticalLook(const float InAxisValue);
+	void OnJump();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status)
-		TEnumAsByte<Status> Status;
+private:
+	void OnRun();
+	void OffRun();
 };

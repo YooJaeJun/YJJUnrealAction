@@ -5,7 +5,9 @@ public class YJJActionCpp : ModuleRules
 	public YJJActionCpp(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
+
+		PublicIncludePaths.Add(ModuleDirectory);	// ../ 상대경로 없애기 위함
+
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
