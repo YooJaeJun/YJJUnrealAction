@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Component/CMovingComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -20,7 +21,7 @@ ACPlayer::ACPlayer()
 	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComponent, "WeaponComponent");
 
 	USkeletalMesh* mesh;
-	CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/Mesh/SK_Mannequin.SK_Mannequin'");
+	CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
 
 	GetMesh()->SetSkeletalMesh(mesh);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
@@ -29,11 +30,6 @@ ACPlayer::ACPlayer()
 	TSubclassOf<UCAnimInstance_Character> animInstance;
 	CHelpers::GetClass<UCAnimInstance_Character>(&animInstance, "AnimBlueprint'/Game/Character/ABP_CCharacter.ABP_CCharacter_C'");
 	GetMesh()->SetAnimClass(animInstance);
-
-	bUseControllerRotationYaw = true;
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-	GetCharacterMovement()->MaxWalkSpeed = 800;
-	GetCharacterMovement()->GroundFriction = 2;
 
 	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
 	SpringArm->TargetArmLength = 200;
@@ -47,6 +43,14 @@ void ACPlayer::BeginPlay()
 
 	GetController<APlayerController>()->PlayerCameraManager->ViewPitchMin = PitchRange.X;
 	GetController<APlayerController>()->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
+
+	const TArray<float> speeds{ 200, 500, 800 };
+	MovingComponent->SetSpeeds(speeds);
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->MaxWalkSpeed = 800;
+	GetCharacterMovement()->GroundFriction = 2;
+	GetCharacterMovement()->BrakingDecelerationWalking = 256;
 }
 
 void ACPlayer::Tick(float DeltaTime)

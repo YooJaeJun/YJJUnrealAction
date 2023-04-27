@@ -1,10 +1,9 @@
 #pragma once
-
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "CWeaponComponent.generated.h"
 
-class ACPlayer;
+class ACCharacter;
 class ACWeapon;
 
 UENUM(BlueprintType)
@@ -27,12 +26,15 @@ class YJJACTIONCPP_API UCWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	UCWeaponComponent();
-
 private:
 	UPROPERTY(EditAnyWhere, Category = "Settings")
 		TArray<TSubclassOf<ACWeapon>> WeaponClasses;
+
+	UPROPERTY(EditAnyWhere, Category = "Settings")
+		EWeaponType Type = EWeaponType::Max;
+
+public:	
+	UCWeaponComponent();
 
 protected:
 	virtual void BeginPlay() override;
@@ -41,18 +43,18 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	FORCEINLINE bool IsUnarmed() { return Type == EWeaponType::Unarmed; }
-	FORCEINLINE bool IsSword() { return Type == EWeaponType::Sword; }
-	FORCEINLINE bool IsFist() { return Type == EWeaponType::Fist; }
-	FORCEINLINE bool IsBow() { return Type == EWeaponType::Bow; }
-	FORCEINLINE bool IsDual() { return Type == EWeaponType::Dual; }
+	FORCEINLINE bool IsUnarmedMode() { return Type == EWeaponType::Unarmed; }
+	FORCEINLINE bool IsSwordMode() { return Type == EWeaponType::Sword; }
+	FORCEINLINE bool IsFistMode() { return Type == EWeaponType::Fist; }
+	FORCEINLINE bool IsBowMode() { return Type == EWeaponType::Bow; }
+	FORCEINLINE bool IsDualMode() { return Type == EWeaponType::Dual; }
 
-	void SetUnarmed();
-	void SetSword();
-	void SetFist();
-	void SetHammer();
-	void SetBow();
-	void SetDual();
+	void SetUnarmedMode();
+	void SetSwordMode();
+	void SetFistMode();
+	void SetHammerMode();
+	void SetBowMode();
+	void SetDualMode();
 
 	void Begin_Equip();
 	void End_Equip();
@@ -63,9 +65,7 @@ public:
 	FWeaponTypeChanged OnWeaponTypeChanged;
 
 private:
-	EWeaponType Type = EWeaponType::Max;
-
-private:
-	TWeakObjectPtr<ACPlayer> Owner;
+	TWeakObjectPtr<ACCharacter> Owner;
 	TArray<TSharedPtr<ACWeapon>> Weapons;
+	TSharedPtr<ACWeapon> Weapon;
 };

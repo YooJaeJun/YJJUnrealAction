@@ -10,7 +10,7 @@ class USoundWave;
 class UMatineeCameraShake;
 class USceneComponent;
 class USkeletalMeshComponent;
-class ACPlayer;
+class ACCharacter;
 
 UCLASS()
 class YJJACTIONCPP_API ACWeapon : public AActor
@@ -55,7 +55,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	TWeakObjectPtr<ACPlayer> Owner;
+	TWeakObjectPtr<ACCharacter> Owner;
 
 private:
 	bool bEquipping;

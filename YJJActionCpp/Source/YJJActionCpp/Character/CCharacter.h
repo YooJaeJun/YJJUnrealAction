@@ -4,6 +4,9 @@
 #include "GameFramework/Character.h"
 #include "CCharacter.generated.h"
 
+class UCMovingComponent;
+class UCStateComponent;
+
 UCLASS()
 class YJJACTIONCPP_API ACCharacter : public ACharacter
 {
@@ -11,6 +14,12 @@ class YJJACTIONCPP_API ACCharacter : public ACharacter
 
 public:
 	ACCharacter();
+
+	UPROPERTY(VisibleAnywhere)
+		UCStateComponent* StateComponent;
+
+	UPROPERTY(VisibleAnywhere)
+		UCMovingComponent* MovingComponent;
 
 protected:
 	virtual void BeginPlay() override;

@@ -1,7 +1,7 @@
 #include "Component/CWeaponComponent.h"
-#include "Weapons/CWeapon.h"
-#include "Player/CPlayer.h"
 #include "Global.h"
+#include "Character/CCharacter.h"
+#include "Weapons/CWeapon.h"
 
 UCWeaponComponent::UCWeaponComponent()
 {
@@ -12,7 +12,7 @@ void UCWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Owner = Cast<ACPlayer>(GetOwner());
+	Owner = Cast<ACCharacter>(GetOwner());
 	CheckNull(Owner);
 
 	FActorSpawnParameters params;
@@ -25,27 +25,27 @@ void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UCWeaponComponent::SetUnarmed()
+void UCWeaponComponent::SetUnarmedMode()
 {
 }
 
-void UCWeaponComponent::SetSword()
+void UCWeaponComponent::SetSwordMode()
 {
 }
 
-void UCWeaponComponent::SetFist()
+void UCWeaponComponent::SetFistMode()
 {
 }
 
-void UCWeaponComponent::SetHammer()
+void UCWeaponComponent::SetHammerMode()
 {
 }
 
-void UCWeaponComponent::SetBow()
+void UCWeaponComponent::SetBowMode()
 {
 }
 
-void UCWeaponComponent::SetDual()
+void UCWeaponComponent::SetDualMode()
 {
 }
 
