@@ -2,28 +2,25 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "CCharacter.generated.h"
+#include "CCommonCharacter.generated.h"
 
-class UCMovingComponent;
+class UCMovementComponent;
 class UCStateComponent;
 
 UCLASS()
-class YJJACTIONCPP_API ACCharacter : public ACharacter
+class YJJACTIONCPP_API ACCommonCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	ACCharacter();
+	ACCommonCharacter();
 
 	UPROPERTY(VisibleAnywhere)
 		UCStateComponent* StateComponent;
 
 	UPROPERTY(VisibleAnywhere)
-		UCMovingComponent* MovingComponent;
+		UCMovementComponent* MovementComponent;
 
 protected:
 	virtual void BeginPlay() override;
-
-public:	
-	virtual void Tick(float DeltaTime) override;
 };

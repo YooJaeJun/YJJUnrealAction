@@ -3,7 +3,7 @@
 #include "Components/ActorComponent.h"
 #include "CWeaponComponent.generated.h"
 
-class ACCharacter;
+class ACCommonCharacter;
 class ACWeapon;
 
 UENUM(BlueprintType)
@@ -33,6 +33,13 @@ private:
 	UPROPERTY(EditAnyWhere, Category = "Settings")
 		EWeaponType Type = EWeaponType::Max;
 
+public:
+	FORCEINLINE bool IsUnarmedMode() const { return Type == EWeaponType::Unarmed; }
+	FORCEINLINE bool IsSwordMode() const { return Type == EWeaponType::Sword; }
+	FORCEINLINE bool IsFistMode() const { return Type == EWeaponType::Fist; }
+	FORCEINLINE bool IsBowMode() const { return Type == EWeaponType::Bow; }
+	FORCEINLINE bool IsDualMode() const { return Type == EWeaponType::Dual; }
+
 public:	
 	UCWeaponComponent();
 
@@ -41,13 +48,6 @@ protected:
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-public:
-	FORCEINLINE bool IsUnarmedMode() { return Type == EWeaponType::Unarmed; }
-	FORCEINLINE bool IsSwordMode() { return Type == EWeaponType::Sword; }
-	FORCEINLINE bool IsFistMode() { return Type == EWeaponType::Fist; }
-	FORCEINLINE bool IsBowMode() { return Type == EWeaponType::Bow; }
-	FORCEINLINE bool IsDualMode() { return Type == EWeaponType::Dual; }
 
 	void SetUnarmedMode();
 	void SetSwordMode();
@@ -65,7 +65,7 @@ public:
 	FWeaponTypeChanged OnWeaponTypeChanged;
 
 private:
-	TWeakObjectPtr<ACCharacter> Owner;
+	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TArray<TSharedPtr<ACWeapon>> Weapons;
 	TSharedPtr<ACWeapon> Weapon;
 };

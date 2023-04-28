@@ -1,10 +1,10 @@
 #include "Component/CMontagesComponent.h"
 #include "Global.h"
+#include "Character/CCommonCharacter.h"
 #include "GameFramework/Character.h"
 
 UCMontagesComponent::UCMontagesComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UCMontagesComponent::PlayBackStepMode()
@@ -12,11 +12,11 @@ void UCMontagesComponent::PlayBackStepMode()
 	PlayAnimMontage(EStateType::BackStep);
 }
 
-void UCMontagesComponent::PlayAnimMontage(EStateType InType)
+void UCMontagesComponent::PlayAnimMontage(const EStateType InType)
 {
 	CheckNull(Owner);
 
-	FMontagesData* data = Datas[(uint8)InType];
+	TSharedPtr<FMontagesData> data = Datas[(uint8)InType];
 
 	if (nullptr == data || nullptr == data->Montage)
 	{

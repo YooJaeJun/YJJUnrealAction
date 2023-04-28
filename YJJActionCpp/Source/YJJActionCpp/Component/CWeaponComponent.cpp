@@ -1,6 +1,6 @@
 #include "Component/CWeaponComponent.h"
 #include "Global.h"
-#include "Character/CCharacter.h"
+#include "Character/CCommonCharacter.h"
 #include "Weapons/CWeapon.h"
 
 UCWeaponComponent::UCWeaponComponent()
@@ -12,7 +12,7 @@ void UCWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Owner = Cast<ACCharacter>(GetOwner());
+	Owner = Cast<ACCommonCharacter>(GetOwner());
 	CheckNull(Owner);
 
 	FActorSpawnParameters params;

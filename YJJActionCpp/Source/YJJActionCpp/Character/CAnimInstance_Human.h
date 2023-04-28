@@ -4,12 +4,12 @@
 #include "Animation/AnimInstance.h"
 #include "Component/CWeaponComponent.h"
 #include "Component/CStateComponent.h"
-#include "CAnimInstance_Character.generated.h"
+#include "CAnimInstance_Human.generated.h"
 
-class ACCharacter;
+class ACCommonCharacter;
 
 UCLASS()
-class YJJACTIONCPP_API UCAnimInstance_Character : public UAnimInstance
+class YJJACTIONCPP_API UCAnimInstance_Human : public UAnimInstance
 {
 	GENERATED_BODY()
 		
@@ -56,7 +56,7 @@ private:
 		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
 
 private:
-	TWeakObjectPtr<ACCharacter> Owner;
+	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCWeaponComponent> WeaponComponent;
 	TWeakObjectPtr<UCStateComponent> StateComponent;
 	FRotator PrevRotation;

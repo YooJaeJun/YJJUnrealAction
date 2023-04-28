@@ -37,10 +37,11 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "Settings")
 		EStateType Type = EStateType::Max;
 
-	FORCEINLINE bool IsIdleMode() { return Type == EStateType::Idle; }
-	FORCEINLINE bool IsEquipMode() { return Type == EStateType::Equip; }
-	FORCEINLINE bool IsActMode() { return Type == EStateType::Act; }
-	FORCEINLINE bool IsHitMode() { return Type == EStateType::Hit; }
+	FORCEINLINE bool IsIdleMode() const { return Type == EStateType::Idle; }
+	FORCEINLINE bool IsEquipMode() const { return Type == EStateType::Equip; }
+	FORCEINLINE bool IsActMode() const { return Type == EStateType::Act; }
+	FORCEINLINE bool IsHitMode() const { return Type == EStateType::Hit; }
+	FORCEINLINE bool IsJumpMode() const { return Type == EStateType::Fall; }
 
 public:
 	UCStateComponent();
@@ -53,6 +54,7 @@ public:
 	void SetEquipMode();
 	void SetActMode();
 	void SetHitMode();
+	void SetFallMode();
 
 private:
 	void ChangedType(EStateType InType);

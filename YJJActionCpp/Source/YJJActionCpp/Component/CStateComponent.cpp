@@ -1,21 +1,29 @@
 #include "Component/CStateComponent.h"
 #include "Global.h"
-#include "Character/CCharacter.h"
 
 void UCStateComponent::SetIdleMode()
 {
+	Type = EStateType::Idle;
 }
 
 void UCStateComponent::SetEquipMode()
 {
+	Type = EStateType::Equip;
 }
 
 void UCStateComponent::SetActMode()
 {
+	Type = EStateType::Act;
 }
 
 void UCStateComponent::SetHitMode()
 {
+	Type = EStateType::Hit;
+}
+
+void UCStateComponent::SetFallMode()
+{
+	Type = EStateType::Fall;
 }
 
 void UCStateComponent::ChangedType(EStateType InType)

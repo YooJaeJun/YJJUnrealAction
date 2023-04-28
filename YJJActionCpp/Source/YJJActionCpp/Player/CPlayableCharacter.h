@@ -1,8 +1,8 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Character/CCharacter.h"
-#include "CPlayer.generated.h"
+#include "Character/CCommonCharacter.h"
+#include "CPlayableCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -13,14 +13,11 @@ class UInputComponent;
 class UCAnimInstance_Character;
 
 UCLASS()
-class YJJACTIONCPP_API ACPlayer : public ACCharacter
+class YJJACTIONCPP_API ACPlayableCharacter : public ACCommonCharacter
 {
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-		FVector2D PitchRange = FVector2D(-40, +40);
-
 	UPROPERTY(VisibleAnywhere)
 		USpringArmComponent* SpringArm;
 
@@ -30,53 +27,59 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		UCWeaponComponent* WeaponComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+		FVector2D PitchRange = FVector2D(-40, +40);
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+		TArray<float> Speeds{ 200, 500, 800 };
+	
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float MaxExp;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float Exp;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		int32 Level = 1;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float MaxHp;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float Hp;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float MaxStamina;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float Stamina;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float StaminaAccelRestore;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float StaminaDefaultRestore;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float MaxMana;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float Mana;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float ManaAccelRestore;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		float ManaDefaultRestore;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		bool EnoughStamina;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Status")
 		bool EnoughMana;
 
 public:
-	ACPlayer();
+	ACPlayableCharacter();
 
 protected:
 	virtual void BeginPlay() override;
@@ -91,9 +94,7 @@ private:
 	void OnMoveRight(const float InAxisValue);
 	void OnHorizontalLook(const float InAxisValue);
 	void OnVerticalLook(const float InAxisValue);
-	void OnJump();
-
-private:
-	void OnRun();
-	void OffRun();
+	void SetJumpMode();
+	void SetRunMode();
+	void SetWalkMode();
 };

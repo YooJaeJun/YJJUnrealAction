@@ -6,7 +6,7 @@
 #include "CMontagesComponent.generated.h"
 
 class UAnimMontage;
-class ACharacter;
+class ACCommonCharacter;
 
 USTRUCT()
 struct FMontagesData
@@ -41,9 +41,9 @@ public:
 	void PlayBackStepMode();
 
 private:
-	void PlayAnimMontage(EStateType InType);
+	void PlayAnimMontage(const EStateType InType);
 
 private:
-	ACharacter* Owner;
-	FMontagesData* Datas[(uint8)EStateType::Max];
+	TWeakObjectPtr<ACCommonCharacter> Owner;
+	TSharedPtr<FMontagesData> Datas[static_cast<uint8>(EStateType::Max)];
 };

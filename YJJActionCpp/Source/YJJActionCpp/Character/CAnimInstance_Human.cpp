@@ -1,33 +1,33 @@
-#include "CAnimInstance_Character.h"
+#include "CAnimInstance_Human.h"
 #include "Global.h"
-#include "Character/CCharacter.h"
+#include "Character/CCommonCharacter.h"
 #include "Component/CWeaponComponent.h"
 #include "Component/CStateComponent.h"
 
-void UCAnimInstance_Character::NativeBeginPlay()
+void UCAnimInstance_Human::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
-	Owner = Cast<ACCharacter>(TryGetPawnOwner());
+	Owner = Cast<ACCommonCharacter>(TryGetPawnOwner());
 	CheckNull(Owner);
-
-	WeaponComponent = CHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
-	CheckNull(WeaponComponent);
-	WeaponComponent->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance_Character::OnWeaponTypeChanged);
 
 	StateComponent = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
 	CheckNull(StateComponent);
-	StateComponent->OnStateTypeChanged.AddDynamic(this, &UCAnimInstance_Character::OnStateTypeChanged);
+	StateComponent->OnStateTypeChanged.AddDynamic(this, &UCAnimInstance_Human::OnStateTypeChanged);
+
+	WeaponComponent = CHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
+	CheckNull(WeaponComponent);
+	WeaponComponent->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance_Human::OnWeaponTypeChanged);
 }
 
-void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
+void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	// 라이딩 시 GetPawnOwner가 변경될 경우 대비
 	if (nullptr == Owner)	
 	{
-		Owner = Cast<ACCharacter>(TryGetPawnOwner());
+		Owner = Cast<ACCommonCharacter>(TryGetPawnOwner());
 		CheckNull(Owner);
 	}
 
@@ -43,16 +43,16 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 	Falling = (StateType == EStateType::Fall);
 	Hitting = (StateType == EStateType::Hit);
 
-	// TODO 활 애님
+
 }
 
-void UCAnimInstance_Character::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)
+void UCAnimInstance_Human::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)
 {
 	WeaponType = InNewType;
 	WeaponPrevType = InPrevType;
 }
 
-void UCAnimInstance_Character::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+void UCAnimInstance_Human::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
 	StateType = InNewType;
 	StatePrevType = InPrevType;

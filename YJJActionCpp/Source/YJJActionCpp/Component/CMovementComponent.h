@@ -1,9 +1,9 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CMovingComponent.generated.h"
+#include "CMovementComponent.generated.h"
 
-class ACCharacter;
+class ACCommonCharacter;
 
 UENUM()
 enum class ESpeedType : uint8
@@ -15,13 +15,11 @@ enum class ESpeedType : uint8
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class YJJACTIONCPP_API UCMovingComponent : public UActorComponent
+class YJJACTIONCPP_API UCMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UCMovingComponent();
-
 	UPROPERTY(VisibleAnywhere, Category = "Move")
 		bool Moveable;
 
@@ -29,7 +27,7 @@ public:
 		bool CameraFixed;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Move")
-		float Speeds[(uint8)ESpeedType::Max] = { 200, 500, 800 };
+		float Speeds[static_cast<uint8>(ESpeedType::Max)] = { 200, 500, 800 };
 
 	UPROPERTY(VisibleAnywhere, Category = "Lerp")
 		bool LerpMoving;
@@ -51,17 +49,20 @@ private:
 		float VerticalLook = 45;
 
 public:
-	FORCEINLINE bool CanMove() { return bCanMove; }
+	FORCEINLINE bool CanMove() const { return bCanMove; }
 	FORCEINLINE void Move() { bCanMove = true; }
 	FORCEINLINE void Stop() { bCanMove = false; }
 
-	FORCEINLINE float GetWalkSpeed() { return Speeds[(uint8)ESpeedType::Walk]; }
-	FORCEINLINE float GetRunSpeed() { return Speeds[(uint8)ESpeedType::Run]; }
-	FORCEINLINE float GetSprintSpeed() { return Speeds[(uint8)ESpeedType::Sprint]; }
+	FORCEINLINE float GetWalkSpeed() const { return Speeds[(uint8)ESpeedType::Walk]; }
+	FORCEINLINE float GetRunSpeed() const { return Speeds[(uint8)ESpeedType::Run]; }
+	FORCEINLINE float GetSprintSpeed() const { return Speeds[(uint8)ESpeedType::Sprint]; }
 
-	FORCEINLINE bool GetFixedCamera() { return bFixedCamera; }
+	FORCEINLINE bool GetFixedCamera() const { return bFixedCamera; }
 	FORCEINLINE void FixCamera() { bFixedCamera = true; }
 	FORCEINLINE void UnFixCamera() { bFixedCamera = false; }
+
+public:
+	UCMovementComponent();
 
 protected:
 	virtual void BeginPlay() override;
@@ -71,15 +72,19 @@ public:
 	void DisableControlRotation();
 
 	void SetSpeeds(const TArray<float> InSpeeds);
-	void SetMaxWalkSpeed(const ESpeedType Index);
+	void SetSpeed(const ESpeedType Index) const;
+	void SetMaxWalkSpeed(const float InSpeed) const;
+	void SetWalkSpeed(const float InSpeed) const;
+	void SetRunSpeed(const float InSpeed) const;
+	void SetSprintSpeed(const float InSpeed) const;
 	void SetLerpMove();
-	void IsLerpMove();
+	void IsLerpMove() const;
 
 	void SetGravity();
 	void AddGravity();
 
 private:
-	TWeakObjectPtr<ACCharacter> Owner;
+	TWeakObjectPtr<ACCommonCharacter> Owner;
 	bool bCanMove = true;
 	bool bFixedCamera;
 };
