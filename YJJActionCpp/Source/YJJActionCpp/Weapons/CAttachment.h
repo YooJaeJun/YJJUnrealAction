@@ -23,6 +23,4 @@ protected:
 
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
-	//UPROPERTY(BlueprintReadOnly, Category = "Game")
-	//	ACCommonCharacter* Owner;
 };

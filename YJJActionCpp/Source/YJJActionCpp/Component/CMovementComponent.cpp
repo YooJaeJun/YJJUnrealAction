@@ -16,10 +16,14 @@ void UCMovementComponent::BeginPlay()
 
 void UCMovementComponent::EnableControlRotation()
 {
+	Owner->bUseControllerRotationYaw = true;
+	Owner->GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
 void UCMovementComponent::DisableControlRotation()
 {
+	Owner->bUseControllerRotationYaw = false;
+	Owner->GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void UCMovementComponent::SetSpeeds(const TArray<float> InSpeeds)

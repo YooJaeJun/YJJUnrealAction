@@ -7,6 +7,8 @@
 class USpringArmComponent;
 class UCameraComponent;
 class USkeletalMeshComponent;
+class UCZoomComponent;
+class UCTargetingComponent;
 class UCWeaponComponent;
 class UCStateComponent;
 class UInputComponent;
@@ -17,15 +19,23 @@ class YJJACTIONCPP_API ACPlayableCharacter : public ACCommonCharacter
 {
 	GENERATED_BODY()
 
-private:
+public:
+	// ZoomComponent에서 사용
+	UPROPERTY(VisibleAnywhere)
+		UCTargetingComponent* TargetingComponent;
+
 	UPROPERTY(VisibleAnywhere)
 		USpringArmComponent* SpringArm;
 
+private:
 	UPROPERTY(VisibleAnywhere)
 		UCameraComponent* Camera;
 
 	UPROPERTY(VisibleAnywhere)
 		UCWeaponComponent* WeaponComponent;
+
+	UPROPERTY(VisibleAnywhere)
+		UCZoomComponent* ZoomComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 		FVector2D PitchRange = FVector2D(-40, +40);
@@ -78,6 +88,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Status")
 		bool EnoughMana;
 
+	UPROPERTY(EditAnywhere, Category = "Status")
+		float Zooming;
+
 public:
 	ACPlayableCharacter();
 
@@ -94,7 +107,9 @@ private:
 	void OnMoveRight(const float InAxisValue);
 	void OnHorizontalLook(const float InAxisValue);
 	void OnVerticalLook(const float InAxisValue);
-	void SetJumpMode();
-	void SetRunMode();
-	void SetWalkMode();
+	void OnZoom(const float InAxisValue);
+	void OnWalk();
+	void OnRun();
+	void OnJump();
+	void OnTargeting();
 };
