@@ -31,8 +31,8 @@ private:
 		UCEquipment* Equipment;
 
 public:
-	FORCEINLINE ACAttachment* GetAttachment() { return Attachment; }
-	FORCEINLINE UCEquipment* GetEquipment() { return Equipment; }
+	FORCEINLINE ACAttachment* GetAttachment() const { return Attachment; }
+	FORCEINLINE UCEquipment* GetEquipment() const { return Equipment; }
 
 public:
 	UCWeaponAsset();

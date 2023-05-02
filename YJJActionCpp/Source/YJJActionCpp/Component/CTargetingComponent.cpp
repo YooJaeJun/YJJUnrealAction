@@ -20,11 +20,11 @@ void UCTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UCTargetingComponent::Target()
+void UCTargetingComponent::OnTargeting()
 {
 	if (IsTargeting)
 	{
-		
+
 	}
 }
 
@@ -32,4 +32,3 @@ void UCTargetingComponent::ChangeFocus(const bool InRight)
 {
 
 }
-

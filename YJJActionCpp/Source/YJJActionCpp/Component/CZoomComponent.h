@@ -47,7 +47,7 @@ public:
 
 public:
 	UFUNCTION()
-		void Zoom(const float axis);
+		void OnZoom(const float InAxis);
 
 private:
 	TWeakObjectPtr<ACPlayableCharacter> Owner;

@@ -34,16 +34,21 @@ private:
 	UPROPERTY(EditAnywhere, Category = "DataTable")
 		UDataTable* DataTable;
 
+	UPROPERTY(EditAnywhere, Category = "DataTable")
+		FMontagesData Datas[static_cast<uint8>(EStateType::Max)];
+
 public:	
 	UCMontagesComponent();
 
+protected:
+	virtual void BeginPlay() override;
+
 public:
-	void PlayBackStepMode();
+	void PlayAvoidAnim();
 
 private:
 	void PlayAnimMontage(const EStateType InType);
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
-	TSharedPtr<FMontagesData> Datas[static_cast<uint8>(EStateType::Max)];
 };

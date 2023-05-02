@@ -15,5 +15,5 @@ class YJJACTIONCPP_API IICharacterAnim
 	GENERATED_BODY()
 
 public:
-	virtual void End_BackStep() {}
+	virtual void End_Avoid() {}
 };

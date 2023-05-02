@@ -19,8 +19,8 @@ void UCAnimNotify_End_State::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 
 	switch(StateType)
 	{
-	case EStateType::BackStep:
-		character->End_BackStep();
+	case EStateType::Avoid:
+		character->End_Avoid();
 		break;
 	}
 }

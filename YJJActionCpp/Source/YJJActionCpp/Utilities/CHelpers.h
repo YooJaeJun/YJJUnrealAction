@@ -2,7 +2,7 @@
 #include "CoreMinimal.h"
 
 #define CheckTrue(x) { if (x == true) return; }
-#define CheckTrue(x, y) { if (x == true) return y; }
+#define CheckTrueResult(x, y) { if (x == true) return y; }
 
 #define CheckFalse(x) { if(x == false) return;}
 #define CheckFalseResult(x, y) { if(x == false) return y;}
@@ -112,5 +112,11 @@ public:
 	static void AttachTo(AActor* InActor, USceneComponent* InParent, const FName InSocketName)
 	{
 		InActor->AttachToComponent(InParent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), InSocketName);
+	}
+
+	template<typename EnumType>
+	static FString GetEnumToString(const EnumType InValue)
+	{
+		return StaticEnum<EnumType>()->GetNameStringByValue(static_cast<int64>(InValue));
 	}
 };

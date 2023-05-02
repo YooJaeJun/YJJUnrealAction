@@ -1,21 +1,23 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
 #include "Character/CCommonCharacter.h"
+#include "Character/ICharacterAnim.h"
 #include "CPlayableCharacter.generated.h"
 
+class USkeletalMeshComponent;
 class USpringArmComponent;
 class UCameraComponent;
-class USkeletalMeshComponent;
+class UInputComponent;
+class UCAnimInstance_Character;
+class UCMontagesComponent;
 class UCZoomComponent;
 class UCTargetingComponent;
 class UCWeaponComponent;
-class UCStateComponent;
-class UInputComponent;
-class UCAnimInstance_Character;
 
 UCLASS()
-class YJJACTIONCPP_API ACPlayableCharacter : public ACCommonCharacter
+class YJJACTIONCPP_API ACPlayableCharacter
+	: public ACCommonCharacter
+	, public IICharacterAnim
 {
 	GENERATED_BODY()
 
@@ -33,6 +35,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		UCWeaponComponent* WeaponComponent;
+
+	UPROPERTY(VisibleAnywhere)
+		UCMontagesComponent* MontagesComponent;
 
 	UPROPERTY(VisibleAnywhere)
 		UCZoomComponent* ZoomComponent;
@@ -102,14 +107,14 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	virtual void Landed(const FHitResult& Hit) override;
+
 private:
-	void OnMoveForward(const float InAxisValue);
-	void OnMoveRight(const float InAxisValue);
-	void OnHorizontalLook(const float InAxisValue);
-	void OnVerticalLook(const float InAxisValue);
-	void OnZoom(const float InAxisValue);
-	void OnWalk();
-	void OnRun();
-	void OnJump();
-	void OnTargeting();
+	void Avoid();
+	void End_Avoid() override;
+	void OnAvoid();
+
+private:
+	UFUNCTION()
+		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
 };

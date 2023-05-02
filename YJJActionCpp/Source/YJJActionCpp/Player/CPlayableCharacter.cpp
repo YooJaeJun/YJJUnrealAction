@@ -1,25 +1,28 @@
-#include "CPlayableCharacter.h"
+﻿#include "CPlayableCharacter.h"
 #include "Global.h"
-#include "Character/CAnimInstance_Human.h"
-#include "Component/CWeaponComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Camera/CameraComponent.h"
-#include "Component/CMovementComponent.h"
-#include "Component/CZoomComponent.h"
-#include "Component/CTargetingComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/InputComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Camera/CameraComponent.h"
+#include "Character/CAnimInstance_Human.h"
+#include "Component/CMovementComponent.h"
+#include "Component/CMontagesComponent.h"
+#include "Component/CWeaponComponent.h"
+#include "Component/CZoomComponent.h"
+#include "Component/CTargetingComponent.h"
 
 ACPlayableCharacter::ACPlayableCharacter()
+	: ACCommonCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetCapsuleComponent());
 	CHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
+	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComponent, "MontagesComponent");
 	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComponent, "WeaponComponent");
 	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComponent, "ZoomComponent");
 	CHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComponent, "TargetingComponent");
@@ -45,6 +48,11 @@ ACPlayableCharacter::ACPlayableCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->GroundFriction = 2;
 	GetCharacterMovement()->BrakingDecelerationWalking = 256;
+
+	StateComponent->SetIdleMode();
+	WeaponComponent->SetUnarmedMode();
+
+	Name = TEXT("플레이어");
 }
 
 void ACPlayableCharacter::BeginPlay()
@@ -64,69 +72,59 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &ACPlayableCharacter::OnMoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ACPlayableCharacter::OnMoveRight);
-	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPlayableCharacter::OnHorizontalLook);
-	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPlayableCharacter::OnVerticalLook);
-	PlayerInputComponent->BindAxis("Zoom", this, &ACPlayableCharacter::OnZoom);
+	PlayerInputComponent->BindAxis("MoveForward", MovementComponent, &UCMovementComponent::OnMoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", MovementComponent, &UCMovementComponent::OnMoveRight);
+	PlayerInputComponent->BindAxis("HorizontalLook", MovementComponent, &UCMovementComponent::OnHorizontalLook);
+	PlayerInputComponent->BindAxis("VerticalLook", MovementComponent, &UCMovementComponent::OnVerticalLook);
+	PlayerInputComponent->BindAxis("Zoom", ZoomComponent, &UCZoomComponent::OnZoom);
 
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, this, &ACPlayableCharacter::OnWalk);
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, this, &ACPlayableCharacter::OnRun);
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACPlayableCharacter::OnJump);
-	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, this, &ACPlayableCharacter::OnTargeting);
+	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::OnWalk);
+	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComponent, &UCMovementComponent::OnRun);
+	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::OnJump);
+	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, this, &ACPlayableCharacter::OnAvoid);
+	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComponent, &UCTargetingComponent::OnTargeting);
 }
 
-void ACPlayableCharacter::OnMoveForward(const float InAxisValue)
+void ACPlayableCharacter::Landed(const FHitResult& Hit)
 {
-	const FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
-	const FVector direction = FQuat(rotator).GetForwardVector();
+	Super::Landed(Hit);
 
-	AddMovementInput(direction, InAxisValue);
+	StateComponent->SetIdleMode();
 }
 
-void ACPlayableCharacter::OnMoveRight(const float InAxisValue)
+void ACPlayableCharacter::Avoid()
 {
-	const FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
-	const FVector direction = FQuat(rotator).GetRightVector();
+	MovementComponent->EnableControlRotation();
 
-	AddMovementInput(direction, InAxisValue);
+	MontagesComponent->PlayAvoidAnim();
 }
 
-void ACPlayableCharacter::OnHorizontalLook(const float InAxisValue)
+void ACPlayableCharacter::End_Avoid()
 {
-	AddControllerYawInput(InAxisValue);
+	MovementComponent->DisableControlRotation();
+
+	StateComponent->SetIdleMode();
 }
 
-void ACPlayableCharacter::OnVerticalLook(const float InAxisValue)
+void ACPlayableCharacter::OnAvoid()
 {
-	AddControllerPitchInput(InAxisValue);
-}
-
-void ACPlayableCharacter::OnZoom(const float InAxisValue)
-{
-	ZoomComponent->Zoom(InAxisValue);
-}
-
-void ACPlayableCharacter::OnWalk()
-{
-	MovementComponent->SetMaxWalkSpeed(Speeds[static_cast<uint8>(ESpeedType::Walk)]);
-}
-
-void ACPlayableCharacter::OnRun()
-{
-	MovementComponent->SetMaxWalkSpeed(Speeds[static_cast<uint8>(ESpeedType::Sprint)]);
-}
-
-void ACPlayableCharacter::OnJump()
-{
+	CheckFalse(StateComponent->IsIdleMode());
 	CheckFalse(MovementComponent->CanMove());
 
-	Jump();
+	if (InputComponent->GetAxisValue("MoveForward") >= 0.0f)
+		return;
 
-	StateComponent->SetFallMode();
+	StateComponent->SetAvoidMode();
 }
 
-void ACPlayableCharacter::OnTargeting()
+void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
 {
-	TargetingComponent->Target();
+	CLog::Log("Test " + CHelpers::GetEnumToString(InNewType));
+
+	switch (InNewType)
+	{
+	case EStateType::Avoid:
+		Avoid();
+		break;
+	}
 }

@@ -36,23 +36,26 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 	const FRotator rotator = Owner->GetVelocity().ToOrientationRotator();
 	const FRotator rotator2 = Owner->GetControlRotation();
 	const FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotator, rotator2);
-	PrevRotation = UKismetMathLibrary::RInterpTo(PrevRotation, delta, DeltaSeconds, 25);
+	PrevRotation = UKismetMathLibrary::RInterpTo(
+		PrevRotation, delta, DeltaSeconds, 25);
 	Direction = PrevRotation.Yaw;
-	Pitch = UKismetMathLibrary::FInterpTo(Pitch, Owner->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
+	Pitch = UKismetMathLibrary::FInterpTo(
+		Pitch, Owner->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
 
+	CheckNull(StateComponent);
+
+	StateType = StateComponent->Type;
 	Falling = (StateType == EStateType::Fall);
 	Hitting = (StateType == EStateType::Hit);
-
-
 }
 
-void UCAnimInstance_Human::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)
+void UCAnimInstance_Human::OnWeaponTypeChanged(const EWeaponType InPrevType, const EWeaponType InNewType)
 {
 	WeaponType = InNewType;
 	WeaponPrevType = InPrevType;
 }
 
-void UCAnimInstance_Human::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+void UCAnimInstance_Human::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
 {
 	StateType = InNewType;
 	StatePrevType = InPrevType;

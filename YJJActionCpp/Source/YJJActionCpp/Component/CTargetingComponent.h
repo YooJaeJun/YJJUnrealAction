@@ -25,7 +25,7 @@ public:
 
 public:
 	UFUNCTION()
-		void Target();
+		void OnTargeting();
 
 	UFUNCTION()
 		void ChangeFocus(const bool InRight);

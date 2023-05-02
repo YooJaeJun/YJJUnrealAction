@@ -7,23 +7,53 @@ UCMontagesComponent::UCMontagesComponent()
 {
 }
 
-void UCMontagesComponent::PlayBackStepMode()
+void UCMontagesComponent::BeginPlay()
 {
-	PlayAnimMontage(EStateType::BackStep);
+	Super::BeginPlay();
+
+	if (nullptr == DataTable)
+	{
+		GLog->Log(ELogVerbosity::Error, "DataTable is not selected");
+
+		return;
+	}
+	Owner = Cast<ACCommonCharacter>(GetOwner());
+
+	TArray<FMontagesData*> datas;
+	DataTable->GetAllRows<FMontagesData>("", datas);
+
+	for (int32 i=0; i<static_cast<int32>(EStateType::Max); i++)
+	{
+		for (FMontagesData* data : datas)
+		{
+			if (static_cast<EStateType>(i) == data->StateType)
+			{
+				Datas[i] = *data;
+
+				continue;
+			}
+		}//for(data)
+	}//for(i)
+}
+
+
+void UCMontagesComponent::PlayAvoidAnim()
+{
+	PlayAnimMontage(EStateType::Avoid);
 }
 
 void UCMontagesComponent::PlayAnimMontage(const EStateType InType)
 {
 	CheckNull(Owner);
 
-	TSharedPtr<FMontagesData> data = Datas[(uint8)InType];
+	const FMontagesData data = Datas[(uint8)InType];
 
-	if (nullptr == data || nullptr == data->Montage)
+	if (nullptr == data.Montage)
 	{
 		GLog->Log(ELogVerbosity::Error, "No Montages Data");
 
 		return;
 	}
 
-	Owner->PlayAnimMontage(data->Montage, data->PlayRate);
+	Owner->PlayAnimMontage(data.Montage, data.PlayRate);
 }

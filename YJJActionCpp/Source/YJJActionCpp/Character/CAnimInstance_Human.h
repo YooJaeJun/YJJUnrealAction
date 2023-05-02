@@ -50,10 +50,10 @@ public:
 
 private:
 	UFUNCTION()
-		void OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType);
+		void OnWeaponTypeChanged(const EWeaponType InPrevType, const EWeaponType InNewType);
 
 	UFUNCTION()
-		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
+		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

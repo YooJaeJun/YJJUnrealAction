@@ -1,6 +1,5 @@
 #include "CCommonCharacter.h"
 #include "Global.h"
-#include "Component/CStateComponent.h"
 #include "Component/CMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 

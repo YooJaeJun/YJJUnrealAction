@@ -38,9 +38,9 @@ void UCZoomComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	);
 }
 
-void UCZoomComponent::Zoom(const float axis)
+void UCZoomComponent::OnZoom(const float InAxis)
 {
-	if (axis == 0.0f)
+	if (InAxis == 0.0f)
 		return;
 
 	CheckNull(Owner);
@@ -48,7 +48,7 @@ void UCZoomComponent::Zoom(const float axis)
 	if (!!Owner->TargetingComponent && 
 		Owner->TargetingComponent->IsTargeting)
 	{
-		if (axis > 0.0f)
+		if (InAxis > 0.0f)
 			Owner->TargetingComponent->ChangeFocus(true);
 		else
 			Owner->TargetingComponent->ChangeFocus(false);
@@ -58,7 +58,7 @@ void UCZoomComponent::Zoom(const float axis)
 		if (false == Owner->MovementComponent->GetFixedCamera())
 		{
 			Zooming = UKismetMathLibrary::Clamp(
-				Zooming + axis * ZoomData.ZoomSpeed,
+				Zooming + InAxis * ZoomData.ZoomSpeed,
 				ZoomData.MinRange,
 				ZoomData.MaxRange);
 		}

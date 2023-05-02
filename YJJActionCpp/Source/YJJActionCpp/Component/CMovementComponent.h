@@ -83,6 +83,15 @@ public:
 	void SetGravity();
 	void AddGravity();
 
+public:
+	void OnMoveForward(const float InAxis);
+	void OnMoveRight(const float InAxis);
+	void OnHorizontalLook(const float InAxis);
+	void OnVerticalLook(const float InAxis);
+	void OnWalk();
+	void OnRun();
+	void OnJump();
+
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	bool bCanMove = true;
