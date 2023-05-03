@@ -8,6 +8,7 @@
 UCWeaponAsset::UCWeaponAsset()
 {
 	AttachmentClass = ACAttachment::StaticClass();
+	EquipmentClass = UCEquipment::StaticClass();
 }
 
 void UCWeaponAsset::BeginPlay(ACCommonCharacter* InOwner)

@@ -5,6 +5,9 @@
 
 class ACCommonCharacter;
 class ACWeapon;
+class ACAttachment;
+class UCEquipment;
+class UCWeaponAsset;
 
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
@@ -19,7 +22,7 @@ enum class EWeaponType : uint8
 	Max
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, const EWeaponType, InPrevType, const EWeaponType, InNewType);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCWeaponComponent : public UActorComponent
@@ -27,11 +30,14 @@ class YJJACTIONCPP_API UCWeaponComponent : public UActorComponent
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnyWhere, Category = "Settings")
-		TArray<TSubclassOf<ACWeapon>> WeaponClasses;
+	UPROPERTY(EditAnywhere, Category = "DataAsset")
+		UCWeaponAsset* DataAssets[static_cast<uint8>(EWeaponType::Max)];
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EWeaponType Type = EWeaponType::Max;
+		EWeaponType Type = EWeaponType::Unarmed;
+
+	UPROPERTY(EditAnyWhere, Category = "Settings")
+		EWeaponType PrevType = EWeaponType::Max;
 
 public:
 	FORCEINLINE bool IsUnarmedMode() const { return Type == EWeaponType::Unarmed; }
@@ -46,8 +52,15 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	UFUNCTION()
+		ACAttachment* GetAttachment();
+
+	UFUNCTION()
+		UCEquipment* GetEquipment();
+
+public:
+	bool IsIdleMode() const;
 
 	void SetUnarmedMode();
 	void SetSwordMode();
@@ -60,6 +73,10 @@ public:
 	void End_Equip();
 	void Begin_Act();
 	void End_Act();
+
+private:
+	void SetMode(EWeaponType InType);
+	void ChangeType(EWeaponType InType);
 
 public:
 	FWeaponTypeChanged OnWeaponTypeChanged;

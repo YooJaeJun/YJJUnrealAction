@@ -22,5 +22,9 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
+	UFUNCTION(BlueprintCallable, Category = "Attach")
+		void AttachTo(FName InSocketName);
+
+protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 };

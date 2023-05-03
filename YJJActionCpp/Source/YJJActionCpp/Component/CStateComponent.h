@@ -37,7 +37,7 @@ class YJJACTIONCPP_API UCStateComponent : public UActorComponent
 
 public:
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EStateType Type = EStateType::Max;
+		EStateType Type = EStateType::Idle;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
 		EStateType PrevType = EStateType::Max;

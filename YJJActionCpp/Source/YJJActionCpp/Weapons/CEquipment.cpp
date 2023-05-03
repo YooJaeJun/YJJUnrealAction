@@ -51,5 +51,3 @@ void UCEquipment::Unequip_Implementation()
 	bEquipped = false;
 	Movement->DisableControlRotation();
 }
-
-

@@ -1,7 +1,8 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Character/CCommonCharacter.h"
-#include "Character/ICharacterAnim.h"
+#include "Character/CInterface_CharacterAnim.h"
+#include "Character/CInterface_CharacterUI.h"
 #include "CPlayableCharacter.generated.h"
 
 class USkeletalMeshComponent;
@@ -13,11 +14,12 @@ class UCMontagesComponent;
 class UCZoomComponent;
 class UCTargetingComponent;
 class UCWeaponComponent;
+class UCGameUIComponent;
 
 UCLASS()
-class YJJACTIONCPP_API ACPlayableCharacter
-	: public ACCommonCharacter
-	, public IICharacterAnim
+class YJJACTIONCPP_API ACPlayableCharacter :
+	public ACCommonCharacter,
+	public ICInterface_CharacterAnim
 {
 	GENERATED_BODY()
 
@@ -41,6 +43,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		UCZoomComponent* ZoomComponent;
+
+	UPROPERTY(VisibleAnywhere)
+		UCGameUIComponent* GameUIComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 		FVector2D PitchRange = FVector2D(-40, +40);
@@ -92,9 +97,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Status")
 		bool EnoughMana;
-
-	UPROPERTY(EditAnywhere, Category = "Status")
-		float Zooming;
 
 public:
 	ACPlayableCharacter();

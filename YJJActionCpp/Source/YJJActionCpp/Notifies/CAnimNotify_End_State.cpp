@@ -1,6 +1,6 @@
 #include "CAnimNotify_End_State.h"
 #include "Global.h"
-#include "Character/ICharacterAnim.h"
+#include "Character/CInterface_CharacterAnim.h"
 
 FString UCAnimNotify_End_State::GetNotifyName_Implementation() const
 {
@@ -14,7 +14,7 @@ void UCAnimNotify_End_State::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 
-	IICharacterAnim* character = Cast<IICharacterAnim>(MeshComp->GetOwner());
+	ICInterface_CharacterAnim* character = Cast<ICInterface_CharacterAnim>(MeshComp->GetOwner());
 	CheckNull(character);
 
 	switch(StateType)

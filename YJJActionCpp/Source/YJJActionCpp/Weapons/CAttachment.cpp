@@ -14,3 +14,10 @@ void ACAttachment::BeginPlay()
 
 	Super::BeginPlay();
 }
+
+void ACAttachment::AttachTo(FName InSocketName)
+{
+	AttachToComponent(Owner->GetMesh(),
+		FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
+		InSocketName);
+}

@@ -14,6 +14,8 @@
 #include "Component/CWeaponComponent.h"
 #include "Component/CZoomComponent.h"
 #include "Component/CTargetingComponent.h"
+#include "Component/CGameUIComponent.h"
+#include "GameMode/CGameMode.h"
 
 ACPlayableCharacter::ACPlayableCharacter()
 	: ACCommonCharacter()
@@ -26,6 +28,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComponent, "WeaponComponent");
 	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComponent, "ZoomComponent");
 	CHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComponent, "TargetingComponent");
+	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComponent, "GameUIComponent");
 
 	USkeletalMesh* mesh;
 	CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
@@ -50,7 +53,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 256;
 
 	StateComponent->SetIdleMode();
-	WeaponComponent->SetUnarmedMode();
+	StateComponent->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
 
 	Name = TEXT("플레이어");
 }
@@ -83,6 +86,7 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::OnJump);
 	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, this, &ACPlayableCharacter::OnAvoid);
 	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComponent, &UCTargetingComponent::OnTargeting);
+	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComponent, &UCGameUIComponent::OnMenu);
 }
 
 void ACPlayableCharacter::Landed(const FHitResult& Hit)
@@ -119,8 +123,6 @@ void ACPlayableCharacter::OnAvoid()
 
 void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
 {
-	CLog::Log("Test " + CHelpers::GetEnumToString(InNewType));
-
 	switch (InNewType)
 	{
 	case EStateType::Avoid:
