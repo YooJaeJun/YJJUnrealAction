@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "CAttachment.h"
 #include "CEquipment.h"
+#include "CAct.h"
 #include "Character/CCommonCharacter.h"
 #include "GameFramework/Character.h"
 
@@ -9,6 +10,7 @@ UCWeaponAsset::UCWeaponAsset()
 {
 	AttachmentClass = ACAttachment::StaticClass();
 	EquipmentClass = UCEquipment::StaticClass();
+	ActClass = UCAct::StaticClass();
 }
 
 void UCWeaponAsset::BeginPlay(ACCommonCharacter* InOwner)
@@ -18,12 +20,24 @@ void UCWeaponAsset::BeginPlay(ACCommonCharacter* InOwner)
 		FActorSpawnParameters params;
 		params.Owner = Cast<AActor>(InOwner);
 
-		InOwner->GetWorld()->SpawnActor<ACAttachment>(AttachmentClass, params);
+		Attachment = InOwner->GetWorld()->SpawnActor<ACAttachment>(AttachmentClass, params);
 	}
 
 	if (!!EquipmentClass)
 	{
 		Equipment = NewObject<UCEquipment>(this, EquipmentClass);
 		Equipment->BeginPlay(InOwner, EquipmentData);
+
+		if (!!Attachment)
+		{
+			Equipment->OnEquipmentBeginEquip.AddDynamic(Attachment, &ACAttachment::OnBeginEquip);
+			Equipment->OnEquipmentUnequip.AddDynamic(Attachment, &ACAttachment::OnUnequip);
+		}
+	}
+
+	if (!!ActClass)
+	{
+		Act = NewObject<UCAct>(this, ActClass);
+		Act->BeginPlay(Attachment, Equipment, InOwner, ActDatas);
 	}
 }

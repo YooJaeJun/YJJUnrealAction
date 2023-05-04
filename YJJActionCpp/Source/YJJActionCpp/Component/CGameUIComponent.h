@@ -2,11 +2,11 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Character/CInterface_CharacterUI.h"
+#include "Widgets/Weapons/CUserWidget_EquipMenu.h"
+#include "Widgets/Weapons/CUserWidget_EquipMenuButton.h"
 #include "CGameUIComponent.generated.h"
 
 class ACCommonCharacter;
-class UCUserWidget_EquipMenu;
-class UCUserWidget_EquipMenuButton;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCGameUIComponent :
@@ -19,8 +19,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "UI")
 		TSubclassOf<UCUserWidget_EquipMenu> EquipMenuClass;
 
-	UPROPERTY(VisibleAnywhere, Category = "UI")
-		UCUserWidget_EquipMenu* EquipMenu;
+	UPROPERTY(EditAnywhere, Category = "UI")
+		TSubclassOf<UCUserWidget_EquipMenuButton> EquipMenuButtonClass;
 
 public:	
 	UCGameUIComponent();
@@ -28,16 +28,17 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+private:
+	UFUNCTION()
+		void OnWeaponEquipped(const EWeaponType InNewType);
 
-	void OnMenu() override;
-	void ActivateEquipMenu() override;
-	void DeactivateEquipMenu() override;
-	void HoveredEquipMenu() override;
-	void UnhoveredEquipMenu() override;
-	void ClickedEquipMenu() override;
+public:
+	void InputAction_ActivateEquipMenu() override;
+	void InputAction_DeactivateEquipMenu() override;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
+	TWeakObjectPtr<UCUserWidget_EquipMenu> EquipMenu;
+	TWeakObjectPtr<UCUserWidget_EquipMenuButton> EquipMenuButton;
+	TWeakObjectPtr<APlayerController> PlayerController;
 };

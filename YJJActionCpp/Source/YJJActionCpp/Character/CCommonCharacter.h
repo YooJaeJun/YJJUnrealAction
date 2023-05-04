@@ -23,6 +23,8 @@ public:
 		FString Name;
 
 public:
+	// 라이딩 시 PlayerController와 AIController 전환 시 사용. 다른 클래스에서 접근 시 GetController 등이 아닌, 이 함수로 접근
+	FORCEINLINE TWeakObjectPtr<AController> GetMyCurController() const { return MyCurController; }
 	FORCEINLINE const FString& GetName() const { return Name; }
 
 public:
@@ -30,4 +32,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	TWeakObjectPtr<AController> MyCurController;
 };

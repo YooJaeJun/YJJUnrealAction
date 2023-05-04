@@ -20,7 +20,7 @@ void UCTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UCTargetingComponent::OnTargeting()
+void UCTargetingComponent::InputAction_Targeting()
 {
 	if (IsTargeting)
 	{

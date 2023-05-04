@@ -7,6 +7,7 @@ class ACCommonCharacter;
 class ACWeapon;
 class ACAttachment;
 class UCEquipment;
+class UCAct;
 class UCWeaponAsset;
 
 UENUM(BlueprintType)
@@ -53,11 +54,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UFUNCTION()
-		ACAttachment* GetAttachment();
-
-	UFUNCTION()
-		UCEquipment* GetEquipment();
+	ACAttachment* GetAttachment();
+	UCEquipment* GetEquipment();
+	UCAct* GetAct();
 
 public:
 	bool IsIdleMode() const;
@@ -74,8 +73,12 @@ public:
 	void Begin_Act();
 	void End_Act();
 
-private:
+	void Act();
+
+public:
 	void SetMode(EWeaponType InType);
+
+private:
 	void ChangeType(EWeaponType InType);
 
 public:

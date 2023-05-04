@@ -15,10 +15,6 @@ class YJJACTIONCPP_API ICInterface_CharacterUI
 	GENERATED_BODY()
 
 public:
-	virtual void OnMenu() {}
-	virtual void ActivateEquipMenu() {}
-	virtual void DeactivateEquipMenu() {}
-	virtual void HoveredEquipMenu() {}
-	virtual void UnhoveredEquipMenu() {}
-	virtual void ClickedEquipMenu() {}
+	virtual void InputAction_ActivateEquipMenu() {}
+	virtual void InputAction_DeactivateEquipMenu() {}
 };

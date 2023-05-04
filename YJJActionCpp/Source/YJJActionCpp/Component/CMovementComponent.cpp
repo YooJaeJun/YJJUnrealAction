@@ -75,7 +75,7 @@ void UCMovementComponent::AddGravity()
 {
 }
 
-void UCMovementComponent::OnMoveForward(const float InAxis)
+void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 {
 	CheckFalse(bCanMove);
 
@@ -85,7 +85,7 @@ void UCMovementComponent::OnMoveForward(const float InAxis)
 	Owner->AddMovementInput(direction, InAxis);
 }
 
-void UCMovementComponent::OnMoveRight(const float InAxis)
+void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 {
 	CheckFalse(bCanMove);
 
@@ -95,31 +95,31 @@ void UCMovementComponent::OnMoveRight(const float InAxis)
 	Owner->AddMovementInput(direction, InAxis);
 }
 
-void UCMovementComponent::OnHorizontalLook(const float InAxis)
+void UCMovementComponent::InputAxis_HorizontalLook(const float InAxis)
 {
 	CheckTrue(bFixedCamera);
 
 	Owner->AddControllerYawInput(InAxis * HorizontalLook * GetWorld()->GetDeltaSeconds());
 }
 
-void UCMovementComponent::OnVerticalLook(const float InAxis)
+void UCMovementComponent::InputAxis_VerticalLook(const float InAxis)
 {
 	CheckTrue(bFixedCamera);
 
 	Owner->AddControllerPitchInput(InAxis * VerticalLook * GetWorld()->GetDeltaSeconds());
 }
 
-void UCMovementComponent::OnWalk()
+void UCMovementComponent::InputAction_Walk()
 {
 	SetMaxWalkSpeed(Speeds[static_cast<uint8>(ESpeedType::Walk)]);
 }
 
-void UCMovementComponent::OnRun()
+void UCMovementComponent::InputAction_Run()
 {
 	SetMaxWalkSpeed(Speeds[static_cast<uint8>(ESpeedType::Sprint)]);
 }
 
-void UCMovementComponent::OnJump()
+void UCMovementComponent::InputAction_Jump()
 {
 	CheckFalse(CanMove());
 

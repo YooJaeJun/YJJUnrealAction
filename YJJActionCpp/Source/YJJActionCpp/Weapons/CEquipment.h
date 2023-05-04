@@ -8,6 +8,9 @@ class ACCommonCharacter;
 class UCMovementComponent;
 class UCStateComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEquipmentBeginEquip);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEquipmentUnequip);
+
 UCLASS()
 class YJJACTIONCPP_API UCEquipment : public UObject
 {
@@ -32,6 +35,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 		void Unequip();
 	void Unequip_Implementation();
+
+public:
+	FEquipmentBeginEquip OnEquipmentBeginEquip;
+	FEquipmentUnequip OnEquipmentUnequip;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

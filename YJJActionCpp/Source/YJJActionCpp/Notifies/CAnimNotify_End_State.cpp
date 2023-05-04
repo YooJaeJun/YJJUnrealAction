@@ -4,7 +4,7 @@
 
 FString UCAnimNotify_End_State::GetNotifyName_Implementation() const
 {
-	return "EndState";
+	return "End_State";
 }
 
 void UCAnimNotify_End_State::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)

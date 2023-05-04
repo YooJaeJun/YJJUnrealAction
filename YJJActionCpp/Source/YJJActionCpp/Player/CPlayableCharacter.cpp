@@ -62,8 +62,12 @@ void ACPlayableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetController<APlayerController>()->PlayerCameraManager->ViewPitchMin = PitchRange.X;
-	GetController<APlayerController>()->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
+	TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(MyCurController);
+	if (!!playerController.Get())
+	{
+		playerController->PlayerCameraManager->ViewPitchMin = PitchRange.X;
+		playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
+	}
 }
 
 void ACPlayableCharacter::Tick(float DeltaTime)
@@ -75,18 +79,19 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", MovementComponent, &UCMovementComponent::OnMoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", MovementComponent, &UCMovementComponent::OnMoveRight);
-	PlayerInputComponent->BindAxis("HorizontalLook", MovementComponent, &UCMovementComponent::OnHorizontalLook);
-	PlayerInputComponent->BindAxis("VerticalLook", MovementComponent, &UCMovementComponent::OnVerticalLook);
-	PlayerInputComponent->BindAxis("Zoom", ZoomComponent, &UCZoomComponent::OnZoom);
+	PlayerInputComponent->BindAxis("MoveForward", MovementComponent, &UCMovementComponent::InputAxis_MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", MovementComponent, &UCMovementComponent::InputAxis_MoveRight);
+	PlayerInputComponent->BindAxis("HorizontalLook", MovementComponent, &UCMovementComponent::InputAxis_HorizontalLook);
+	PlayerInputComponent->BindAxis("VerticalLook", MovementComponent, &UCMovementComponent::InputAxis_VerticalLook);
+	PlayerInputComponent->BindAxis("Zoom", ZoomComponent, &UCZoomComponent::InputAxis_Zoom);
 
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::OnWalk);
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComponent, &UCMovementComponent::OnRun);
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::OnJump);
-	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, this, &ACPlayableCharacter::OnAvoid);
-	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComponent, &UCTargetingComponent::OnTargeting);
-	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComponent, &UCGameUIComponent::OnMenu);
+	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::InputAction_Walk);
+	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComponent, &UCMovementComponent::InputAction_Run);
+	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::InputAction_Jump);
+	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, this, &ACPlayableCharacter::InputAction_Avoid);
+	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComponent, &UCTargetingComponent::InputAction_Targeting);
+	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComponent, &UCGameUIComponent::InputAction_ActivateEquipMenu);
+	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComponent, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
 }
 
 void ACPlayableCharacter::Landed(const FHitResult& Hit)
@@ -110,7 +115,7 @@ void ACPlayableCharacter::End_Avoid()
 	StateComponent->SetIdleMode();
 }
 
-void ACPlayableCharacter::OnAvoid()
+void ACPlayableCharacter::InputAction_Avoid()
 {
 	CheckFalse(StateComponent->IsIdleMode());
 	CheckFalse(MovementComponent->CanMove());

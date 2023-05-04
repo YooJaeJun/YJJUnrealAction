@@ -7,6 +7,8 @@ ACCommonCharacter::ACCommonCharacter()
 {
 	CHelpers::CreateActorComponent<UCStateComponent>(this, &StateComponent, "StateComponent");
 	CHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComponent, "MovementComponent");
+
+	MyCurController = GetController();
 }
 
 void ACCommonCharacter::BeginPlay()

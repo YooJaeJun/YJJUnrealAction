@@ -84,13 +84,13 @@ public:
 	void AddGravity();
 
 public:
-	void OnMoveForward(const float InAxis);
-	void OnMoveRight(const float InAxis);
-	void OnHorizontalLook(const float InAxis);
-	void OnVerticalLook(const float InAxis);
-	void OnWalk();
-	void OnRun();
-	void OnJump();
+	void InputAxis_MoveForward(const float InAxis);
+	void InputAxis_MoveRight(const float InAxis);
+	void InputAxis_HorizontalLook(const float InAxis);
+	void InputAxis_VerticalLook(const float InAxis);
+	void InputAction_Walk();
+	void InputAction_Run();
+	void InputAction_Jump();
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

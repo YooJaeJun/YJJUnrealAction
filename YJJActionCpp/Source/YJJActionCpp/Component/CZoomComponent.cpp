@@ -38,7 +38,7 @@ void UCZoomComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	);
 }
 
-void UCZoomComponent::OnZoom(const float InAxis)
+void UCZoomComponent::InputAxis_Zoom(const float InAxis)
 {
 	if (InAxis == 0.0f)
 		return;

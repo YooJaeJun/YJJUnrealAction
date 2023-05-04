@@ -114,7 +114,7 @@ public:
 private:
 	void Avoid();
 	void End_Avoid() override;
-	void OnAvoid();
+	void InputAction_Avoid();
 
 private:
 	UFUNCTION()

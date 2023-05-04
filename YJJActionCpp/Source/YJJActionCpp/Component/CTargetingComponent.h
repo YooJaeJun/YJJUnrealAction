@@ -25,7 +25,7 @@ public:
 
 public:
 	UFUNCTION()
-		void OnTargeting();
+		void InputAction_Targeting();
 
 	UFUNCTION()
 		void ChangeFocus(const bool InRight);

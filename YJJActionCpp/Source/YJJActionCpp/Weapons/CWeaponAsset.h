@@ -7,6 +7,7 @@
 
 class ACAttachment;
 class UCEquipment;
+class UCAct;
 class ACCommonCharacter;
 
 UCLASS()
@@ -22,17 +23,27 @@ private:
 		ACAttachment* Attachment;
 
 	UPROPERTY(EditAnywhere)
-		FEquipmentData EquipmentData;
+		TSubclassOf<UCEquipment> EquipmentClass;
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<UCEquipment> EquipmentClass;
+		FEquipmentData EquipmentData;
 
 	UPROPERTY()
 		UCEquipment* Equipment;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UCAct> ActClass;
+
+	UPROPERTY(EditAnywhere)
+		TArray<FActData> ActDatas;
+
+	UPROPERTY()
+		UCAct* Act;
+
 public:
 	FORCEINLINE ACAttachment* GetAttachment() const { return Attachment; }
 	FORCEINLINE UCEquipment* GetEquipment() const { return Equipment; }
+	FORCEINLINE UCAct* GetAct() const { return Act; }
 
 public:
 	UCWeaponAsset();

@@ -4,10 +4,12 @@
 #include "Weapons/CWeapon.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CEquipment.h"
+#include "Weapons/CAct.h"
 #include "Weapons/CWeaponAsset.h"
 
 UCWeaponComponent::UCWeaponComponent()
 {
+
 }
 
 void UCWeaponComponent::BeginPlay()
@@ -43,6 +45,14 @@ UCEquipment* UCWeaponComponent::GetEquipment()
 	CheckFalseResult(!!DataAssets[static_cast<uint8>(Type)], nullptr);
 
 	return DataAssets[static_cast<uint8>(Type)]->GetEquipment();
+}
+
+UCAct* UCWeaponComponent::GetAct()
+{
+	CheckTrueResult(IsUnarmedMode(), nullptr);
+	CheckFalseResult(!!DataAssets[(int32)Type], nullptr);
+
+	return DataAssets[(int32)Type]->GetAct();
 }
 
 bool UCWeaponComponent::IsIdleMode() const
@@ -94,6 +104,12 @@ void UCWeaponComponent::SetDualMode()
 	SetMode(EWeaponType::Dual);
 }
 
+void UCWeaponComponent::Act()
+{
+	if (!!GetAct())
+		GetAct()->Act();
+}
+
 void UCWeaponComponent::SetMode(EWeaponType InType)
 {
 	if (Type == InType)
@@ -126,7 +142,6 @@ void UCWeaponComponent::ChangeType(EWeaponType InType)
 	if (OnWeaponTypeChanged.IsBound())
 		OnWeaponTypeChanged.Broadcast(PrevType, InType);
 }
-
 
 void UCWeaponComponent::Begin_Equip()
 {
