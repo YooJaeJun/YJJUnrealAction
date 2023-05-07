@@ -1,6 +1,8 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Global.h"
 #include "Game/CGameInstance.h"
+#include "Character/CCommonCharacter.h"
+#include "Components/CStateComponent.h"
 
 UCCharacterStatComponent::UCCharacterStatComponent()
 {
@@ -18,12 +20,14 @@ UCCharacterStatComponent::UCCharacterStatComponent()
 void UCCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Owner = Cast<ACCommonCharacter>(GetOwner());
 }
 
 void UCCharacterStatComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
-	SetNewLevel(1);
+	SetNewLevel(1, 0.0f);
 }
 
 void UCCharacterStatComponent::SetNewLevel(const int32 InNewLevel, const float InRemainExp)
@@ -41,6 +45,7 @@ void UCCharacterStatComponent::SetNewLevel(const int32 InNewLevel, const float I
 		SetHp(CurStat->MaxHp);
 		SetStamina(CurStat->MaxStamina);
 		SetMana(CurStat->MaxMana);
+		OnLevelChanged.Broadcast();
 	}
 	else
 		CLog::Log("New Level data doesn't exist.");
@@ -57,15 +62,36 @@ void UCCharacterStatComponent::SetExp(const float InNewExp)
 
 	if (true == FMath::IsNearlyEqual(CurExp, CurStat->MaxExp) ||
 		CurExp > CurStat->MaxExp)
-	{
-		SetNewLevel(CurStat->MaxExp - CurExp);
-	}
+		SetNewLevel(CurLevel + 1, CurExp - CurStat->MaxExp);
+
+	OnExpChanged.Broadcast();
+
+	CLog::Print("Level : " + FString::FromInt(CurLevel), -1, 5, FColor::Cyan);
+	CLog::Print("Exp : " + FString::FromInt((int)CurExp), -1, 5, FColor::Cyan);
 }
 
 void UCCharacterStatComponent::SetDamage(const float InNewDamage)
 {
 	CheckNull(CurStat);
+	
 	SetHp(FMath::Clamp<float>(CurHp - InNewDamage, 0.0f, CurStat->MaxHp));
+
+	TWeakObjectPtr<UCStateComponent> state = 
+		Cast<UCStateComponent>(Owner->GetComponentByClass(UCStateComponent::StaticClass()));
+
+	state->SetHitMode();
+}
+
+void UCCharacterStatComponent::SetStaminaDamage(const float InNewDamage)
+{
+	CheckNull(CurStat);
+	SetStamina(FMath::Clamp<float>(CurStamina - InNewDamage, 0.0f, CurStat->MaxStamina));
+}
+
+void UCCharacterStatComponent::SetManaDamage(const float InNewDamage)
+{
+	CheckNull(CurStat);
+	SetMana(FMath::Clamp<float>(CurMana - InNewDamage, 0.0f, CurStat->MaxMana));
 }
 
 void UCCharacterStatComponent::SetHp(const float InNewHp)
@@ -104,6 +130,34 @@ void UCCharacterStatComponent::SetMana(const float InNewMana)
 	}
 }
 
+float UCCharacterStatComponent::GetCurLevel() const
+{
+	CheckNullResult(CurStat, 0.0f);
+	return CurLevel;
+}
+
+float UCCharacterStatComponent::GetExpRatio() const
+{
+	CheckNullResult(CurStat, 0.0f);
+
+	if (CurStat->MaxExp < KINDA_SMALL_NUMBER)
+		return 0.0f;
+	else
+		return CurExp / CurStat->MaxExp;
+}
+
+float UCCharacterStatComponent::GetCurExp() const
+{
+	CheckNullResult(CurStat, 0.0f);
+	return CurExp;
+}
+
+float UCCharacterStatComponent::GetMaxExp() const
+{
+	CheckNullResult(CurStat, 0.0f);
+	return CurStat->MaxExp;
+}
+
 float UCCharacterStatComponent::GetHpRatio() const
 {
 	CheckNullResult(CurStat, 0.0f);
@@ -117,20 +171,61 @@ float UCCharacterStatComponent::GetHpRatio() const
 float UCCharacterStatComponent::GetCurHp() const
 {
 	CheckNullResult(CurStat, 0.0f);
-
 	return CurHp;
 }
 
 float UCCharacterStatComponent::GetMaxHp() const
 {
 	CheckNullResult(CurStat, 0.0f);
-
 	return CurStat->MaxHp;
+}
+
+float UCCharacterStatComponent::GetStaminaRatio() const
+{
+	CheckNullResult(CurStat, 0.0f);
+
+	if (CurStat->MaxStamina < KINDA_SMALL_NUMBER)
+		return 0.0f;
+	else
+		return CurStamina / CurStat->MaxStamina;
+}
+
+float UCCharacterStatComponent::GetCurStamina() const
+{
+	CheckNullResult(CurStat, 0.0f);
+	return CurStamina;
+}
+
+float UCCharacterStatComponent::GetMaxStamina() const
+{
+	CheckNullResult(CurStat, 0.0f);
+	return CurStat->MaxStamina;
+}
+
+float UCCharacterStatComponent::GetManaRatio() const
+{
+	CheckNullResult(CurStat, 0.0f);
+
+	if (CurStat->MaxMana < KINDA_SMALL_NUMBER)
+		return 0.0f;
+	else
+		return CurMana / CurStat->MaxMana;
+}
+
+float UCCharacterStatComponent::GetCurMana() const
+{
+	CheckNullResult(CurStat, 0.0f);
+	return CurMana;
+}
+
+float UCCharacterStatComponent::GetMaxMana() const
+{
+	CheckNullResult(CurStat, 0.0f);
+	return CurStat->MaxMana;
 }
 
 float UCCharacterStatComponent::GetAttack() const
 {
 	CheckNullResult(CurStat, 0.0f);
-
 	return CurStat->Attack;
 }

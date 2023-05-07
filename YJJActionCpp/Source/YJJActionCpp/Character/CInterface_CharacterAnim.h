@@ -16,4 +16,5 @@ class YJJACTIONCPP_API ICInterface_CharacterAnim
 
 public:
 	virtual void End_Avoid() {}
+	virtual void End_Hit() {}
 };

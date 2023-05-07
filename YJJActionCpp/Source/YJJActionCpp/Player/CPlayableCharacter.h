@@ -40,6 +40,7 @@ public:
 private:
 	void Avoid();
 	void End_Avoid() override;
+	void End_Hit() override;
 	void InputAction_Avoid();
 
 private:
@@ -78,4 +79,6 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 		TArray<float> Speeds{ 200, 500, 800 };
+
+	FTimerHandle DestroyDelayTimerHandle;
 };

@@ -42,7 +42,10 @@ public:
 	void PlayDeadAnim();
 
 private:
-	void PlayAnimMontage(const EStateType InType);
+	UFUNCTION(BlueprintCallable)
+		void PlayAnimMontage(const EStateType InType);
+
+	void PlayAnimMontage(const EStateType InType, const TWeakObjectPtr<UInputComponent> InInput);
 
 private:
 	UPROPERTY(EditAnywhere, Category = "DataTable")

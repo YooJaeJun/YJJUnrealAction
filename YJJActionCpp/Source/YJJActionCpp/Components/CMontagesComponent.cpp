@@ -11,13 +11,14 @@ void UCMontagesComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Owner = Cast<ACCommonCharacter>(GetOwner());
+
 	if (nullptr == DataTable)
 	{
 		GLog->Log(ELogVerbosity::Error, "DataTable is not selected");
 
 		return;
 	}
-	Owner = Cast<ACCommonCharacter>(GetOwner());
 
 	TArray<FMontagesData*> datas;
 	DataTable->GetAllRows<FMontagesData>("", datas);
@@ -39,7 +40,10 @@ void UCMontagesComponent::BeginPlay()
 
 void UCMontagesComponent::PlayAvoidAnim()
 {
-	PlayAnimMontage(EStateType::Avoid);
+	const TWeakObjectPtr<UInputComponent> input = 
+		Cast<UInputComponent>(Owner->GetComponentByClass(UInputComponent::StaticClass()));
+
+	PlayAnimMontage(EStateType::Avoid, input);
 }
 
 void UCMontagesComponent::PlayHitAnim()
@@ -66,4 +70,27 @@ void UCMontagesComponent::PlayAnimMontage(const EStateType InType)
 	}
 
 	Owner->PlayAnimMontage(data.Montage, data.PlayRate);
+}
+
+void UCMontagesComponent::PlayAnimMontage(const EStateType InType, const TWeakObjectPtr<UInputComponent> InInput)
+{
+	CheckNull(Owner);
+
+	const FMontagesData data = Datas[(uint8)InType];
+
+	if (nullptr == data.Montage)
+	{
+		GLog->Log(ELogVerbosity::Error, "No Montages Data");
+
+		return;
+	}
+
+	if (InInput->GetAxisValue("MoveRight") > 0)
+		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Right");
+	else if (InInput->GetAxisValue("MoveRight") < 0)
+		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Left");
+	else if (InInput->GetAxisValue("MoveForward") > 0)
+		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Front");
+	else
+		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Back");
 }

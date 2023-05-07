@@ -16,8 +16,9 @@
 #include "Components/CGameUIComponent.h"
 #include "Game/CGameMode.h"
 #include "Widgets/CUserWidget_HUD.h"
-#include "Widgets/Player/CUserWidget_PlayerHpBar.h"
+#include "Widgets/Player/CUserWidget_PlayerBar.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
+#include "Widgets/Player/CUserWidget_PlayerLevel.h"
 
 ACPlayableCharacter::ACPlayableCharacter()
 	: ACCommonCharacter()
@@ -59,6 +60,9 @@ ACPlayableCharacter::ACPlayableCharacter()
 
 	CharacterStatComponent->OnHpIsZero.AddLambda([this]() -> void {
 		MontagesComponent->PlayDeadAnim();
+		GetWorldTimerManager().SetTimer(DestroyDelayTimerHandle, [this]() -> void {
+			Destroy();
+		}, 1.5f, false, 1.5f);
 	});
 
 	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));
@@ -75,13 +79,22 @@ void ACPlayableCharacter::BeginPlay()
 		playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
 	}
 
-
 	TWeakObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
 	if (hud.Get())
 	{
 		hud->SetChild();
+
+		if (!!hud->PlayerInfo->LevelBar)
+			hud->PlayerInfo->LevelBar->BindLevelStat(CharacterStatComponent);
+
 		if (!!hud->PlayerInfo->HpBar)
-			hud->PlayerInfo->HpBar->BindCharacterStat(CharacterStatComponent);
+			hud->PlayerInfo->HpBar->BindHpStat(CharacterStatComponent);
+
+		if (!!hud->PlayerInfo->StaminaBar)
+			hud->PlayerInfo->StaminaBar->BindStaminaStat(CharacterStatComponent);
+
+		if (!!hud->PlayerInfo->ManaBar)
+			hud->PlayerInfo->ManaBar->BindManaStat(CharacterStatComponent);
 	}
 }
 
@@ -130,13 +143,15 @@ void ACPlayableCharacter::End_Avoid()
 	StateComponent->SetIdleMode();
 }
 
+void ACPlayableCharacter::End_Hit()
+{
+	StateComponent->SetIdleMode();
+}
+
 void ACPlayableCharacter::InputAction_Avoid()
 {
 	CheckFalse(StateComponent->IsIdleMode());
 	CheckFalse(MovementComponent->CanMove());
-
-	if (InputComponent->GetAxisValue("MoveForward") >= 0.0f)
-		return;
 
 	StateComponent->SetAvoidMode();
 }

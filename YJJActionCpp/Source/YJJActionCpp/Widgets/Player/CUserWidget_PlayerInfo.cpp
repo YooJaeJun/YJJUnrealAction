@@ -1,8 +1,11 @@
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
-#include "Global.h"
-#include "CUserWidget_PlayerHpBar.h"
+#include "CUserWidget_PlayerBar.h"
+#include "CUserWidget_PlayerLevel.h"
 
 void UCUserWidget_PlayerInfo::SetChild()
 {
-	HpBar = Cast<UCUserWidget_PlayerHpBar>(GetWidgetFromName(TEXT("CHpBar")));
+	LevelBar = Cast<UCUserWidget_PlayerLevel>(GetWidgetFromName(TEXT("CLevelBar")));
+	HpBar = Cast<UCUserWidget_PlayerBar>(GetWidgetFromName(TEXT("CHpBar")));
+	StaminaBar = Cast<UCUserWidget_PlayerBar>(GetWidgetFromName(TEXT("CStaminaBar")));
+	ManaBar = Cast<UCUserWidget_PlayerBar>(GetWidgetFromName(TEXT("CManaBar")));
 }
