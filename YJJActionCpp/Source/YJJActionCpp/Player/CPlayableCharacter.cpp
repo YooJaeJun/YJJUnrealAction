@@ -6,7 +6,6 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/WidgetComponent.h"
-#include "Materials/MaterialInstanceDynamic.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CAnimInstance_Human.h"
 #include "Components/CMovementComponent.h"
@@ -15,9 +14,10 @@
 #include "Components/CZoomComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/CGameUIComponent.h"
-#include "Widgets/Player/CUserWidget_PlayerInfo.h"
-#include "Widgets/Player/CUserWidget_PlayerHpBar.h"
 #include "Game/CGameMode.h"
+#include "Widgets/CUserWidget_HUD.h"
+#include "Widgets/Player/CUserWidget_PlayerHpBar.h"
+#include "Widgets/Player/CUserWidget_PlayerInfo.h"
 
 ACPlayableCharacter::ACPlayableCharacter()
 	: ACCommonCharacter()
@@ -31,7 +31,6 @@ ACPlayableCharacter::ACPlayableCharacter()
 	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComponent, "ZoomComponent");
 	CHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComponent, "TargetingComponent");
 	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComponent, "GameUIComponent");
-	CHelpers::CreateActorComponent<UWidgetComponent>(this, &InfoWidgetComponent, "HpBarWidgetComponent");
 
 	USkeletalMesh* mesh;
 	CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
@@ -49,28 +48,20 @@ ACPlayableCharacter::ACPlayableCharacter()
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->bEnableCameraLag = true;
 
+	StateComponent->SetIdleMode();
+	StateComponent->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
+
 	MovementComponent->SetSpeeds(Speeds);
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->GroundFriction = 2;
 	GetCharacterMovement()->BrakingDecelerationWalking = 256;
 
-	StateComponent->SetIdleMode();
-	StateComponent->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
-
 	CharacterStatComponent->OnHpIsZero.AddLambda([this]() -> void {
 		MontagesComponent->PlayDeadAnim();
 	});
 
-	static ConstructorHelpers::FClassFinder<UCUserWidget_Custom> infoWidget(TEXT("WidgetBlueprint'/Game/Widgets/Player/WB_CPlayer_Info.WB_CPlayer_Info_C'"));
-	if (infoWidget.Succeeded())
-	{
-		InfoWidgetComponent->SetWidgetClass(infoWidget.Class);
-		InfoWidgetComponent->SetupAttachment(GetMesh());
-		InfoWidgetComponent->SetRelativeLocation(FVector(0, 0, 180));
-		InfoWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
-		InfoWidgetComponent->SetDrawSize(FVector2D(150, 50));
-	}
+	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));
 }
 
 void ACPlayableCharacter::BeginPlay()
@@ -84,11 +75,13 @@ void ACPlayableCharacter::BeginPlay()
 		playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
 	}
 
-	TWeakObjectPtr<UCUserWidget_PlayerInfo> infoWidget = Cast<UCUserWidget_PlayerInfo>(InfoWidgetComponent->GetUserWidgetObject());
-	if (nullptr != infoWidget)
+
+	TWeakObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
+	if (hud.Get())
 	{
-		infoWidget->SetChild();
-		infoWidget->HpBar->BindCharacterStat(CharacterStatComponent);
+		hud->SetChild();
+		if (!!hud->PlayerInfo->HpBar)
+			hud->PlayerInfo->HpBar->BindCharacterStat(CharacterStatComponent);
 	}
 }
 

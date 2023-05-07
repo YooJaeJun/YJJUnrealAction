@@ -11,11 +11,6 @@ void UCUserWidget_PlayerHpBar::BindCharacterStat(UCCharacterStatComponent* InNew
 	CurStat = InNewStat;
 
 	InNewStat->OnHpChanged.AddUObject(this, &UCUserWidget_PlayerHpBar::UpdateHpWidget);
-}
-
-void UCUserWidget_PlayerHpBar::NativeConstruct()
-{
-	Super::NativeConstruct();
 
 	HpProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("CHpProgressBar")));
 	CurHp = Cast<UTextBlock>(GetWidgetFromName(TEXT("CCurHp")));

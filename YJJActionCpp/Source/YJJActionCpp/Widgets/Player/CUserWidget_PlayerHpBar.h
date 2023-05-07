@@ -17,7 +17,6 @@ public:
 	void BindCharacterStat(UCCharacterStatComponent* InNewStat);
 
 protected:
-	virtual void NativeConstruct() override;
 	void UpdateHpWidget();
 
 private:

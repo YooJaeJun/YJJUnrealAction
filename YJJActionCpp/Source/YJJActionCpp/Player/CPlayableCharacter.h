@@ -70,8 +70,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		UCGameUIComponent* GameUIComponent;
 
-	UPROPERTY(EditAnywhere, Category = "UI")
-		UWidgetComponent* InfoWidgetComponent;
+	UPROPERTY(EditAnywhere, Category = "Mode")
+		ACGameMode* GameMode;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 		FVector2D PitchRange = FVector2D(-40, +40);
