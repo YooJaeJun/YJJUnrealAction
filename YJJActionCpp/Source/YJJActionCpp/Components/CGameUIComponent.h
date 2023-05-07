@@ -7,6 +7,7 @@
 #include "CGameUIComponent.generated.h"
 
 class ACCommonCharacter;
+class UUserWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCGameUIComponent :
@@ -15,14 +16,7 @@ class YJJACTIONCPP_API UCGameUIComponent :
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditAnywhere, Category = "UI")
-		TSubclassOf<UCUserWidget_EquipMenu> EquipMenuClass;
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-		TSubclassOf<UCUserWidget_EquipMenuButton> EquipMenuButtonClass;
-
-public:	
+public:
 	UCGameUIComponent();
 
 protected:
@@ -35,6 +29,13 @@ private:
 public:
 	void InputAction_ActivateEquipMenu() override;
 	void InputAction_DeactivateEquipMenu() override;
+
+private:
+	UPROPERTY(EditAnywhere, Category = "UI")
+		TSubclassOf<UCUserWidget_EquipMenu> EquipMenuClass;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+		TSubclassOf<UCUserWidget_EquipMenuButton> EquipMenuButtonClass;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

@@ -1,7 +1,7 @@
-#include "Component/CZoomComponent.h"
+#include "Components/CZoomComponent.h"
 #include "Global.h"
-#include "Component/CMovementComponent.h"
-#include "Component/CTargetingComponent.h"
+#include "Components/CMovementComponent.h"
+#include "Components/CTargetingComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Player/CPlayableCharacter.h"
 

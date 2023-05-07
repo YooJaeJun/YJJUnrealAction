@@ -36,20 +36,6 @@ class YJJACTIONCPP_API UCStateComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EStateType Type = EStateType::Idle;
-
-	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EStateType PrevType = EStateType::Max;
-
-	FORCEINLINE bool IsIdleMode() const { return Type == EStateType::Idle; }
-	FORCEINLINE bool IsFallMode() const { return Type == EStateType::Fall; }
-	FORCEINLINE bool IsAvoidMode() const { return Type == EStateType::Avoid; }
-	FORCEINLINE bool IsEquipMode() const { return Type == EStateType::Equip; }
-	FORCEINLINE bool IsActMode() const { return Type == EStateType::Act; }
-	FORCEINLINE bool IsHitMode() const { return Type == EStateType::Hit; }
-
-public:
 	UCStateComponent();
 
 protected:
@@ -65,6 +51,21 @@ public:
 
 private:
 	void ChangeType(const EStateType InType);
+
+public:
+	FORCEINLINE bool IsIdleMode() const { return Type == EStateType::Idle; }
+	FORCEINLINE bool IsFallMode() const { return Type == EStateType::Fall; }
+	FORCEINLINE bool IsAvoidMode() const { return Type == EStateType::Avoid; }
+	FORCEINLINE bool IsEquipMode() const { return Type == EStateType::Equip; }
+	FORCEINLINE bool IsActMode() const { return Type == EStateType::Act; }
+	FORCEINLINE bool IsHitMode() const { return Type == EStateType::Hit; }
+
+public:
+	UPROPERTY(EditAnyWhere, Category = "Settings")
+		EStateType Type = EStateType::Idle;
+
+	UPROPERTY(EditAnyWhere, Category = "Settings")
+		EStateType PrevType = EStateType::Max;
 
 public:
 	FStateTypeChanged OnStateTypeChanged;

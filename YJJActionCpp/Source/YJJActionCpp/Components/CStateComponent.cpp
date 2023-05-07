@@ -1,4 +1,4 @@
-#include "Component/CStateComponent.h"
+#include "Components/CStateComponent.h"
 #include "Global.h"
 #include "Character/CCommonCharacter.h"
 

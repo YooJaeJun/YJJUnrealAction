@@ -10,10 +10,6 @@ UCLASS()
 class YJJACTIONCPP_API ACAttachment : public AActor
 {
 	GENERATED_BODY()
-
-protected:
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		USceneComponent* Root;
 	
 public:	
 	ACAttachment();
@@ -31,6 +27,10 @@ public:
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Attach")
 		void AttachTo(FName InSocketName);
+
+protected:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+		USceneComponent* Root;
 
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

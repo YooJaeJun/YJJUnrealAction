@@ -1,8 +1,8 @@
 #include "CAnimInstance_Human.h"
 #include "Global.h"
 #include "Character/CCommonCharacter.h"
-#include "Component/CWeaponComponent.h"
-#include "Component/CStateComponent.h"
+#include "Components/CWeaponComponent.h"
+#include "Components/CStateComponent.h"
 
 void UCAnimInstance_Human::NativeBeginPlay()
 {

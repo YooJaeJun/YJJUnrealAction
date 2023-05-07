@@ -2,20 +2,22 @@
 #include "Global.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CAnimInstance_Human.h"
-#include "Component/CMovementComponent.h"
-#include "Component/CMontagesComponent.h"
-#include "Component/CWeaponComponent.h"
-#include "Component/CZoomComponent.h"
-#include "Component/CTargetingComponent.h"
-#include "Component/CGameUIComponent.h"
-#include "GameMode/CGameMode.h"
+#include "Components/CMovementComponent.h"
+#include "Components/CMontagesComponent.h"
+#include "Components/CWeaponComponent.h"
+#include "Components/CZoomComponent.h"
+#include "Components/CTargetingComponent.h"
+#include "Components/CGameUIComponent.h"
+#include "Widgets/Player/CUserWidget_PlayerInfo.h"
+#include "Widgets/Player/CUserWidget_PlayerHpBar.h"
+#include "Game/CGameMode.h"
 
 ACPlayableCharacter::ACPlayableCharacter()
 	: ACCommonCharacter()
@@ -29,6 +31,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComponent, "ZoomComponent");
 	CHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComponent, "TargetingComponent");
 	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComponent, "GameUIComponent");
+	CHelpers::CreateActorComponent<UWidgetComponent>(this, &InfoWidgetComponent, "HpBarWidgetComponent");
 
 	USkeletalMesh* mesh;
 	CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
@@ -55,7 +58,19 @@ ACPlayableCharacter::ACPlayableCharacter()
 	StateComponent->SetIdleMode();
 	StateComponent->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
 
-	Name = TEXT("플레이어");
+	CharacterStatComponent->OnHpIsZero.AddLambda([this]() -> void {
+		MontagesComponent->PlayDeadAnim();
+	});
+
+	static ConstructorHelpers::FClassFinder<UCUserWidget_Custom> infoWidget(TEXT("WidgetBlueprint'/Game/Widgets/Player/WB_CPlayer_Info.WB_CPlayer_Info_C'"));
+	if (infoWidget.Succeeded())
+	{
+		InfoWidgetComponent->SetWidgetClass(infoWidget.Class);
+		InfoWidgetComponent->SetupAttachment(GetMesh());
+		InfoWidgetComponent->SetRelativeLocation(FVector(0, 0, 180));
+		InfoWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+		InfoWidgetComponent->SetDrawSize(FVector2D(150, 50));
+	}
 }
 
 void ACPlayableCharacter::BeginPlay()
@@ -67,6 +82,13 @@ void ACPlayableCharacter::BeginPlay()
 	{
 		playerController->PlayerCameraManager->ViewPitchMin = PitchRange.X;
 		playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
+	}
+
+	TWeakObjectPtr<UCUserWidget_PlayerInfo> infoWidget = Cast<UCUserWidget_PlayerInfo>(InfoWidgetComponent->GetUserWidgetObject());
+	if (nullptr != infoWidget)
+	{
+		infoWidget->SetChild();
+		infoWidget->HpBar->BindCharacterStat(CharacterStatComponent);
 	}
 }
 
@@ -128,7 +150,7 @@ void ACPlayableCharacter::InputAction_Avoid()
 
 void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
 {
-	switch (InNewType)
+	switch (static_cast<uint8>(InNewType))
 	{
 	case EStateType::Avoid:
 		Avoid();

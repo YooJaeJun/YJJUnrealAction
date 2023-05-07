@@ -1,6 +1,6 @@
 #include "Notifies/CAnimNotifyState_Equip.h"
 #include "Global.h"
-#include "Component/CWeaponComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "Weapons/CEquipment.h"
 
 FString UCAnimNotifyState_Equip::GetNotifyName_Implementation() const

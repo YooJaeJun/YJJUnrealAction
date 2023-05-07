@@ -1,5 +1,4 @@
-#include "Component/CMovementComponent.h"
-
+#include "Components/CMovementComponent.h"
 #include "CStateComponent.h"
 #include "Global.h"
 #include "Character/CCommonCharacter.h"

@@ -1,6 +1,6 @@
 #include "Widgets/Weapons/CUserWidget_EquipMenu.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
-#include "Component/CGameUIComponent.h"
+#include "Components/CGameUIComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void UCUserWidget_EquipMenu::Activate(const float TimeDilation)

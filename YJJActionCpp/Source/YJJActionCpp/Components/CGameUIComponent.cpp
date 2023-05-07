@@ -1,17 +1,19 @@
-#include "Component/CGameUIComponent.h"
+#include "Components/CGameUIComponent.h"
 #include "Global.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/GridPanel.h"
+#include "Components/WidgetComponent.h"
 #include "Character/CCommonCharacter.h"
 #include "Player/CPlayableCharacter.h"
+#include "Blueprint/UserWidget.h"
 
 UCGameUIComponent::UCGameUIComponent()
 {
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
-	CHelpers::GetClass<UCUserWidget_EquipMenu>(&EquipMenuClass, "WidgetBlueprint'/Game/Widgets/Weapons/WB_CUserWidget_EquipMenu.WB_CUserWidget_EquipMenu_C'");
-	CHelpers::GetClass<UCUserWidget_EquipMenuButton>(&EquipMenuButtonClass, "WidgetBlueprint'/Game/Widgets/Weapons/WB_CUserWidget_EquipMenuButton.WB_CUserWidget_EquipMenuButton_C'");
+	CHelpers::GetClass<UCUserWidget_EquipMenu>(&EquipMenuClass, "WidgetBlueprint'/Game/Widgets/Weapons/WB_CEquipMenu.WB_CEquipMenu_C'");
+	CHelpers::GetClass<UCUserWidget_EquipMenuButton>(&EquipMenuButtonClass, "WidgetBlueprint'/Game/Widgets/Weapons/WB_CEquipMenuButton.WB_CEquipMenuButton_C'");
 }
 
 void UCGameUIComponent::BeginPlay()
@@ -34,7 +36,8 @@ void UCGameUIComponent::OnWeaponEquipped(const EWeaponType InNewType)
 {
 	ACPlayableCharacter* player = Cast<ACPlayableCharacter>(Owner);
 
-	UCWeaponComponent* weaponComponent = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	UCWeaponComponent* weaponComponent = Cast<UCWeaponComponent>(
+		player->GetComponentByClass(UCWeaponComponent::StaticClass()));
 
 	weaponComponent->SetMode(InNewType);
 }

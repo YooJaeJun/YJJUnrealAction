@@ -30,35 +30,30 @@ class YJJACTIONCPP_API UCWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditAnywhere, Category = "DataAsset")
-		UCWeaponAsset* DataAssets[static_cast<uint8>(EWeaponType::Max)];
-
-	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EWeaponType Type = EWeaponType::Unarmed;
-
-	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EWeaponType PrevType = EWeaponType::Max;
-
 public:
-	FORCEINLINE bool IsUnarmedMode() const { return Type == EWeaponType::Unarmed; }
-	FORCEINLINE bool IsSwordMode() const { return Type == EWeaponType::Sword; }
-	FORCEINLINE bool IsFistMode() const { return Type == EWeaponType::Fist; }
-	FORCEINLINE bool IsBowMode() const { return Type == EWeaponType::Bow; }
-	FORCEINLINE bool IsDualMode() const { return Type == EWeaponType::Dual; }
-
-public:	
 	UCWeaponComponent();
 
 protected:
 	virtual void BeginPlay() override;
 
 public:
-	ACAttachment* GetAttachment();
-	UCEquipment* GetEquipment();
-	UCAct* GetAct();
+	void Begin_Equip();
+	void End_Equip();
+	void Begin_Act();
+	void End_Act();
+	void Act();
 
 public:
+	void SetMode(EWeaponType InType);
+
+private:
+	void ChangeType(EWeaponType InType);
+
+public:
+	ACAttachment* GetAttachment() const;
+	UCEquipment* GetEquipment() const;
+	UCAct* GetAct() const;
+
 	bool IsIdleMode() const;
 
 	void SetUnarmedMode();
@@ -68,18 +63,22 @@ public:
 	void SetBowMode();
 	void SetDualMode();
 
-	void Begin_Equip();
-	void End_Equip();
-	void Begin_Act();
-	void End_Act();
-
-	void Act();
-
 public:
-	void SetMode(EWeaponType InType);
+	FORCEINLINE bool IsUnarmedMode() const { return Type == EWeaponType::Unarmed; }
+	FORCEINLINE bool IsSwordMode() const { return Type == EWeaponType::Sword; }
+	FORCEINLINE bool IsFistMode() const { return Type == EWeaponType::Fist; }
+	FORCEINLINE bool IsBowMode() const { return Type == EWeaponType::Bow; }
+	FORCEINLINE bool IsDualMode() const { return Type == EWeaponType::Dual; }
 
 private:
-	void ChangeType(EWeaponType InType);
+	UPROPERTY(EditAnywhere, Category = "DataAsset")
+		UCWeaponAsset* DataAssets[static_cast<uint8>(EWeaponType::Max)];
+
+	UPROPERTY(EditAnyWhere, Category = "Settings")
+		EWeaponType Type = EWeaponType::Unarmed;
+
+	UPROPERTY(EditAnyWhere, Category = "Settings")
+		EWeaponType PrevType = EWeaponType::Max;
 
 public:
 	FWeaponTypeChanged OnWeaponTypeChanged;

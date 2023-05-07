@@ -1,7 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Component/CStateComponent.h"
+#include "Components/CStateComponent.h"
 #include "Engine/DataTable.h"
 #include "CMontagesComponent.generated.h"
 
@@ -30,14 +30,7 @@ class YJJACTIONCPP_API UCMontagesComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditAnywhere, Category = "DataTable")
-		UDataTable* DataTable;
-
-	UPROPERTY(EditAnywhere, Category = "DataTable")
-		FMontagesData Datas[static_cast<uint8>(EStateType::Max)];
-
-public:	
+public:
 	UCMontagesComponent();
 
 protected:
@@ -45,9 +38,18 @@ protected:
 
 public:
 	void PlayAvoidAnim();
+	void PlayHitAnim();
+	void PlayDeadAnim();
 
 private:
 	void PlayAnimMontage(const EStateType InType);
+
+private:
+	UPROPERTY(EditAnywhere, Category = "DataTable")
+		UDataTable* DataTable;
+
+	UPROPERTY(EditAnywhere, Category = "DataTable")
+		FMontagesData Datas[static_cast<uint8>(EStateType::Max)];
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

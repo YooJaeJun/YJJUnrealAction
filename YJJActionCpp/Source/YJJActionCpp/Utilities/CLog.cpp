@@ -1,31 +1,31 @@
 #include "CLog.h"
 #include "Engine.h"
 
-DEFINE_LOG_CATEGORY_STATIC(GP, Display, All);
+DEFINE_LOG_CATEGORY_STATIC(YJJ, Display, All);
 
-void CLog::Log(const int32 InValue)
+void CLog::Log(const int32 InValue, const ELogVerbosity::Type InVerbosityType)
 {
-	UE_LOG(GP, Display, TEXT("%d"), InValue);
+	UE_LOG(YJJ, Warning, TEXT("%d"), InValue);
 }
 
 void CLog::Log(const float InValue)
 {
-	UE_LOG(GP, Display, TEXT("%f"), InValue);
+	UE_LOG(YJJ, Warning, TEXT("%f"), InValue);
 }
 
 void CLog::Log(const FString& InValue)
 {
-	UE_LOG(GP, Display, TEXT("%s"), *InValue);
+	UE_LOG(YJJ, Warning, TEXT("%s"), *InValue);
 }
 
 void CLog::Log(const FVector& InValue)
 {
-	UE_LOG(GP, Display, TEXT("%s"), *InValue.ToString());
+	UE_LOG(YJJ, Warning, TEXT("%s"), *InValue.ToString());
 }
 
 void CLog::Log(const FRotator& InValue)
 {
-	UE_LOG(GP, Display, TEXT("%s"), *InValue.ToString());
+	UE_LOG(YJJ, Warning, TEXT("%s"), *InValue.ToString());
 }
 
 void CLog::Log(const UObject* InValue)
@@ -37,20 +37,18 @@ void CLog::Log(const UObject* InValue)
 
 	str.Append(!!InValue ? " Not Null" : "Null");
 
-	UE_LOG(GP, Display, TEXT("%s"), *str);
+	UE_LOG(YJJ, Warning, TEXT("%s"), *str);
 }
 
 void CLog::Log(const FString& InFileName, const FString& InFuncName, const int32 InLineNumber)
 {
-	// C:\\Test\\Test.cpp
-
 	int32 index = 0, length = 0;
 	InFileName.FindLastChar(TEXT('\\'), index);
 
 	length = InFileName.Len() - 1;
 	FString fileName = InFileName.Right(length - index);
 
-	UE_LOG(GP, Display, TEXT("%s, %s, %d"), *fileName, *InFuncName, InLineNumber);
+	UE_LOG(YJJ, Warning, TEXT("%s, %s, %d"), *fileName, *InFuncName, InLineNumber);
 }
 
 void CLog::Print(const int32 InValue, const int32 InKey, const float InDuration, const FColor InColor)

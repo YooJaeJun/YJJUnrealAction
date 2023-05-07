@@ -29,13 +29,6 @@ class YJJACTIONCPP_API UCZoomComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY()
-		float Zooming;
-
-	UPROPERTY(EditAnywhere)
-		FZoomData ZoomData;
-
 public:	
 	UCZoomComponent();
 
@@ -48,6 +41,13 @@ public:
 public:
 	UFUNCTION()
 		void InputAxis_Zoom(const float InAxis);
+
+public:
+	UPROPERTY()
+		float Zooming;
+
+	UPROPERTY(EditAnywhere)
+		FZoomData ZoomData;
 
 private:
 	TWeakObjectPtr<ACPlayableCharacter> Owner;

@@ -1,8 +1,8 @@
 #include "Weapons/CEquipment.h"
 #include "Global.h"
 #include "Character/CCommonCharacter.h"
-#include "Component/CMovementComponent.h"
-#include "Component/CStateComponent.h"
+#include "Components/CMovementComponent.h"
+#include "Components/CStateComponent.h"
 
 void UCEquipment::BeginPlay(ACCommonCharacter* InOwner, const FEquipmentData& InData)
 {

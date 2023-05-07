@@ -10,10 +10,6 @@ class YJJACTIONCPP_API UCTargetingComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(VisibleAnywhere)
-		bool IsTargeting;
-
 public:	
 	UCTargetingComponent();
 
@@ -29,6 +25,10 @@ public:
 
 	UFUNCTION()
 		void ChangeFocus(const bool InRight);
+
+public:
+	UPROPERTY(VisibleAnywhere)
+		bool IsTargeting;
 
 private:
 	TWeakObjectPtr<ACPlayableCharacter> Owner;

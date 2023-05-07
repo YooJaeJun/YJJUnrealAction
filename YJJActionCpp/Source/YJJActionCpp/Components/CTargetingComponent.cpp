@@ -1,4 +1,4 @@
-#include "Component/CTargetingComponent.h"
+#include "Components/CTargetingComponent.h"
 #include "Global.h"
 #include "Player/CPlayableCharacter.h"
 

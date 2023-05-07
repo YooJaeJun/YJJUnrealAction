@@ -1,7 +1,7 @@
 #include "Weapons/Acts/CAct_Combo.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
-#include "Component/CStateComponent.h"
+#include "Components/CStateComponent.h"
 
 void UCAct_Combo::Act()
 {

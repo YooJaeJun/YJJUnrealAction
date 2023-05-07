@@ -3,8 +3,8 @@
 #include "CAttachment.h"
 #include "CEquipment.h"
 #include "Character/CCommonCharacter.h"
-#include "Component/CStateComponent.h"
-#include "Component/CMovementComponent.h"
+#include "Components/CStateComponent.h"
+#include "Components/CMovementComponent.h"
 
 UCAct::UCAct()
 {

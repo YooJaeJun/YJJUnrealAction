@@ -16,7 +16,19 @@ UCLASS()
 class YJJACTIONCPP_API ACWeapon : public AActor
 {
 	GENERATED_BODY()
-	
+
+public:	
+	ACWeapon();
+
+protected:
+	virtual void BeginPlay() override;
+
+public:	
+	virtual void Tick(float DeltaTime) override;
+
+private:
+	FORCEINLINE bool IsActing() { return bActing; }
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 		FName HolsterSocketName;
@@ -42,17 +54,6 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* Root;
-
-	FORCEINLINE bool IsActing() { return bActing; }
-
-public:	
-	ACWeapon();
-
-protected:
-	virtual void BeginPlay() override;
-
-public:	
-	virtual void Tick(float DeltaTime) override;
 
 protected:
 	TWeakObjectPtr<ACCharacter> Owner;

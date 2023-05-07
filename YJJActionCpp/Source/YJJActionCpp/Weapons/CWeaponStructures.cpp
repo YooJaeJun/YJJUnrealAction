@@ -1,8 +1,8 @@
 #include "Weapons/CWeaponStructures.h"
 #include "Global.h"
 #include "Character/CCommonCharacter.h"
-#include "Component/CStateComponent.h"
-#include "Component/CMovementComponent.h"
+#include "Components/CStateComponent.h"
+#include "Components/CMovementComponent.h"
 #include "Animation/AnimMontage.h"
 
 void FActData::Act(ACCommonCharacter* InOwner)

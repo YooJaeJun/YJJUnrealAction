@@ -15,6 +15,16 @@ class YJJACTIONCPP_API UCWeaponAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
+public:
+	UCWeaponAsset();
+
+	void BeginPlay(ACCommonCharacter* InOwner);
+
+public:
+	FORCEINLINE ACAttachment* GetAttachment() const { return Attachment; }
+	FORCEINLINE UCEquipment* GetEquipment() const { return Equipment; }
+	FORCEINLINE UCAct* GetAct() const { return Act; }
+
 private:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ACAttachment> AttachmentClass;
@@ -39,14 +49,4 @@ private:
 
 	UPROPERTY()
 		UCAct* Act;
-
-public:
-	FORCEINLINE ACAttachment* GetAttachment() const { return Attachment; }
-	FORCEINLINE UCEquipment* GetEquipment() const { return Equipment; }
-	FORCEINLINE UCAct* GetAct() const { return Act; }
-
-public:
-	UCWeaponAsset();
-
-	void BeginPlay(ACCommonCharacter* InOwner);
 };

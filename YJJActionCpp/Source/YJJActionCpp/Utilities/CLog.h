@@ -8,7 +8,7 @@
 class YJJACTIONCPP_API CLog
 {
 public:
-	static void Log(const int32 InValue);
+	static void Log(const int32 InValue, const ELogVerbosity::Type InVerbosityType = ELogVerbosity::Type::Display);
 	static void Log(const float InValue);
 	static void Log(const FString& InValue);
 	static void Log(const FVector& InValue);

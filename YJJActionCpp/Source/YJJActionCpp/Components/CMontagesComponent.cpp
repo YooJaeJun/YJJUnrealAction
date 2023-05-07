@@ -1,4 +1,4 @@
-#include "Component/CMontagesComponent.h"
+#include "Components/CMontagesComponent.h"
 #include "Global.h"
 #include "Character/CCommonCharacter.h"
 #include "GameFramework/Character.h"
@@ -40,6 +40,16 @@ void UCMontagesComponent::BeginPlay()
 void UCMontagesComponent::PlayAvoidAnim()
 {
 	PlayAnimMontage(EStateType::Avoid);
+}
+
+void UCMontagesComponent::PlayHitAnim()
+{
+	PlayAnimMontage(EStateType::Hit);
+}
+
+void UCMontagesComponent::PlayDeadAnim()
+{
+	PlayAnimMontage(EStateType::Dead);
 }
 
 void UCMontagesComponent::PlayAnimMontage(const EStateType InType)

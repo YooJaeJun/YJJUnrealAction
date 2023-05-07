@@ -11,18 +11,18 @@ class YJJACTIONCPP_API ACGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditAnywhere, Category = "UI")
-		TSubclassOf<UCUserWidget_HUD> MyHUDClass;
-
-	UPROPERTY()
-		UCUserWidget_HUD* HUD;
-
-public:
-	FORCEINLINE UCUserWidget_HUD* GetHUD() { return HUD; }
-
 public:
 	ACGameMode();
 
 	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY(EditAnywhere, Category = "UI")
+		TSubclassOf<UCUserWidget_HUD> PlayerHUDClass;
+
+	UPROPERTY()
+		UCUserWidget_HUD* PlayerHUD;
+
+public:
+	FORCEINLINE UCUserWidget_HUD* GetHUD() { return PlayerHUD; }
 };
