@@ -39,8 +39,8 @@ public:
 
 private:
 	void Avoid();
-	void End_Avoid() override;
-	void End_Hit() override;
+	virtual void End_Avoid() override;
+	virtual void End_Hit() override;
 	void InputAction_Avoid();
 
 private:

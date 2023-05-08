@@ -69,7 +69,7 @@ class YJJACTIONCPP_API UCGameInstance : public UGameInstance
 public:
 	UCGameInstance();
 
-	void Init() override;
+	virtual void Init() override;
 
 	FCCharacterInfo* GetInfo(const FName InName);
 	FCCharacterStat* GetStat(int32 InLevel);

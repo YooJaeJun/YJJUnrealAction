@@ -115,8 +115,16 @@ public:
 	}
 
 	template<typename EnumType>
-	static FString GetEnumToString(const EnumType InValue)
+	static FString ConvertEnumToString(const EnumType InValue)
 	{
 		return StaticEnum<EnumType>()->GetNameStringByValue(static_cast<int64>(InValue));
+	}
+
+	template<typename EnumType>
+	static EnumType ConvertTCHARToEnum(const TCHAR& InValue)
+	{
+		int32 typeIndex = InValue - '0';
+		EnumType weaponType = static_cast<EnumType>(typeIndex);
+		return weaponType;
 	}
 };

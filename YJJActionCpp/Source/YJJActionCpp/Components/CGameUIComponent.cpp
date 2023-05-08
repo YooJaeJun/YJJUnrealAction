@@ -12,22 +12,32 @@ UCGameUIComponent::UCGameUIComponent()
 {
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
-	CHelpers::GetClass<UCUserWidget_EquipMenu>(&EquipMenuClass, "WidgetBlueprint'/Game/Widgets/Weapons/WB_CEquipMenu.WB_CEquipMenu_C'");
-	CHelpers::GetClass<UCUserWidget_EquipMenuButton>(&EquipMenuButtonClass, "WidgetBlueprint'/Game/Widgets/Weapons/WB_CEquipMenuButton.WB_CEquipMenuButton_C'");
+	CHelpers::GetClass<UCUserWidget_EquipMenu>(
+		&EquipMenuClass, "WidgetBlueprint'/Game/Widgets/Weapons/WB_CEquipMenu.WB_CEquipMenu_C'");
+	CHelpers::GetClass<UCUserWidget_EquipMenuButton>(
+		&EquipMenuButtonClass, "WidgetBlueprint'/Game/Widgets/Weapons/WB_CEquipMenuButton.WB_CEquipMenuButton_C'");
+
+	if (!!EquipMenuClass)
+	{
+		EquipMenu = CreateWidget<UCUserWidget_EquipMenu, APlayerController>(
+			Owner->GetController<APlayerController>(), EquipMenuClass);
+		EquipMenu->AddToViewport();
+		EquipMenu->SetVisibility(ESlateVisibility::Collapsed);
+
+		if (!!EquipMenuButtonClass)
+		{
+			for (int i=0; i<EquipMenu->EquipMenuButtons.Num(); i++)
+				EquipMenuButtons[i] = EquipMenu->EquipMenuButtons[i];
+		}
+	}
+
+	for (auto& elem : EquipMenuButtons)
+		elem->OnWeaponEquipped.AddDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
 }
 
 void UCGameUIComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (!!EquipMenuClass)
-	{
-		EquipMenu = CreateWidget<UCUserWidget_EquipMenu, APlayerController>(Owner->GetController<APlayerController>(), EquipMenuClass);
-		EquipMenu->AddToViewport();
-		EquipMenu->SetVisibility(ESlateVisibility::Collapsed);
-	}
-
-	EquipMenu->OnWeaponEquipped.AddDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
 
 	PlayerController = Cast<APlayerController>(Owner->GetController());
 }

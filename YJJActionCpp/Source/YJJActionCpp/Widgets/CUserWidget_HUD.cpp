@@ -14,5 +14,6 @@ void UCUserWidget_HUD::SetChild()
 	if (nullptr == EquipMenu)
 	{
 		EquipMenu = Cast<UCUserWidget_EquipMenu>(GetWidgetFromName(TEXT("CEquipMenu")));
+		EquipMenu->SetChild();
 	}
 }

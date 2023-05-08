@@ -2,10 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Widgets/CUserWidget_Custom.h"
-#include "Components/CWeaponComponent.h"
 #include "CUserWidget_EquipMenu.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponEquipped, const EWeaponType, InNewType);
+class UCUserWidget_EquipMenuButton;
 
 UCLASS()
 class YJJACTIONCPP_API UCUserWidget_EquipMenu : public UCUserWidget_Custom
@@ -13,13 +12,16 @@ class YJJACTIONCPP_API UCUserWidget_EquipMenu : public UCUserWidget_Custom
 	GENERATED_BODY()
 
 public:
+	void SetChild();
+
+public:
 	void Activate(const float TimeDilation);
 	void Deactivate(const float TimeDilation);
 
 public:
 	UPROPERTY()
-		FWeaponEquipped OnWeaponEquipped;
+		TArray<UCUserWidget_EquipMenuButton*> EquipMenuButtons;
 
-private:
-	FString ButtonInHovering;
+	UPROPERTY()
+		FString ButtonHovered;
 };

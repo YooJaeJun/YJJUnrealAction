@@ -8,8 +8,6 @@
 #include "Components/CCharacterStatComponent.h"
 #include "CCommonCharacter.generated.h"
 
-class UCMovementComponent;
-
 UCLASS(Abstract)
 class YJJACTIONCPP_API ACCommonCharacter : public ACharacter
 {
@@ -27,10 +25,10 @@ public:
 
 public:
 	UPROPERTY(VisibleAnywhere)
-		UCMovementComponent* MovementComponent;
+		UCStateComponent* StateComponent;
 
 	UPROPERTY(VisibleAnywhere)
-		UCStateComponent* StateComponent;
+		UCMovementComponent* MovementComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Status")
 		UCCharacterInfoComponent* CharacterInfoComponent;

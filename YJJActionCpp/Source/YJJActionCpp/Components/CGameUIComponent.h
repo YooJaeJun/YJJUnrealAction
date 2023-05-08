@@ -27,8 +27,8 @@ private:
 		void OnWeaponEquipped(const EWeaponType InNewType);
 
 public:
-	void InputAction_ActivateEquipMenu() override;
-	void InputAction_DeactivateEquipMenu() override;
+	virtual void InputAction_ActivateEquipMenu() override;
+	virtual void InputAction_DeactivateEquipMenu() override;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "UI")
@@ -40,6 +40,6 @@ private:
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCUserWidget_EquipMenu> EquipMenu;
-	TWeakObjectPtr<UCUserWidget_EquipMenuButton> EquipMenuButton;
+	TArray<TWeakObjectPtr<UCUserWidget_EquipMenuButton>> EquipMenuButtons;
 	TWeakObjectPtr<APlayerController> PlayerController;
 };

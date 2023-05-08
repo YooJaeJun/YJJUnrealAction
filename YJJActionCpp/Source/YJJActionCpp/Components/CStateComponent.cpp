@@ -49,7 +49,7 @@ void UCStateComponent::ChangeType(const EStateType InType)
 
 	if (OnStateTypeChanged.IsBound())
 	{
-		CLog::Print(Owner->GetName() + " : " + CHelpers::GetEnumToString(Type), -1, 5, FColor::Emerald);
+		CLog::Print(Owner->GetName() + " : " + CHelpers::ConvertEnumToString(Type), -1, 5, FColor::Emerald);
 		OnStateTypeChanged.Broadcast(PrevType, Type);
 	}
 }

@@ -84,17 +84,21 @@ void ACPlayableCharacter::BeginPlay()
 	{
 		hud->SetChild();
 
-		if (!!hud->PlayerInfo->LevelBar)
-			hud->PlayerInfo->LevelBar->BindLevelStat(CharacterStatComponent);
+		TWeakObjectPtr<UCUserWidget_PlayerInfo> playerInfo = hud->PlayerInfo;
+		if (!!playerInfo.Get())
+		{
+			if (!!playerInfo->LevelBar)
+				hud->PlayerInfo->LevelBar->BindLevelStat(CharacterStatComponent);
 
-		if (!!hud->PlayerInfo->HpBar)
-			hud->PlayerInfo->HpBar->BindHpStat(CharacterStatComponent);
+			if (!!playerInfo->HpBar)
+				hud->PlayerInfo->HpBar->BindHpStat(CharacterStatComponent);
 
-		if (!!hud->PlayerInfo->StaminaBar)
-			hud->PlayerInfo->StaminaBar->BindStaminaStat(CharacterStatComponent);
+			if (!!playerInfo->StaminaBar)
+				hud->PlayerInfo->StaminaBar->BindStaminaStat(CharacterStatComponent);
 
-		if (!!hud->PlayerInfo->ManaBar)
-			hud->PlayerInfo->ManaBar->BindManaStat(CharacterStatComponent);
+			if (!!playerInfo->ManaBar)
+				hud->PlayerInfo->ManaBar->BindManaStat(CharacterStatComponent);
+		}
 	}
 }
 
@@ -160,7 +164,7 @@ void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const 
 {
 	switch (static_cast<uint8>(InNewType))
 	{
-	case EStateType::Avoid:
+	case static_cast<uint8>(EStateType::Avoid):
 		Avoid();
 		break;
 	}

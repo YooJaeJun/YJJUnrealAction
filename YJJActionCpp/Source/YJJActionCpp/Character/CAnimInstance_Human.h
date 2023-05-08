@@ -14,8 +14,8 @@ class YJJACTIONCPP_API UCAnimInstance_Human : public UAnimInstance
 	GENERATED_BODY()
 
 public:
-	void NativeBeginPlay() override;
-	void NativeUpdateAnimation(float DeltaSeconds) override;
+	virtual void NativeBeginPlay() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
 	UFUNCTION()

@@ -14,9 +14,9 @@ public:
 	FORCEINLINE void DisableCombo() { bEnable = false; }
 
 public:
-	void Act() override;
-	void Begin_Act() override;
-	void End_Act() override;
+	virtual void Act() override;
+	virtual void Begin_Act() override;
+	virtual void End_Act() override;
 
 private:
 	int32 Index;
