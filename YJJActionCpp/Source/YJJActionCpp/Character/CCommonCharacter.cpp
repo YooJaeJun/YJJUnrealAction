@@ -3,10 +3,10 @@
 
 ACCommonCharacter::ACCommonCharacter()
 {
-	CHelpers::CreateActorComponent<UCStateComponent>(this, &StateComponent, "StateComponent");
-	CHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComponent, "MovementComponent");
-	CHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComponent, "CharacterInfoComponent");
-	CHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComponent, "CharacterStatComponent");
+	CHelpers::CreateActorComponent<UCStateComponent>(this, &StateComp, "StateComponent");
+	CHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "MovementComponent");
+	CHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
+	CHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
 
 	MyCurController = GetController();
 }
@@ -15,5 +15,5 @@ void ACCommonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MovementComponent->SetSpeed(ESpeedType::Sprint);
+	MovementComp->SetSpeed(ESpeedType::Sprint);
 }

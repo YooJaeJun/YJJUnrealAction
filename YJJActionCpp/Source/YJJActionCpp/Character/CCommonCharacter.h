@@ -25,16 +25,16 @@ public:
 
 public:
 	UPROPERTY(VisibleAnywhere)
-		UCStateComponent* StateComponent;
+		UCStateComponent* StateComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCMovementComponent* MovementComponent;
+		UCMovementComponent* MovementComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Status")
-		UCCharacterInfoComponent* CharacterInfoComponent;
+		UCCharacterInfoComponent* CharacterInfoComp;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Status")
-		UCCharacterStatComponent* CharacterStatComponent;
+		UCCharacterStatComponent* CharacterStatComp;
 
 public:
 	TWeakObjectPtr<AController> MyCurController;

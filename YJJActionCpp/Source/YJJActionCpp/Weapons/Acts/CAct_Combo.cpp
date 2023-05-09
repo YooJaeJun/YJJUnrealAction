@@ -15,7 +15,7 @@ void UCAct_Combo::Act()
 		return;
 	}
 
-	CheckFalse(State->IsIdleMode());
+	CheckFalse(StateComp->IsIdleMode());
 
 	Super::Act();
 	ActDatas[Index].Act(Owner.Get());
@@ -35,4 +35,13 @@ void UCAct_Combo::End_Act()
 	Super::End_Act();
 
 	Index = 0;
+}
+
+void UCAct_Combo::OnAttachmentBeginOverlap(ACCommonCharacter* InAttacker, AActor* InAttackCauser,
+	ACCommonCharacter* InOther)
+{
+	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
+	CheckNull(InOther);
+
+	HitDatas[Index].SendDamage(InAttacker, InAttackCauser, InOther);
 }

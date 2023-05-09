@@ -8,6 +8,7 @@
 
 class ACCommonCharacter;
 class UUserWidget;
+class ACGameMode;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCGameUIComponent :
@@ -31,15 +32,12 @@ public:
 	virtual void InputAction_DeactivateEquipMenu() override;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "UI")
-		TSubclassOf<UCUserWidget_EquipMenu> EquipMenuClass;
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-		TSubclassOf<UCUserWidget_EquipMenuButton> EquipMenuButtonClass;
+	UPROPERTY(EditAnywhere, Category = "Mode")
+		ACGameMode* GameMode;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCUserWidget_EquipMenu> EquipMenu;
-	TArray<TWeakObjectPtr<UCUserWidget_EquipMenuButton>> EquipMenuButtons;
+	TArray<UCUserWidget_EquipMenuButton*> EquipMenuButtons;
 	TWeakObjectPtr<APlayerController> PlayerController;
 };

@@ -2,7 +2,6 @@
 #include "Global.h"
 #include "Components/CStateComponent.h"
 #include "Character/CCommonCharacter.h"
-#include "Weapons/CWeapon.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CEquipment.h"
 #include "Weapons/CAct.h"
@@ -20,32 +19,12 @@ void UCWeaponComponent::BeginPlay()
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 	CheckNull(Owner);
 
-	FActorSpawnParameters params;
-	params.Owner = Owner.Get();
-	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
 	uint8 size = (uint8)EWeaponType::Max;
-	for (int32 i=0; i<size; i++)
+	for (int32 i = 0; i < size; i++)
 	{
 		if (!!DataAssets[i])
 			DataAssets[i]->BeginPlay(Owner.Get());
 	}
-}
-
-void UCWeaponComponent::Begin_Equip()
-{
-}
-
-void UCWeaponComponent::End_Equip()
-{
-}
-
-void UCWeaponComponent::Begin_Act()
-{
-}
-
-void UCWeaponComponent::End_Act()
-{
 }
 
 void UCWeaponComponent::Act()
@@ -59,21 +38,18 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 	if (Type == InType)
 	{
 		SetUnarmedMode();
-
 		return;
 	}
 
 	if (false == IsUnarmedMode())
 	{
 		CheckNull(GetEquipment());
-
 		GetEquipment()->Unequip();
 	}
 
 	if (!!DataAssets[static_cast<uint8>(InType)])
 	{
 		DataAssets[static_cast<uint8>(InType)]->GetEquipment()->Equip();
-
 		ChangeType(InType);
 	}
 }
@@ -111,51 +87,68 @@ UCAct* UCWeaponComponent::GetAct() const
 	return DataAssets[(int32)Type]->GetAct();
 }
 
-bool UCWeaponComponent::IsIdleMode() const
+bool UCWeaponComponent::IsIdleStateMode() const
 {
-	return Owner->StateComponent->IsIdleMode();
+	return Owner->StateComp->IsIdleMode();
 }
 
 void UCWeaponComponent::SetUnarmedMode()
 {
 	CheckNull(GetEquipment());
-
 	GetEquipment()->Unequip();
-
 	ChangeType(EWeaponType::Unarmed);
 }
 
 void UCWeaponComponent::SetSwordMode()
 {
-	CheckFalse(IsIdleMode());
-
+	CheckFalse(IsIdleStateMode());
 	SetMode(EWeaponType::Sword);
 }
 
 void UCWeaponComponent::SetFistMode()
 {
-	CheckFalse(IsIdleMode());
-
+	CheckFalse(IsIdleStateMode());
 	SetMode(EWeaponType::Fist);
 }
 
 void UCWeaponComponent::SetHammerMode()
 {
-	CheckFalse(IsIdleMode());
-
+	CheckFalse(IsIdleStateMode());
 	SetMode(EWeaponType::Hammer);
 }
 
 void UCWeaponComponent::SetBowMode()
 {
-	CheckFalse(IsIdleMode());
-
+	CheckFalse(IsIdleStateMode());
 	SetMode(EWeaponType::Bow);
 }
 
 void UCWeaponComponent::SetDualMode()
 {
-	CheckFalse(IsIdleMode());
-
+	CheckFalse(IsIdleStateMode());
 	SetMode(EWeaponType::Dual);
+}
+
+void UCWeaponComponent::SetAroundMode()
+{
+	CheckFalse(IsIdleStateMode());
+	SetMode(EWeaponType::Around);
+}
+
+void UCWeaponComponent::SetFireballMode()
+{
+	CheckFalse(IsIdleStateMode());
+	SetMode(EWeaponType::Fireball);
+}
+
+void UCWeaponComponent::SetBombMode()
+{
+	CheckFalse(IsIdleStateMode());
+	SetMode(EWeaponType::Bomb);
+}
+
+void UCWeaponComponent::SetYonduMode()
+{
+	CheckFalse(IsIdleStateMode());
+	SetMode(EWeaponType::Yondu);
 }

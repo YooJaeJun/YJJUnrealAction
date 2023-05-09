@@ -5,13 +5,8 @@
 void UCUserWidget_EquipMenuButton::BindEquipMenuButton()
 {
 	Button = Cast<UButton>(GetWidgetFromName(TEXT("CButton")));
-	// Button->OnHovered.AddDynamic(this, &OnHovered);
-	// Button->OnUnhovered.AddDynamic(this, &OnUnhovered);
-
-	EWeaponType weaponType = CHelpers::ConvertTCHARToEnum<EWeaponType>(GetName()[GetName().Len() - 1]);
-
-	if (OnWeaponEquipped.IsBound())
-		OnWeaponEquipped.Broadcast(weaponType);
+	Button->OnHovered.AddUniqueDynamic(this, &UCUserWidget_EquipMenuButton::OnHovered);
+	Button->OnUnhovered.AddUniqueDynamic(this, &UCUserWidget_EquipMenuButton::OnUnhovered);
 }
 
 void UCUserWidget_EquipMenuButton::OnHovered()
@@ -20,4 +15,8 @@ void UCUserWidget_EquipMenuButton::OnHovered()
 
 void UCUserWidget_EquipMenuButton::OnUnhovered()
 {
+	EWeaponType weaponType = CHelpers::ConvertTCHARToEnum<EWeaponType>(GetName()[GetName().Len() - 1]);
+
+	if (OnWeaponEquipped.IsBound())
+		OnWeaponEquipped.Broadcast(weaponType);
 }

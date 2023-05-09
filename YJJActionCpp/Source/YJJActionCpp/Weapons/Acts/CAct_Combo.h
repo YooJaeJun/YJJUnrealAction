@@ -18,6 +18,10 @@ public:
 	virtual void Begin_Act() override;
 	virtual void End_Act() override;
 
+public:
+	virtual void OnAttachmentBeginOverlap(ACCommonCharacter* InAttacker, 
+		AActor* InAttackCauser, ACCommonCharacter* InOther) override;
+
 private:
 	int32 Index;
 

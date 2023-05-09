@@ -4,7 +4,6 @@
 #include "CWeaponComponent.generated.h"
 
 class ACCommonCharacter;
-class ACWeapon;
 class ACAttachment;
 class UCEquipment;
 class UCAct;
@@ -14,12 +13,16 @@ UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	Unarmed,
-	Sword,
 	Fist,
+	Sword,
 	Hammer,
-	Bow,
 	Dual,
+	Bow,
 	Guard,
+	Around,
+	Fireball,
+	Bomb,
+	Yondu,
 	Max
 };
 
@@ -37,13 +40,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void Begin_Equip();
-	void End_Equip();
-	void Begin_Act();
-	void End_Act();
 	void Act();
-
-public:
 	void SetMode(EWeaponType InType);
 
 private:
@@ -54,21 +51,29 @@ public:
 	UCEquipment* GetEquipment() const;
 	UCAct* GetAct() const;
 
-	bool IsIdleMode() const;
+	bool IsIdleStateMode() const;
 
 	void SetUnarmedMode();
 	void SetSwordMode();
 	void SetFistMode();
 	void SetHammerMode();
-	void SetBowMode();
 	void SetDualMode();
+	void SetBowMode();
+	void SetAroundMode();
+	void SetFireballMode();
+	void SetBombMode();
+	void SetYonduMode();
 
 public:
 	FORCEINLINE bool IsUnarmedMode() const { return Type == EWeaponType::Unarmed; }
 	FORCEINLINE bool IsSwordMode() const { return Type == EWeaponType::Sword; }
 	FORCEINLINE bool IsFistMode() const { return Type == EWeaponType::Fist; }
-	FORCEINLINE bool IsBowMode() const { return Type == EWeaponType::Bow; }
 	FORCEINLINE bool IsDualMode() const { return Type == EWeaponType::Dual; }
+	FORCEINLINE bool IsBowMode() const { return Type == EWeaponType::Bow; }
+	FORCEINLINE bool IsAroundMode() const { return Type == EWeaponType::Around; }
+	FORCEINLINE bool IsFireballMode() const { return Type == EWeaponType::Fireball; }
+	FORCEINLINE bool IsBombMode() const { return Type == EWeaponType::Bomb; }
+	FORCEINLINE bool IsYonduMode() const { return Type == EWeaponType::Yondu; }
 
 private:
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
@@ -85,6 +90,4 @@ public:
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
-	TArray<TSharedPtr<ACWeapon>> Weapons;
-	TSharedPtr<ACWeapon> Weapon;
 };

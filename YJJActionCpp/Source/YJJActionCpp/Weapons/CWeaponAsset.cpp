@@ -38,6 +38,15 @@ void UCWeaponAsset::BeginPlay(ACCommonCharacter* InOwner)
 	if (!!ActClass)
 	{
 		Act = NewObject<UCAct>(this, ActClass);
-		Act->BeginPlay(Attachment, Equipment, InOwner, ActDatas);
+		Act->BeginPlay(Attachment, Equipment, InOwner, ActDatas, HitDatas);
+
+		if (!!Attachment)
+		{
+			Attachment->OnAttachmentBeginCollision.AddDynamic(Act, &UCAct::OnAttachmentBeginCollision);
+			Attachment->OnAttachmentEndCollision.AddDynamic(Act, &UCAct::OnAttachmentEndCollision);
+
+			Attachment->OnAttachmentBeginOverlap.AddDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
+			Attachment->OnAttachmentEndOverlap.AddDynamic(Act, &UCAct::OnAttachmentEndOverlap);
+		}
 	}
 }

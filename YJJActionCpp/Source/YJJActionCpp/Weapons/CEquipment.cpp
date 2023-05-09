@@ -9,19 +9,19 @@ void UCEquipment::BeginPlay(ACCommonCharacter* InOwner, const FEquipmentData& In
 	Owner = InOwner;
 	Data = InData;
 
-	Movement = CHelpers::GetComponent<UCMovementComponent>(InOwner);
-	State = CHelpers::GetComponent<UCStateComponent>(InOwner);
+	MovementComp = CHelpers::GetComponent<UCMovementComponent>(InOwner);
+	StateComp = CHelpers::GetComponent<UCStateComponent>(InOwner);
 }
 
 void UCEquipment::Equip_Implementation()
 {
-	State->SetEquipMode();
+	StateComp->SetEquipMode();
 
 	if (Data.bCanMove == false)
-		Movement->Stop();
+		MovementComp->Stop();
 
 	if (Data.bUseControlRotation)
-		Movement->EnableControlRotation();
+		MovementComp->EnableControlRotation();
 
 	if (!!Data.Montage)
 		Owner->PlayAnimMontage(Data.Montage, Data.PlayRate);
@@ -45,14 +45,14 @@ void UCEquipment::End_Equip_Implementation()
 	bBeginEquip = false;
 	bEquipped = true;
 
-	Movement->Move();
-	State->SetIdleMode();
+	MovementComp->Move();
+	StateComp->SetIdleMode();
 }
 
 void UCEquipment::Unequip_Implementation()
 {
 	bEquipped = false;
-	Movement->DisableControlRotation();
+	MovementComp->DisableControlRotation();
 
 	if (OnEquipmentUnequip.IsBound())
 		OnEquipmentUnequip.Broadcast();

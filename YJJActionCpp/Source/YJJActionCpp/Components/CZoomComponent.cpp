@@ -45,17 +45,17 @@ void UCZoomComponent::InputAxis_Zoom(const float InAxis)
 
 	CheckNull(Owner);
 
-	if (!!Owner->TargetingComponent && 
-		Owner->TargetingComponent->IsTargeting)
+	if (!!Owner->TargetingComp && 
+		Owner->TargetingComp->IsTargeting)
 	{
 		if (InAxis > 0.0f)
-			Owner->TargetingComponent->ChangeFocus(true);
+			Owner->TargetingComp->ChangeFocus(true);
 		else
-			Owner->TargetingComponent->ChangeFocus(false);
+			Owner->TargetingComp->ChangeFocus(false);
 	}
 	else
 	{
-		if (false == Owner->MovementComponent->GetFixedCamera())
+		if (false == Owner->MovementComp->GetFixedCamera())
 		{
 			Zooming = UKismetMathLibrary::Clamp(
 				Zooming + InAxis * ZoomData.ZoomSpeed,

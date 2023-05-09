@@ -57,7 +57,7 @@ protected:
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
-	TWeakObjectPtr<UCWeaponComponent> WeaponComponent;
-	TWeakObjectPtr<UCStateComponent> StateComponent;
+	TWeakObjectPtr<UCWeaponComponent> WeaponComp;
+	TWeakObjectPtr<UCStateComponent> StateComp;
 	FRotator PrevRotation;
 };

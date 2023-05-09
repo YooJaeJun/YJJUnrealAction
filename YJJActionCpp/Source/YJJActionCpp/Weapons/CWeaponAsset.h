@@ -5,10 +5,10 @@
 #include "Weapons/CWeaponStructures.h"
 #include "CWeaponAsset.generated.h"
 
+class ACCommonCharacter;
 class ACAttachment;
 class UCEquipment;
 class UCAct;
-class ACCommonCharacter;
 
 UCLASS()
 class YJJACTIONCPP_API UCWeaponAsset : public UDataAsset
@@ -49,4 +49,7 @@ private:
 
 	UPROPERTY()
 		UCAct* Act;
+
+	UPROPERTY(EditAnywhere)
+		TArray<FHitData> HitDatas;
 };

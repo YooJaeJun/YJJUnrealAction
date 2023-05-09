@@ -13,8 +13,8 @@ ACEnemy::ACEnemy()
 
 	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComponent, "Weapon");
 	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComponent, "Montages");
-	CHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComponent, "Movement");
-	CHelpers::CreateActorComponent<UCStateComponent>(this, &StateComponent, "State");
+	CHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "Movement");
+	CHelpers::CreateActorComponent<UCStateComponent>(this, &StateComp, "State");
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
@@ -34,12 +34,12 @@ void ACEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MovementComponent->InputAction_Run();
+	MovementComp->InputAction_Run();
 
 	Create_DynamicMaterial(this);
 	Change_Color(this, OriginColor);
 
-	StateComponent->OnStateTypeChanged.AddDynamic(this, &ACEnemy::OnStateTypeChanged);
+	StateComp->OnStateTypeChanged.AddDynamic(this, &ACEnemy::OnStateTypeChanged);
 }
 
 void ACEnemy::Tick(float DeltaTime)

@@ -50,7 +50,7 @@ private:
 public:
 	// ZoomComponent에서 사용
 	UPROPERTY(VisibleAnywhere)
-		UCTargetingComponent* TargetingComponent;
+		UCTargetingComponent* TargetingComp;
 
 	UPROPERTY(VisibleAnywhere)
 		USpringArmComponent* SpringArm;
@@ -60,16 +60,16 @@ private:
 		UCameraComponent* Camera;
 
 	UPROPERTY(VisibleAnywhere)
-		UCWeaponComponent* WeaponComponent;
+		UCWeaponComponent* WeaponComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCMontagesComponent* MontagesComponent;
+		UCMontagesComponent* MontagesComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCZoomComponent* ZoomComponent;
+		UCZoomComponent* ZoomComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCGameUIComponent* GameUIComponent;
+		UCGameUIComponent* GameUIComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mode")
 		ACGameMode* GameMode;

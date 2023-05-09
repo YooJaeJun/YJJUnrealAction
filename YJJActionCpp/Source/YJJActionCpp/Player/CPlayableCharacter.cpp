@@ -27,11 +27,11 @@ ACPlayableCharacter::ACPlayableCharacter()
 
 	CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetCapsuleComponent());
 	CHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
-	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComponent, "MontagesComponent");
-	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComponent, "WeaponComponent");
-	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComponent, "ZoomComponent");
-	CHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComponent, "TargetingComponent");
-	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComponent, "GameUIComponent");
+	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
+	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
+	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComp, "ZoomComponent");
+	CHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
+	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 
 	USkeletalMesh* mesh;
 	CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
@@ -49,17 +49,17 @@ ACPlayableCharacter::ACPlayableCharacter()
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->bEnableCameraLag = true;
 
-	StateComponent->SetIdleMode();
-	StateComponent->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
+	StateComp->SetIdleMode();
+	StateComp->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
 
-	MovementComponent->SetSpeeds(Speeds);
+	MovementComp->SetSpeeds(Speeds);
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->GroundFriction = 2;
 	GetCharacterMovement()->BrakingDecelerationWalking = 256;
 
-	CharacterStatComponent->OnHpIsZero.AddLambda([this]() -> void {
-		MontagesComponent->PlayDeadAnim();
+	CharacterStatComp->OnHpIsZero.AddLambda([this]() -> void {
+		MontagesComp->PlayDeadAnim();
 		GetWorldTimerManager().SetTimer(DestroyDelayTimerHandle, [this]() -> void {
 			Destroy();
 		}, 1.5f, false, 1.5f);
@@ -88,16 +88,16 @@ void ACPlayableCharacter::BeginPlay()
 		if (!!playerInfo.Get())
 		{
 			if (!!playerInfo->LevelBar)
-				hud->PlayerInfo->LevelBar->BindLevelStat(CharacterStatComponent);
+				hud->PlayerInfo->LevelBar->BindLevelStat(CharacterStatComp);
 
 			if (!!playerInfo->HpBar)
-				hud->PlayerInfo->HpBar->BindHpStat(CharacterStatComponent);
+				hud->PlayerInfo->HpBar->BindHpStat(CharacterStatComp);
 
 			if (!!playerInfo->StaminaBar)
-				hud->PlayerInfo->StaminaBar->BindStaminaStat(CharacterStatComponent);
+				hud->PlayerInfo->StaminaBar->BindStaminaStat(CharacterStatComp);
 
 			if (!!playerInfo->ManaBar)
-				hud->PlayerInfo->ManaBar->BindManaStat(CharacterStatComponent);
+				hud->PlayerInfo->ManaBar->BindManaStat(CharacterStatComp);
 		}
 	}
 }
@@ -111,53 +111,54 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", MovementComponent, &UCMovementComponent::InputAxis_MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", MovementComponent, &UCMovementComponent::InputAxis_MoveRight);
-	PlayerInputComponent->BindAxis("HorizontalLook", MovementComponent, &UCMovementComponent::InputAxis_HorizontalLook);
-	PlayerInputComponent->BindAxis("VerticalLook", MovementComponent, &UCMovementComponent::InputAxis_VerticalLook);
-	PlayerInputComponent->BindAxis("Zoom", ZoomComponent, &UCZoomComponent::InputAxis_Zoom);
+	PlayerInputComponent->BindAxis("MoveForward", MovementComp, &UCMovementComponent::InputAxis_MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", MovementComp, &UCMovementComponent::InputAxis_MoveRight);
+	PlayerInputComponent->BindAxis("HorizontalLook", MovementComp, &UCMovementComponent::InputAxis_HorizontalLook);
+	PlayerInputComponent->BindAxis("VerticalLook", MovementComp, &UCMovementComponent::InputAxis_VerticalLook);
+	PlayerInputComponent->BindAxis("Zoom", ZoomComp, &UCZoomComponent::InputAxis_Zoom);
 
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::InputAction_Walk);
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComponent, &UCMovementComponent::InputAction_Run);
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::InputAction_Jump);
+	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Walk);
+	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComp, &UCMovementComponent::InputAction_Run);
+	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Jump);
 	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, this, &ACPlayableCharacter::InputAction_Avoid);
-	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComponent, &UCTargetingComponent::InputAction_Targeting);
-	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComponent, &UCGameUIComponent::InputAction_ActivateEquipMenu);
-	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComponent, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
+	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComp, &UCTargetingComponent::InputAction_Targeting);
+	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
+	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
+	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::Act);
 }
 
 void ACPlayableCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
 
-	StateComponent->SetIdleMode();
+	StateComp->SetIdleMode();
 }
 
 void ACPlayableCharacter::Avoid()
 {
-	MovementComponent->EnableControlRotation();
+	MovementComp->EnableControlRotation();
 
-	MontagesComponent->PlayAvoidAnim();
+	MontagesComp->PlayAvoidAnim();
 }
 
 void ACPlayableCharacter::End_Avoid()
 {
-	MovementComponent->DisableControlRotation();
+	MovementComp->DisableControlRotation();
 
-	StateComponent->SetIdleMode();
+	StateComp->SetIdleMode();
 }
 
 void ACPlayableCharacter::End_Hit()
 {
-	StateComponent->SetIdleMode();
+	StateComp->SetIdleMode();
 }
 
 void ACPlayableCharacter::InputAction_Avoid()
 {
-	CheckFalse(StateComponent->IsIdleMode());
-	CheckFalse(MovementComponent->CanMove());
+	CheckFalse(StateComp->IsIdleMode());
+	CheckFalse(MovementComp->CanMove());
 
-	StateComponent->SetAvoidMode();
+	StateComp->SetAvoidMode();
 }
 
 void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)

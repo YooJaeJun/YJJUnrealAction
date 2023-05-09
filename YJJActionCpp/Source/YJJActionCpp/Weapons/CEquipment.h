@@ -45,8 +45,8 @@ private:
 	FEquipmentData Data;
 
 private:
-	TWeakObjectPtr<UCMovementComponent> Movement;
-	TWeakObjectPtr<UCStateComponent> State;
+	TWeakObjectPtr<UCMovementComponent> MovementComp;
+	TWeakObjectPtr<UCStateComponent> StateComp;
 
 private:
 	bool bBeginEquip;

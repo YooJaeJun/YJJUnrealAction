@@ -17,8 +17,11 @@ class YJJACTIONCPP_API UCUserWidget_EquipMenuButton : public UCUserWidget_Custom
 public:
 	void BindEquipMenuButton();
 
-	void OnHovered();
-	void OnUnhovered();
+	UFUNCTION()
+		void OnHovered();
+
+	UFUNCTION()
+		void OnUnhovered();
 
 public:
 	UPROPERTY()

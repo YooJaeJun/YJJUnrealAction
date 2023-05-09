@@ -25,8 +25,24 @@ public:
 		ACAttachment* InAttachment,
 		UCEquipment* InEquipment,
 		ACCommonCharacter* InOwner,
-		const TArray<FActData>& InActDatas
+		const TArray<FActData>& InActDatas,
+		const TArray<FHitData>& InHitDatas
 	);
+
+public:
+	UFUNCTION()
+		virtual void OnAttachmentBeginCollision() {}
+
+	UFUNCTION()
+		virtual void OnAttachmentEndCollision() {}
+
+	UFUNCTION()
+		virtual void OnAttachmentBeginOverlap(ACCommonCharacter* InAttacker, 
+			AActor* InAttackCauser, ACCommonCharacter* InOther) {}
+
+	UFUNCTION()
+		virtual void OnAttachmentEndOverlap(ACCommonCharacter* InAttacker,
+			ACCommonCharacter* InOther) {}
 
 public:
 	virtual void Act();
@@ -39,8 +55,9 @@ protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UWorld> World;
 
-	TWeakObjectPtr<UCMovementComponent> Movement;
-	TWeakObjectPtr<UCStateComponent> State;
+	TWeakObjectPtr<UCMovementComponent> MovementComp;
+	TWeakObjectPtr<UCStateComponent> StateComp;
 
 	TArray<FActData> ActDatas;
+	TArray<FHitData> HitDatas;
 };

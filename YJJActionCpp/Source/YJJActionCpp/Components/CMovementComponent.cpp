@@ -124,5 +124,5 @@ void UCMovementComponent::InputAction_Jump()
 
 	Owner->Jump();
 
-	Owner->StateComponent->SetFallMode();
+	Owner->StateComp->SetFallMode();
 }

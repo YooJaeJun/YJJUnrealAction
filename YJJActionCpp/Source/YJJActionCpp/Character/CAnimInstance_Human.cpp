@@ -11,13 +11,13 @@ void UCAnimInstance_Human::NativeBeginPlay()
 	Owner = Cast<ACCommonCharacter>(TryGetPawnOwner());
 	CheckNull(Owner);
 
-	StateComponent = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
-	CheckNull(StateComponent);
-	StateComponent->OnStateTypeChanged.AddDynamic(this, &UCAnimInstance_Human::OnStateTypeChanged);
+	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+	CheckNull(StateComp);
+	StateComp->OnStateTypeChanged.AddDynamic(this, &UCAnimInstance_Human::OnStateTypeChanged);
 
-	WeaponComponent = CHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
-	CheckNull(WeaponComponent);
-	WeaponComponent->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance_Human::OnWeaponTypeChanged);
+	WeaponComp = CHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
+	CheckNull(WeaponComp);
+	WeaponComp->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance_Human::OnWeaponTypeChanged);
 }
 
 void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
@@ -42,9 +42,9 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 	Pitch = UKismetMathLibrary::FInterpTo(
 		Pitch, Owner->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
 
-	CheckNull(StateComponent);
+	CheckNull(StateComp);
 
-	StateType = StateComponent->Type;
+	StateType = StateComp->Type;
 	Falling = (StateType == EStateType::Fall);
 	Hitting = (StateType == EStateType::Hit);
 }

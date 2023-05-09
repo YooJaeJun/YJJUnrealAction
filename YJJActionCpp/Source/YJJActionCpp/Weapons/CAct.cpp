@@ -11,20 +11,22 @@ UCAct::UCAct()
 }
 
 void UCAct::BeginPlay(ACAttachment* InAttachment, UCEquipment* InEquipment, 
-	ACCommonCharacter* InOwner, const TArray<FActData>& InActDatas)
+	ACCommonCharacter* InOwner, const TArray<FActData>& InActDatas,
+	const TArray<FHitData>& InHitDatas)
 {
 	Owner = InOwner;
 	World = Owner->GetWorld();
 
-	State = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
-	Movement = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+	MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
 
 	ActDatas = InActDatas;
+	HitDatas = InHitDatas;
 }
 
 void UCAct::Act()
 {
-	State->SetActMode();
+	StateComp->SetActMode();
 }
 
 void UCAct::Begin_Act()
@@ -36,8 +38,8 @@ void UCAct::End_Act()
 {
 	bBeginAct = false;
 
-	State->SetIdleMode();
+	StateComp->SetIdleMode();
 
-	Movement->Move();
-	Movement->UnFixCamera();
+	MovementComp->Move();
+	MovementComp->UnFixCamera();
 }
