@@ -38,6 +38,7 @@ protected:
 
 public:
 	void PlayAvoidAnim();
+	void PlayRiseAnim();
 	void PlayHitAnim();
 	void PlayDeadAnim();
 

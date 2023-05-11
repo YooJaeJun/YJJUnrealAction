@@ -8,8 +8,11 @@
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CAnimInstance_Human.h"
+#include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CMontagesComponent.h"
+#include "Components/CCharacterInfoComponent.h"
+#include "Components/CCharacterStatComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "Components/CZoomComponent.h"
 #include "Components/CTargetingComponent.h"
@@ -21,13 +24,11 @@
 #include "Widgets/Player/CUserWidget_PlayerLevel.h"
 
 ACPlayableCharacter::ACPlayableCharacter()
-	: ACCommonCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetCapsuleComponent());
 	CHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
-	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
 	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
 	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComp, "ZoomComponent");
 	CHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
@@ -53,8 +54,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	StateComp->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
 
 	MovementComp->SetSpeeds(Speeds);
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	MovementComp->DisableControlRotation();
 	GetCharacterMovement()->GroundFriction = 2;
 	GetCharacterMovement()->BrakingDecelerationWalking = 256;
 
@@ -71,6 +71,8 @@ ACPlayableCharacter::ACPlayableCharacter()
 void ACPlayableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MovementComp->SetSpeed(ESpeedType::Sprint);
 
 	TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(MyCurController);
 	if (!!playerController.Get())
@@ -136,19 +138,20 @@ void ACPlayableCharacter::Landed(const FHitResult& Hit)
 
 void ACPlayableCharacter::Avoid()
 {
-	MovementComp->EnableControlRotation();
-
 	MontagesComp->PlayAvoidAnim();
 }
 
 void ACPlayableCharacter::End_Avoid()
 {
-	MovementComp->DisableControlRotation();
-
 	StateComp->SetIdleMode();
 }
 
 void ACPlayableCharacter::End_Hit()
+{
+	StateComp->SetIdleMode();
+}
+
+void ACPlayableCharacter::End_Rise()
 {
 	StateComp->SetIdleMode();
 }

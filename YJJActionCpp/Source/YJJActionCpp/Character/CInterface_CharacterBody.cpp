@@ -14,7 +14,7 @@ void ICInterface_CharacterBody::Create_DynamicMaterial(ACCommonCharacter* InChar
 	}
 }
 
-void ICInterface_CharacterBody::Change_Color(ACCommonCharacter* InCharacter, FLinearColor InColor)
+void ICInterface_CharacterBody::ChangeColor(ACCommonCharacter* InCharacter, FLinearColor InColor)
 {
 	for (UMaterialInterface* material : InCharacter->GetMesh()->GetMaterials())
 	{

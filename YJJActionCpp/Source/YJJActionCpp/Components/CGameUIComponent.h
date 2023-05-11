@@ -32,7 +32,7 @@ public:
 	virtual void InputAction_DeactivateEquipMenu() override;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Mode")
+	UPROPERTY()
 		ACGameMode* GameMode;
 
 private:

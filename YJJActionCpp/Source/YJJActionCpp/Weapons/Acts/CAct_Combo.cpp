@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "Components/CStateComponent.h"
+#include "Character/CCommonCharacter.h"
 
 void UCAct_Combo::Act()
 {
@@ -38,10 +39,51 @@ void UCAct_Combo::End_Act()
 }
 
 void UCAct_Combo::OnAttachmentBeginOverlap(ACCommonCharacter* InAttacker, AActor* InAttackCauser,
-	ACCommonCharacter* InOther)
+                                           ACCommonCharacter* InOther)
 {
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
 	CheckNull(InOther);
 
+	for (ACCommonCharacter* hitted : Hitted)
+		CheckTrue(hitted == InOther);
+
+	Hitted.AddUnique(InOther);
+
+	CheckTrue(HitDatas.Num() - 1 < Index);
 	HitDatas[Index].SendDamage(InAttacker, InAttackCauser, InOther);
+}
+
+void UCAct_Combo::OnAttachmentEndCollision()
+{
+	Super::OnAttachmentEndCollision();
+
+	float angle = -1.0f;
+	TWeakObjectPtr<ACCommonCharacter> candidate = nullptr;
+
+	for (ACCommonCharacter* hitted : Hitted)
+	{
+		FVector direction = hitted->GetActorLocation() - Owner->GetActorLocation();
+		direction = direction.GetSafeNormal2D();
+
+		FVector forward = FQuat(Owner->GetActorRotation()).GetForwardVector();
+
+		float dot = FVector::DotProduct(direction, forward);
+		if (dot >= angle)
+		{
+			angle = dot;
+			candidate = hitted;
+		}
+	}
+
+	if (!!candidate.Get())
+	{
+		FRotator rotator = UKismetMathLibrary::FindLookAtRotation(Owner->GetActorLocation(),
+			candidate->GetActorLocation());
+		FRotator target = FRotator(0, rotator.Yaw, 0);
+
+		TWeakObjectPtr<AController> controller = Owner->GetController<AController>();
+		controller->SetControlRotation(target);
+	}
+
+	Hitted.Empty();
 }

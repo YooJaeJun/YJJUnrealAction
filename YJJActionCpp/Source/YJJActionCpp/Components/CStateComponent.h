@@ -9,22 +9,13 @@ UENUM(BlueprintType)
 enum class EStateType : uint8
 {
 	Idle		UMETA(DisplayName = "Idle"),
-	Avoid		UMETA(DisplayName = "Avoid"),
-	Dash		UMETA(DisplayName = "Dash"),
-	Fly			UMETA(DisplayName = "Fly"),
 	Fall		UMETA(DisplayName = "Fall"),
+	Avoid		UMETA(DisplayName = "Avoid"),
 	Equip		UMETA(DisplayName = "Equip"),
 	Act			UMETA(DisplayName = "Act"),
 	Hit			UMETA(DisplayName = "Hit"),
 	Dead		UMETA(DisplayName = "Dead"),
-	HitAir		UMETA(DisplayName = "HitAir"),
-	DownFly		UMETA(DisplayName = "DownFly"),
-	DownFall	UMETA(DisplayName = "DownFall"),
 	Rise		UMETA(DisplayName = "Rise"),
-	Ride		UMETA(DisplayName = "Ride"),
-	RideAndAct	UMETA(DisplayName = "RideAndAct"),
-	Cinematic	UMETA(DisplayName = "Cinematic"),
-	Groggy		UMETA(DisplayName = "Groggy"),
 	Max			UMETA(DisplayName = "Max")
 };
 
@@ -48,6 +39,8 @@ public:
 	void SetEquipMode();
 	void SetActMode();
 	void SetHitMode();
+	void SetDeadMode();
+	void SetRiseMode();
 
 private:
 	void ChangeType(const EStateType InType);
@@ -59,6 +52,8 @@ public:
 	FORCEINLINE bool IsEquipMode() const { return Type == EStateType::Equip; }
 	FORCEINLINE bool IsActMode() const { return Type == EStateType::Act; }
 	FORCEINLINE bool IsHitMode() const { return Type == EStateType::Hit; }
+	FORCEINLINE bool IsDeadMode() const { return Type == EStateType::Dead; }
+	FORCEINLINE bool IsRiseMode() const { return Type == EStateType::Rise; }
 
 public:
 	UPROPERTY(EditAnyWhere, Category = "Settings")

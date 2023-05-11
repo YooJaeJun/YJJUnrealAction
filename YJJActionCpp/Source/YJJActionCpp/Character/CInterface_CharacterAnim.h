@@ -15,6 +15,8 @@ class YJJACTIONCPP_API ICInterface_CharacterAnim
 	GENERATED_BODY()
 
 public:
+	virtual void End_Rise() {}
 	virtual void End_Avoid() {}
 	virtual void End_Hit() {}
+	virtual void End_Dead() {}
 };

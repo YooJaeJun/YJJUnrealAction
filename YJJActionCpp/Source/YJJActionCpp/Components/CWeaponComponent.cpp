@@ -9,14 +9,12 @@
 
 UCWeaponComponent::UCWeaponComponent()
 {
-
+	Owner = Cast<ACCommonCharacter>(GetOwner());
 }
 
 void UCWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Owner = Cast<ACCommonCharacter>(GetOwner());
 	CheckNull(Owner);
 
 	uint8 size = (uint8)EWeaponType::Max;
@@ -82,9 +80,9 @@ UCEquipment* UCWeaponComponent::GetEquipment() const
 UCAct* UCWeaponComponent::GetAct() const
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!DataAssets[(int32)Type], nullptr);
+	CheckFalseResult(!!DataAssets[static_cast<uint8>(Type)], nullptr);
 
-	return DataAssets[(int32)Type]->GetAct();
+	return DataAssets[static_cast<uint8>(Type)]->GetAct();
 }
 
 bool UCWeaponComponent::IsIdleStateMode() const
@@ -99,16 +97,16 @@ void UCWeaponComponent::SetUnarmedMode()
 	ChangeType(EWeaponType::Unarmed);
 }
 
-void UCWeaponComponent::SetSwordMode()
-{
-	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Sword);
-}
-
 void UCWeaponComponent::SetFistMode()
 {
 	CheckFalse(IsIdleStateMode());
 	SetMode(EWeaponType::Fist);
+}
+
+void UCWeaponComponent::SetSwordMode()
+{
+	CheckFalse(IsIdleStateMode());
+	SetMode(EWeaponType::Sword);
 }
 
 void UCWeaponComponent::SetHammerMode()

@@ -25,5 +25,11 @@ void UCAnimNotify_End_State::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 	case EStateType::Hit:
 		character->End_Hit();
 		break;
+	case EStateType::Dead:
+		character->End_Dead();
+		break;
+	case EStateType::Rise:
+		character->End_Rise();
+		break;
 	}
 }

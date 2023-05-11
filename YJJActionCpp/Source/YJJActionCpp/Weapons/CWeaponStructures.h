@@ -9,6 +9,18 @@ class UFXSystemAsset;
 class ACCommonCharacter;
 class USoundWave;
 
+UENUM()
+enum class EAttackType
+{
+	None,
+	Knockback,
+	Air,
+	Fly,
+	FlyingPutDown,
+	Down,
+	Max
+};
+
 USTRUCT()
 struct FEquipmentData
 {
@@ -51,6 +63,9 @@ public:
 		bool bFixedCamera;
 
 	UPROPERTY(EditAnywhere)
+		TArray<USoundWave*> Sounds;
+
+	UPROPERTY(EditAnywhere)
 		UFXSystemAsset* Effect;
 
 	UPROPERTY(EditAnywhere)
@@ -61,6 +76,9 @@ public:
 
 public:
 	void Act(ACCommonCharacter* InOwner);
+	void PlaySoundWave(ACCommonCharacter* InOwner);
+	void PlayEffect(UWorld* InWorld, const FVector& InLocation);
+	void PlayEffect(UWorld* InWorld, const FVector& InLocation, const FRotator& InRotation);
 };
 
 
@@ -86,7 +104,7 @@ public:
 		float StopTime;
 
 	UPROPERTY(EditAnywhere)
-		USoundWave* Sound;
+		TArray<USoundWave*> Sounds;
 
 	UPROPERTY(EditAnywhere)
 		UFXSystemAsset* Effect;
@@ -97,11 +115,16 @@ public:
 	UPROPERTY(EditAnywhere)
 		FVector EffectScale = FVector::OneVector;
 
+	UPROPERTY(EditAnywhere)
+		EAttackType AttackType = EAttackType::None;
+
 public:
 	void SendDamage(ACCommonCharacter* InAttacker, AActor* InAttackCauser, ACCommonCharacter* InOther);
 	void PlayMontage(ACCommonCharacter* InOwner);
 	void PlayHitStop(UWorld* InWorld);
 	void PlaySoundWave(ACCommonCharacter* InOwner);
+	void PlayEffect(UWorld* InWorld, const FVector& InLocation);
+	void PlayEffect(UWorld* InWorld, const FVector& InLocation, const FRotator& InRotation);
 };
 
 USTRUCT()

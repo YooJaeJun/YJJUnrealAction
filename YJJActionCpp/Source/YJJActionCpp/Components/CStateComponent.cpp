@@ -17,6 +17,16 @@ void UCStateComponent::SetIdleMode()
 	ChangeType(EStateType::Idle);
 }
 
+void UCStateComponent::SetFallMode()
+{
+	ChangeType(EStateType::Fall);
+}
+
+void UCStateComponent::SetAvoidMode()
+{
+	ChangeType(EStateType::Avoid);
+}
+
 void UCStateComponent::SetEquipMode()
 {
 	ChangeType(EStateType::Equip);
@@ -32,14 +42,14 @@ void UCStateComponent::SetHitMode()
 	ChangeType(EStateType::Hit);
 }
 
-void UCStateComponent::SetFallMode()
+void UCStateComponent::SetDeadMode()
 {
-	ChangeType(EStateType::Fall);
+	ChangeType(EStateType::Dead);
 }
 
-void UCStateComponent::SetAvoidMode()
+void UCStateComponent::SetRiseMode()
 {
-	ChangeType(EStateType::Avoid);
+	ChangeType(EStateType::Rise);
 }
 
 void UCStateComponent::ChangeType(const EStateType InType)

@@ -68,6 +68,12 @@ public:
 
 	float GetAttack() const;
 
+	void Damage(const float InAmount);
+
+public:
+	FORCEINLINE float GetHealth() { return CurHp; }
+	FORCEINLINE bool IsDead() { return CurHp <= 0.0f; }
+
 private:
 	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
 		int32 CurLevel;

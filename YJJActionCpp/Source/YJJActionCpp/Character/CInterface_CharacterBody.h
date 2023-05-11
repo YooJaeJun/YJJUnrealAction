@@ -18,5 +18,5 @@ class YJJACTIONCPP_API ICInterface_CharacterBody
 
 public:
 	void Create_DynamicMaterial(ACCommonCharacter* InCharacter);
-	void Change_Color(ACCommonCharacter* InCharacter, FLinearColor InColor);
+	void ChangeColor(ACCommonCharacter* InCharacter, FLinearColor InColor);
 };

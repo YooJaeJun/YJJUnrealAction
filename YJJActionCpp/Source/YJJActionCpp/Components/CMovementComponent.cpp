@@ -6,13 +6,12 @@
 
 UCMovementComponent::UCMovementComponent()
 {
+	Owner = Cast<ACCommonCharacter>(GetOwner());
 }
 
 void UCMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Owner = Cast<ACCommonCharacter>(GetOwner());
 }
 
 void UCMovementComponent::EnableControlRotation()

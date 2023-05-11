@@ -38,6 +38,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Attach")
 		void AttachTo(FName InSocketName);
 
+	UFUNCTION(BlueprintCallable, Category = "Attach")
+		void AttachToCollision(FName InCollisionName);
+
 private:
 	UFUNCTION()
 		void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent,

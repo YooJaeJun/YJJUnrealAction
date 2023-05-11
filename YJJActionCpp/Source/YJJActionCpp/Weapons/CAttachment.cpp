@@ -29,18 +29,35 @@ void ACAttachment::BeginPlay()
 		}
 	}
 
+	OffCollisions();
+
 	Super::BeginPlay();
 }
 
 void ACAttachment::AttachTo(FName InSocketName)
 {
 	AttachToComponent(Owner->GetMesh(),
-		FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
+		FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), 
 		InSocketName);
 }
 
+void ACAttachment::AttachToCollision(FName InCollisionName)
+{
+	for (UShapeComponent* collision : Collisions)
+	{
+		if (collision->GetName() == InCollisionName.ToString())
+		{
+			collision->AttachToComponent(Owner->GetMesh(),
+				FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), 
+				InCollisionName);
+
+			return;
+		}
+	}
+}
+
 void ACAttachment::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	CheckTrue(Owner == OtherActor);
 	CheckTrue(Owner->GetClass() == OtherActor->GetClass());

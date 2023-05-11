@@ -28,8 +28,8 @@ void UCUserWidget_EquipMenu::Activate(const float TimeDilation)
 	if (!!GetOwningPlayer())
 	{
 		GetOwningPlayer()->SetShowMouseCursor(true);
-		UWidgetBlueprintLibrary::SetInputMode_GameAndUI(GetOwningPlayer(), nullptr,
-			true, true);
+		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(GetOwningPlayer(), nullptr,
+			EMouseLockMode::LockInFullscreen, true);
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilation);
 	}
 }
@@ -43,7 +43,5 @@ void UCUserWidget_EquipMenu::Deactivate(const float TimeDilation)
 		GetOwningPlayer()->SetShowMouseCursor(false);
 		UWidgetBlueprintLibrary::SetInputMode_GameOnly(GetOwningPlayer());
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilation);
-
-		
 	}
 }

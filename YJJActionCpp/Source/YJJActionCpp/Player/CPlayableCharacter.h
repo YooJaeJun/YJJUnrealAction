@@ -19,8 +19,7 @@ class ACGameMode;
 
 UCLASS()
 class YJJACTIONCPP_API ACPlayableCharacter :
-	public ACCommonCharacter,
-	public ICInterface_CharacterAnim
+	public ACCommonCharacter
 {
 	GENERATED_BODY()
 
@@ -39,8 +38,11 @@ public:
 
 private:
 	void Avoid();
+
 	virtual void End_Avoid() override;
 	virtual void End_Hit() override;
+	virtual void End_Rise() override;
+
 	void InputAction_Avoid();
 
 private:
@@ -63,9 +65,6 @@ private:
 		UCWeaponComponent* WeaponComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCMontagesComponent* MontagesComp;
-
-	UPROPERTY(VisibleAnywhere)
 		UCZoomComponent* ZoomComp;
 
 	UPROPERTY(VisibleAnywhere)
@@ -80,5 +79,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 		TArray<float> Speeds{ 200, 500, 800 };
 
+private:
 	FTimerHandle DestroyDelayTimerHandle;
 };

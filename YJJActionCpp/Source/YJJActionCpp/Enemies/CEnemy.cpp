@@ -3,18 +3,19 @@
 #include "Character/CAnimInstance_Human.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/CWeaponComponent.h"
-#include "Components/CMontagesComponent.h"
+#include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CMontagesComponent.h"
+#include "Components/CCharacterInfoComponent.h"
+#include "Components/CCharacterStatComponent.h"
+#include "Components/CWeaponComponent.h"
+#include "Weapons/CWeaponStructures.h"
 
 ACEnemy::ACEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComponent, "Weapon");
-	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComponent, "Montages");
-	CHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "Movement");
-	CHelpers::CreateActorComponent<UCStateComponent>(this, &StateComp, "State");
+	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "Weapon");
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
@@ -28,18 +29,19 @@ ACEnemy::ACEnemy()
 	GetMesh()->SetAnimClass(animInstance);
 
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
+
+	StateComp->OnStateTypeChanged.AddDynamic(this, &ACEnemy::OnStateTypeChanged);
+
+	MovementComp->SetSpeed(ESpeedType::Sprint);
+	MovementComp->InputAction_Run();
 }
 
 void ACEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MovementComp->InputAction_Run();
-
 	Create_DynamicMaterial(this);
-	Change_Color(this, OriginColor);
-
-	StateComp->OnStateTypeChanged.AddDynamic(this, &ACEnemy::OnStateTypeChanged);
+	ChangeColor(this, OriginColor);
 }
 
 void ACEnemy::Tick(float DeltaTime)
@@ -50,14 +52,52 @@ void ACEnemy::Tick(float DeltaTime)
 
 void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
+	switch(InNewType)
+	{
+	case EStateType::Rise:
+		Rise();
+		break;
+	case EStateType::Hit:
+		Hit();
+		break;
+	case EStateType::Dead:
+		Dead();
+		break;
+	}
 }
 
-float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
+void ACEnemy::Hit()
 {
-	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	// Change Color
+	{
+		ChangeColor(this, FLinearColor::Red);
 
-	CLog::Print(damage);
+		FTimerDelegate timerDelegate;
+		timerDelegate.BindUFunction(this, "RestoreColor");
 
-	return damage;
+		GetWorld()->GetTimerManager().SetTimer(RestoreColor_TimerHandle, timerDelegate, 0.2f, false);
+	}
+
+	CurAttackType = Damage.Event->HitData->AttackType;
+
+	Super::Hit();
+}
+
+void ACEnemy::End_Hit()
+{
+	Super::End_Hit();
+
+	switch (CurAttackType)
+	{
+	case EAttackType::Knockback:
+		StateComp->SetRiseMode();
+		break;
+	case EAttackType::Air:
+	case EAttackType::Fly:
+		StateComp->SetFallMode();
+		break;
+	default:
+		StateComp->SetIdleMode();
+		break;
+	}
 }

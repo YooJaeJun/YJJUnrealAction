@@ -8,13 +8,13 @@
 UCZoomComponent::UCZoomComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	Owner = Cast<ACPlayableCharacter>(GetOwner());
 }
 
 void UCZoomComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Owner = Cast<ACPlayableCharacter>(GetOwner());
 	CheckNull(Owner);
 
 	Zooming = Owner->SpringArm->TargetArmLength;

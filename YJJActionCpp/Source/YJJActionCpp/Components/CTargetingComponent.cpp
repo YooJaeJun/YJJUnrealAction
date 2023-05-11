@@ -5,14 +5,13 @@
 UCTargetingComponent::UCTargetingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	Owner = Cast<ACPlayableCharacter>(GetOwner());
 }
 
 void UCTargetingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Owner = Cast<ACPlayableCharacter>(GetOwner());
-	CheckNull(Owner);
 }
 
 void UCTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

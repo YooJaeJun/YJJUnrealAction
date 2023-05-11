@@ -17,8 +17,9 @@ enum class EWeaponType : uint8
 	Sword,
 	Hammer,
 	Dual,
-	Bow,
 	Guard,
+	Bow,
+	Warp,
 	Around,
 	Fireball,
 	Bomb,
@@ -66,8 +67,9 @@ public:
 
 public:
 	FORCEINLINE bool IsUnarmedMode() const { return Type == EWeaponType::Unarmed; }
-	FORCEINLINE bool IsSwordMode() const { return Type == EWeaponType::Sword; }
 	FORCEINLINE bool IsFistMode() const { return Type == EWeaponType::Fist; }
+	FORCEINLINE bool IsSwordMode() const { return Type == EWeaponType::Sword; }
+	FORCEINLINE bool IsHammerMode() const { return Type == EWeaponType::Hammer; }
 	FORCEINLINE bool IsDualMode() const { return Type == EWeaponType::Dual; }
 	FORCEINLINE bool IsBowMode() const { return Type == EWeaponType::Bow; }
 	FORCEINLINE bool IsAroundMode() const { return Type == EWeaponType::Around; }

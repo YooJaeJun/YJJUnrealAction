@@ -15,13 +15,13 @@ UCCharacterStatComponent::UCCharacterStatComponent()
 	CurMana = 100;
 	EnoughStamina = false;
 	EnoughMana = false;
+
+	Owner = Cast<ACCommonCharacter>(GetOwner());
 }
 
 void UCCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Owner = Cast<ACCommonCharacter>(GetOwner());
 }
 
 void UCCharacterStatComponent::InitializeComponent()
@@ -104,6 +104,8 @@ void UCCharacterStatComponent::SetHp(const float InNewHp)
 		CurHp = 0.0f;
 		OnHpIsZero.Broadcast();
 	}
+	else if (CurHp > GetMaxHp())
+		CurHp = GetMaxHp();
 }
 
 void UCCharacterStatComponent::SetStamina(const float InNewStamina)
@@ -116,6 +118,8 @@ void UCCharacterStatComponent::SetStamina(const float InNewStamina)
 		CurStamina = 0.0f;
 		OnStaminaIsZero.Broadcast();
 	}
+	else if (CurStamina > GetMaxStamina())
+		CurStamina = GetMaxStamina();
 }
 
 void UCCharacterStatComponent::SetMana(const float InNewMana)
@@ -128,6 +132,8 @@ void UCCharacterStatComponent::SetMana(const float InNewMana)
 		CurMana = 0.0f;
 		OnManaIsZero.Broadcast();
 	}
+	else if (CurMana > GetMaxMana())
+		CurMana = GetMaxMana();
 }
 
 float UCCharacterStatComponent::GetCurLevel() const
@@ -228,4 +234,9 @@ float UCCharacterStatComponent::GetAttack() const
 {
 	CheckNullResult(CurStat, 0.0f);
 	return CurStat->Attack;
+}
+
+void UCCharacterStatComponent::Damage(const float InAmount)
+{
+	SetHp(CurHp + (InAmount * -1.0f));
 }

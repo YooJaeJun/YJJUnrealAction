@@ -2,30 +2,19 @@
 
 #include "CoreMinimal.h"
 #include "Character/CCommonCharacter.h"
-#include "Character/CInterface_CharacterAnim.h"
 #include "Character/CInterface_CharacterBody.h"
+#include "Weapons/CWeaponStructures.h"
 #include "CEnemy.generated.h"
 
+class AController;
 class UCWeaponComponent;
-class UCMontagesComponent;
+struct FDamageEvent;
 
 UCLASS()
 class YJJACTIONCPP_API ACEnemy :
-	public ACCommonCharacter,
-	public ICInterface_CharacterAnim,
-	public ICInterface_CharacterBody
+	public ACCommonCharacter
 {
 	GENERATED_BODY()
-
-private:
-	UPROPERTY(EditAnywhere, Category = "Color")
-		FLinearColor OriginColor = FLinearColor::White;
-
-	UPROPERTY(VisibleAnywhere)
-		class UCWeaponComponent* WeaponComponent;
-
-	UPROPERTY(VisibleAnywhere)
-		class UCMontagesComponent* MontagesComponent;
 
 public:
 	ACEnemy();
@@ -40,7 +29,14 @@ private:
 	UFUNCTION()
 		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
 
-public:
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-		class AController* EventInstigator, AActor* DamageCauser) override;
+private:
+	virtual void Hit() override;
+	virtual void End_Hit() override;
+
+private:
+	UPROPERTY(VisibleAnywhere)
+		UCWeaponComponent* WeaponComp;
+
+private:
+	EAttackType CurAttackType = EAttackType::None;
 };

@@ -20,6 +20,47 @@ void FActData::Act(ACCommonCharacter* InOwner)
 
 	if (!!Montage)
 		InOwner->PlayAnimMontage(Montage, PlayRate);
+
+	if (Sounds.Num() > 0)
+		PlaySoundWave(InOwner);
+
+	if (!!Effect)
+		PlayEffect(InOwner->GetWorld(), InOwner->GetActorLocation(), InOwner->GetActorRotation());
+}
+
+void FActData::PlaySoundWave(ACCommonCharacter* InOwner)
+{
+	for (const auto& sound : Sounds)
+		CheckNull(sound);
+
+	UWorld* world = InOwner->GetWorld();
+	FVector location = InOwner->GetActorLocation();
+
+	for (const auto& sound : Sounds)
+		UGameplayStatics::SpawnSoundAtLocation(world, sound, location);
+}
+
+void FActData::PlayEffect(UWorld* InWorld, const FVector& InLocation)
+{
+	CheckNull(Effect);
+
+	FTransform transform;
+	transform.SetLocation(EffectLocation);
+	transform.SetScale3D(EffectScale);
+	transform.AddToTranslation(InLocation);
+
+	CHelpers::PlayEffect(InWorld, Effect, transform);
+}
+
+void FActData::PlayEffect(UWorld* InWorld, const FVector& InLocation, const FRotator& InRotation)
+{
+	CheckNull(Effect);
+
+	FTransform transform;
+	transform.SetLocation(InLocation + InRotation.RotateVector(EffectLocation));
+	transform.SetScale3D(EffectScale);
+
+	CHelpers::PlayEffect(InWorld, Effect, transform);
 }
 
 ///////////////////////////////////////////////////////////////
@@ -30,8 +71,7 @@ void FHitData::SendDamage(ACCommonCharacter* InAttacker,
 	FActDamageEvent e;
 	e.HitData = this;
 
-	InOther->TakeDamage(Power, e, 
-		InAttacker->GetController(), InAttackCauser);
+	InOther->TakeDamage(Power, e, InAttacker->GetController(), InAttackCauser);
 }
 
 void FHitData::PlayMontage(ACCommonCharacter* InOwner)
@@ -52,7 +92,6 @@ void FHitData::PlayHitStop(UWorld* InWorld)
 		if (!!character)
 		{
 			character->CustomTimeDilation = 1e-3f;
-
 			characters.Add(character);
 		}
 	}
@@ -60,17 +99,45 @@ void FHitData::PlayHitStop(UWorld* InWorld)
 	FTimerDelegate timerDelegate;
 	timerDelegate.BindLambda([=]()
 	{
-			for (ACCommonCharacter* character : characters)
-				character->CustomTimeDilation = 1;
+		for (ACCommonCharacter* character : characters)
+			character->CustomTimeDilation = 1;
 	});
+
+	FTimerHandle timerHandle;
+	InWorld->GetTimerManager().SetTimer(timerHandle, timerDelegate, StopTime, false);
 }
 
 void FHitData::PlaySoundWave(ACCommonCharacter* InOwner)
 {
-	CheckNull(Sound);
+	for (const auto& sound : Sounds)
+		CheckNull(sound);
 
 	UWorld* world = InOwner->GetWorld();
 	FVector location = InOwner->GetActorLocation();
 
-	UGameplayStatics::SpawnSoundAtLocation(world, Sound, location);
+	for (const auto& sound : Sounds)
+		UGameplayStatics::SpawnSoundAtLocation(world, sound, location);
+}
+
+void FHitData::PlayEffect(UWorld* InWorld, const FVector& InLocation)
+{
+	CheckNull(Effect);
+
+	FTransform transform;
+	transform.SetLocation(EffectLocation);
+	transform.SetScale3D(EffectScale);
+	transform.AddToTranslation(InLocation);
+
+	CHelpers::PlayEffect(InWorld, Effect, transform);
+}
+
+void FHitData::PlayEffect(UWorld* InWorld, const FVector& InLocation, const FRotator& InRotation)
+{
+	CheckNull(Effect);
+
+	FTransform transform;
+	transform.SetLocation(InLocation + InRotation.RotateVector(EffectLocation));
+	transform.SetScale3D(EffectScale);
+
+	CHelpers::PlayEffect(InWorld, Effect, transform);
 }

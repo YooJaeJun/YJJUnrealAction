@@ -5,13 +5,12 @@
 
 UCMontagesComponent::UCMontagesComponent()
 {
+	Owner = Cast<ACCommonCharacter>(GetOwner());
 }
 
 void UCMontagesComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Owner = Cast<ACCommonCharacter>(GetOwner());
 
 	if (nullptr == DataTable)
 	{
@@ -44,6 +43,11 @@ void UCMontagesComponent::PlayAvoidAnim()
 		Cast<UInputComponent>(Owner->GetComponentByClass(UInputComponent::StaticClass()));
 
 	PlayAnimMontage(EStateType::Avoid, input);
+}
+
+void UCMontagesComponent::PlayRiseAnim()
+{
+	PlayAnimMontage(EStateType::Rise);
 }
 
 void UCMontagesComponent::PlayHitAnim()
