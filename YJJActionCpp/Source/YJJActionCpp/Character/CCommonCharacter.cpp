@@ -7,6 +7,7 @@
 #include "Components/CCharacterInfoComponent.h"
 #include "Components/CCharacterStatComponent.h"
 #include "Weapons/CWeaponStructures.h"
+#include "UMG/Public/Blueprint/WidgetLayoutLibrary.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -15,17 +16,37 @@ ACCommonCharacter::ACCommonCharacter()
 	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
 	CHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
 	CHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
-
-	MyCurController = GetController();
 }
 
 void ACCommonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MyCurController = GetController();
+}
+
+void ACCommonCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (bTickLerpForTarget)
+	{
+		FRotator start = MyCurController->GetControlRotation();
+		FRotator target = TargetRotator;
+		MyCurController->SetControlRotation(
+			FMath::RInterpTo(start, target, GetWorld()->DeltaTimeSeconds, 5.0f));
+
+		if (false == UKismetMathLibrary::EqualEqual_Vector2DVector2D(
+			UWidgetLayoutLibrary::GetMousePositionOnPlatform(), GetMousePos(), 1.0f))
+			bTickLerpForTarget = false;
+
+		if (UKismetMathLibrary::EqualEqual_RotatorRotator(start, target, 1.0f))
+			bTickLerpForTarget = false;
+	}
 }
 
 float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
+                                    AActor* DamageCauser)
 {
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
@@ -118,4 +139,19 @@ void ACCommonCharacter::RestoreColor()
 	ChangeColor(this, OriginColor);
 
 	GetWorld()->GetTimerManager().ClearTimer(RestoreColor_TimerHandle);
+}
+
+void ACCommonCharacter::SetTickLerp(FRotator InRotator)
+{
+	TargetRotator = InRotator;
+}
+
+void ACCommonCharacter::TogglebTickLerpForTarget()
+{
+	bTickLerpForTarget = !bTickLerpForTarget;
+}
+
+void ACCommonCharacter::SetMousePos(const FVector2D InPos)
+{
+	MousePos = InPos;
 }

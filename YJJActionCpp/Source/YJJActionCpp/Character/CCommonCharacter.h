@@ -30,6 +30,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	virtual void Tick(float DeltaSeconds) override;
+
+public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 		AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -50,6 +53,20 @@ private:
 public:
 	// 라이딩 시 PlayerController와 AIController 전환 시 사용. 다른 클래스에서 접근 시 GetController 등이 아닌, 이 함수로 접근
 	FORCEINLINE TWeakObjectPtr<AController> GetMyCurController() const { return MyCurController; }
+
+public:
+	UFUNCTION()
+		void SetTickLerp(FRotator InRotator);
+
+	void TogglebTickLerpForTarget();
+
+public:
+	FORCEINLINE const FVector2D& GetMousePos() { return MousePos; }
+	void SetMousePos(const FVector2D InPos);
+
+private:
+	UPROPERTY()
+		FVector2D MousePos;
 
 public:
 	UPROPERTY(VisibleAnywhere)
@@ -86,4 +103,8 @@ protected:
 
 		const FActDamageEvent* Event;
 	} Damage;
+
+private:
+	bool bTickLerpForTarget = false;
+	FRotator TargetRotator = FRotator(0, 0, 0);
 };

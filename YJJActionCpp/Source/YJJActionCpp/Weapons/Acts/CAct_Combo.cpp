@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "Components/CStateComponent.h"
 #include "Character/CCommonCharacter.h"
+#include "UMG/Public/Blueprint/WidgetLayoutLibrary.h"
 
 void UCAct_Combo::Act()
 {
@@ -79,10 +80,10 @@ void UCAct_Combo::OnAttachmentEndCollision()
 	{
 		FRotator rotator = UKismetMathLibrary::FindLookAtRotation(Owner->GetActorLocation(),
 			candidate->GetActorLocation());
-		FRotator target = FRotator(0, rotator.Yaw, 0);
 
-		TWeakObjectPtr<AController> controller = Owner->GetController<AController>();
-		controller->SetControlRotation(target);
+		Owner->TogglebTickLerpForTarget();
+		Owner->SetTickLerp(FRotator(0, rotator.Yaw, 0));
+		Owner->SetMousePos(UWidgetLayoutLibrary::GetMousePositionOnPlatform());
 	}
 
 	Hitted.Empty();
