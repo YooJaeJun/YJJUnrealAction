@@ -41,6 +41,12 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Attach")
 		void AttachToCollision(FName InCollisionName);
 
+	UFUNCTION(BlueprintCallable, Category = "Detach")
+		void DetachTo(FName InSocketName);
+
+	UFUNCTION(BlueprintCallable, Category = "Detach")
+		void DetachToCollision(FName InCollisionName);
+
 private:
 	UFUNCTION()
 		void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent,

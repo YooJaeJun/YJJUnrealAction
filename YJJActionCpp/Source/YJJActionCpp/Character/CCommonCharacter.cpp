@@ -45,8 +45,8 @@ void ACCommonCharacter::Tick(float DeltaSeconds)
 	}
 }
 
-float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-                                    AActor* DamageCauser)
+float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
+	AController* EventInstigator, AActor* DamageCauser)
 {
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 

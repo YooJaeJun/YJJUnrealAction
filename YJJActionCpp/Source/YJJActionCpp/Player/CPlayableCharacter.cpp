@@ -166,10 +166,19 @@ void ACPlayableCharacter::InputAction_Avoid()
 
 void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
 {
-	switch (static_cast<uint8>(InNewType))
+	switch (InNewType)
 	{
-	case static_cast<uint8>(EStateType::Avoid):
+	case EStateType::Avoid:
 		Avoid();
+		break;
+	case EStateType::Rise:
+		Rise();
+		break;
+	case EStateType::Hit:
+		Hit();
+		break;
+	case EStateType::Dead:
+		Dead();
 		break;
 	}
 }

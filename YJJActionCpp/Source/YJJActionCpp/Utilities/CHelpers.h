@@ -70,7 +70,7 @@ public:
 	}
 
 	template<typename T>
-	static T* FindActor(UWorld* InWorld)
+	static T* FindActor(const TWeakObjectPtr<UWorld> InWorld)
 	{
 		for (AActor* actor : InWorld->GetCurrentLevel()->Actors)
 		{
@@ -82,7 +82,7 @@ public:
 	}
 
 	template<typename T>
-	static void FindActors(UWorld* InWorld, TArray<T*>& OutActors)
+	static void FindActors(const TWeakObjectPtr<UWorld> InWorld, TArray<T*>& OutActors)
 	{
 		for (AActor* actor : InWorld->GetCurrentLevel()->Actors)
 		{
@@ -132,42 +132,42 @@ public:
 		return weaponType;
 	}
 
-	static void PlayEffect(UWorld* InWorld, UFXSystemAsset* InAsset,
-		const FTransform& InTransform, USkeletalMeshComponent* InMesh = nullptr,
+	static void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const TWeakObjectPtr<UFXSystemAsset> InAsset,
+		const FTransform& InTransform, const TWeakObjectPtr<USkeletalMeshComponent> InMesh = nullptr,
 		FName InSocketName = NAME_None)
 	{
-		UParticleSystem* particle = Cast<UParticleSystem>(InAsset);
-		UNiagaraSystem* niagara = Cast<UNiagaraSystem>(InAsset);
+		const TWeakObjectPtr<UParticleSystem> particle = Cast<UParticleSystem>(InAsset);
+		const TWeakObjectPtr<UNiagaraSystem> niagara = Cast<UNiagaraSystem>(InAsset);
 
 		FVector location = InTransform.GetLocation();
 		FRotator rotation = FRotator(InTransform.GetRotation());
 		FVector scale = InTransform.GetScale3D();
 
-		if (!!InMesh)
+		if (!!InMesh.Get())
 		{
-			if (!!particle)
+			if (!!particle.Get())
 			{
-				UGameplayStatics::SpawnEmitterAttached(particle, InMesh, InSocketName, location, rotation, scale);
+				UGameplayStatics::SpawnEmitterAttached(particle.Get(), InMesh.Get(), InSocketName, location, rotation, scale);
 				return;
 			}
 
-			if (!!niagara)
+			if (!!niagara.Get())
 			{
-				UNiagaraFunctionLibrary::SpawnSystemAttached(niagara,InMesh, InSocketName, location, rotation, scale,
+				UNiagaraFunctionLibrary::SpawnSystemAttached(niagara.Get(), InMesh.Get(), InSocketName, location, rotation, scale,
 					EAttachLocation::KeepRelativeOffset,true, ENCPoolMethod::None);
 				return;
 			}
 		}
 
-		if (!!particle)
+		if (!!particle.Get())
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(InWorld, particle, InTransform);
+			UGameplayStatics::SpawnEmitterAtLocation(InWorld.Get(), particle.Get(), InTransform);
 			return;
 		}
 
-		if (!!niagara)
+		if (!!niagara.Get())
 		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(InWorld, niagara, location, rotation, scale);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(InWorld.Get(), niagara.Get(), location, rotation, scale);
 			return;
 		}
 	}

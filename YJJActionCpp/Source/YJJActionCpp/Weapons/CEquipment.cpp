@@ -23,6 +23,10 @@ void UCEquipment::Equip_Implementation()
 	if (Data.bUseControlRotation)
 		MovementComp->EnableControlRotation();
 
+	TWeakObjectPtr<UCMovementComponent> movement = Cast<UCMovementComponent>(
+		Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
+	movement->SetRunSpeed();
+
 	if (!!Data.Montage)
 		Owner->PlayAnimMontage(Data.Montage, Data.PlayRate);
 	else
@@ -30,6 +34,10 @@ void UCEquipment::Equip_Implementation()
 		Begin_Equip();
 		End_Equip();
 	}
+
+	for (const auto& sound : Data.Sounds)
+		if (!!sound)
+			Data.PlaySoundWave(Owner.Get());
 }
 
 void UCEquipment::Begin_Equip_Implementation()
@@ -45,14 +53,18 @@ void UCEquipment::End_Equip_Implementation()
 	bBeginEquip = false;
 	bEquipped = true;
 
-	MovementComp->Move();
 	StateComp->SetIdleMode();
+	MovementComp->Move();
 }
 
 void UCEquipment::Unequip_Implementation()
 {
 	bEquipped = false;
 	MovementComp->DisableControlRotation();
+
+	TWeakObjectPtr<UCMovementComponent> movement = Cast<UCMovementComponent>(
+		Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
+	movement->SetSprintSpeed();
 
 	if (OnEquipmentUnequip.IsBound())
 		OnEquipmentUnequip.Broadcast();

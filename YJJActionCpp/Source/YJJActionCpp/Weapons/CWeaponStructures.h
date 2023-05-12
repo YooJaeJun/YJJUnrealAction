@@ -38,6 +38,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		bool bUseControlRotation = true;
+
+	UPROPERTY(EditAnywhere)
+		TArray<USoundWave*> Sounds;
+
+public:
+	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner);
 };
 
 
@@ -75,10 +81,10 @@ public:
 		FVector EffectScale = FVector::OneVector;
 
 public:
-	void Act(ACCommonCharacter* InOwner);
-	void PlaySoundWave(ACCommonCharacter* InOwner);
-	void PlayEffect(UWorld* InWorld, const FVector& InLocation);
-	void PlayEffect(UWorld* InWorld, const FVector& InLocation, const FRotator& InRotation);
+	void Act(const TWeakObjectPtr<ACCommonCharacter> InOwner);
+	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner);
+	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation);
+	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation);
 };
 
 
@@ -119,12 +125,13 @@ public:
 		EAttackType AttackType = EAttackType::None;
 
 public:
-	void SendDamage(ACCommonCharacter* InAttacker, AActor* InAttackCauser, ACCommonCharacter* InOther);
-	void PlayMontage(ACCommonCharacter* InOwner);
-	void PlayHitStop(UWorld* InWorld);
-	void PlaySoundWave(ACCommonCharacter* InOwner);
-	void PlayEffect(UWorld* InWorld, const FVector& InLocation);
-	void PlayEffect(UWorld* InWorld, const FVector& InLocation, const FRotator& InRotation);
+	void SendDamage(const TWeakObjectPtr<ACCommonCharacter> InAttacker, const TWeakObjectPtr<AActor> InAttackCauser,
+		const TWeakObjectPtr<ACCommonCharacter> InOther);
+	void PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner);
+	void PlayHitStop(const TWeakObjectPtr<UWorld> InWorld);
+	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner);
+	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation);
+	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation);
 };
 
 USTRUCT()

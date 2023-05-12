@@ -50,7 +50,7 @@ public:
 	virtual void End_Act();
 
 protected:
-	bool bBeginAct;
+	bool bBeginAct = false;
 
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UWorld> World;

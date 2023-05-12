@@ -42,17 +42,17 @@ void UCMovementComponent::SetMaxWalkSpeed(const float Speed) const
 	Owner->GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
 
-void UCMovementComponent::SetWalkSpeed(const float InSpeed) const
+void UCMovementComponent::SetWalkSpeed() const
 {
 	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[(uint8)ESpeedType::Walk];
 }
 
-void UCMovementComponent::SetRunSpeed(const float InSpeed) const
+void UCMovementComponent::SetRunSpeed() const
 {
 	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[(uint8)ESpeedType::Run];
 }
 
-void UCMovementComponent::SetSprintSpeed(const float InSpeed) const
+void UCMovementComponent::SetSprintSpeed() const
 {
 	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[(uint8)ESpeedType::Sprint];
 }

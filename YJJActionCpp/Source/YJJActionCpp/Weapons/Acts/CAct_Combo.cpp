@@ -69,7 +69,7 @@ void UCAct_Combo::OnAttachmentEndCollision()
 		FVector forward = FQuat(Owner->GetActorRotation()).GetForwardVector();
 
 		float dot = FVector::DotProduct(direction, forward);
-		if (dot >= angle)
+		if (dot >= 0.7f && angle <= dot)
 		{
 			angle = dot;
 			candidate = hitted;

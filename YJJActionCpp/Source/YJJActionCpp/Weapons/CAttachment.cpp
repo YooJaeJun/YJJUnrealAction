@@ -56,6 +56,18 @@ void ACAttachment::AttachToCollision(FName InCollisionName)
 	}
 }
 
+void ACAttachment::DetachTo(FName InSocketName)
+{
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+}
+
+void ACAttachment::DetachToCollision(FName InCollisionName)
+{
+	for (UShapeComponent* collision : Collisions)
+		if (collision->GetName() == InCollisionName.ToString())
+			collision->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+}
+
 void ACAttachment::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {

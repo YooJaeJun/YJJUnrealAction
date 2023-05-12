@@ -32,9 +32,9 @@ public:
 	void SetSpeeds(const TArray<float> InSpeeds);
 	void SetSpeed(const ESpeedType Index) const;
 	void SetMaxWalkSpeed(const float InSpeed) const;
-	void SetWalkSpeed(const float InSpeed) const;
-	void SetRunSpeed(const float InSpeed) const;
-	void SetSprintSpeed(const float InSpeed) const;
+	void SetWalkSpeed() const;
+	void SetRunSpeed() const;
+	void SetSprintSpeed() const;
 	void SetLerpMove();
 	void IsLerpMove() const;
 
