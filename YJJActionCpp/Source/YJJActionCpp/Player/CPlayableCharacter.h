@@ -78,7 +78,4 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 		TArray<float> Speeds{ 200, 500, 800 };
-
-private:
-	FTimerHandle DestroyDelayTimerHandle;
 };

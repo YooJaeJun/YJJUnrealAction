@@ -85,16 +85,17 @@ void UCMontagesComponent::PlayAnimMontage(const EStateType InType, const TWeakOb
 	if (nullptr == data.Montage)
 	{
 		GLog->Log(ELogVerbosity::Error, "No Montages Data");
-
 		return;
 	}
 
-	if (InInput->GetAxisValue("MoveRight") > 0)
-		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Right");
-	else if (InInput->GetAxisValue("MoveRight") < 0)
-		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Left");
-	else if (InInput->GetAxisValue("MoveForward") > 0)
+	Owner->SetActorRotation(Owner->MyCurController->GetControlRotation());
+
+	if (InInput->GetAxisValue("MoveForward") > 0)
 		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Front");
-	else
+	else if (InInput->GetAxisValue("MoveForward") < 0)
 		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Back");
+	else if (InInput->GetAxisValue("MoveRight") > 0)
+		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Right");
+	else
+		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Left");
 }

@@ -16,6 +16,8 @@ ACCommonCharacter::ACCommonCharacter()
 	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
 	CHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
 	CHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
+
+	CharacterStatComp->OnHpIsZero.AddUObject(this, &ACCommonCharacter::Dead);
 }
 
 void ACCommonCharacter::BeginPlay()
@@ -117,6 +119,11 @@ void ACCommonCharacter::Dead()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	MontagesComp->PlayDeadAnim();
+
+	FTimerHandle DestroyDelayTimerHandle;
+	GetWorldTimerManager().SetTimer(DestroyDelayTimerHandle, [this]() -> void {
+		Destroy();
+		}, 1.5f, false, 1.5f);
 }
 
 void ACCommonCharacter::End_Hit()

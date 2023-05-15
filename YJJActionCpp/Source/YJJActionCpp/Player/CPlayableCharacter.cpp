@@ -58,13 +58,6 @@ ACPlayableCharacter::ACPlayableCharacter()
 	GetCharacterMovement()->GroundFriction = 2;
 	GetCharacterMovement()->BrakingDecelerationWalking = 256;
 
-	CharacterStatComp->OnHpIsZero.AddLambda([this]() -> void {
-		MontagesComp->PlayDeadAnim();
-		GetWorldTimerManager().SetTimer(DestroyDelayTimerHandle, [this]() -> void {
-			Destroy();
-		}, 1.5f, false, 1.5f);
-	});
-
 	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));
 }
 
