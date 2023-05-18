@@ -23,27 +23,26 @@ void UCCharacterInfoComponent::InitializeComponent()
 	SetCharacterName(TEXT("Player"));
 }
 
-void UCCharacterInfoComponent::SetCharacterName(const FName InNewName)
+void UCCharacterInfoComponent::SetGroupIndex(int32 InNewGroupIndex)
 {
 	UCGameInstance* gameInst = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	CheckNull(gameInst);
 
-	CurInfo = gameInst->GetInfo(InNewName);
+	CurInfo = gameInst->GetInfo(InNewGroupIndex);
 
 	if (nullptr != CurInfo)
 	{
-		CurName = InNewName;
-		SetGroupIndex(CurInfo->GroupIndex);
+		CurGroupIndex = InNewGroupIndex;
 		SetBodyColor(CurInfo->BodyColor);
 	}
 	else
 		CLog::Log("New Name data doesn't exist.");
 }
 
-void UCCharacterInfoComponent::SetGroupIndex(int32 InNewGroupIndex)
+void UCCharacterInfoComponent::SetCharacterName(const FString InNewName)
 {
-	CurGroupIndex = InNewGroupIndex;
+	CurName = InNewName;
 }
 
 void UCCharacterInfoComponent::SetBodyColor(const FLinearColor& InNewColor)

@@ -20,6 +20,7 @@ void UCAct_Combo::Act()
 	CheckFalse(StateComp->IsIdleMode());
 
 	Super::Act();
+
 	ActDatas[Index].Act(Owner.Get());
 }
 

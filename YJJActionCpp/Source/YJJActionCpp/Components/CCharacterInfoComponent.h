@@ -20,8 +20,8 @@ protected:
 	virtual void InitializeComponent() override;
 
 public:
-	void SetCharacterName(const FName InNewName);
 	void SetGroupIndex(int32 InNewGroupIndex);
+	void SetCharacterName(const FString InNewName);
 	void SetBodyColor(const FLinearColor& InNewColor);
 
 	const FName GetCharacterName() const;
@@ -29,7 +29,7 @@ public:
 
 private:
 	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
-		FName CurName;
+		FString CurName;
 
 	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
 		int32 CurGroupIndex;

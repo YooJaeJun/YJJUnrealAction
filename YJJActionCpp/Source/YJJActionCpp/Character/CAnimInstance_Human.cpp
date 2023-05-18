@@ -44,7 +44,7 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 
 	CheckNull(StateComp);
 
-	StateType = StateComp->Type;
+	StateType = StateComp->CurMode;
 	Falling = (StateType == EStateType::Fall);
 	Hitting = (StateType == EStateType::Hit);
 }

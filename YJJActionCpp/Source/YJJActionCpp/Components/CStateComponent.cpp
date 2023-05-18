@@ -52,14 +52,19 @@ void UCStateComponent::SetRiseMode()
 	ChangeType(EStateType::Rise);
 }
 
+void UCStateComponent::SetRideMode()
+{
+	ChangeType(EStateType::Ride);
+}
+
 void UCStateComponent::ChangeType(const EStateType InType)
 {
-	PrevType = Type;
-	Type = InType;
+	PrevType = CurMode;
+	CurMode = InType;
 
 	if (OnStateTypeChanged.IsBound())
 	{
-		CLog::Print(Owner->GetName() + " : " + CHelpers::ConvertEnumToString(Type), -1, 5, FColor::Emerald);
-		OnStateTypeChanged.Broadcast(PrevType, Type);
+		CLog::Print(Owner->GetName() + " : " + CHelpers::ConvertEnumToString(CurMode), -1, 5, FColor::Emerald);
+		OnStateTypeChanged.Broadcast(PrevType, CurMode);
 	}
 }

@@ -75,6 +75,5 @@ public:
 	FAttachmentBeginOverlap OnAttachmentBeginOverlap;
 	FAttachmentEndOverlap OnAttachmentEndOverlap;
 
-protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 };

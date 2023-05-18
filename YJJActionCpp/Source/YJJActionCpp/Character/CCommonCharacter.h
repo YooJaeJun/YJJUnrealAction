@@ -98,7 +98,7 @@ protected:
 	struct FDamageData
 	{
 		float Power;
-		const ACCommonCharacter* Character;
+		const ACCommonCharacter* Attacker;
 		const AActor* Causer;
 
 		const FActDamageEvent* Event;

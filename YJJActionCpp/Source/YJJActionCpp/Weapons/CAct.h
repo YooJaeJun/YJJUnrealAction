@@ -22,9 +22,9 @@ public:
 
 	virtual void BeginPlay
 	(
+		ACCommonCharacter* InOwner,
 		ACAttachment* InAttachment,
 		UCEquipment* InEquipment,
-		ACCommonCharacter* InOwner,
 		const TArray<FActData>& InActDatas,
 		const TArray<FHitData>& InHitDatas
 	);

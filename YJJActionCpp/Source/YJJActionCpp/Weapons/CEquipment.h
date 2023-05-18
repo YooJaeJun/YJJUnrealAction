@@ -22,25 +22,25 @@ public:
 public:
 	UFUNCTION(BlueprintNativeEvent)
 		void Equip();
-	void Equip_Implementation();
+	virtual void Equip_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent)
 		void Begin_Equip();
-	void Begin_Equip_Implementation();
+	virtual void Begin_Equip_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent)
 		void End_Equip();
-	void End_Equip_Implementation();
+	virtual void End_Equip_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent)
 		void Unequip();
-	void Unequip_Implementation();
+	virtual void Unequip_Implementation();
 
 public:
 	FEquipmentBeginEquip OnEquipmentBeginEquip;
 	FEquipmentUnequip OnEquipmentUnequip;
 
-private:
+protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	FEquipmentData Data;
 

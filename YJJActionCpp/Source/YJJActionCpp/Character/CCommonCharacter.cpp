@@ -53,7 +53,7 @@ float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	Damage.Power = damage;
-	Damage.Character = Cast<ACCommonCharacter>(EventInstigator->GetPawn());
+	Damage.Attacker = Cast<ACCommonCharacter>(EventInstigator->GetPawn());
 	Damage.Causer = DamageCauser;
 
 	// UObject가 아니기 때문에 Cast 사용 불가
@@ -80,7 +80,7 @@ void ACCommonCharacter::Hit()
 		Damage.Power = 0;
 	}
 
-	// Damage
+	// Interaction
 	if (!!Damage.Event &&
 		!!Damage.Event->HitData)
 	{
@@ -94,7 +94,7 @@ void ACCommonCharacter::Hit()
 		if (false == CharacterStatComp->IsDead())
 		{
 			FVector start = GetActorLocation();
-			FVector target = Damage.Character->GetActorLocation();
+			FVector target = Damage.Attacker->GetActorLocation();
 			FVector direction = target - start;
 			direction.Normalize();
 
@@ -109,7 +109,7 @@ void ACCommonCharacter::Hit()
 		return;
 	}
 
-	Damage.Character = nullptr;
+	Damage.Attacker = nullptr;
 	Damage.Causer = nullptr;
 	Damage.Event = nullptr;
 }

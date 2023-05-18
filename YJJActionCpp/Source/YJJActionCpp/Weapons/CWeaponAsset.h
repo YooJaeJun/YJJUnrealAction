@@ -52,4 +52,12 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		TArray<FHitData> HitDatas;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<ACAttachment> SkillClass;
+
+	enum { SkillMax = 10 };
+
+	UPROPERTY()
+		ACAttachment* Skills[SkillMax];
 };

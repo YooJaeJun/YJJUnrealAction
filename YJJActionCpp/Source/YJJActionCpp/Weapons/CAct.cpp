@@ -10,8 +10,10 @@ UCAct::UCAct()
 {
 }
 
-void UCAct::BeginPlay(ACAttachment* InAttachment, UCEquipment* InEquipment, 
-	ACCommonCharacter* InOwner, const TArray<FActData>& InActDatas,
+void UCAct::BeginPlay(ACCommonCharacter* InOwner, 
+	ACAttachment* InAttachment, 
+	UCEquipment* InEquipment, 
+	const TArray<FActData>& InActDatas, 
 	const TArray<FHitData>& InHitDatas)
 {
 	Owner = InOwner;
@@ -19,9 +21,12 @@ void UCAct::BeginPlay(ACAttachment* InAttachment, UCEquipment* InEquipment,
 
 	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
 	MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+	
+	for (int i = 0; i < InActDatas.Num(); i++)
+		ActDatas.Emplace(InActDatas[i]);
 
-	ActDatas = InActDatas;
-	HitDatas = InHitDatas;
+	for (int i = 0; i < InHitDatas.Num(); i++)
+		HitDatas.Emplace(InHitDatas[i]);
 }
 
 void UCAct::Act()

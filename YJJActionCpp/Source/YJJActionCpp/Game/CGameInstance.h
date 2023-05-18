@@ -12,10 +12,10 @@ struct FCCharacterInfo : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Status")
-		FName Name;
+		int32 GroupIndex;
 
 	UPROPERTY(EditAnywhere, Category = "Status")
-		int32 GroupIndex;
+		FName Name;
 
 	UPROPERTY(EditAnywhere, Category = "Status")
 		FLinearColor BodyColor;
@@ -71,8 +71,8 @@ public:
 
 	virtual void Init() override;
 
-	FCCharacterInfo* GetInfo(const FName InName);
-	FCCharacterStat* GetStat(int32 InLevel);
+	FCCharacterInfo* GetInfo(const int32 InGroupIndex);
+	FCCharacterStat* GetStat(const int32 InLevel);
 
 private:
 	UPROPERTY()

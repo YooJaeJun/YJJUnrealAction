@@ -4,6 +4,7 @@
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Animation/AnimMontage.h"
+#include "Components/CCharacterStatComponent.h"
 
 void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner)
 {
@@ -19,6 +20,20 @@ void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwn
 
 void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner)
 {
+	TWeakObjectPtr<UCCharacterStatComponent> stat = 
+		Cast<UCCharacterStatComponent>(InOwner->GetComponentByClass(UCCharacterStatComponent::StaticClass()));
+
+	CheckNull(stat.Get());
+
+	if (stat->GetCurStamina() < Stamina)
+	{
+		// TODO 스태미나 부족 시스템메시지, 카메라 떨림
+		return;
+	}
+
+	stat->SetStaminaDamage(Stamina);
+	stat->SetManaDamage(Mana);
+
 	TWeakObjectPtr<UCMovementComponent> movement = CHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
 
 	if (!!movement.Get())
@@ -42,14 +57,14 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner)
 
 void FActData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner)
 {
-	for (const auto& sound : Sounds)
-		CheckNull(sound);
-
 	TWeakObjectPtr<UWorld> world = InOwner->GetWorld();
 	FVector location = InOwner->GetActorLocation();
 
 	for (const auto& sound : Sounds)
+	{
+		CheckNull(sound);
 		UGameplayStatics::SpawnSoundAtLocation(world.Get(), sound, location);
+	}
 }
 
 void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation)
