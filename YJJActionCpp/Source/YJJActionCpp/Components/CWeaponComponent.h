@@ -41,7 +41,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void Act();
+	void InputAction_Act();
 	void SetMode(EWeaponType InType);
 
 private:
@@ -60,6 +60,7 @@ public:
 	void SetHammerMode();
 	void SetDualMode();
 	void SetBowMode();
+	void SetWarpMode();
 	void SetAroundMode();
 	void SetFireballMode();
 	void SetBombMode();
@@ -72,6 +73,7 @@ public:
 	FORCEINLINE bool IsHammerMode() const { return Type == EWeaponType::Hammer; }
 	FORCEINLINE bool IsDualMode() const { return Type == EWeaponType::Dual; }
 	FORCEINLINE bool IsBowMode() const { return Type == EWeaponType::Bow; }
+	FORCEINLINE bool IsWarpMode() const { return Type == EWeaponType::Warp; }
 	FORCEINLINE bool IsAroundMode() const { return Type == EWeaponType::Around; }
 	FORCEINLINE bool IsFireballMode() const { return Type == EWeaponType::Fireball; }
 	FORCEINLINE bool IsBombMode() const { return Type == EWeaponType::Bomb; }

@@ -49,8 +49,8 @@ private:
 	UFUNCTION()
 		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
 
-public:
 	// ZoomComponent에서 사용
+public:
 	UPROPERTY(VisibleAnywhere)
 		UCTargetingComponent* TargetingComp;
 
@@ -71,7 +71,7 @@ private:
 		UCGameUIComponent* GameUIComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mode")
-		ACGameMode* GameMode;
+		TWeakObjectPtr<ACGameMode> GameMode;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 		FVector2D PitchRange = FVector2D(-40, +40);

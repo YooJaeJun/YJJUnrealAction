@@ -10,33 +10,9 @@ class AController;
 class UCWeaponComponent;
 struct FDamageEvent;
 
-UCLASS()
+UCLASS(Abstract)
 class YJJACTIONCPP_API ACEnemy :
 	public ACCommonCharacter
 {
 	GENERATED_BODY()
-
-public:
-	ACEnemy();
-
-protected:
-	virtual void BeginPlay() override;
-
-public:
-	virtual void Tick(float DeltaTime) override;
-
-private:
-	UFUNCTION()
-		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
-
-private:
-	virtual void Hit() override;
-	virtual void End_Hit() override;
-
-private:
-	UPROPERTY(VisibleAnywhere)
-		UCWeaponComponent* WeaponComp;
-
-private:
-	EAttackType CurAttackType = EAttackType::None;
 };

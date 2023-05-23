@@ -25,7 +25,7 @@ void UCWeaponComponent::BeginPlay()
 	}
 }
 
-void UCWeaponComponent::Act()
+void UCWeaponComponent::InputAction_Act()
 {
 	if (!!GetAct())
 		GetAct()->Act();
@@ -125,6 +125,12 @@ void UCWeaponComponent::SetDualMode()
 {
 	CheckFalse(IsIdleStateMode());
 	SetMode(EWeaponType::Dual);
+}
+
+void UCWeaponComponent::SetWarpMode()
+{
+	CheckFalse(IsIdleStateMode());
+	SetMode(EWeaponType::Warp);
 }
 
 void UCWeaponComponent::SetAroundMode()

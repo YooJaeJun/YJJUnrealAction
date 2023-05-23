@@ -17,7 +17,7 @@ class YJJACTIONCPP_API UCEquipment : public UObject
 	GENERATED_BODY()
 
 public:
-	void BeginPlay(ACCommonCharacter* InOwner, const FEquipmentData& InData);
+	virtual void BeginPlay(ACCommonCharacter* InOwner, const FEquipmentData& InData);
 
 public:
 	UFUNCTION(BlueprintNativeEvent)

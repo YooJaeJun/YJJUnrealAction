@@ -14,8 +14,6 @@ void UCEquipment_Warp::BeginPlay(ACCommonCharacter* InOwner, const FEquipmentDat
 void UCEquipment_Warp::Equip_Implementation()
 {
 	Super::Equip_Implementation();
-
-
 }
 
 void UCEquipment_Warp::Unequip_Implementation()

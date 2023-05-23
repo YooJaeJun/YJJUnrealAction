@@ -10,7 +10,6 @@ UCWeaponAsset::UCWeaponAsset()
 	AttachmentClass = ACAttachment::StaticClass();
 	EquipmentClass = UCEquipment::StaticClass();
 	ActClass = UCAct::StaticClass();
-	SkillClass = ACAttachment::StaticClass();
 }
 
 void UCWeaponAsset::BeginPlay(ACCommonCharacter* InOwner)
@@ -44,29 +43,8 @@ void UCWeaponAsset::BeginPlay(ACCommonCharacter* InOwner)
 		{
 			Attachment->OnAttachmentBeginCollision.AddDynamic(Act, &UCAct::OnAttachmentBeginCollision);
 			Attachment->OnAttachmentEndCollision.AddDynamic(Act, &UCAct::OnAttachmentEndCollision);
-
 			Attachment->OnAttachmentBeginOverlap.AddDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
 			Attachment->OnAttachmentEndOverlap.AddDynamic(Act, &UCAct::OnAttachmentEndOverlap);
 		}
-	}
-
-	if (!!SkillClass)
-	{
-		//for (auto& skill : Skills)
-		//{
-		//	CHelpers::GetAsset<ACAttachment>(&skill, "Blueprint'/Game/Weapons/Bow/BP_CAttachment_Arrow.BP_CAttachment_Arrow_C'");
-
-		//	Equipment->OnEquipmentBeginEquip.AddDynamic(skill, &ACAttachment::OnBeginEquip);
-		//	Equipment->OnEquipmentUnequip.AddDynamic(skill, &ACAttachment::OnUnequip);
-
-		//	if (!!Act)
-		//	{
-		//		skill->OnAttachmentBeginCollision.AddDynamic(Act, &UCAct::OnAttachmentBeginCollision);
-		//		skill->OnAttachmentEndCollision.AddDynamic(Act, &UCAct::OnAttachmentEndCollision);
-
-		//		skill->OnAttachmentBeginOverlap.AddDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
-		//		skill->OnAttachmentEndOverlap.AddDynamic(Act, &UCAct::OnAttachmentEndOverlap);
-		//	}
-		//}
 	}
 }

@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
 #include "Widgets/Weapons/CUserWidget_EquipMenu.h"
+#include "Widgets/Interaction/CUserWidget_Interaction.h"
 
 void UCUserWidget_HUD::SetChild()
 {
@@ -15,5 +16,11 @@ void UCUserWidget_HUD::SetChild()
 	{
 		EquipMenu = Cast<UCUserWidget_EquipMenu>(GetWidgetFromName(TEXT("CEquipMenu")));
 		EquipMenu->SetChild();
+	}
+
+	if (nullptr == Interaction)
+	{
+		Interaction = Cast<UCUserWidget_Interaction>(GetWidgetFromName(TEXT("CInteraction")));
+		Interaction->SetChild();
 	}
 }

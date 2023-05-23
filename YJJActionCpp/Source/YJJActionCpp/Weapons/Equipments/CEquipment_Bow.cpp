@@ -1,4 +1,5 @@
 #include "Weapons/Equipments/CEquipment_Bow.h"
+#include "Global.h"
 
 void UCEquipment_Bow::End_Equip_Implementation()
 {

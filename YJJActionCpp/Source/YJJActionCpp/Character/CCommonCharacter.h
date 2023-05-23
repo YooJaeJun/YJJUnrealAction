@@ -13,7 +13,6 @@ class UCCharacterInfoComponent;
 class UCCharacterStatComponent;
 struct FActDamageEvent;
 class UCWeaponStructures;
-class UCInterface_CharacterBody;
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API ACCommonCharacter :

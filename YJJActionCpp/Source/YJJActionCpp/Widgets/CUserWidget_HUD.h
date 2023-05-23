@@ -6,6 +6,7 @@
 
 class UCUserWidget_PlayerInfo;
 class UCUserWidget_EquipMenu;
+class UCUserWidget_Interaction;
 
 UCLASS()
 class YJJACTIONCPP_API UCUserWidget_HUD : public UCUserWidget_Custom
@@ -21,4 +22,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
 		UCUserWidget_EquipMenu* EquipMenu;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
+		UCUserWidget_Interaction* Interaction;
 };
