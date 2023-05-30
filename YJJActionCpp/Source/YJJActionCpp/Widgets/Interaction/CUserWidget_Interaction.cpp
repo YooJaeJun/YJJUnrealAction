@@ -8,6 +8,13 @@ void UCUserWidget_Interaction::BindChildren()
 	Text = Cast<UTextBlock>(GetWidgetFromName(TEXT("CInteractionText")));
 }
 
+void UCUserWidget_Interaction::SetChildren(UTexture2D* InKeyTexture, const FText& InText)
+{
+	SetKeyIcon(InKeyTexture);
+	SetText(InText);
+	SetVisibility(ESlateVisibility::Collapsed);
+}
+
 void UCUserWidget_Interaction::SetKeyIcon(UTexture2D* InKeyTexture)
 {
 	KeyIcon->SetBrushFromTexture(InKeyTexture);

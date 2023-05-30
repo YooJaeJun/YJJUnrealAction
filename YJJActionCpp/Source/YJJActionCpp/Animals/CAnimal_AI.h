@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Animals/CAnimal.h"
-#include "Character/CInterface_Rideable.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "CAnimal_AI.generated.h"
 
@@ -17,11 +16,11 @@ class UCPatrolComponent;
 class UBoxComponent;
 class CUserWidget_HUD;
 class CUserWidget_Interaction;
+class ACCommonCharacter;
 
 UCLASS()
 class YJJACTIONCPP_API ACAnimal_AI :
-	public ACAnimal,
-	public ICInterface_Rideable
+	public ACAnimal
 {
 	GENERATED_BODY()
 
@@ -34,20 +33,29 @@ protected:
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	// ZoomComponent에서 사용
 public:
+	FORCEINLINE UBoxComponent* GetInteractionCollision() { return InteractionCollision; }
+	FORCEINLINE USceneComponent* GetMountRightPoint() { return MountRightPoint; }
+	FORCEINLINE USceneComponent* GetMountLeftPoint() { return MountLeftPoint; }
+	FORCEINLINE USceneComponent* GetMountBackPoint() { return MountBackPoint; }
+	FORCEINLINE USceneComponent* GetRiderPoint() { return RiderPoint; }
+	FORCEINLINE USceneComponent* GetUnmountPoint() { return UnmountPoint; }
+	FORCEINLINE USceneComponent* GetEyePoint() { return EyePoint; }
+
+	FORCEINLINE USpringArmComponent* GetSpringArm() { return SpringArm; }
+	FORCEINLINE UCameraComponent* GetCamera() { return Camera; }
+	FORCEINLINE UCTargetingComponent* GetTargetingComp() { return TargetingComp; }
+
+
+private:
 	UPROPERTY(VisibleAnywhere)
 		USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
-		UCTargetingComponent* TargetingComp;
-
-private:
-	UPROPERTY(VisibleAnywhere)
-		USceneComponent* RiderPoint;
-
-	UPROPERTY(VisibleAnywhere)
 		UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere)
+		UCTargetingComponent* TargetingComp;
 
 	UPROPERTY(VisibleAnywhere)
 		UCZoomComponent* ZoomComp;
@@ -58,26 +66,30 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		UCPatrolComponent* PatrolComp;
 
+	// Rider
 	UPROPERTY(VisibleAnywhere)
 		UCRidingComponent* RidingComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UBoxComponent* InteractionCollision;
+		USceneComponent* MountRightPoint;
 
 	UPROPERTY(VisibleAnywhere)
-		USceneComponent* MountRight;
+		USceneComponent* MountLeftPoint;
 
 	UPROPERTY(VisibleAnywhere)
-		USceneComponent* MountLeft;
+		USceneComponent* MountBackPoint;
 
 	UPROPERTY(VisibleAnywhere)
-		USceneComponent* MountBack;
+		USceneComponent* RiderPoint;
 
 	UPROPERTY(VisibleAnywhere)
-		USceneComponent* Unmount;
+		USceneComponent* UnmountPoint;
 
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* EyePoint;
+
+	UPROPERTY(VisibleAnywhere)
+		UBoxComponent* InteractionCollision;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 		TArray<float> Speeds{ 400, 1000, 1600 };

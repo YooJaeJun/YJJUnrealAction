@@ -4,7 +4,7 @@
 #include "Widgets/Weapons/CUserWidget_EquipMenu.h"
 #include "Widgets/Interaction/CUserWidget_Interaction.h"
 
-void UCUserWidget_HUD::SetChild()
+void UCUserWidget_HUD::SetChildren()
 {
 	if (nullptr == PlayerInfo)
 	{

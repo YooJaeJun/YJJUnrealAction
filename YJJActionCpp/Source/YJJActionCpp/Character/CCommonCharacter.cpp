@@ -8,6 +8,7 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Weapons/CWeaponStructures.h"
 #include "UMG/Public/Blueprint/WidgetLayoutLibrary.h"
+#include "Animals/CAnimal_AI.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -45,6 +46,13 @@ void ACCommonCharacter::Tick(float DeltaSeconds)
 		if (UKismetMathLibrary::EqualEqual_RotatorRotator(start, target, 1.0f))
 			bTickLerpForTarget = false;
 	}
+}
+
+void ACCommonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &ACCommonCharacter::InputAction_Interact);
 }
 
 float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
@@ -161,4 +169,24 @@ void ACCommonCharacter::TogglebTickLerpForTarget()
 void ACCommonCharacter::SetMousePos(const FVector2D InPos)
 {
 	MousePos = InPos;
+}
+
+void ACCommonCharacter::SetInteractor(ACCommonCharacter* InCharacter)
+{
+	Interactor = InCharacter;
+}
+
+void ACCommonCharacter::SetRider(ACCommonCharacter* InCharacter)
+{
+	Rider = InCharacter;
+}
+
+void ACCommonCharacter::InputAction_Interact()
+{
+	CheckNull(Interactor);
+
+	if (OnInteract.IsBound())
+		OnInteract.Broadcast(this);
+
+	Rider = MoveTemp(Interactor);
 }

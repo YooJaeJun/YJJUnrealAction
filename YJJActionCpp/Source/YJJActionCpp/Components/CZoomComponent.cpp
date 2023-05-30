@@ -17,7 +17,7 @@ void UCZoomComponent::BeginPlay()
 	Super::BeginPlay();
 	CheckNull(Owner);
 
-	Zooming = Owner->SpringArm->TargetArmLength;
+	Zooming = Owner->GetSpringArm()->TargetArmLength;
 }
 
 void UCZoomComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -27,11 +27,11 @@ void UCZoomComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	CheckNull(Owner);
 
 	if (UKismetMathLibrary::NearlyEqual_FloatFloat(
-		Zooming, Owner->SpringArm->TargetArmLength, 0.1f))
+		Zooming, Owner->GetSpringArm()->TargetArmLength, 0.1f))
 		return;
 
-	Owner->SpringArm->TargetArmLength = UKismetMathLibrary::FInterpTo(
-		Owner->SpringArm->TargetArmLength,
+	Owner->GetSpringArm()->TargetArmLength = UKismetMathLibrary::FInterpTo(
+		Owner->GetSpringArm()->TargetArmLength,
 		Zooming,
 		UGameplayStatics::GetWorldDeltaSeconds(GetWorld()),
 		ZoomData.InterpSpeed
@@ -45,13 +45,13 @@ void UCZoomComponent::InputAxis_Zoom(const float InAxis)
 
 	CheckNull(Owner);
 
-	if (!!Owner->TargetingComp && 
-		Owner->TargetingComp->IsTargeting)
+	if (!!Owner->GetTargetingComp() && 
+		Owner->GetTargetingComp()->IsTargeting)
 	{
 		if (InAxis > 0.0f)
-			Owner->TargetingComp->ChangeFocus(true);
+			Owner->GetTargetingComp()->ChangeFocus(true);
 		else
-			Owner->TargetingComp->ChangeFocus(false);
+			Owner->GetTargetingComp()->ChangeFocus(false);
 	}
 	else
 	{

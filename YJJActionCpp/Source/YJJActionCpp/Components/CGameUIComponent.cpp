@@ -27,7 +27,7 @@ void UCGameUIComponent::BeginPlay()
 		TWeakObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
 		if (hud.Get())
 		{
-			hud->SetChild();
+			hud->SetChildren();
 
 			EquipMenu = hud->EquipMenu;
 
@@ -46,18 +46,22 @@ void UCGameUIComponent::BeginPlay()
 void UCGameUIComponent::OnWeaponEquipped(const EWeaponType InNewType)
 {
 	ACPlayableCharacter* player = Cast<ACPlayableCharacter>(Owner);
+	CheckNull(player);
 
 	UCWeaponComponent* weaponComponent = CHelpers::GetComponent<UCWeaponComponent>(player);
+	CheckNull(weaponComponent);
 
 	weaponComponent->SetMode(InNewType);
 }
 
 void UCGameUIComponent::InputAction_ActivateEquipMenu()
 {
+	CheckNull(EquipMenu);
 	EquipMenu->Activate(0.1f);
 }
 
 void UCGameUIComponent::InputAction_DeactivateEquipMenu()
 {
+	CheckNull(EquipMenu);
 	EquipMenu->Deactivate(1.0f);
 }

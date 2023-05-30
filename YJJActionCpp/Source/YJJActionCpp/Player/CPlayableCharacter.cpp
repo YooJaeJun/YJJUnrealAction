@@ -22,6 +22,7 @@
 #include "Widgets/Player/CUserWidget_PlayerBar.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
 #include "Widgets/Player/CUserWidget_PlayerLevel.h"
+#include "Components/CRidingComponent.h"
 
 ACPlayableCharacter::ACPlayableCharacter()
 {
@@ -77,23 +78,11 @@ void ACPlayableCharacter::BeginPlay()
 	TWeakObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
 	if (hud.Get())
 	{
-		hud->SetChild();
+		hud->SetChildren();
 
 		TWeakObjectPtr<UCUserWidget_PlayerInfo> playerInfo = hud->PlayerInfo;
 		if (!!playerInfo.Get())
-		{
-			if (!!playerInfo->LevelBar)
-				hud->PlayerInfo->LevelBar->BindLevelStat(CharacterStatComp);
-
-			if (!!playerInfo->HpBar)
-				hud->PlayerInfo->HpBar->BindHpStat(CharacterStatComp);
-
-			if (!!playerInfo->StaminaBar)
-				hud->PlayerInfo->StaminaBar->BindStaminaStat(CharacterStatComp);
-
-			if (!!playerInfo->ManaBar)
-				hud->PlayerInfo->ManaBar->BindManaStat(CharacterStatComp);
-		}
+			playerInfo->BindStats(CharacterStatComp);
 	}
 }
 

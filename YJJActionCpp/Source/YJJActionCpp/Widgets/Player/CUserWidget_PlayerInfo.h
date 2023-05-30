@@ -6,6 +6,7 @@
 
 class UCUserWidget_PlayerBar;
 class UCUserWidget_PlayerLevel;
+class UCCharacterStatComponent;
 
 UCLASS()
 class YJJACTIONCPP_API UCUserWidget_PlayerInfo : public UCUserWidget_Custom
@@ -14,6 +15,7 @@ class YJJACTIONCPP_API UCUserWidget_PlayerInfo : public UCUserWidget_Custom
 
 public:
 	void BindChildren();
+	void BindStats(UCCharacterStatComponent* StatComp);
 
 public:
 	UPROPERTY()

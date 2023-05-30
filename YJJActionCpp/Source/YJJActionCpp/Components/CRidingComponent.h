@@ -14,16 +14,34 @@ class UCUserWidget_Interaction;
 class ACAnimal_AI;
 class AAIController;
 class UTexture2D;
+class USceneComponent;
+class USpringArmComponent;
+class UCameraComponent;
+class UCMovementComponent;
+class UCStateComponent;
 
 UENUM()
 enum class ERidingState : uint8
 {
+	None,
 	ToMountPoint,
 	Mounting,
 	MountingEnd,
 	Riding,
 	Unmounting,
 	UnmountingEnd
+};
+
+UENUM()
+enum class ERidingPoint : uint8
+{
+	CurMount,
+	CandidateLeft,
+	CandidateRight,
+	CandidateBack,
+	Rider,
+	Unmount,
+	Max
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -52,27 +70,64 @@ public:
 		void EndOverlap(UPrimitiveComponent* OverlappedComponent, 
 			AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-private:
-	virtual void Interact(ACCommonCharacter* InteractingActor) override;
+public:
+	void SetInteractableCharacter(TWeakObjectPtr<ACCommonCharacter> InCharacter, 
+		const TWeakObjectPtr<ACCommonCharacter> InOtherCharacter);
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Settings")
-		USkeletalMeshComponent* Mesh;
+	void Tick_ToMountPoint();
+	void Tick_Mounting();
+	void Tick_MountingEnd();
+	void Tick_Riding();
+	void Tick_Unmounting();
+	void Tick_UnmountingEnd();
 
-	UPROPERTY(VisibleAnywhere, Category = "Settings")
-		UBoxComponent* InteractionCollision;
+public:
+	void CheckValidPoint();
+	bool MoveToPoint(ACCommonCharacter* Char, const USceneComponent* To);
 
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		ERidingState RidingState;
+	void Input_Zoom(const float InAxis) {}
+	void Input_Targeting() {}
+	void ApplyZoom() {}
 
+	void CancelHitAnim() {}
+
+	void SetStatusUI() {}
+	void OnStatusUI() {}
+
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		ACAnimal_AI* Owner;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		ACCommonCharacter* Rider;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Interact")
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		UCUserWidget_HUD* Hud;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		ERidingState RidingState;
+
+	UPROPERTY(VisibleAnywhere, Category = "Settings")
+		USkeletalMeshComponent* Mesh;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		USpringArmComponent* SpringArm;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		UCameraComponent* Camera;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		UCMovementComponent* MovementComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		UCStateComponent* StateComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		USceneComponent* RidingPoints[static_cast<uint8>(ERidingPoint::Max)];
+
+	UPROPERTY(VisibleAnywhere, Category = "Settings")
+		UBoxComponent* InteractionCollision;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Interact")
 		UCUserWidget_Interaction* Interaction;
@@ -84,13 +139,13 @@ private:
 		FText InteractionText;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		UAnimMontage* MountAnim;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		float MountRotationZFactor = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		EDirection MountDir;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Zoom")
+		float Zooming;
 
 	//UPROPERTY(EditDefaultsOnly, Category = "Mount")
 	//	AAIController* AIControllerSave;

@@ -14,19 +14,19 @@
 
 ACAnimal_AI::ACAnimal_AI()
 {
-	CHelpers::CreateComponent<USceneComponent>(this, &RiderPoint, "RiderPoint", GetMesh());
 	CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", RiderPoint);
 	CHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
-	CHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &MountRight, "MountRight", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &MountLeft, "MountLeft", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &MountBack, "MountBack", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &Unmount, "Unmount", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComp, "ZoomComponent");
 	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 	CHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
 	CHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
+	CHelpers::CreateComponent<USceneComponent>(this, &MountRightPoint, "MountRightPoint", GetMesh());
+	CHelpers::CreateComponent<USceneComponent>(this, &MountLeftPoint, "MountLeftPoint", GetMesh());
+	CHelpers::CreateComponent<USceneComponent>(this, &MountBackPoint, "MountBackPoint", GetMesh());
+	CHelpers::CreateComponent<USceneComponent>(this, &RiderPoint, "RiderPoint", GetMesh());
+	CHelpers::CreateComponent<USceneComponent>(this, &UnmountPoint, "UnmountPoint", GetMesh());
+	CHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
+	CHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
 }
 
 void ACAnimal_AI::BeginPlay()

@@ -13,6 +13,9 @@ class UCCharacterInfoComponent;
 class UCCharacterStatComponent;
 struct FActDamageEvent;
 class UCWeaponStructures;
+class ACAnimal_AI;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteract, ACCommonCharacter*, Object);
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API ACCommonCharacter :
@@ -30,6 +33,8 @@ protected:
 
 public:
 	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
@@ -60,14 +65,25 @@ public:
 	void TogglebTickLerpForTarget();
 
 public:
-	FORCEINLINE const FVector2D& GetMousePos() { return MousePos; }
 	void SetMousePos(const FVector2D InPos);
-
-private:
-	UPROPERTY()
-		FVector2D MousePos;
+	FORCEINLINE const FVector2D& GetMousePos() { return MousePos; }
 
 public:
+	void SetInteractor(ACCommonCharacter* InCharacter);
+
+	UFUNCTION()
+		void SetRider(ACCommonCharacter* InCharacter);
+
+	FORCEINLINE ACCommonCharacter* GetInteractor() { return Interactor; };
+	FORCEINLINE ACCommonCharacter* GetRider() { return Rider; };
+
+protected:
+	void InputAction_Interact();
+
+public:
+	UPROPERTY()
+		FInteract OnInteract;
+
 	UPROPERTY(VisibleAnywhere)
 		UCStateComponent* StateComp;
 
@@ -86,6 +102,16 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Color")
 		FLinearColor OriginColor = FLinearColor::White;
+
+private:
+	UPROPERTY()
+		FVector2D MousePos;
+
+	UPROPERTY(VisibleAnywhere)
+		ACCommonCharacter* Interactor;
+
+	UPROPERTY(VisibleAnywhere)
+		ACCommonCharacter* Rider;
 
 public:
 	TWeakObjectPtr<AController> MyCurController;

@@ -1,7 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Character/CCommonCharacter.h"
-#include "Character/CInterface_CharacterAnim.h"
+#include "Components/CStateComponent.h"
 #include "CPlayableCharacter.generated.h"
 
 class USkeletalMeshComponent;
@@ -49,20 +49,22 @@ private:
 	UFUNCTION()
 		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
 
-	// ZoomComponent에서 사용
 public:
-	UPROPERTY(VisibleAnywhere)
-		UCTargetingComponent* TargetingComp;
+	FORCEINLINE USpringArmComponent* GetSpringArm() { return SpringArm; }
+	FORCEINLINE UCTargetingComponent* GetTargetingComp() { return TargetingComp; }
 
+private:
 	UPROPERTY(VisibleAnywhere)
 		USpringArmComponent* SpringArm;
 
-private:
 	UPROPERTY(VisibleAnywhere)
 		UCameraComponent* Camera;
 
 	UPROPERTY(VisibleAnywhere)
 		UCWeaponComponent* WeaponComp;
+
+	UPROPERTY(VisibleAnywhere)
+		UCTargetingComponent* TargetingComp;
 
 	UPROPERTY(VisibleAnywhere)
 		UCZoomComponent* ZoomComp;

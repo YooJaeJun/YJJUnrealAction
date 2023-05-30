@@ -14,7 +14,7 @@ class YJJACTIONCPP_API UCUserWidget_HUD : public UCUserWidget_Custom
 	GENERATED_BODY()
 
 public:
-	void SetChild();
+	void SetChildren();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")

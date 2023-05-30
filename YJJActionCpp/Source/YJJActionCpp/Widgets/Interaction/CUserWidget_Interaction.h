@@ -13,6 +13,9 @@ class YJJACTIONCPP_API UCUserWidget_Interaction : public UCUserWidget_Custom
 
 public:
 	void BindChildren();
+	void SetChildren(UTexture2D* InKeyTexture, const FText& InText);
+
+private:
 	void SetKeyIcon(UTexture2D* InKeyTexture);
 	void SetText(const FText& InText);
 
