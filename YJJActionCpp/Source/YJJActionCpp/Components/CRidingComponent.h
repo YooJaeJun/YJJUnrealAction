@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Character/CInterface_Interactable.h"
+#include "Game/CEnums.h"
 #include "CRidingComponent.generated.h"
 
 class USkeletalMeshComponent;
@@ -10,6 +11,20 @@ class ACCommonCharacter;
 class ACGameMode;
 class UCUserWidget_HUD;
 class UCUserWidget_Interaction;
+class ACAnimal_AI;
+class AAIController;
+class UTexture2D;
+
+UENUM()
+enum class ERidingState : uint8
+{
+	ToMountPoint,
+	Mounting,
+	MountingEnd,
+	Riding,
+	Unmounting,
+	UnmountingEnd
+};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class YJJACTIONCPP_API UCRidingComponent :
@@ -26,7 +41,7 @@ protected:
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 public:
 	UFUNCTION()
 		void BeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -41,18 +56,42 @@ private:
 	virtual void Interact(ACCommonCharacter* InteractingActor) override;
 
 private:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Settings")
 		USkeletalMeshComponent* Mesh;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Settings")
 		UBoxComponent* InteractionCollision;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		ERidingState RidingState;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		ACAnimal_AI* Owner;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		ACCommonCharacter* Rider;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Interact")
 		UCUserWidget_HUD* Hud;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	UPROPERTY(EditDefaultsOnly, Category = "Interact")
 		UCUserWidget_Interaction* Interaction;
 
-private:
-	TWeakObjectPtr<ACCommonCharacter> Owner;
+	UPROPERTY(EditDefaultsOnly, Category = "Interact")
+		UTexture2D* InteractionKeyTexture;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Interact")
+		FText InteractionText;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		UAnimMontage* MountAnim;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		float MountRotationZFactor = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		EDirection MountDir;
+
+	//UPROPERTY(EditDefaultsOnly, Category = "Mount")
+	//	AAIController* AIControllerSave;
 };

@@ -2,8 +2,18 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 
-void UCUserWidget_Interaction::SetChild()
+void UCUserWidget_Interaction::BindChildren()
 {
 	KeyIcon = Cast<UImage>(GetWidgetFromName(TEXT("CKeyIcon")));
-	InteractionText = Cast<UTextBlock>(GetWidgetFromName(TEXT("CInteractionText")));
+	Text = Cast<UTextBlock>(GetWidgetFromName(TEXT("CInteractionText")));
+}
+
+void UCUserWidget_Interaction::SetKeyIcon(UTexture2D* InKeyTexture)
+{
+	KeyIcon->SetBrushFromTexture(InKeyTexture);
+}
+
+void UCUserWidget_Interaction::SetText(const FText& InText)
+{
+	Text->SetText(InText);
 }

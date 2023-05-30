@@ -3,7 +3,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "CUserWidget_EquipMenuButton.h"
 
-void UCUserWidget_EquipMenu::SetChild()
+void UCUserWidget_EquipMenu::BindChildren()
 {
 	for (int i=0; ; i++)
 	{

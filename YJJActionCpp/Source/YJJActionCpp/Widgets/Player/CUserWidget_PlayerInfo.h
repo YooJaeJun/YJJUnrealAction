@@ -13,7 +13,7 @@ class YJJACTIONCPP_API UCUserWidget_PlayerInfo : public UCUserWidget_Custom
 	GENERATED_BODY()
 
 public:
-	void SetChild();
+	void BindChildren();
 
 public:
 	UPROPERTY()

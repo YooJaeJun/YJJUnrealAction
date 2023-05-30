@@ -47,8 +47,7 @@ void UCGameUIComponent::OnWeaponEquipped(const EWeaponType InNewType)
 {
 	ACPlayableCharacter* player = Cast<ACPlayableCharacter>(Owner);
 
-	UCWeaponComponent* weaponComponent = Cast<UCWeaponComponent>(
-		player->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	UCWeaponComponent* weaponComponent = CHelpers::GetComponent<UCWeaponComponent>(player);
 
 	weaponComponent->SetMode(InNewType);
 }

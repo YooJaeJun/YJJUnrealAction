@@ -90,12 +90,16 @@ void UCMontagesComponent::PlayAnimMontage(const EStateType InType, const TWeakOb
 
 	Owner->SetActorRotation(Owner->MyCurController->GetControlRotation());
 
+	FName startSectionName;
+
 	if (InInput->GetAxisValue("MoveForward") > 0)
-		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Front");
+		startSectionName = "Front";
 	else if (InInput->GetAxisValue("MoveForward") < 0)
-		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Back");
+		startSectionName = "Back";
 	else if (InInput->GetAxisValue("MoveRight") > 0)
-		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Right");
+		startSectionName = "Right";
 	else
-		Owner->PlayAnimMontage(data.Montage, data.PlayRate, "Left");
+		startSectionName = "Left";
+
+	Owner->PlayAnimMontage(data.Montage, data.PlayRate, startSectionName);
 }

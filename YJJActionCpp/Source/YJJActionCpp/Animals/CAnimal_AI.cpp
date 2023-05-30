@@ -25,8 +25,8 @@ ACAnimal_AI::ACAnimal_AI()
 	CHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComp, "ZoomComponent");
 	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
-	CHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
 	CHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
+	CHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
 }
 
 void ACAnimal_AI::BeginPlay()

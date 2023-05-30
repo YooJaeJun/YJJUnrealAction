@@ -56,10 +56,10 @@ private:
 		UCGameUIComponent* GameUIComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCRidingComponent* RidingComp;
+		UCPatrolComponent* PatrolComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCPatrolComponent* PatrolComp;
+		UCRidingComponent* RidingComp;
 
 	UPROPERTY(VisibleAnywhere)
 		UBoxComponent* InteractionCollision;

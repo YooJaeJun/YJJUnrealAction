@@ -12,7 +12,7 @@ class YJJACTIONCPP_API UCUserWidget_EquipMenu : public UCUserWidget_Custom
 	GENERATED_BODY()
 
 public:
-	void SetChild();
+	void BindChildren();
 
 public:
 	void Activate(const float TimeDilation);

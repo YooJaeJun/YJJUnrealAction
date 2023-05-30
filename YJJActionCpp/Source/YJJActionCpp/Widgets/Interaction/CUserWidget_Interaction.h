@@ -12,12 +12,14 @@ class YJJACTIONCPP_API UCUserWidget_Interaction : public UCUserWidget_Custom
 	GENERATED_BODY()
 
 public:
-	void SetChild();
+	void BindChildren();
+	void SetKeyIcon(UTexture2D* InKeyTexture);
+	void SetText(const FText& InText);
 
 public:
 	UPROPERTY()
 		UImage* KeyIcon;
 
 	UPROPERTY()
-		UTextBlock* InteractionText;
+		UTextBlock* Text;
 };
