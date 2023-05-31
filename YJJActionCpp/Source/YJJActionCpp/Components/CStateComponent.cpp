@@ -59,12 +59,12 @@ void UCStateComponent::SetRideMode()
 
 void UCStateComponent::ChangeType(const EStateType InType)
 {
-	PrevType = CurMode;
-	CurMode = InType;
+	PrevType = CurType;
+	CurType = InType;
 
 	if (OnStateTypeChanged.IsBound())
 	{
-		CLog::Print(Owner->GetName() + " : " + CHelpers::ConvertEnumToString(CurMode), -1, 5, FColor::Emerald);
-		OnStateTypeChanged.Broadcast(PrevType, CurMode);
+		CLog::Print(Owner->GetName() + " : " + CHelpers::ConvertEnumToString(CurType), -1, 5, FColor::Emerald);
+		OnStateTypeChanged.Broadcast(PrevType, CurType);
 	}
 }

@@ -71,8 +71,8 @@ public:
 	void Damage(const float InAmount);
 
 public:
-	FORCEINLINE float GetHealth() { return CurHp; }
-	FORCEINLINE bool IsDead() { return CurHp <= 0.0f; }
+	FORCEINLINE float GetHealth() const { return CurHp; }
+	FORCEINLINE bool IsDead() const { return CurHp <= 0.0f; }
 
 private:
 	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))

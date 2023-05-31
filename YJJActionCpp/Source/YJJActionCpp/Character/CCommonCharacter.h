@@ -66,16 +66,11 @@ public:
 
 public:
 	void SetMousePos(const FVector2D InPos);
-	FORCEINLINE const FVector2D& GetMousePos() { return MousePos; }
+	FORCEINLINE const FVector2D& GetMousePos() const { return MousePos; }
 
 public:
 	void SetInteractor(ACCommonCharacter* InCharacter);
-
-	UFUNCTION()
-		void SetRider(ACCommonCharacter* InCharacter);
-
-	FORCEINLINE ACCommonCharacter* GetInteractor() { return Interactor; };
-	FORCEINLINE ACCommonCharacter* GetRider() { return Rider; };
+	FORCEINLINE ACCommonCharacter* GetInteractor() const { return Interactor; };
 
 protected:
 	void InputAction_Interact();
@@ -109,9 +104,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		ACCommonCharacter* Interactor;
-
-	UPROPERTY(VisibleAnywhere)
-		ACCommonCharacter* Rider;
 
 public:
 	TWeakObjectPtr<AController> MyCurController;

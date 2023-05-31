@@ -2,7 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "Enemies/CEnemy.h"
+#include "Components/CStateComponent.h"
 #include "CEnemy_AI.generated.h"
+
+class AController;
+class UCWeaponComponent;
+struct FDamageEvent;
 
 UCLASS()
 class YJJACTIONCPP_API ACEnemy_AI : public ACEnemy

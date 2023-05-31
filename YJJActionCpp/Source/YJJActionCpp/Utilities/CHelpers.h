@@ -173,7 +173,7 @@ public:
 	}
 
 	template<typename T>
-	static void LoadTextureFromPath(T** OutObject, const FString& Path)
+	static void LoadAsset(T** OutObject, const FString& Path)
 	{
 		*OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *Path));
 	}

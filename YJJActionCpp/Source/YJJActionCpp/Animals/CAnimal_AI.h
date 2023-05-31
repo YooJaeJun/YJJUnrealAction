@@ -34,18 +34,17 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 public:
-	FORCEINLINE UBoxComponent* GetInteractionCollision() { return InteractionCollision; }
-	FORCEINLINE USceneComponent* GetMountRightPoint() { return MountRightPoint; }
-	FORCEINLINE USceneComponent* GetMountLeftPoint() { return MountLeftPoint; }
-	FORCEINLINE USceneComponent* GetMountBackPoint() { return MountBackPoint; }
-	FORCEINLINE USceneComponent* GetRiderPoint() { return RiderPoint; }
-	FORCEINLINE USceneComponent* GetUnmountPoint() { return UnmountPoint; }
-	FORCEINLINE USceneComponent* GetEyePoint() { return EyePoint; }
+	FORCEINLINE UBoxComponent* GetInteractionCollision() const { return InteractionCollision; }
+	FORCEINLINE USceneComponent* GetMountLeftPoint() const { return MountLeftPoint; }
+	FORCEINLINE USceneComponent* GetMountRightPoint() const { return MountRightPoint; }
+	FORCEINLINE USceneComponent* GetMountBackPoint() const { return MountBackPoint; }
+	FORCEINLINE USceneComponent* GetRiderPoint() const { return RiderPoint; }
+	FORCEINLINE USceneComponent* GetUnmountPoint() const { return UnmountPoint; }
+	FORCEINLINE USceneComponent* GetEyePoint() const { return EyePoint; }
 
-	FORCEINLINE USpringArmComponent* GetSpringArm() { return SpringArm; }
-	FORCEINLINE UCameraComponent* GetCamera() { return Camera; }
-	FORCEINLINE UCTargetingComponent* GetTargetingComp() { return TargetingComp; }
-
+	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
+	FORCEINLINE UCTargetingComponent* GetTargetingComp() const { return TargetingComp; }
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -71,10 +70,10 @@ private:
 		UCRidingComponent* RidingComp;
 
 	UPROPERTY(VisibleAnywhere)
-		USceneComponent* MountRightPoint;
+		USceneComponent* MountLeftPoint;
 
 	UPROPERTY(VisibleAnywhere)
-		USceneComponent* MountLeftPoint;
+		USceneComponent* MountRightPoint;
 
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* MountBackPoint;

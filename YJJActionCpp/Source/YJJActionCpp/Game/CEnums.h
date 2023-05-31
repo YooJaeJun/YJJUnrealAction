@@ -7,6 +7,8 @@ enum class EDirection : uint8
 {
 	Left,
 	Right,
+	Forward,
+	Back,
 	Top,
 	Bottom
 };

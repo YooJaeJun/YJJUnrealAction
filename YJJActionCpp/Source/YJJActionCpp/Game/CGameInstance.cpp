@@ -18,12 +18,12 @@ void UCGameInstance::Init()
 	Super::Init();
 }
 
-FCCharacterInfo* UCGameInstance::GetInfo(const int32 InGroupIndex)
+FCCharacterInfo* UCGameInstance::GetInfo(const int32 InGroupIndex) const
 {
 	return CharacterInfoTable->FindRow<FCCharacterInfo>(*FString::FromInt(InGroupIndex), TEXT(""));
 }
 
-FCCharacterStat* UCGameInstance::GetStat(const int32 InLevel)
+FCCharacterStat* UCGameInstance::GetStat(const int32 InLevel) const
 {
 	return CharacterStatTable->FindRow<FCCharacterStat>(*FString::FromInt(InLevel), TEXT(""));
 }

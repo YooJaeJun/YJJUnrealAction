@@ -71,8 +71,8 @@ public:
 
 	virtual void Init() override;
 
-	FCCharacterInfo* GetInfo(const int32 InGroupIndex);
-	FCCharacterStat* GetStat(const int32 InLevel);
+	FCCharacterInfo* GetInfo(const int32 InGroupIndex) const;
+	FCCharacterStat* GetStat(const int32 InLevel) const;
 
 private:
 	UPROPERTY()

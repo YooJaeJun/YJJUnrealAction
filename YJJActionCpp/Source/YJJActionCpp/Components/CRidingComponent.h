@@ -19,6 +19,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UCMovementComponent;
 class UCStateComponent;
+class UAnimMontage;
 
 UENUM()
 enum class ERidingState : uint8
@@ -74,6 +75,11 @@ public:
 	void SetInteractableCharacter(TWeakObjectPtr<ACCommonCharacter> InCharacter, 
 		const TWeakObjectPtr<ACCommonCharacter> InOtherCharacter);
 
+	UFUNCTION()
+		void SetRider(ACCommonCharacter* InCharacter);
+
+	FORCEINLINE const ACCommonCharacter* GetRider() const { return Rider; };
+
 private:
 	void Tick_ToMountPoint();
 	void Tick_Mounting();
@@ -86,6 +92,9 @@ public:
 	void CheckValidPoint();
 	bool MoveToPoint(ACCommonCharacter* Char, const USceneComponent* To);
 
+	UFUNCTION()
+		void AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted);
+
 	void Input_Zoom(const float InAxis) {}
 	void Input_Targeting() {}
 	void ApplyZoom() {}
@@ -96,9 +105,6 @@ public:
 	void OnStatusUI() {}
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		ACAnimal_AI* Owner;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		ACCommonCharacter* Rider;
 
@@ -139,14 +145,20 @@ private:
 		FText InteractionText;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		float MountRotationZFactor = 0.0f;
+		EDirection MountDir;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		EDirection MountDir;
+		UAnimMontage* MountAnim;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		float MountRotationZFactor = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Zoom")
 		float Zooming;
 
 	//UPROPERTY(EditDefaultsOnly, Category = "Mount")
 	//	AAIController* AIControllerSave;
+
+private:
+	TWeakObjectPtr<ACAnimal_AI> Owner;
 };

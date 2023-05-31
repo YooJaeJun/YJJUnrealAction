@@ -14,14 +14,14 @@
 
 ACAnimal_AI::ACAnimal_AI()
 {
-	CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", RiderPoint);
+	CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
 	CHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
 	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComp, "ZoomComponent");
 	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 	CHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
 	CHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
-	CHelpers::CreateComponent<USceneComponent>(this, &MountRightPoint, "MountRightPoint", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &MountLeftPoint, "MountLeftPoint", GetMesh());
+	CHelpers::CreateComponent<USceneComponent>(this, &MountRightPoint, "MountRightPoint", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &MountBackPoint, "MountBackPoint", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &RiderPoint, "RiderPoint", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &UnmountPoint, "UnmountPoint", GetMesh());

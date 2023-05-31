@@ -48,21 +48,21 @@ private:
 	void ChangeType(const EStateType InType);
 
 public:
-	FORCEINLINE EStateType GetCurMode() const { return CurMode; }
+	FORCEINLINE EStateType GetCurMode() const { return CurType; }
 	FORCEINLINE EStateType GetPrevMode() const { return PrevType; }
-	FORCEINLINE bool IsIdleMode() const { return CurMode == EStateType::Idle; }
-	FORCEINLINE bool IsFallMode() const { return CurMode == EStateType::Fall; }
-	FORCEINLINE bool IsAvoidMode() const { return CurMode == EStateType::Avoid; }
-	FORCEINLINE bool IsEquipMode() const { return CurMode == EStateType::Equip; }
-	FORCEINLINE bool IsActMode() const { return CurMode == EStateType::Act; }
-	FORCEINLINE bool IsHitMode() const { return CurMode == EStateType::Hit; }
-	FORCEINLINE bool IsDeadMode() const { return CurMode == EStateType::Dead; }
-	FORCEINLINE bool IsRiseMode() const { return CurMode == EStateType::Rise; }
-	FORCEINLINE bool IsRideMode() const { return CurMode == EStateType::Ride; }
+	FORCEINLINE bool IsIdleMode() const { return CurType == EStateType::Idle; }
+	FORCEINLINE bool IsFallMode() const { return CurType == EStateType::Fall; }
+	FORCEINLINE bool IsAvoidMode() const { return CurType == EStateType::Avoid; }
+	FORCEINLINE bool IsEquipMode() const { return CurType == EStateType::Equip; }
+	FORCEINLINE bool IsActMode() const { return CurType == EStateType::Act; }
+	FORCEINLINE bool IsHitMode() const { return CurType == EStateType::Hit; }
+	FORCEINLINE bool IsDeadMode() const { return CurType == EStateType::Dead; }
+	FORCEINLINE bool IsRiseMode() const { return CurType == EStateType::Rise; }
+	FORCEINLINE bool IsRideMode() const { return CurType == EStateType::Ride; }
 
-public:
+private:
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EStateType CurMode = EStateType::Idle;
+		EStateType CurType = EStateType::Idle;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
 		EStateType PrevType = EStateType::Max;

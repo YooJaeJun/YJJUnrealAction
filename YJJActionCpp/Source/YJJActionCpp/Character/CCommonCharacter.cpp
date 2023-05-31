@@ -176,17 +176,10 @@ void ACCommonCharacter::SetInteractor(ACCommonCharacter* InCharacter)
 	Interactor = InCharacter;
 }
 
-void ACCommonCharacter::SetRider(ACCommonCharacter* InCharacter)
-{
-	Rider = InCharacter;
-}
-
 void ACCommonCharacter::InputAction_Interact()
 {
 	CheckNull(Interactor);
 
 	if (OnInteract.IsBound())
 		OnInteract.Broadcast(this);
-
-	Rider = MoveTemp(Interactor);
 }
