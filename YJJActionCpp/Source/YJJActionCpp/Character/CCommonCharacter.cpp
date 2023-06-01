@@ -156,6 +156,11 @@ void ACCommonCharacter::RestoreColor()
 	GetWorld()->GetTimerManager().ClearTimer(RestoreColor_TimerHandle);
 }
 
+void ACCommonCharacter::SetMyCurController(const TWeakObjectPtr<AController> InController)
+{
+	MyCurController = InController;
+}
+
 void ACCommonCharacter::SetTickLerp(FRotator InRotator)
 {
 	TargetRotator = InRotator;

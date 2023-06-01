@@ -12,11 +12,6 @@ void UCAnimInstance_Human::NativeBeginPlay()
 	WeaponComp->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance_Human::OnWeaponTypeChanged);
 }
 
-void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
-{
-	Super::NativeUpdateAnimation(DeltaSeconds);
-}
-
 void UCAnimInstance_Human::OnWeaponTypeChanged(const EWeaponType InPrevType, const EWeaponType InNewType)
 {
 	WeaponType = InNewType;

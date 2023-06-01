@@ -55,7 +55,8 @@ private:
 		void RestoreColor();
 
 public:
-	// 라이딩 시 PlayerController와 AIController 전환 시 사용. 다른 클래스에서 접근 시 GetController 등이 아닌, 이 함수로 접근
+	// 라이딩 시 PlayerController와 AIController 전환 시 사용
+	void SetMyCurController(const TWeakObjectPtr<AController> InController);
 	FORCEINLINE TWeakObjectPtr<AController> GetMyCurController() const { return MyCurController; }
 
 public:

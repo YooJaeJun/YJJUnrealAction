@@ -14,7 +14,6 @@ class YJJACTIONCPP_API UCAnimInstance_Human : public UCAnimInstance_Character
 
 public:
 	virtual void NativeBeginPlay() override;
-	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
 	UFUNCTION()

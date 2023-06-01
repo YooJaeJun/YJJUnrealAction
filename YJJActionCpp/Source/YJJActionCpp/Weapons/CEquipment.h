@@ -37,6 +37,10 @@ public:
 	virtual void Unequip_Implementation();
 
 public:
+	bool GetBeginEquip() const { return bBeginEquip; }
+	bool GetEquipped() const { return bEquipped; }
+
+public:
 	FEquipmentBeginEquip OnEquipmentBeginEquip;
 	FEquipmentUnequip OnEquipmentUnequip;
 

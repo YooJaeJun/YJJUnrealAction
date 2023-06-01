@@ -12,7 +12,6 @@ class ACGameMode;
 class UCUserWidget_HUD;
 class UCUserWidget_Interaction;
 class ACAnimal_AI;
-class AAIController;
 class UTexture2D;
 class USceneComponent;
 class USpringArmComponent;
@@ -20,6 +19,8 @@ class UCameraComponent;
 class UCMovementComponent;
 class UCStateComponent;
 class UAnimMontage;
+class UCWeaponComponent;
+class AController;
 
 UENUM()
 enum class ERidingState : uint8
@@ -109,6 +110,9 @@ private:
 		ACCommonCharacter* Rider;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		UCWeaponComponent* RiderWeaponComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		UCUserWidget_HUD* Hud;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
@@ -153,11 +157,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		float MountRotationZFactor = 0.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		USoundBase* MountSound;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Zoom")
 		float Zooming;
 
-	//UPROPERTY(EditDefaultsOnly, Category = "Mount")
-	//	AAIController* AIControllerSave;
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		AController* ControllerSave;
 
 private:
 	TWeakObjectPtr<ACAnimal_AI> Owner;
