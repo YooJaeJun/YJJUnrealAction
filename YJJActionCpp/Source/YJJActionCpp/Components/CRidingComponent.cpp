@@ -1,10 +1,10 @@
 ﻿#include "Components/CRidingComponent.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "Game/CGameMode.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Interaction/CUserWidget_Interaction.h"
-#include "Animals/CAnimal_AI.h"
+#include "Characters/Animals/CAnimal_AI.h"
 #include "Engine/Texture2D.h"
 #include "AIController.h"
 #include "Components/CMovementComponent.h"
@@ -16,10 +16,9 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CWeaponComponent.h"
-#include "Components/SceneCaptureComponent2D.h"
 #include "Weapons/CEquipment.h"
 #include "GameFramework/Controller.h"
-#include "Player/CPlayableCharacter.h"
+#include "Characters/Player/CPlayableCharacter.h"
 
 UCRidingComponent::UCRidingComponent()
 {
@@ -311,9 +310,9 @@ void UCRidingComponent::Tick_MountingEnd()
 
 		if (!!RiderWeaponComp->GetEquipment() &&
 			!!RiderWeaponComp->GetEquipment()->GetEquipped())
-			MovementComp->EnableControlRotation();
-		else
 			MovementComp->DisableControlRotation();
+		else
+			MovementComp->EnableControlRotation();
 
 		MovementComp->Move();
 
@@ -331,9 +330,9 @@ void UCRidingComponent::Tick_MountingEnd()
 		// AI Controller 세이브 / Player Controller 빙의
 		ControllerSave = Owner->GetController();
 
-		// GetWorld()->GetFirstPlayerController()->UnPossess();
-
 		TWeakObjectPtr<ACCommonCharacter> animal = Cast<ACCommonCharacter>(Owner);
+
+		GetWorld()->GetFirstPlayerController()->UnPossess();
 
 		if (!!animal.Get())
 			GetWorld()->GetFirstPlayerController()->Possess(animal.Get());
