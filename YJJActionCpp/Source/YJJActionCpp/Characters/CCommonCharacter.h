@@ -14,8 +14,10 @@ class UCCharacterStatComponent;
 struct FActDamageEvent;
 class UCWeaponStructures;
 class ACAnimal_AI;
+class USoundBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteract, ACCommonCharacter*, Object);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnmount, ACCommonCharacter*, Object);
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API ACCommonCharacter :
@@ -35,6 +37,8 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	virtual void Landed(const FHitResult& Hit) override;
 
 public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
@@ -80,6 +84,9 @@ public:
 	UPROPERTY()
 		FInteract OnInteract;
 
+	UPROPERTY()
+		FInteract OnUnmount;
+
 	UPROPERTY(VisibleAnywhere)
 		UCStateComponent* StateComp;
 
@@ -94,6 +101,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, Category = "Status")
 		UCCharacterStatComponent* CharacterStatComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+		USoundBase* LandSound;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Color")

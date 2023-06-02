@@ -41,6 +41,9 @@ public:
 	void SetGravity();
 	void AddGravity();
 
+	void SetFriction(const float InFriction, const float InBraking);
+	void SetJumpZ(const float InVelocity);
+
 public:
 	void InputAxis_MoveForward(const float InAxis);
 	void InputAxis_MoveRight(const float InAxis);
@@ -95,5 +98,5 @@ private:
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	bool bCanMove = true;
-	bool bFixedCamera;
+	bool bFixedCamera = false;
 };

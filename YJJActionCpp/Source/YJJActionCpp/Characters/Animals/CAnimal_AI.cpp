@@ -27,18 +27,34 @@ ACAnimal_AI::ACAnimal_AI()
 	CHelpers::CreateComponent<USceneComponent>(this, &UnmountPoint, "UnmountPoint", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 	CHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
+
+	if (MovementComp)
+	{
+		MovementComp->SetSpeeds(Speeds);
+		MovementComp->EnableControlRotation();
+		MovementComp->UnFixCamera();
+		MovementComp->SetSpeed(ESpeedType::Sprint);
+		MovementComp->SetFriction(2, 256);
+		MovementComp->SetJumpZ(700.0f);
+	}
 }
 
 void ACAnimal_AI::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InteractionCollision->OnComponentBeginOverlap.AddDynamic(RidingComp, &UCRidingComponent::BeginOverlap);
-	InteractionCollision->OnComponentEndOverlap.AddDynamic(RidingComp, &UCRidingComponent::EndOverlap);
+	if (!!InteractionCollision)
+	{
+		InteractionCollision->OnComponentBeginOverlap.AddDynamic(RidingComp, &UCRidingComponent::BeginOverlap);
+		InteractionCollision->OnComponentEndOverlap.AddDynamic(RidingComp, &UCRidingComponent::EndOverlap);
+	}
 }
 
 void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	for (auto& elem : PlayerInputComponent->KeyBindings)
+		CLog::Log(elem.KeyEvent);
+
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("MoveForward", MovementComp, &UCMovementComponent::InputAxis_MoveForward);

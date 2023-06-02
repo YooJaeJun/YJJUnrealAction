@@ -26,6 +26,9 @@ void ACCommonCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	MyCurController = GetController();
+
+	CHelpers::LoadAsset<USoundBase>(&LandSound,
+		TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 }
 
 void ACCommonCharacter::Tick(float DeltaSeconds)
@@ -55,8 +58,17 @@ void ACCommonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &ACCommonCharacter::InputAction_Interact);
 }
 
+void ACCommonCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	StateComp->SetIdleMode();
+
+	UGameplayStatics::PlaySoundAtLocation(this, LandSound, GetActorLocation());
+}
+
 float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
-	AController* EventInstigator, AActor* DamageCauser)
+                                    AController* EventInstigator, AActor* DamageCauser)
 {
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
@@ -185,6 +197,14 @@ void ACCommonCharacter::InputAction_Interact()
 {
 	CheckNull(Interactor);
 
-	if (OnInteract.IsBound())
-		OnInteract.Broadcast(this);
+	if (!!Interactor)
+	{
+		if (OnInteract.IsBound())
+			OnInteract.Broadcast(this);
+	}
+	else
+	{
+		if (OnUnmount.IsBound())
+			OnUnmount.Broadcast(this);
+	}
 }

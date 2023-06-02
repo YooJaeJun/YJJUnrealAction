@@ -30,10 +30,14 @@ ACEnemy_AI::ACEnemy_AI()
 
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
 
-	StateComp->OnStateTypeChanged.AddDynamic(this, &ACEnemy_AI::OnStateTypeChanged);
+	if (!!StateComp)
+		StateComp->OnStateTypeChanged.AddDynamic(this, &ACEnemy_AI::OnStateTypeChanged);
 
-	MovementComp->SetSpeed(ESpeedType::Sprint);
-	MovementComp->InputAction_Run();
+	if (!!MovementComp)
+	{
+		MovementComp->SetSpeed(ESpeedType::Sprint);
+		MovementComp->InputAction_Run();
+	}
 }
 
 void ACEnemy_AI::BeginPlay()

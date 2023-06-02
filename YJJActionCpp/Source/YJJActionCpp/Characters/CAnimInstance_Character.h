@@ -36,10 +36,16 @@ protected:
 		EStateType StatePrevType = EStateType::Idle;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		bool Falling;
+		bool bFalling;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		bool Hitting;
+		bool bHitting;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
+		bool bRiding;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
+		bool bRidingFalling;
 
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

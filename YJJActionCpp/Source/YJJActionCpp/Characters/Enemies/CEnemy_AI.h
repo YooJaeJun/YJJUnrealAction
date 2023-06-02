@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Characters/Enemies/CEnemy.h"
 #include "Components/CStateComponent.h"
+#include "Weapons/CWeaponStructures.h"
 #include "CEnemy_AI.generated.h"
 
 class AController;

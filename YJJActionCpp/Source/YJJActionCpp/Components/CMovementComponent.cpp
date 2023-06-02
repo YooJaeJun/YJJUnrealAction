@@ -73,6 +73,17 @@ void UCMovementComponent::AddGravity()
 {
 }
 
+void UCMovementComponent::SetJumpZ(const float InVelocity)
+{
+	Owner->GetCharacterMovement()->JumpZVelocity = InVelocity;
+}
+
+void UCMovementComponent::SetFriction(const float InFriction, const float InBraking)
+{
+	Owner->GetCharacterMovement()->GroundFriction = InFriction;
+	Owner->GetCharacterMovement()->BrakingDecelerationWalking = InBraking;
+}
+
 void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 {
 	CheckFalse(bCanMove);

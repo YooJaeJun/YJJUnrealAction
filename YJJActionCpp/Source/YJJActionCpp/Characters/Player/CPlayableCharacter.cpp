@@ -46,18 +46,28 @@ ACPlayableCharacter::ACPlayableCharacter()
 	CHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/ABP_CHuman.ABP_CHuman_C'");
 	GetMesh()->SetAnimClass(animInstance);
 
-	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
-	SpringArm->TargetArmLength = 280;
-	SpringArm->bUsePawnControlRotation = true;
-	SpringArm->bEnableCameraLag = true;
+	if (!!SpringArm)
+	{
+		SpringArm->SetRelativeLocation(FVector(0, 0, 60));
+		SpringArm->TargetArmLength = 280;
+		SpringArm->bUsePawnControlRotation = true;
+		SpringArm->bEnableCameraLag = true;
+	}
 
-	StateComp->SetIdleMode();
-	StateComp->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
+	if (!!StateComp)
+	{
+		StateComp->SetIdleMode();
+		StateComp->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
+	}
 
-	MovementComp->SetSpeeds(Speeds);
-	MovementComp->DisableControlRotation();
-	GetCharacterMovement()->GroundFriction = 2;
-	GetCharacterMovement()->BrakingDecelerationWalking = 256;
+	if (!!MovementComp)
+	{
+		MovementComp->SetSpeeds(Speeds);
+		MovementComp->DisableControlRotation();
+		MovementComp->UnFixCamera();
+		MovementComp->SetFriction(2, 256);
+		MovementComp->SetJumpZ(700.0f);
+	}
 
 	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));
 }
@@ -66,7 +76,8 @@ void ACPlayableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MovementComp->SetSpeed(ESpeedType::Sprint);
+	if (!!MovementComp)
+		MovementComp->SetSpeed(ESpeedType::Sprint);
 
 	TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(MyCurController);
 	if (!!playerController.Get())
@@ -109,13 +120,6 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
 	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Act);
-}
-
-void ACPlayableCharacter::Landed(const FHitResult& Hit)
-{
-	Super::Landed(Hit);
-
-	StateComp->SetIdleMode();
 }
 
 void ACPlayableCharacter::Avoid()

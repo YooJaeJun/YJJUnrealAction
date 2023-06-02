@@ -31,7 +31,7 @@ void UCRidingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TWeakObjectPtr<ACGameMode> gameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	const TWeakObjectPtr<ACGameMode> gameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	Hud = Cast<UCUserWidget_HUD>(gameMode->GetHUD());
 
 	if (!!Hud)
@@ -122,7 +122,7 @@ void UCRidingComponent::BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	const auto animal = Cast<ACAnimal_AI>(OtherActor);
 	CheckTrue(!!animal);
 
-	const auto interactor = Cast<ACCommonCharacter>(OtherActor);
+	const auto interactor = Cast<ACPlayableCharacter>(OtherActor);
 	CheckNull(interactor);
 
 	SetInteractableCharacter(interactor, Owner);
@@ -142,7 +142,7 @@ void UCRidingComponent::EndOverlap(UPrimitiveComponent* OverlappedComponent,
 	const auto animal = Cast<ACAnimal_AI>(OtherActor);
 	CheckTrue(!!animal);
 
-	const auto interactor = Cast<ACCommonCharacter>(OtherActor);
+	const auto interactor = Cast<ACPlayableCharacter>(OtherActor);
 	CheckNull(interactor);
 
 	SetInteractableCharacter(interactor, nullptr);
@@ -261,12 +261,12 @@ void UCRidingComponent::Tick_Mounting()
 
 
 	// 탑승 후 위치, 방향으로
-	FVector ridingPos = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentLocation();
-	FVector riderPos = Rider->GetActorLocation();
+	const FVector ridingPos = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentLocation();
+	const FVector riderPos = Rider->GetActorLocation();
 
 	const FVector dir = UKismetMathLibrary::GetDirectionUnitVector(ridingPos, riderPos);
 
-	FVector targetLocation = ridingPos + dir * 50.0f;
+	const FVector targetLocation = ridingPos + dir * 50.0f;
 	// targetLocation.Z += 70.0f;
 
 	const FRotator rotator = UKismetMathLibrary::FindLookAtRotation(riderPos, ridingPos);
@@ -306,7 +306,8 @@ void UCRidingComponent::Tick_MountingEnd()
 	{
 		Rider->StateComp->SetRideMode();
 		Rider->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-		Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		//Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
 
 		if (!!RiderWeaponComp->GetEquipment() &&
 			!!RiderWeaponComp->GetEquipment()->GetEquipped())
@@ -316,16 +317,16 @@ void UCRidingComponent::Tick_MountingEnd()
 
 		MovementComp->Move();
 
-		if (!!MovementComp->GetFixedCamera())
+		if (!!Rider->MovementComp->GetFixedCamera())
 			MovementComp->FixCamera();
 		else
 			MovementComp->UnFixCamera();
 
-		MovementComp->SetSpeed(ESpeedType::Sprint);
 
 		// TODO Riding Info
 		SetStatusUI();
 		OnStatusUI();
+
 
 		// AI Controller 세이브 / Player Controller 빙의
 		ControllerSave = Owner->GetController();
