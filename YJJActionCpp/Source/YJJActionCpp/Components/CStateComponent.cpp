@@ -1,6 +1,6 @@
 #include "Components/CStateComponent.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 
 UCStateComponent::UCStateComponent()
 {

@@ -5,7 +5,6 @@
 #include "CGameMode.generated.h"
 
 class UCUserWidget_HUD;
-class UWidgetComponent;
 
 UCLASS()
 class YJJACTIONCPP_API ACGameMode : public AGameModeBase

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Animals/CAnimal.h"
+#include "Characters/Animals/CAnimal.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "CAnimal_AI.generated.h"
 

@@ -1,6 +1,6 @@
 #include "Components/CTargetingComponent.h"
 #include "Global.h"
-#include "Player/CPlayableCharacter.h"
+#include "Characters/Player/CPlayableCharacter.h"
 
 UCTargetingComponent::UCTargetingComponent()
 {

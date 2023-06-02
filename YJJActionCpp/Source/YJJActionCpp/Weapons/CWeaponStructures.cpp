@@ -1,7 +1,6 @@
 #include "Weapons/CWeaponStructures.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
-#include "Components/CStateComponent.h"
+#include "Characters/CCommonCharacter.h"
 #include "Components/CMovementComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CCharacterStatComponent.h"

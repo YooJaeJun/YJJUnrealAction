@@ -1,6 +1,6 @@
 #include "Weapons/Equipments/CEquipment_Warp.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 
 void UCEquipment_Warp::BeginPlay(ACCommonCharacter* InOwner, const FEquipmentData& InData)
 {

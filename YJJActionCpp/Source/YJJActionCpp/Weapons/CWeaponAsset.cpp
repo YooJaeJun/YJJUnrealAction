@@ -1,9 +1,9 @@
 #include "Weapons/CWeaponAsset.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
-#include "CAttachment.h"
-#include "CEquipment.h"
-#include "CAct.h"
+#include "Characters/CCommonCharacter.h"
+#include "Weapons/CAttachment.h"
+#include "Weapons/CEquipment.h"
+#include "Weapons/CAct.h"
 
 UCWeaponAsset::UCWeaponAsset()
 {

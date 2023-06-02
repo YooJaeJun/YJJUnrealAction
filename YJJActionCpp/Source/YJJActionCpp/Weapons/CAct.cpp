@@ -2,7 +2,7 @@
 #include "Global.h"
 #include "CAttachment.h"
 #include "CEquipment.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 

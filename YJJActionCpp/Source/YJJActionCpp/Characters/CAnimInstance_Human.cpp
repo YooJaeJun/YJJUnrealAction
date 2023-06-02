@@ -1,6 +1,6 @@
 #include "CAnimInstance_Human.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "Components/CWeaponComponent.h"
 
 void UCAnimInstance_Human::NativeBeginPlay()

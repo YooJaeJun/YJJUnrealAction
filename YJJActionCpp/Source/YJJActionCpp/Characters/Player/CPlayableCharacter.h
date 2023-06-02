@@ -1,6 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "Components/CStateComponent.h"
 #include "CPlayableCharacter.generated.h"
 

@@ -1,5 +1,5 @@
-#include "Character/CInterface_CharacterBody.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CInterface_CharacterBody.h"
+#include "Characters/CCommonCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 

@@ -1,7 +1,7 @@
 #include "Components/CWeaponComponent.h"
 #include "Global.h"
 #include "Components/CStateComponent.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CEquipment.h"
 #include "Weapons/CAct.h"

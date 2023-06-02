@@ -1,6 +1,6 @@
 #include "CAnimNotify_End_State.h"
 #include "Global.h"
-#include "Character/CInterface_CharacterAnim.h"
+#include "Characters/CInterface_CharacterAnim.h"
 
 FString UCAnimNotify_End_State::GetNotifyName_Implementation() const
 {

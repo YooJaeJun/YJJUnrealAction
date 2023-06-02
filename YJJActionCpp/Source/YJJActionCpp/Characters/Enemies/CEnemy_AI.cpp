@@ -1,6 +1,6 @@
-#include "Enemies/CEnemy_AI.h"
+#include "Characters/Enemies/CEnemy_AI.h"
 #include "Global.h"
-#include "Character/CAnimInstance_Human.h"
+#include "Characters/CAnimInstance_Human.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CStateComponent.h"

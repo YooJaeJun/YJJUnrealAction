@@ -1,6 +1,6 @@
 #include "Weapons/Acts/CAct_Bow.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "Components/CStateComponent.h"
 
 void UCAct_Bow::Act()

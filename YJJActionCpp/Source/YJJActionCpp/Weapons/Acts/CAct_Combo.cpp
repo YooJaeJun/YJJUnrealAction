@@ -2,7 +2,7 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "Components/CStateComponent.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "UMG/Public/Blueprint/WidgetLayoutLibrary.h"
 
 void UCAct_Combo::Act()

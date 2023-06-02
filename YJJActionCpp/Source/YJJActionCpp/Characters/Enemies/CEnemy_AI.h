@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Enemies/CEnemy.h"
+#include "Characters/Enemies/CEnemy.h"
 #include "Components/CStateComponent.h"
 #include "CEnemy_AI.generated.h"
 

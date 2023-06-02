@@ -2,7 +2,6 @@
 #include "Global.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/CUserWidget_HUD.h"
-#include "Components/WidgetComponent.h"
 
 ACGameMode::ACGameMode()
 {

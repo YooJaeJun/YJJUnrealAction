@@ -1,6 +1,6 @@
 #include "Weapons/CAttachment.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "Components/SceneComponent.h"
 #include "Components/ShapeComponent.h"
 

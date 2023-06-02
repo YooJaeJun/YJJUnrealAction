@@ -1,6 +1,6 @@
-#include "Character/CAnimInstance_Character.h"
+#include "Characters/CAnimInstance_Character.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 
 void UCAnimInstance_Character::NativeBeginPlay()
 {

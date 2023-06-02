@@ -1,6 +1,6 @@
-#include "Weapons/Assets/CWeaponAsset_Bow.h"
+#include "Weapons/DataAssets/CWeaponAsset_Bow.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "Utilities/CHelpers.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CEquipment.h"

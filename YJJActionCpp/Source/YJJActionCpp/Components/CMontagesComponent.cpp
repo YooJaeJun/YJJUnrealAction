@@ -1,6 +1,6 @@
 #include "Components/CMontagesComponent.h"
 #include "Global.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "GameFramework/Character.h"
 
 UCMontagesComponent::UCMontagesComponent()

@@ -1,7 +1,7 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Global.h"
 #include "Game/CGameInstance.h"
-#include "Character/CCommonCharacter.h"
+#include "Characters/CCommonCharacter.h"
 #include "Components/CStateComponent.h"
 
 UCCharacterStatComponent::UCCharacterStatComponent()

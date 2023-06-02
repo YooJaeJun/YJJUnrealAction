@@ -1,7 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Character/CInterface_Interactable.h"
+#include "Characters/CInterface_Interactable.h"
 #include "Game/CEnums.h"
 #include "CRidingComponent.generated.h"
 

@@ -8,7 +8,7 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Weapons/CWeaponStructures.h"
 #include "UMG/Public/Blueprint/WidgetLayoutLibrary.h"
-#include "Animals/CAnimal_AI.h"
+#include "Characters/Animals/CAnimal_AI.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {

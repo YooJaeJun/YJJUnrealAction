@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/CAnimInstance_Character.h"
+#include "Characters/CAnimInstance_Character.h"
 #include "Components/CWeaponComponent.h"
 #include "CAnimInstance_Human.generated.h"
 

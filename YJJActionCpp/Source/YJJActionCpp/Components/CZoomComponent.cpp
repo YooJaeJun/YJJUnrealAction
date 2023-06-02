@@ -3,7 +3,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Player/CPlayableCharacter.h"
+#include "Characters/Player/CPlayableCharacter.h"
 
 UCZoomComponent::UCZoomComponent()
 {

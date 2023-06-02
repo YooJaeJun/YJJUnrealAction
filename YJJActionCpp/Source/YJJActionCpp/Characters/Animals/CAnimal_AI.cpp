@@ -1,4 +1,4 @@
-#include "Animals/CAnimal_AI.h"
+#include "Characters/Animals/CAnimal_AI.h"
 #include "Global.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"

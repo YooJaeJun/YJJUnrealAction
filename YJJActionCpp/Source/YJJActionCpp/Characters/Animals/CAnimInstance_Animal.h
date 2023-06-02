@@ -1,6 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "Character/CAnimInstance_Character.h"
+#include "Characters/CAnimInstance_Character.h"
 #include "CAnimInstance_Animal.generated.h"
 
 UCLASS()

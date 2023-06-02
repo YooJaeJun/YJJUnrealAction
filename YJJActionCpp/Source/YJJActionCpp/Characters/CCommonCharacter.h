@@ -2,8 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Character/CInterface_CharacterAnim.h"
-#include "Character/CInterface_CharacterBody.h"
+#include "Characters/CInterface_CharacterAnim.h"
+#include "Characters/CInterface_CharacterBody.h"
 #include "CCommonCharacter.generated.h"
 
 class UCStateComponent;

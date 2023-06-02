@@ -4,6 +4,8 @@
 #include "Widgets/CUserWidget_Custom.h"
 #include "CUserWidget_PlayerLevel.generated.h"
 
+class UCCharacterStatComponent;
+
 UCLASS()
 class YJJACTIONCPP_API UCUserWidget_PlayerLevel : public UCUserWidget_Custom
 {
