@@ -33,6 +33,8 @@ protected:
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	virtual void Landed(const FHitResult& Hit) override;
+
 public:
 	FORCEINLINE UBoxComponent* GetInteractionCollision() const { return InteractionCollision; }
 	FORCEINLINE USceneComponent* GetMountLeftPoint() const { return MountLeftPoint; }

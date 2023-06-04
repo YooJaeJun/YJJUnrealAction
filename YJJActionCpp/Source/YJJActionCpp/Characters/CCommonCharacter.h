@@ -15,6 +15,7 @@ struct FActDamageEvent;
 class UCWeaponStructures;
 class ACAnimal_AI;
 class USoundBase;
+class UFXSystemAsset;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMount, ACCommonCharacter*, Object);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnmount);
@@ -102,8 +103,11 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Status")
 		UCCharacterStatComponent* CharacterStatComp;
 
-	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	UPROPERTY(EditDefaultsOnly, Category = "Land")
 		USoundBase* LandSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Land")
+		UFXSystemAsset* LandEffect;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Color")

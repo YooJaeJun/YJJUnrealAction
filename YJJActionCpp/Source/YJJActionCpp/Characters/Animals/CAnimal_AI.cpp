@@ -40,6 +40,12 @@ ACAnimal_AI::ACAnimal_AI()
 
 	if (!!RiderPoint)
 		RiderPoint->SetWorldLocation(FindComponentByClass<USceneComponent>()->GetSocketLocation("RiderPoint"));
+
+	CHelpers::LoadAsset<USoundBase>(&LandSound,
+		TEXT("SoundCue'/Game/Assets/Sounds/Footsteps/Run/Stone/SC_Footstep_Stone_Run.SC_Footstep_Stone_Run'"));
+
+	CHelpers::LoadAsset<UFXSystemAsset>(&LandEffect,
+		TEXT("NiagaraSystem'/Game/Assets/Effects/SuperheroFlight/VFX/Niagara/System/SuperheroLanding/NS_Superhero_Landing_Concrete.NS_Superhero_Landing_Concrete'"));
 }
 
 void ACAnimal_AI::BeginPlay()
@@ -68,4 +74,12 @@ void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Jump);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
+}
+
+void ACAnimal_AI::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	UGameplayStatics::PlaySoundAtLocation(this, LandSound, GetActorLocation());
+	CHelpers::PlayEffect(GetWorld(), LandEffect, GetActorTransform());
 }

@@ -3,6 +3,7 @@
 #include "Components/ActorComponent.h"
 #include "Characters/CInterface_Interactable.h"
 #include "Game/CEnums.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "CRidingComponent.generated.h"
 
 class USkeletalMeshComponent;
@@ -21,6 +22,7 @@ class UCStateComponent;
 class UAnimMontage;
 class UCWeaponComponent;
 class AController;
+class USoundBase;
 
 UENUM()
 enum class ERidingState : uint8
@@ -97,7 +99,7 @@ public:
 	bool MoveToPoint(ACCommonCharacter* Char, const USceneComponent* To);
 
 	UFUNCTION()
-		void LerpAnim(UAnimMontage* Anim, bool bInterrupted);
+		void LerpAnimToAnim(UAnimMontage* Anim, bool bInterrupted);
 
 	UFUNCTION()
 		void AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted);
@@ -174,4 +176,6 @@ private:
 
 private:
 	TWeakObjectPtr<ACAnimal_AI> Owner;
+	TEnumAsByte<EMoveComponentAction::Type> eMoveAction;
+	FLatentActionInfo latentInfo;
 };

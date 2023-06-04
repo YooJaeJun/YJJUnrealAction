@@ -64,8 +64,6 @@ void ACCommonCharacter::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 
 	StateComp->SetIdleMode();
-
-	UGameplayStatics::PlaySoundAtLocation(this, LandSound, GetActorLocation());
 }
 
 float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
