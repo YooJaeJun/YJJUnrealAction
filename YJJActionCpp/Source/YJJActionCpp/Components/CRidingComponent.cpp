@@ -74,11 +74,6 @@ void UCRidingComponent::BeginPlay()
 
 		// TODO Eye
 		// TODO Rider Info
-
-		//if (false == Owner->GetRiderPoint()->AttachToComponent(Owner->GetMesh(),
-		//	FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		//	"RiderPoint"))
-		//	CLog::Log("RiderPoint Attach Fail");
 	}
 }
 
@@ -125,11 +120,11 @@ void UCRidingComponent::BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	const auto interactor = Cast<ACPlayableCharacter>(OtherActor);
 	CheckNull(interactor);
 
-	SetInteractableCharacter(interactor, Owner);
-	SetInteractableCharacter(Owner, interactor);
+	SetInteractor(interactor, Owner);
+	SetInteractor(Owner, interactor);
 
-	if (false == interactor->OnInteract.IsBound())
-		interactor->OnInteract.AddDynamic(this, &UCRidingComponent::SetRider);
+	if (false == interactor->OnMount.IsBound())
+		interactor->OnMount.AddDynamic(this, &UCRidingComponent::SetRider);
 
 	Interaction->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
@@ -145,16 +140,16 @@ void UCRidingComponent::EndOverlap(UPrimitiveComponent* OverlappedComponent,
 	const auto interactor = Cast<ACPlayableCharacter>(OtherActor);
 	CheckNull(interactor);
 
-	SetInteractableCharacter(interactor, nullptr);
-	SetInteractableCharacter(Owner, nullptr);
+	SetInteractor(interactor, nullptr);
+	SetInteractor(Owner, nullptr);
 
-	if (!!interactor->OnInteract.IsBound())
-		interactor->OnInteract.RemoveDynamic(this, &UCRidingComponent::SetRider);
+	if (!!interactor->OnMount.IsBound())
+		interactor->OnMount.RemoveDynamic(this, &UCRidingComponent::SetRider);
 
 	Interaction->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UCRidingComponent::SetInteractableCharacter(TWeakObjectPtr<ACCommonCharacter> InCharacter, 
+void UCRidingComponent::SetInteractor(TWeakObjectPtr<ACCommonCharacter> InCharacter, 
 	const TWeakObjectPtr<ACCommonCharacter> InOtherCharacter)
 {
 	InCharacter->SetInteractor(InOtherCharacter.Get());
@@ -164,6 +159,20 @@ void UCRidingComponent::SetRider(ACCommonCharacter* InCharacter)
 {
 	Rider = InCharacter;
 	RiderWeaponComp = CHelpers::GetComponent<UCWeaponComponent>(InCharacter);
+
+	if (false == Rider->OnUnmount.IsBound())
+		Rider->OnUnmount.AddDynamic(this, &UCRidingComponent::InitRider);
+}
+
+void UCRidingComponent::InitRider()
+{
+	Rider = nullptr;
+	RiderWeaponComp = nullptr;
+
+	RidingState = ERidingState::Unmounting;
+
+	if (!!Rider->OnUnmount.IsBound())
+		Rider->OnUnmount.RemoveDynamic(this, &UCRidingComponent::InitRider);
 }
 
 void UCRidingComponent::Tick_ToMountPoint()
@@ -204,7 +213,7 @@ void UCRidingComponent::CheckValidPoint()
 		CHelpers::LoadAsset<UAnimMontage>(&MountAnim,
 			TEXT("AnimMontage'/Game/Character/AnimationMontages/Riding/Rider_Mount_Front_Left_Montage.Rider_Mount_Front_Left_Montage'"));
 
-		MountRotationZFactor = 30.0f;
+		MountRotationZFactor = 50.0f;
 	}
 	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateRight, 5.0f))
 	{
@@ -215,7 +224,7 @@ void UCRidingComponent::CheckValidPoint()
 		CHelpers::LoadAsset<UAnimMontage>(&MountAnim,
 			TEXT("AnimMontage'/Game/Character/AnimationMontages/Riding/Rider_Mount_Front_Right_Montage.Rider_Mount_Front_Right_Montage'"));
 
-		MountRotationZFactor = -30.0f;
+		MountRotationZFactor = -50.0f;
 	}
 	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateBack, 5.0f))
 	{
@@ -253,12 +262,11 @@ bool UCRidingComponent::MoveToPoint(ACCommonCharacter* Char, const USceneCompone
 
 void UCRidingComponent::Tick_Mounting()
 {
-	// 공통변수 세팅
+	// 일반변수 세팅
 	const TEnumAsByte<EMoveComponentAction::Type> eMoveAction = EMoveComponentAction::Type::Move;
 
 	FLatentActionInfo latentInfo;
 	latentInfo.CallbackTarget = this;
-
 
 	// 탑승 후 위치, 방향으로
 	const FVector ridingPos = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentLocation();
@@ -266,27 +274,37 @@ void UCRidingComponent::Tick_Mounting()
 
 	const FVector dir = UKismetMathLibrary::GetDirectionUnitVector(ridingPos, riderPos);
 
-	const FVector targetLocation = ridingPos + dir * 50.0f;
-	// targetLocation.Z += 70.0f;
+	FVector targetLocation = ridingPos + dir * 50.0f;
+	targetLocation.Z += 70.0f;
 
 	const FRotator rotator = UKismetMathLibrary::FindLookAtRotation(riderPos, ridingPos);
 
-	const FRotator targetRotation = FRotator(0, 0, rotator.Yaw + MountRotationZFactor);
+	const FRotator targetRotation = FRotator(0, rotator.Yaw + MountRotationZFactor, 0);
 
 	UKismetSystemLibrary::MoveComponentTo(Rider->GetRootComponent(), targetLocation, targetRotation,
 		false, true, 0.3f, false,
 		eMoveAction, latentInfo);
 
+	//const FVector ridingPos = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentLocation();
+	//FRotator ridingRot = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentRotation();
 
-	// 탑승중애니 - 탑승후루프애니 블렌딩
+	//const FVector riderPos = Rider->GetActorLocation();
+	//const FRotator rotator = UKismetMathLibrary::FindLookAtRotation(riderPos, ridingPos);
+	//ridingRot.Yaw = rotator.Yaw + MountRotationZFactor;
+
+	//UKismetSystemLibrary::MoveComponentTo(Rider->GetRootComponent(), riderPos, ridingRot,
+	//	false, true, 0.3f, false,
+	//	eMoveAction, latentInfo);
+
+
 	Rider->PlayAnimMontage(MountAnim, 1.5f);
-	
-	const FRotator ridingRot = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentRotation();
 
-	UKismetSystemLibrary::MoveComponentTo(Rider->GetRootComponent(), ridingPos, ridingRot,
-		false, true, 0.2f, false,
-		eMoveAction, latentInfo);
 
+	// 탑승중애니 - 탑승후루프애니
+	// MoveComponentTo - 몽타주 블렌드 아웃 되는 시점에 딱
+	if (false == Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.IsBound())
+		Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddDynamic(
+			this, &UCRidingComponent::LerpAnim);
 
 	// Attach - 몽타주 끝나는 시점에 딱
 	if (false == Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.IsBound())
@@ -299,14 +317,34 @@ void UCRidingComponent::Tick_Mounting()
 	RidingState = ERidingState::MountingEnd;
 }
 
+void UCRidingComponent::LerpAnim(UAnimMontage* Anim, bool bInterrupted)
+{
+	const TEnumAsByte<EMoveComponentAction::Type> eMoveAction = EMoveComponentAction::Type::Move;
+
+	FLatentActionInfo latentInfo;
+	latentInfo.CallbackTarget = this;
+
+	const FVector ridingPos = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentLocation();
+	const FRotator ridingRot = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentRotation();
+
+	UKismetSystemLibrary::MoveComponentTo(Rider->GetRootComponent(), ridingPos, ridingRot,
+		false, true, 0.2f, false,
+		eMoveAction, latentInfo);
+}
+
+void UCRidingComponent::AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted)
+{
+	Rider->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "RiderPoint");
+}
+
 void UCRidingComponent::Tick_MountingEnd()
 {
 	// 애니 끝날 때까지 대기 후 실행
 	if (false == IsValid(Rider->GetCurrentMontage()))
 	{
 		Rider->StateComp->SetRideMode();
-		Rider->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-		//Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		// Rider->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+		// Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 
 		if (!!RiderWeaponComp->GetEquipment() &&
@@ -353,13 +391,9 @@ void UCRidingComponent::Tick_Riding()
 
 void UCRidingComponent::Tick_Unmounting()
 {
+	CLog::Log("Unmounting");
 }
 
 void UCRidingComponent::Tick_UnmountingEnd()
 {
-}
-
-void UCRidingComponent::AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted)
-{
-	Rider->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "RiderPoint");
 }

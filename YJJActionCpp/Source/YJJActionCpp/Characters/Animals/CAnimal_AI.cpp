@@ -28,7 +28,7 @@ ACAnimal_AI::ACAnimal_AI()
 	CHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 	CHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
 
-	if (MovementComp)
+	if (!!MovementComp)
 	{
 		MovementComp->SetSpeeds(Speeds);
 		MovementComp->EnableControlRotation();
@@ -37,6 +37,9 @@ ACAnimal_AI::ACAnimal_AI()
 		MovementComp->SetFriction(2, 256);
 		MovementComp->SetJumpZ(700.0f);
 	}
+
+	if (!!RiderPoint)
+		RiderPoint->SetWorldLocation(FindComponentByClass<USceneComponent>()->GetSocketLocation("RiderPoint"));
 }
 
 void ACAnimal_AI::BeginPlay()
@@ -52,9 +55,6 @@ void ACAnimal_AI::BeginPlay()
 
 void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	for (auto& elem : PlayerInputComponent->KeyBindings)
-		CLog::Log(elem.KeyEvent);
-
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("MoveForward", MovementComp, &UCMovementComponent::InputAxis_MoveForward);

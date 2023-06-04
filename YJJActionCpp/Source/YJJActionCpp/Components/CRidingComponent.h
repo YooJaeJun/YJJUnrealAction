@@ -73,11 +73,14 @@ public:
 			AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:
-	void SetInteractableCharacter(TWeakObjectPtr<ACCommonCharacter> InCharacter, 
+	void SetInteractor(TWeakObjectPtr<ACCommonCharacter> InCharacter, 
 		const TWeakObjectPtr<ACCommonCharacter> InOtherCharacter);
 
 	UFUNCTION()
 		void SetRider(ACCommonCharacter* InCharacter);
+
+	UFUNCTION()
+		void InitRider();
 
 	FORCEINLINE const ACCommonCharacter* GetRider() const { return Rider; };
 
@@ -92,6 +95,9 @@ private:
 public:
 	void CheckValidPoint();
 	bool MoveToPoint(ACCommonCharacter* Char, const USceneComponent* To);
+
+	UFUNCTION()
+		void LerpAnim(UAnimMontage* Anim, bool bInterrupted);
 
 	UFUNCTION()
 		void AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted);

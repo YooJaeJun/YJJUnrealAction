@@ -16,8 +16,8 @@ class UCWeaponStructures;
 class ACAnimal_AI;
 class USoundBase;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteract, ACCommonCharacter*, Object);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnmount, ACCommonCharacter*, Object);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMount, ACCommonCharacter*, Object);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnmount);
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API ACCommonCharacter :
@@ -82,10 +82,10 @@ protected:
 
 public:
 	UPROPERTY()
-		FInteract OnInteract;
+		FMount OnMount;
 
 	UPROPERTY()
-		FInteract OnUnmount;
+		FUnmount OnUnmount;
 
 	UPROPERTY(VisibleAnywhere)
 		UCStateComponent* StateComp;

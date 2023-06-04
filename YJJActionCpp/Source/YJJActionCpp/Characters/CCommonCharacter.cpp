@@ -37,8 +37,9 @@ void ACCommonCharacter::Tick(float DeltaSeconds)
 
 	if (bTickLerpForTarget)
 	{
-		FRotator start = MyCurController->GetControlRotation();
-		FRotator target = TargetRotator;
+		const FRotator start = MyCurController->GetControlRotation();
+		const FRotator target = TargetRotator;
+
 		MyCurController->SetControlRotation(
 			FMath::RInterpTo(start, target, GetWorld()->DeltaTimeSeconds, 5.0f));
 
@@ -195,16 +196,14 @@ void ACCommonCharacter::SetInteractor(ACCommonCharacter* InCharacter)
 
 void ACCommonCharacter::InputAction_Interact()
 {
-	CheckNull(Interactor);
-
 	if (!!Interactor)
 	{
-		if (OnInteract.IsBound())
-			OnInteract.Broadcast(this);
+		if (OnMount.IsBound())
+			OnMount.Broadcast(this);
 	}
 	else
 	{
 		if (OnUnmount.IsBound())
-			OnUnmount.Broadcast(this);
+			OnUnmount.Broadcast();
 	}
 }
