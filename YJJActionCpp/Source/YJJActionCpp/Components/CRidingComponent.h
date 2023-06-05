@@ -65,6 +65,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 public:
+	void SetRidingState(const ERidingState InState);
+
 	UFUNCTION()
 		void BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 			AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -81,9 +83,6 @@ public:
 	UFUNCTION()
 		void SetRider(ACCommonCharacter* InCharacter);
 
-	UFUNCTION()
-		void InitRider();
-
 	FORCEINLINE const ACCommonCharacter* GetRider() const { return Rider; };
 
 private:
@@ -97,13 +96,18 @@ private:
 public:
 	void CheckValidPoint();
 	bool MoveToPoint(ACCommonCharacter* Char, const USceneComponent* To);
-	void InterpToCamera();
+	void PossessAndInterpToCamera();
 
 	UFUNCTION()
 		void InterpToRidingPos(UAnimMontage* Anim, bool bInterrupted);
 
 	UFUNCTION()
 		void AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted);
+
+	void UnpossessAndInterpToCamera();
+
+	UFUNCTION()
+		void Unmount();
 
 	void Input_Zoom(const float InAxis) {}
 	void Input_Targeting() {}
@@ -112,7 +116,7 @@ public:
 	void CancelHitAnim() {}
 
 	void SetStatusUI() {}
-	void OnStatusUI() {}
+	void OnStatusUI(const bool InOn) {}
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
@@ -174,6 +178,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		AController* ControllerSave;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		UAnimMontage* UnmountAnim;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		USoundBase* UnmountSound;
 
 private:
 	TWeakObjectPtr<ACAnimal_AI> Owner;

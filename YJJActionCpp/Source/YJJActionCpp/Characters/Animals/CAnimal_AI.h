@@ -56,10 +56,10 @@ private:
 		UCameraComponent* Camera;
 
 	UPROPERTY(VisibleAnywhere)
-		UCTargetingComponent* TargetingComp;
+		UCZoomComponent* ZoomComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCZoomComponent* ZoomComp;
+		UCTargetingComponent* TargetingComp;
 
 	UPROPERTY(VisibleAnywhere)
 		UCGameUIComponent* GameUIComp;
