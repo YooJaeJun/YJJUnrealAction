@@ -188,31 +188,7 @@ void UCRidingComponent::Tick_ToMountPoint()
 		Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 		Rider->GetCharacterMovement()->bEnablePhysicsInteraction = false;
 
-
-		// Camera Start
-		Camera->SetWorldTransform(UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetTransform());
-
-		// Controller Possess
-		ControllerSave = Owner->GetController();
-
-		TWeakObjectPtr<ACCommonCharacter> animal = Cast<ACCommonCharacter>(Owner);
-
-		GetWorld()->GetFirstPlayerController()->UnPossess();
-
-		if (!!animal.Get())
-			GetWorld()->GetFirstPlayerController()->Possess(animal.Get());
-
-		Rider->SetMyCurController(GetWorld()->GetFirstPlayerController());
-
-
-		// Camera Move
-		latentInfo.CallbackTarget = Camera;
-
-		UKismetSystemLibrary::MoveComponentTo(Camera,
-			FVector::ZeroVector, FRotator::ZeroRotator,
-			true, true, 0.7f, false,
-			eMoveAction, latentInfo);
-
+		InterpToCamera();
 
 		RidingState = ERidingState::Mounting;
 	}
@@ -287,6 +263,33 @@ bool UCRidingComponent::MoveToPoint(ACCommonCharacter* Char, const USceneCompone
 	return reached;
 }
 
+void UCRidingComponent::InterpToCamera()
+{
+	// Camera Start
+	Camera->SetWorldTransform(UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetTransform());
+
+	// Controller Possess
+	ControllerSave = Owner->GetController();
+
+	TWeakObjectPtr<ACCommonCharacter> animal = Cast<ACCommonCharacter>(Owner);
+
+	GetWorld()->GetFirstPlayerController()->UnPossess();
+
+	if (!!animal.Get())
+		GetWorld()->GetFirstPlayerController()->Possess(animal.Get());
+
+	Rider->SetMyCurController(GetWorld()->GetFirstPlayerController());
+
+	// Camera Move
+	latentInfo.CallbackTarget = Camera;
+
+	UKismetSystemLibrary::MoveComponentTo(Camera,
+		FVector::ZeroVector, FRotator::ZeroRotator,
+		true, true, 0.7f, false,
+		eMoveAction, latentInfo);
+}
+
+
 void UCRidingComponent::Tick_Mounting()
 {
 	// 탑승 후 위치, 방향으로
@@ -309,7 +312,7 @@ void UCRidingComponent::Tick_Mounting()
 	// MoveComponentTo - 몽타주 블렌드 아웃 되는 시점에 딱
 	if (false == Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.IsBound())
 		Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddDynamic(
-			this, &UCRidingComponent::LerpAnimToAnim);
+			this, &UCRidingComponent::InterpToRidingPos);
 
 	// Attach - 몽타주 끝나는 시점에 딱
 	if (false == Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.IsBound())
@@ -322,7 +325,7 @@ void UCRidingComponent::Tick_Mounting()
 	RidingState = ERidingState::MountingEnd;
 }
 
-void UCRidingComponent::LerpAnimToAnim(UAnimMontage* Anim, bool bInterrupted)
+void UCRidingComponent::InterpToRidingPos(UAnimMontage* Anim, bool bInterrupted)
 {
 	const FVector ridingPos = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentLocation();
 	const FRotator ridingRot = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentRotation();
@@ -342,9 +345,10 @@ void UCRidingComponent::Tick_MountingEnd()
 	// 애니 끝날 때까지 대기 후 실행
 	if (false == IsValid(Rider->GetCurrentMontage()))
 	{
+		Owner->StateComp->SetRideMode();
 		Rider->StateComp->SetRideMode();
 		Rider->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-		// Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 
 		if (!!RiderWeaponComp->GetEquipment() &&

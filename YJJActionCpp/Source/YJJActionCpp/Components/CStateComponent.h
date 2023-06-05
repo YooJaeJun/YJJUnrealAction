@@ -44,6 +44,8 @@ public:
 	void SetRiseMode();
 	void SetRideMode();
 
+	void GoBack();
+
 private:
 	void ChangeType(const EStateType InType);
 
@@ -59,6 +61,7 @@ public:
 	FORCEINLINE bool IsDeadMode() const { return CurType == EStateType::Dead; }
 	FORCEINLINE bool IsRiseMode() const { return CurType == EStateType::Rise; }
 	FORCEINLINE bool IsRideMode() const { return CurType == EStateType::Ride; }
+	FORCEINLINE bool WasRideMode() const { return PrevType == EStateType::Ride; }
 
 private:
 	UPROPERTY(EditAnyWhere, Category = "Settings")

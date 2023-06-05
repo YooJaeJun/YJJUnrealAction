@@ -129,17 +129,17 @@ void ACPlayableCharacter::Avoid()
 
 void ACPlayableCharacter::End_Avoid()
 {
-	StateComp->SetIdleMode();
+	StateComp->GoBack();
 }
 
 void ACPlayableCharacter::End_Hit()
 {
-	StateComp->SetIdleMode();
+	StateComp->GoBack();
 }
 
 void ACPlayableCharacter::End_Rise()
 {
-	StateComp->SetIdleMode();
+	StateComp->GoBack();
 }
 
 void ACPlayableCharacter::InputAction_Avoid()

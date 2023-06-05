@@ -6,7 +6,7 @@
 
 class ACCommonCharacter;
 
-UCLASS()
+UCLASS(Abstract)
 class YJJACTIONCPP_API UCAnimInstance_Character : public UAnimInstance
 {
 	GENERATED_BODY()
@@ -40,12 +40,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
 		bool bHitting;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		bool bRiding;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		bool bRidingFalling;
 
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

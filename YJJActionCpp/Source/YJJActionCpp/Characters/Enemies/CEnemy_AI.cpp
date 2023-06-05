@@ -29,7 +29,7 @@ ACEnemy_AI::ACEnemy_AI()
 	GetMesh()->SetAnimClass(animInstance);
 
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
-
+	
 	if (!!StateComp)
 		StateComp->OnStateTypeChanged.AddDynamic(this, &ACEnemy_AI::OnStateTypeChanged);
 

@@ -97,9 +97,10 @@ private:
 public:
 	void CheckValidPoint();
 	bool MoveToPoint(ACCommonCharacter* Char, const USceneComponent* To);
+	void InterpToCamera();
 
 	UFUNCTION()
-		void LerpAnimToAnim(UAnimMontage* Anim, bool bInterrupted);
+		void InterpToRidingPos(UAnimMontage* Anim, bool bInterrupted);
 
 	UFUNCTION()
 		void AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted);

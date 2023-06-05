@@ -63,7 +63,7 @@ void ACCommonCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
 
-	StateComp->SetIdleMode();
+	StateComp->GoBack();
 }
 
 float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 

@@ -57,6 +57,14 @@ void UCStateComponent::SetRideMode()
 	ChangeType(EStateType::Ride);
 }
 
+void UCStateComponent::GoBack()
+{
+	if (WasRideMode())
+		SetRideMode();
+	else
+		SetIdleMode();
+}
+
 void UCStateComponent::ChangeType(const EStateType InType)
 {
 	PrevType = CurType;

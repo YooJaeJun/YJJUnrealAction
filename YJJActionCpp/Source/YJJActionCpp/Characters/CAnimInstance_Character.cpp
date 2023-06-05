@@ -1,7 +1,6 @@
 #include "Characters/CAnimInstance_Character.h"
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
-#include "Characters/Animals/CAnimal_AI.h"
 
 void UCAnimInstance_Character::NativeBeginPlay()
 {
@@ -32,23 +31,8 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 		bFalling = (StateComp->IsFallMode());
 		bHitting = (StateComp->IsHitMode());
-		bRiding = (StateComp->IsRideMode());
 
-		if (bRiding)
-		{
-			const auto animal = Cast<ACAnimal_AI>(Owner->GetMyCurController()->GetCharacter());
-			if (!!animal)
-			{
-				Speed = animal->GetVelocity().Size2D();
-
-				if (animal->StateComp->IsFallMode())
-					bRidingFalling = true;
-				else
-					bRidingFalling = false;
-			}
-		}
-		else
-			Speed = Owner->GetVelocity().Size2D();
+		Speed = Owner->GetVelocity().Size2D();
 	}
 
 	const FRotator rotator = Owner->GetVelocity().ToOrientationRotator();

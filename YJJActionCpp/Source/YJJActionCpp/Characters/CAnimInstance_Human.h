@@ -14,6 +14,7 @@ class YJJACTIONCPP_API UCAnimInstance_Human : public UCAnimInstance_Character
 
 public:
 	virtual void NativeBeginPlay() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
 	UFUNCTION()
@@ -25,6 +26,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
 		EWeaponType WeaponPrevType = EWeaponType::Unarmed;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
+		bool bRiding;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
+		bool bRidingFalling;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
 		bool BowAiming;
