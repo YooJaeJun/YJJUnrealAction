@@ -52,17 +52,9 @@ void UCStateComponent::SetRiseMode()
 	ChangeType(EStateType::Rise);
 }
 
-void UCStateComponent::SetRideMode()
-{
-	ChangeType(EStateType::Ride);
-}
-
 void UCStateComponent::GoBack()
 {
-	if (WasRideMode())
-		SetRideMode();
-	else
-		SetIdleMode();
+	SetIdleMode();
 }
 
 void UCStateComponent::ChangeType(const EStateType InType)

@@ -16,7 +16,6 @@ enum class EStateType : uint8
 	Hit			UMETA(DisplayName = "Hit"),
 	Dead		UMETA(DisplayName = "Dead"),
 	Rise		UMETA(DisplayName = "Rise"),
-	Ride		UMETA(DisplayName = "Ride"),
 	Max			UMETA(DisplayName = "Max")
 };
 
@@ -42,7 +41,6 @@ public:
 	void SetHitMode();
 	void SetDeadMode();
 	void SetRiseMode();
-	void SetRideMode();
 
 	void GoBack();
 
@@ -60,8 +58,6 @@ public:
 	FORCEINLINE bool IsHitMode() const { return CurType == EStateType::Hit; }
 	FORCEINLINE bool IsDeadMode() const { return CurType == EStateType::Dead; }
 	FORCEINLINE bool IsRiseMode() const { return CurType == EStateType::Rise; }
-	FORCEINLINE bool IsRideMode() const { return CurType == EStateType::Ride; }
-	FORCEINLINE bool WasRideMode() const { return PrevType == EStateType::Ride; }
 
 private:
 	UPROPERTY(EditAnyWhere, Category = "Settings")

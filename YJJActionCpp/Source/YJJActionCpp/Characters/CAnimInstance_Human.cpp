@@ -17,21 +17,17 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (StateComp.Get())
-		bRiding = (StateComp->IsRideMode());
+	CheckNull(Owner.Get());
+
+	bRiding = Owner->GetbRiding();
 
 	if (bRiding)
 	{
 		const auto animal = Cast<ACAnimal_AI>(Owner->GetMyCurController()->GetCharacter());
-		if (!!animal)
-		{
-			Speed = animal->GetVelocity().Size2D();
 
+		if (!!animal)
 			bRidingFalling = animal->StateComp->IsFallMode();
-		}
 	}
-	else if (!!Owner.Get())
-		Speed = Owner->GetVelocity().Size2D();
 }
 
 void UCAnimInstance_Human::OnWeaponTypeChanged(const EWeaponType InPrevType, const EWeaponType InNewType)

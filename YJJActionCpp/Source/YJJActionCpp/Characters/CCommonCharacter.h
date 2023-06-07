@@ -55,6 +55,9 @@ public:
 	virtual void End_Dead() override;
 	virtual void End_Rise() override;
 
+	FORCEINLINE void SetbRiding(const bool InbRiding) { bRiding = InbRiding; }
+	FORCEINLINE const bool GetbRiding() const { return bRiding; }
+
 private:
 	UFUNCTION()
 		void RestoreColor();
@@ -114,11 +117,14 @@ protected:
 		FLinearColor OriginColor = FLinearColor::White;
 
 private:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Key")
 		FVector2D MousePos;
 
 	UPROPERTY(VisibleAnywhere)
 		ACCommonCharacter* Interactor;
+
+	UPROPERTY(VisibleAnywhere, Category = "Ride")
+		bool bRiding;
 
 public:
 	TWeakObjectPtr<AController> MyCurController;

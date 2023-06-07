@@ -105,4 +105,3 @@ void ACEnemy_AI::End_Hit()
 		break;
 	}
 }
-

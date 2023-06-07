@@ -79,19 +79,19 @@ void ACPlayableCharacter::BeginPlay()
 	if (!!MovementComp)
 		MovementComp->SetSpeed(ESpeedType::Sprint);
 
-	TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(MyCurController);
+	const TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(MyCurController);
 	if (!!playerController.Get())
 	{
 		playerController->PlayerCameraManager->ViewPitchMin = PitchRange.X;
 		playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
 	}
 
-	TWeakObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
+	const TWeakObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
 	if (hud.Get())
 	{
 		hud->SetChildren();
 
-		TWeakObjectPtr<UCUserWidget_PlayerInfo> playerInfo = hud->PlayerInfo;
+		const TWeakObjectPtr<UCUserWidget_PlayerInfo> playerInfo = hud->PlayerInfo;
 		if (!!playerInfo.Get())
 			playerInfo->BindStats(CharacterStatComp);
 	}

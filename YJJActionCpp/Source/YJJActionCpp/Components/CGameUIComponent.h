@@ -32,12 +32,9 @@ public:
 	virtual void InputAction_DeactivateEquipMenu() override;
 
 private:
-	UPROPERTY()
-		ACGameMode* GameMode;
-
-private:
+	TWeakObjectPtr<ACGameMode> GameMode;
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCUserWidget_EquipMenu> EquipMenu;
-	TArray<UCUserWidget_EquipMenuButton*> EquipMenuButtons;
+	TArray<TWeakObjectPtr<UCUserWidget_EquipMenuButton>> EquipMenuButtons;
 	TWeakObjectPtr<APlayerController> PlayerController;
 };

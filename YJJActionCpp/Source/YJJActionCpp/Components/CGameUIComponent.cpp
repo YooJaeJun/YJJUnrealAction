@@ -1,4 +1,6 @@
 #include "Components/CGameUIComponent.h"
+
+#include "CMovementComponent.h"
 #include "Global.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -21,7 +23,7 @@ void UCGameUIComponent::BeginPlay()
 
 	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	if (!!GameMode)
+	if (!!GameMode.Get())
 	{
 		TWeakObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
 		if (hud.Get())
@@ -47,10 +49,10 @@ void UCGameUIComponent::OnWeaponEquipped(const EWeaponType InNewType)
 	ACPlayableCharacter* player = Cast<ACPlayableCharacter>(Owner);
 	CheckNull(player);
 
-	UCWeaponComponent* weaponComponent = CHelpers::GetComponent<UCWeaponComponent>(player);
-	CheckNull(weaponComponent);
+	UCWeaponComponent* weaponComp = CHelpers::GetComponent<UCWeaponComponent>(player);
+	CheckNull(weaponComp);
 
-	weaponComponent->SetMode(InNewType);
+	weaponComp->SetMode(InNewType);
 }
 
 void UCGameUIComponent::InputAction_ActivateEquipMenu()

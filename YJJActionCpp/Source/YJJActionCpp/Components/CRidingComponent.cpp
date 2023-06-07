@@ -91,6 +91,7 @@ void UCRidingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+
 	switch (RidingState)
 	{
 	case ERidingState::None:
@@ -188,7 +189,9 @@ void UCRidingComponent::Tick_ToMountPoint()
 		Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 		Rider->GetCharacterMovement()->bEnablePhysicsInteraction = false;
 
+
 		PossessAndInterpToCamera();
+
 
 		SetRidingState(ERidingState::Mounting);
 	}
@@ -341,6 +344,8 @@ void UCRidingComponent::InterpToRidingPos(UAnimMontage* Anim, bool bInterrupted)
 
 void UCRidingComponent::AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted)
 {
+	Rider->GetCharacterMovement()->StopMovementImmediately();
+
 	Rider->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "RiderPoint");
 
 	if (!!Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.IsBound())
@@ -353,24 +358,15 @@ void UCRidingComponent::Tick_MountingEnd()
 	// 애니 끝날 때까지 대기 후 실행
 	if (false == IsValid(Rider->GetCurrentMontage()))
 	{
-		Owner->StateComp->SetRideMode();
-		Rider->StateComp->SetRideMode();
+		Rider->SetbRiding(true);
+		Owner->SetbRiding(true);
+
 		Rider->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 		Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-
-		if (!!RiderWeaponComp->GetEquipment() &&
-			!!RiderWeaponComp->GetEquipment()->GetEquipped())
-			MovementComp->DisableControlRotation();
-		else
-			MovementComp->EnableControlRotation();
-
 		MovementComp->Move();
 
-		if (!!Rider->MovementComp->GetFixedCamera())
-			MovementComp->FixCamera();
-		else
-			MovementComp->UnFixCamera();
+		SpringArm->bUsePawnControlRotation = true;
 
 
 		// TODO Riding Info
@@ -384,6 +380,17 @@ void UCRidingComponent::Tick_MountingEnd()
 
 void UCRidingComponent::Tick_Riding()
 {
+	if (!!RiderWeaponComp->GetEquipment() &&
+		!!RiderWeaponComp->GetEquipment()->GetEquipped())
+		MovementComp->EnableControlRotation();
+	else
+		MovementComp->DisableControlRotation();
+
+	if (!!Rider->MovementComp->GetFixedCamera())
+		MovementComp->FixCamera();
+	else
+		MovementComp->UnFixCamera();
+
 	// TODO Zoom
 	// TODO Height UI
 }
@@ -417,7 +424,6 @@ void UCRidingComponent::Tick_Unmounting()
 
 	UnpossessAndInterpToCamera();
 
-
 	// 탑승 후 위치, 방향으로
 	FVector targetPos = RidingPoints[static_cast<uint8>(ERidingPoint::Unmount)]->GetComponentLocation();
 	targetPos.Z += 20.0f;
@@ -430,6 +436,8 @@ void UCRidingComponent::Tick_Unmounting()
 		true, true, 0.6f, false,
 		eMoveAction, latentInfo);
 
+	Owner->SetbRiding(false);
+	Rider->SetbRiding(false);
 	Rider->StateComp->SetFallMode();
 	Rider->StateComp->SetFallMode();
 
