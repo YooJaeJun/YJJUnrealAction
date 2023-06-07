@@ -76,6 +76,7 @@ void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComp, &UCTargetingComponent::InputAction_Targeting);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
+	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, RidingComp, &UCRidingComponent::InputAction_Act);
 }
 
 void ACAnimal_AI::Landed(const FHitResult& Hit)

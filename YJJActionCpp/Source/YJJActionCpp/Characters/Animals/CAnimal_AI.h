@@ -67,7 +67,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		UCPatrolComponent* PatrolComp;
 
-	// Rider
 	UPROPERTY(VisibleAnywhere)
 		UCRidingComponent* RidingComp;
 

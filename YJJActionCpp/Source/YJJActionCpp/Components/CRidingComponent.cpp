@@ -20,6 +20,7 @@
 #include "Weapons/CEquipment.h"
 #include "GameFramework/Controller.h"
 #include "Characters/Player/CPlayableCharacter.h"
+#include "Weapons/CAct.h"
 
 UCRidingComponent::UCRidingComponent()
 {
@@ -488,4 +489,11 @@ void UCRidingComponent::Tick_UnmountingEnd()
 
 		SetRidingState(ERidingState::None);
 	}
+}
+
+void UCRidingComponent::InputAction_Act()
+{
+	if (!!RiderWeaponComp && 
+		!!RiderWeaponComp->GetAct())
+		RiderWeaponComp->GetAct()->Act();
 }

@@ -109,6 +109,7 @@ public:
 	UFUNCTION()
 		void Unmount();
 
+	void InputAction_Act();
 	void Input_Zoom(const float InAxis) {}
 	void Input_Targeting() {}
 	void ApplyZoom() {}
@@ -117,6 +118,7 @@ public:
 
 	void SetStatusUI() {}
 	void OnStatusUI(const bool InOn) {}
+
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
