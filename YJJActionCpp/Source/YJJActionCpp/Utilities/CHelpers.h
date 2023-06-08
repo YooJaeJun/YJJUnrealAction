@@ -3,6 +3,8 @@
 #include "Particles/ParticleSystem.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Characters/CCommonCharacter.h"
+#include "GameFramework/Controller.h"
 
 #define CheckTrue(x) { if (x == true) return; }
 #define CheckTrueResult(x, y) { if (x == true) return y; }
@@ -176,5 +178,39 @@ public:
 	static void LoadAsset(T** OutObject, const FString& Path)
 	{
 		*OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *Path));
+	}
+
+	static TWeakObjectPtr<ACCommonCharacter> GetNearlyFromAngle(
+		TWeakObjectPtr<ACCommonCharacter> InCenter,
+		TArray<TWeakObjectPtr<ACCommonCharacter>> InArray,
+		TWeakObjectPtr<AController> InController)
+	{
+		CheckTrueResult(InArray.Num() <= 0, nullptr);
+
+		const float limitLeastAngle = 0.7f;
+		float maxAngle = 0.0f;
+		TWeakObjectPtr<ACCommonCharacter> outTarget;
+
+		for (const auto& elem : InArray)
+		{
+			if (!!elem.IsValid())
+			{
+				FVector diff = (elem->GetActorLocation() - InCenter->GetActorLocation());
+				diff.Normalize();
+
+				FVector forward = UKismetMathLibrary::GetForwardVector(InController->GetControlRotation());
+
+				float curAngle = diff.DotProduct(diff, forward);
+
+				if (curAngle > limitLeastAngle &&
+					curAngle > maxAngle)
+				{
+					curAngle = maxAngle;
+					outTarget = elem;
+				}
+			}
+		}
+
+		return outTarget;
 	}
 };

@@ -1,41 +1,61 @@
 #include "Components/CZoomComponent.h"
 #include "Global.h"
-#include "Components/CMovementComponent.h"
-#include "Components/CTargetingComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/CTargetingComponent.h"
+#include "Components/CMovementComponent.h"
 #include "Characters/Player/CPlayableCharacter.h"
+#include "Characters/Animals/CAnimal_AI.h"
 
 UCZoomComponent::UCZoomComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	Owner = Cast<ACPlayableCharacter>(GetOwner());
+	Player = Cast<ACPlayableCharacter>(GetOwner());
+	Animal = Cast<ACAnimal_AI>(GetOwner());
 }
 
 void UCZoomComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	CheckNull(Owner);
 
-	Zooming = Owner->GetSpringArm()->TargetArmLength;
+	if (!!Player.Get())
+	{
+		Zooming = Player->GetSpringArm()->TargetArmLength;
+		TargetingComp = Player->GetTargetingComp();
+		MovementComp = Player->MovementComp;
+	}
+	else if (!!Animal.Get())
+	{
+		Zooming = Animal->GetSpringArm()->TargetArmLength;
+		TargetingComp = Animal->GetTargetingComp();
+		MovementComp = Animal->MovementComp;
+	}
 }
 
 void UCZoomComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	CheckNull(Owner);
+	if (!!Player.Get())
+		TargetArmLength = Player->GetSpringArm()->TargetArmLength;
+	else if (!!Animal.Get())
+		TargetArmLength = Animal->GetSpringArm()->TargetArmLength;
+
 
 	if (UKismetMathLibrary::NearlyEqual_FloatFloat(
-		Zooming, Owner->GetSpringArm()->TargetArmLength, 0.1f))
+		Zooming, TargetArmLength, 0.1f))
 		return;
 
-	Owner->GetSpringArm()->TargetArmLength = UKismetMathLibrary::FInterpTo(
-		Owner->GetSpringArm()->TargetArmLength,
-		Zooming,
+	TargetArmLength = UKismetMathLibrary::FInterpTo(
+		TargetArmLength, Zooming,
 		UGameplayStatics::GetWorldDeltaSeconds(GetWorld()),
-		ZoomData.InterpSpeed
-	);
+		ZoomData.InterpSpeed);
+
+
+	if (!!Player.Get())
+		Player->GetSpringArm()->TargetArmLength = TargetArmLength;
+	else if (!!Animal.Get())
+		Animal->GetSpringArm()->TargetArmLength = TargetArmLength;
 }
 
 void UCZoomComponent::InputAxis_Zoom(const float InAxis)
@@ -43,17 +63,12 @@ void UCZoomComponent::InputAxis_Zoom(const float InAxis)
 	if (InAxis == 0.0f)
 		return;
 
-	CheckNull(Owner);
-
-	if (!!Owner->GetTargetingComp() && 
-		Owner->GetTargetingComp()->IsTargeting)
+	if (!!TargetingComp.Get() && 
+		!!TargetingComp->bTargeting)
 	{
-		if (InAxis > 0.0f)
-			Owner->GetTargetingComp()->ChangeFocus(true);
-		else
-			Owner->GetTargetingComp()->ChangeFocus(false);
+		TargetingComp->ChangeFocus(InAxis > 0.0f);
 	}
-	else if(false == Owner->MovementComp->GetFixedCamera())
+	else if(false == MovementComp->GetFixedCamera())
 	{
 		Zooming = UKismetMathLibrary::Clamp(
 			Zooming + InAxis * ZoomData.ZoomSpeed,

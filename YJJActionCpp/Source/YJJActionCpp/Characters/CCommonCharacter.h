@@ -16,6 +16,7 @@ class UCWeaponStructures;
 class ACAnimal_AI;
 class USoundBase;
 class UFXSystemAsset;
+class UWidgetComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMount, ACCommonCharacter*, Object);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnmount);
@@ -111,6 +112,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Land")
 		UFXSystemAsset* LandEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+		UWidgetComponent* TargetingWidgetComp;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Color")

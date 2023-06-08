@@ -8,7 +8,7 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Weapons/CWeaponStructures.h"
 #include "UMG/Public/Blueprint/WidgetLayoutLibrary.h"
-#include "Characters/Animals/CAnimal_AI.h"
+#include "Components/WidgetComponent.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -17,8 +17,15 @@ ACCommonCharacter::ACCommonCharacter()
 	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
 	CHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
 	CHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
+	CHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", GetMesh());
 
 	CharacterStatComp->OnHpIsZero.AddUObject(this, &ACCommonCharacter::Dead);
+
+	if (!!TargetingWidgetComp)
+	{
+		TargetingWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+		TargetingWidgetComp->SetVisibility(false);
+	}
 }
 
 void ACCommonCharacter::BeginPlay()

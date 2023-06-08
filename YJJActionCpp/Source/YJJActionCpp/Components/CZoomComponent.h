@@ -4,6 +4,9 @@
 #include "CZoomComponent.generated.h"
 
 class ACPlayableCharacter;
+class ACAnimal_AI;
+class UCTargetingComponent;
+class UCMovementComponent;
 
 USTRUCT()
 struct FZoomData
@@ -43,12 +46,18 @@ public:
 		void InputAxis_Zoom(const float InAxis);
 
 public:
-	UPROPERTY()
-		float Zooming;
-
 	UPROPERTY(EditAnywhere)
 		FZoomData ZoomData;
 
+	UPROPERTY(VisibleAnywhere)
+		float Zooming;
+
+	UPROPERTY(VisibleAnywhere)
+		float TargetArmLength;
+
 private:
-	TWeakObjectPtr<ACPlayableCharacter> Owner;
+	TWeakObjectPtr<ACPlayableCharacter> Player;
+	TWeakObjectPtr<ACAnimal_AI> Animal;
+	TWeakObjectPtr<UCTargetingComponent> TargetingComp;
+	TWeakObjectPtr<UCMovementComponent> MovementComp;
 };
