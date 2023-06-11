@@ -24,14 +24,13 @@ public:
 	UFUNCTION()
 		void InputAction_Targeting();
 
-	void Toggle_Target();
 	void Begin_Targeting();
 	void End_Targeting();
 	void ChangeTarget(ACCommonCharacter* InTarget);
 	void SetVisibleTargetUI(bool bVisible);
 	void Tick_MoveFocusCoolTIme(const float InDelta);
 	void Tick_Targeting();
-	void ChangeFocus(const bool InRight);
+	void ChangeFocus(const bool InbRight);
 
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Focus")

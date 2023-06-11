@@ -1,8 +1,7 @@
 #include "Components/CTargetingComponent.h"
-
+#include "Global.h"
 #include "CMovementComponent.h"
 #include "CStateComponent.h"
-#include "Global.h"
 #include "Characters/CCommonCharacter.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Controller.h"
@@ -34,11 +33,6 @@ void UCTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UCTargetingComponent::InputAction_Targeting()
 {
-	Toggle_Target();
-}
-
-void UCTargetingComponent::Toggle_Target()
-{
 	if (bTargeting)
 		End_Targeting();
 	else
@@ -51,24 +45,30 @@ void UCTargetingComponent::Begin_Targeting()
 	TArray<FHitResult> hitResults;
 
 	UKismetSystemLibrary::SphereTraceMultiByProfile(GetWorld(),
-		Owner->GetActorLocation(), Owner->GetActorLocation(),
-		TraceDistance, "Targeting",
-		false, ignores,
-		EDrawDebugTrace::ForOneFrame,
-		hitResults, true);
+		Owner->GetActorLocation(), 
+		Owner->GetActorLocation(),
+		TraceDistance, 
+		"Targeting",
+		false, 
+		ignores,
+		EDrawDebugTrace::None,
+		hitResults, 
+		true);
 
-	TArray<TWeakObjectPtr<ACCommonCharacter>> Targets;
+	TArray<TWeakObjectPtr<ACCommonCharacter>> targets;
 
 	for (const auto& elem : hitResults)
 	{
 		if (elem.GetActor()->GetClass() != Owner->GetClass())
 		{
-			Targets.Push(Cast<ACCommonCharacter>(elem.GetActor()));
+			targets.Push(Cast<ACCommonCharacter>(elem.GetActor()));
 			bTargeting = true;
 		}
 	}
 
-	const TWeakObjectPtr<ACCommonCharacter> target = CHelpers::GetNearlyFromAngle(Owner, Targets, Owner->GetMyCurController());
+	const TWeakObjectPtr<ACCommonCharacter> target = 
+		CHelpers::GetNearForward(Owner, targets, Owner->GetMyCurController());
+
 	ChangeTarget(target.Get());
 }
 
@@ -94,9 +94,10 @@ void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 		Target = InTarget;
 
 		if (!!Target.Get())
+		{
 			SetVisibleTargetUI(true);
-
-		Target->MovementComp->FixCamera();
+			Target->MovementComp->FixCamera();
+		}
 	}
 	else
 	{
@@ -131,7 +132,7 @@ void UCTargetingComponent::Tick_Targeting()
 	CheckNull(Target.Get());
 	CheckNull(Target->StateComp);
 	
-	if (!!Target->StateComp->IsDeadMode() &&
+	if (false == Target->StateComp->IsDeadMode() &&
 		!!(Owner->GetDistanceTo(Target.Get()) <= TraceDistance))
 	{
 		if (nullptr == Controller.Get())
@@ -157,13 +158,75 @@ void UCTargetingComponent::Tick_Targeting()
 			
 			Controller->SetControlRotation(rotator);
 		}
-
-	}// IsDeadMode, GetDistanceTo
+	}// !IsDeadMode, GetDistanceTo
 	else
 		End_Targeting();
 }
 
-void UCTargetingComponent::ChangeFocus(const bool InRight)
+void UCTargetingComponent::ChangeFocus(const bool InbRight)
 {
+	CheckFalse(bCanMoveFocus);
+	CheckNull(Target);
 
+	const TArray<AActor*> ignores{ Owner.Get(), Target.Get() };
+	TArray<FHitResult> hitResults;
+
+	UKismetSystemLibrary::SphereTraceMultiByProfile(GetWorld(),
+		Owner->GetActorLocation(),
+		Owner->GetActorLocation(),
+		TraceDistance,
+		"Targeting",
+		false,
+		ignores,
+		EDrawDebugTrace::None,
+		hitResults,
+		true);
+
+	TArray<TWeakObjectPtr<ACCommonCharacter>> targets;
+
+	CheckTrue(hitResults.Num() == 0);
+
+	for (const auto& elem : hitResults)
+	{
+		if (!!elem.GetActor() && 
+			elem.GetActor()->GetClass() != Owner->GetClass())
+		{
+			targets.AddUnique(Cast<ACCommonCharacter>(elem.GetActor()));
+			bTargeting = true;
+		}
+	}
+
+	TMap<float, TWeakObjectPtr<ACCommonCharacter>> nearCharacters;
+
+	CHelpers::AddNearSideCharacters(Owner, targets, Owner->GetMyCurController(), nearCharacters);
+
+	float minAngle = 1e9;
+
+	TWeakObjectPtr<ACCommonCharacter> candidate;
+
+	for (const auto& elem : nearCharacters)
+	{
+		const float curAngle = elem.Key;
+
+		if ((!!InbRight && curAngle > 0.0f) ||
+			false == InbRight && curAngle < 0.0f)
+		{
+			if (minAngle > abs(curAngle))
+			{
+				minAngle = abs(curAngle);
+				candidate = elem.Value;
+			}
+		}
+	}
+
+	if (!!candidate.Get())
+	{
+		if (false == bMovingFocus)
+		{
+			bMovingFocus = true;
+			ChangeTarget(candidate.Get());
+		}
+	}
+
+	bCanMoveFocus = false;
 }

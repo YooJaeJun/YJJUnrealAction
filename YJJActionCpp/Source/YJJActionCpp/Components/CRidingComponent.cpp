@@ -92,7 +92,6 @@ void UCRidingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-
 	switch (RidingState)
 	{
 	case ERidingState::None:
@@ -126,8 +125,11 @@ void UCRidingComponent::SetRidingState(const ERidingState InState)
 }
 
 void UCRidingComponent::BeginOverlap(UPrimitiveComponent* OverlappedComponent, 
-	AActor* OtherActor, UPrimitiveComponent* OtherComp, 
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex, 
+	bool bFromSweep, 
+	const FHitResult& SweepResult)
 {
 	CheckNull(Interaction);
 
@@ -147,7 +149,9 @@ void UCRidingComponent::BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 }
 
 void UCRidingComponent::EndOverlap(UPrimitiveComponent* OverlappedComponent, 
-	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex)
 {
 	CheckNull(Interaction);
 

@@ -180,7 +180,7 @@ public:
 		*OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *Path));
 	}
 
-	static TWeakObjectPtr<ACCommonCharacter> GetNearlyFromAngle(
+	static TWeakObjectPtr<ACCommonCharacter> GetNearForward(
 		TWeakObjectPtr<ACCommonCharacter> InCenter,
 		TArray<TWeakObjectPtr<ACCommonCharacter>> InArray,
 		TWeakObjectPtr<AController> InController)
@@ -191,11 +191,11 @@ public:
 		float maxAngle = 0.0f;
 		TWeakObjectPtr<ACCommonCharacter> outTarget;
 
-		for (const auto& elem : InArray)
+		for (const auto& otherCharacter : InArray)
 		{
-			if (!!elem.IsValid())
+			if (!!otherCharacter.Get())
 			{
-				FVector diff = (elem->GetActorLocation() - InCenter->GetActorLocation());
+				FVector diff = (otherCharacter->GetActorLocation() - InCenter->GetActorLocation());
 				diff.Normalize();
 
 				FVector forward = UKismetMathLibrary::GetForwardVector(InController->GetControlRotation());
@@ -206,11 +206,37 @@ public:
 					curAngle > maxAngle)
 				{
 					curAngle = maxAngle;
-					outTarget = elem;
+					outTarget = otherCharacter;
 				}
 			}
 		}
 
 		return outTarget;
+	}
+
+	static void AddNearSideCharacters(
+		TWeakObjectPtr<ACCommonCharacter> InCenter,
+		TArray<TWeakObjectPtr<ACCommonCharacter>> InArray,
+		TWeakObjectPtr<AController> InController,
+		TMap<float, TWeakObjectPtr<ACCommonCharacter>>& OutNearCharacters)
+	{
+		CheckTrue(InArray.Num() <= 0);
+
+		for (auto& otherCharacter : InArray)
+		{
+			if (!!otherCharacter.Get())
+			{
+				FVector diff = (otherCharacter->GetActorLocation() - InCenter->GetActorLocation());
+				diff.Normalize();
+
+				const FVector forward = UKismetMathLibrary::GetForwardVector(InController->GetControlRotation());
+
+				const FVector cross = UKismetMathLibrary::Cross_VectorVector(forward, diff);
+
+				const float dot = UKismetMathLibrary::Dot_VectorVector(cross, InCenter->GetActorUpVector());
+
+				OutNearCharacters.Add(dot, otherCharacter);
+			}
+		}
 	}
 };

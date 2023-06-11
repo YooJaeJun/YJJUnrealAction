@@ -60,13 +60,12 @@ void UCZoomComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UCZoomComponent::InputAxis_Zoom(const float InAxis)
 {
-	if (InAxis == 0.0f)
-		return;
+	CheckTrue(InAxis == 0.0f);
 
 	if (!!TargetingComp.Get() && 
 		!!TargetingComp->bTargeting)
 	{
-		TargetingComp->ChangeFocus(InAxis > 0.0f);
+		TargetingComp->ChangeFocus(InAxis <= 0.0f);
 	}
 	else if(false == MovementComp->GetFixedCamera())
 	{
