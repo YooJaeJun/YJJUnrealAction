@@ -87,6 +87,7 @@ void UCMovementComponent::SetFriction(const float InFriction, const float InBrak
 void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 {
 	CheckFalse(bCanMove);
+	CheckTrue(Owner->StateComp->IsFallMode());
 
 	FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 	FVector direction = FQuat(rotator).GetForwardVector();
@@ -97,6 +98,7 @@ void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 {
 	CheckFalse(bCanMove);
+	CheckTrue(Owner->StateComp->IsFallMode());
 
 	FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 	FVector direction = FQuat(rotator).GetRightVector();

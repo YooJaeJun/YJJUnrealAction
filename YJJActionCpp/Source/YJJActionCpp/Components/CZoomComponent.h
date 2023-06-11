@@ -56,8 +56,8 @@ public:
 		float TargetArmLength;
 
 private:
-	TWeakObjectPtr<ACPlayableCharacter> Player;
-	TWeakObjectPtr<ACAnimal_AI> Animal;
+	TWeakObjectPtr<ACPlayableCharacter> OwnerPlayer;
+	TWeakObjectPtr<ACAnimal_AI> OwnerAnimal;
 	TWeakObjectPtr<UCTargetingComponent> TargetingComp;
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
 };

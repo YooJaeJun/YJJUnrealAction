@@ -38,9 +38,12 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 	const FRotator rotator = Owner->GetVelocity().ToOrientationRotator();
 	const FRotator rotator2 = Owner->GetControlRotation();
 	const FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotator, rotator2);
+
 	PrevRotation = UKismetMathLibrary::RInterpTo(
 		PrevRotation, delta, DeltaSeconds, 25);
+
 	Direction = PrevRotation.Yaw;
+
 	Pitch = UKismetMathLibrary::FInterpTo(
 		Pitch, Owner->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
 }

@@ -10,25 +10,25 @@ UCZoomComponent::UCZoomComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	Player = Cast<ACPlayableCharacter>(GetOwner());
-	Animal = Cast<ACAnimal_AI>(GetOwner());
+	OwnerPlayer = Cast<ACPlayableCharacter>(GetOwner());
+	OwnerAnimal = Cast<ACAnimal_AI>(GetOwner());
 }
 
 void UCZoomComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!!Player.Get())
+	if (!!OwnerPlayer.Get())
 	{
-		Zooming = Player->GetSpringArm()->TargetArmLength;
-		TargetingComp = Player->GetTargetingComp();
-		MovementComp = Player->MovementComp;
+		Zooming = OwnerPlayer->GetSpringArm()->TargetArmLength;
+		TargetingComp = OwnerPlayer->GetTargetingComp();
+		MovementComp = OwnerPlayer->MovementComp;
 	}
-	else if (!!Animal.Get())
+	else if (!!OwnerAnimal.Get())
 	{
-		Zooming = Animal->GetSpringArm()->TargetArmLength;
-		TargetingComp = Animal->GetTargetingComp();
-		MovementComp = Animal->MovementComp;
+		Zooming = OwnerAnimal->GetSpringArm()->TargetArmLength;
+		TargetingComp = OwnerAnimal->GetTargetingComp();
+		MovementComp = OwnerAnimal->MovementComp;
 	}
 }
 
@@ -36,10 +36,10 @@ void UCZoomComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!!Player.Get())
-		TargetArmLength = Player->GetSpringArm()->TargetArmLength;
-	else if (!!Animal.Get())
-		TargetArmLength = Animal->GetSpringArm()->TargetArmLength;
+	if (!!OwnerPlayer.Get())
+		TargetArmLength = OwnerPlayer->GetSpringArm()->TargetArmLength;
+	else if (!!OwnerAnimal.Get())
+		TargetArmLength = OwnerAnimal->GetSpringArm()->TargetArmLength;
 
 
 	if (UKismetMathLibrary::NearlyEqual_FloatFloat(
@@ -52,10 +52,10 @@ void UCZoomComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		ZoomData.InterpSpeed);
 
 
-	if (!!Player.Get())
-		Player->GetSpringArm()->TargetArmLength = TargetArmLength;
-	else if (!!Animal.Get())
-		Animal->GetSpringArm()->TargetArmLength = TargetArmLength;
+	if (!!OwnerPlayer.Get())
+		OwnerPlayer->GetSpringArm()->TargetArmLength = TargetArmLength;
+	else if (!!OwnerAnimal.Get())
+		OwnerAnimal->GetSpringArm()->TargetArmLength = TargetArmLength;
 }
 
 void UCZoomComponent::InputAxis_Zoom(const float InAxis)
