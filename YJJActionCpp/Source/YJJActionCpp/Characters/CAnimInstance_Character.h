@@ -20,13 +20,13 @@ protected:
 		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
 
 protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
 		float Speed;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
 		float Pitch;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
 		float Direction;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
