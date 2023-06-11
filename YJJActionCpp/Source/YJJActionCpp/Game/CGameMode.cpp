@@ -5,7 +5,7 @@
 
 ACGameMode::ACGameMode()
 {
-    CHelpers::GetClass<APawn>(&DefaultPawnClass, "Blueprint'/Game/Player/BP_CPlayableCharacter.BP_CPlayableCharacter_C'");
+    CHelpers::GetClass<APawn>(&DefaultPawnClass, "Blueprint'/Game/Character/Player/BP_CPlayableCharacter.BP_CPlayableCharacter_C'");
     CHelpers::GetClass<UCUserWidget_HUD>(&PlayerHUDClass, "WidgetBlueprint'/Game/Widgets/WB_CHUD.WB_CHUD_C'");
 }
 

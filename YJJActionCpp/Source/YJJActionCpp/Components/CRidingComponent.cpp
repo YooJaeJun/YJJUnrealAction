@@ -78,7 +78,7 @@ void UCRidingComponent::BeginPlay()
 			TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
 		CHelpers::LoadAsset<UAnimMontage>(&UnmountAnim,
-			TEXT("AnimMontage'/Game/Character/AnimationMontages/Riding/Rider_Dismount_Front_Right_Montage.Rider_Dismount_Front_Right_Montage'"));
+			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Dismount_Front_Right_Montage.Rider_Dismount_Front_Right_Montage'"));
 
 		CHelpers::LoadAsset<USoundBase>(&UnmountSound,
 			TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
@@ -222,7 +222,7 @@ void UCRidingComponent::CheckValidPoint()
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateLeft)];
 
 		CHelpers::LoadAsset<UAnimMontage>(&MountAnim,
-			TEXT("AnimMontage'/Game/Character/AnimationMontages/Riding/Rider_Mount_Front_Left_Montage.Rider_Mount_Front_Left_Montage'"));
+			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Left_Montage.Rider_Mount_Front_Left_Montage'"));
 
 		MountRotationZFactor = 100.0f;
 	}
@@ -233,7 +233,7 @@ void UCRidingComponent::CheckValidPoint()
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateRight)];
 
 		CHelpers::LoadAsset<UAnimMontage>(&MountAnim,
-			TEXT("AnimMontage'/Game/Character/AnimationMontages/Riding/Rider_Mount_Front_Right_Montage.Rider_Mount_Front_Right_Montage'"));
+			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Right_Montage.Rider_Mount_Front_Right_Montage'"));
 
 		MountRotationZFactor = -100.0f;
 	}
@@ -244,7 +244,7 @@ void UCRidingComponent::CheckValidPoint()
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateBack)];
 
 		CHelpers::LoadAsset<UAnimMontage>(&MountAnim,
-			TEXT("AnimMontage'/Game/Character/AnimationMontages/Riding/Rider_Mount_Back_Montage.Rider_Mount_Back_Montage'"));
+			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Back_Montage.Rider_Mount_Back_Montage'"));
 
 		MountRotationZFactor = 0.0f;
 	}

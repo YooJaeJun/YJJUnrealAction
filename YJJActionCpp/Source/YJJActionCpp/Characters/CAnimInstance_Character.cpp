@@ -1,6 +1,7 @@
 #include "Characters/CAnimInstance_Character.h"
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UCAnimInstance_Character::NativeBeginPlay()
 {
@@ -39,8 +40,7 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 	const FRotator rotator2 = Owner->GetControlRotation();
 	const FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotator, rotator2);
 
-	PrevRotation = UKismetMathLibrary::RInterpTo(
-		PrevRotation, delta, DeltaSeconds, 25);
+	PrevRotation = UKismetMathLibrary::RInterpTo(PrevRotation, delta, DeltaSeconds, 25);
 
 	Direction = PrevRotation.Yaw;
 
