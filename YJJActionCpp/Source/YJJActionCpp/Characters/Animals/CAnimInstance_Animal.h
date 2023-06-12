@@ -7,5 +7,8 @@ UCLASS()
 class YJJACTIONCPP_API UCAnimInstance_Animal : public UCAnimInstance_Character
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool bRotating;
 };

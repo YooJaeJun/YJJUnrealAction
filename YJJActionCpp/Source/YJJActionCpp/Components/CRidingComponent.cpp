@@ -215,7 +215,7 @@ void UCRidingComponent::CheckValidPoint()
 
 	const float minCandidate = UKismetMathLibrary::Min(candidateLeft, UKismetMathLibrary::Min(candidateRight, candidateBack));
 
-	if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateLeft, 5.0f))
+	if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateLeft, 15.0f))
 	{
 		MountDir = EDirection::Left;
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
@@ -226,7 +226,7 @@ void UCRidingComponent::CheckValidPoint()
 
 		MountRotationZFactor = 100.0f;
 	}
-	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateRight, 5.0f))
+	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateRight, 15.0f))
 	{
 		MountDir = EDirection::Right;
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
@@ -237,7 +237,7 @@ void UCRidingComponent::CheckValidPoint()
 
 		MountRotationZFactor = -100.0f;
 	}
-	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateBack, 5.0f))
+	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateBack, 15.0f))
 	{
 		MountDir = EDirection::Back;
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =

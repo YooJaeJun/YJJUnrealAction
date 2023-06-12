@@ -9,6 +9,8 @@
 #include "Weapons/CWeaponStructures.h"
 #include "UMG/Public/Blueprint/WidgetLayoutLibrary.h"
 #include "Components/WidgetComponent.h"
+#include "Widgets/CUserWidget_Custom.h"
+#include "Components/SceneComponent.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -17,12 +19,20 @@ ACCommonCharacter::ACCommonCharacter()
 	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
 	CHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
 	CHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
-	CHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", GetMesh());
+	CHelpers::CreateComponent<USceneComponent>(this, &TargetingPoint, "TargetingPoint", GetMesh());
+	CHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", TargetingPoint);
+	CHelpers::GetClass<UCUserWidget_Custom>(&TargetingWidget, "WidgetBlueprint'/Game/Widgets/Interaction/WB_CTargeting.WB_CTargeting_C'");
 
 	CharacterStatComp->OnHpIsZero.AddUObject(this, &ACCommonCharacter::Dead);
 
+	if (!!TargetingPoint)
+		TargetingPoint->SetWorldLocation(FindComponentByClass<USceneComponent>()->GetSocketLocation("RiderPoint"));
+
 	if (!!TargetingWidgetComp)
 	{
+		if (!!TargetingWidget)
+			TargetingWidgetComp->SetWidgetClass(TargetingWidget);
+
 		TargetingWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 		TargetingWidgetComp->SetVisibility(false);
 	}
@@ -119,8 +129,8 @@ void ACCommonCharacter::Hit()
 
 		if (false == CharacterStatComp->IsDead())
 		{
-			FVector start = GetActorLocation();
-			FVector target = Damage.Attacker->GetActorLocation();
+			const FVector start = GetActorLocation();
+			const FVector target = Damage.Attacker->GetActorLocation();
 			FVector direction = target - start;
 			direction.Normalize();
 

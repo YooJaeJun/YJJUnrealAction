@@ -138,8 +138,8 @@ void UCTargetingComponent::Tick_Targeting()
 		if (nullptr == Controller.Get())
 			Controller = Owner->GetMyCurController();
 
-		FRotator controlRotation = Controller->GetControlRotation();
-		FRotator ownerToTarget = UKismetMathLibrary::FindLookAtRotation(
+		const FRotator controlRotation = Controller->GetControlRotation();
+		const FRotator ownerToTarget = UKismetMathLibrary::FindLookAtRotation(
 			Owner->GetActorLocation(), Target->GetActorLocation());
 
 		if (!!UKismetMathLibrary::EqualEqual_RotatorRotator(controlRotation, ownerToTarget, FinishAngle))

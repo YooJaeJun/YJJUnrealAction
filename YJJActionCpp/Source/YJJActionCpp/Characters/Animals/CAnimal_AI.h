@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/Animals/CAnimal.h"
+#include "Components/CZoomComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "CAnimal_AI.generated.h"
 
@@ -36,6 +37,8 @@ protected:
 	virtual void Landed(const FHitResult& Hit) override;
 
 public:
+	FORCEINLINE void SetZoomMaxRange(const float InMaxRange) { ZoomComp->ZoomData.MaxRange = InMaxRange; }
+
 	FORCEINLINE UBoxComponent* GetInteractionCollision() const { return InteractionCollision; }
 	FORCEINLINE USceneComponent* GetMountLeftPoint() const { return MountLeftPoint; }
 	FORCEINLINE USceneComponent* GetMountRightPoint() const { return MountRightPoint; }
@@ -47,6 +50,11 @@ public:
 	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
 	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
 	FORCEINLINE UCTargetingComponent* GetTargetingComp() const { return TargetingComp; }
+	FORCEINLINE UCZoomComponent* GetZoomComp() const { return ZoomComp; }
+
+protected:
+	UPROPERTY(EditAnywhere)
+		float LandEffectScaleFactor = 1.0f;
 
 private:
 	UPROPERTY(VisibleAnywhere)

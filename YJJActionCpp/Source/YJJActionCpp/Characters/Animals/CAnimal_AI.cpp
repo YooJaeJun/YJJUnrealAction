@@ -84,5 +84,8 @@ void ACAnimal_AI::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 
 	UGameplayStatics::PlaySoundAtLocation(this, LandSound, GetActorLocation());
-	CHelpers::PlayEffect(GetWorld(), LandEffect, GetActorTransform());
+
+	FTransform landTransform = GetActorTransform();
+	landTransform.SetScale3D(landTransform.GetScale3D() * LandEffectScaleFactor);
+	CHelpers::PlayEffect(GetWorld(), LandEffect, landTransform);
 }
