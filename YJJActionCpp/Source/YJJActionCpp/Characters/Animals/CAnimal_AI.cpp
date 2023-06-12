@@ -39,9 +39,6 @@ ACAnimal_AI::ACAnimal_AI()
 		MovementComp->SetJumpZ(700.0f);
 	}
 
-	if (!!RiderPoint)
-		RiderPoint->SetWorldLocation(FindComponentByClass<USceneComponent>()->GetSocketLocation("RiderPoint"));
-
 	CHelpers::LoadAsset<USoundBase>(&LandSound,
 		TEXT("SoundCue'/Game/Assets/Sounds/Footsteps/Run/Stone/SC_Footstep_Stone_Run.SC_Footstep_Stone_Run'"));
 
@@ -58,6 +55,12 @@ void ACAnimal_AI::BeginPlay()
 		InteractionCollision->OnComponentBeginOverlap.AddDynamic(RidingComp, &UCRidingComponent::BeginOverlap);
 		InteractionCollision->OnComponentEndOverlap.AddDynamic(RidingComp, &UCRidingComponent::EndOverlap);
 	}
+
+	if (!!RiderPoint)
+		RiderPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "Rider");
+
+	//if (!!RiderPoint)
+	//	RiderPoint->SetWorldLocation(FindComponentByClass<USceneComponent>()->GetSocketLocation("Rider"));
 }
 
 void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

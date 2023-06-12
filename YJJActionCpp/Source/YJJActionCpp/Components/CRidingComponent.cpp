@@ -351,7 +351,7 @@ void UCRidingComponent::AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted
 {
 	Rider->GetCharacterMovement()->StopMovementImmediately();
 
-	Rider->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "RiderPoint");
+	Rider->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Rider");
 
 	if (!!Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.IsBound())
 		Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.RemoveDynamic(

@@ -25,9 +25,6 @@ ACCommonCharacter::ACCommonCharacter()
 
 	CharacterStatComp->OnHpIsZero.AddUObject(this, &ACCommonCharacter::Dead);
 
-	if (!!TargetingPoint)
-		TargetingPoint->SetWorldLocation(FindComponentByClass<USceneComponent>()->GetSocketLocation("RiderPoint"));
-
 	if (!!TargetingWidgetComp)
 	{
 		if (!!TargetingWidget)
@@ -46,6 +43,12 @@ void ACCommonCharacter::BeginPlay()
 
 	CHelpers::LoadAsset<USoundBase>(&LandSound,
 		TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
+
+	if (!!TargetingPoint)
+		TargetingPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Targeting");
+
+	//if (!!TargetingPoint)
+	//	TargetingPoint->SetWorldLocation(FindComponentByClass<USceneComponent>()->GetSocketLocation("Targeting"));
 }
 
 void ACCommonCharacter::Tick(float DeltaSeconds)
