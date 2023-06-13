@@ -97,6 +97,12 @@ private:
 		USceneComponent* EyePoint;
 
 	UPROPERTY(VisibleAnywhere)
+		TSubclassOf<AActor> EyeClass;
+
+	UPROPERTY(VisibleAnywhere)
+		AActor* Eye;
+
+	UPROPERTY(VisibleAnywhere)
 		UBoxComponent* InteractionCollision;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")

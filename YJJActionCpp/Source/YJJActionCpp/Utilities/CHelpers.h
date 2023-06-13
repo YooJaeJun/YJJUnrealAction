@@ -54,7 +54,7 @@ public:
 	template<typename T>
 	static void GetAsset(T** OutObject, const FString InPath)
 	{
-		ConstructorHelpers::FObjectFinder<T> asset(*InPath);
+		const ConstructorHelpers::FObjectFinder<T> asset(*InPath);
 		*OutObject = asset.Object;
 	}
 
@@ -67,7 +67,7 @@ public:
 	template<typename T>
 	static void GetClass(TSubclassOf<T>* OutClass, const FString InPath)
 	{
-		ConstructorHelpers::FClassFinder<T> asset(*InPath);
+		const ConstructorHelpers::FClassFinder<T> asset(*InPath);
 		*OutClass = asset.Class;
 	}
 
@@ -102,7 +102,7 @@ public:
 	template<typename T>
 	static T* GetComponent(AActor* InActor, const FString& InName)
 	{
-		TArray<T*> components;
+		const TArray<T*> components;
 		InActor->GetComponents<T>(components);
 
 		for (T* component : components)
@@ -129,7 +129,7 @@ public:
 	template<typename EnumType>
 	static EnumType ConvertTCHARToEnum(const TCHAR& InValue)
 	{
-		int32 typeIndex = InValue - '0';
+		const int32 typeIndex = InValue - '0';
 		EnumType weaponType = static_cast<EnumType>(typeIndex);
 		return weaponType;
 	}
@@ -141,9 +141,9 @@ public:
 		const TWeakObjectPtr<UParticleSystem> particle = Cast<UParticleSystem>(InAsset);
 		const TWeakObjectPtr<UNiagaraSystem> niagara = Cast<UNiagaraSystem>(InAsset);
 
-		FVector location = InTransform.GetLocation();
-		FRotator rotation = FRotator(InTransform.GetRotation());
-		FVector scale = InTransform.GetScale3D();
+		const FVector location = InTransform.GetLocation();
+		const FRotator rotation = FRotator(InTransform.GetRotation());
+		const FVector scale = InTransform.GetScale3D();
 
 		if (!!InMesh.Get())
 		{

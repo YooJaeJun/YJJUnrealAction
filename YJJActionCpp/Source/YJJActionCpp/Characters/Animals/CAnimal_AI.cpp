@@ -26,8 +26,8 @@ ACAnimal_AI::ACAnimal_AI()
 	CHelpers::CreateComponent<USceneComponent>(this, &MountBackPoint, "MountBackPoint", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &RiderPoint, "RiderPoint", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &UnmountPoint, "UnmountPoint", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 	CHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
+	CHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 
 	if (!!MovementComp)
 	{
@@ -44,6 +44,8 @@ ACAnimal_AI::ACAnimal_AI()
 
 	CHelpers::LoadAsset<UFXSystemAsset>(&LandEffect,
 		TEXT("NiagaraSystem'/Game/Assets/Effects/SuperheroFlight/VFX/Niagara/System/SuperheroLanding/NS_Superhero_Landing_Concrete.NS_Superhero_Landing_Concrete'"));
+
+	CHelpers::GetClass<AActor>(&EyeClass, "Blueprint'/Game/Character/Animals/BP_Eye.BP_Eye_C'");
 }
 
 void ACAnimal_AI::BeginPlay()
@@ -57,10 +59,32 @@ void ACAnimal_AI::BeginPlay()
 	}
 
 	if (!!RiderPoint)
-		RiderPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "Rider");
+		RiderPoint->AttachToComponent(GetMesh(), 
+			FAttachmentTransformRules::SnapToTargetIncludingScale, "Rider");
 
-	//if (!!RiderPoint)
-	//	RiderPoint->SetWorldLocation(FindComponentByClass<USceneComponent>()->GetSocketLocation("Rider"));
+	if (!!EyePoint)
+	{
+		EyePoint->AttachToComponent(GetMesh(), 
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale, "EyeEffect");
+
+		if (!!EyeClass)
+		{
+			FActorSpawnParameters params;
+			params.Owner = Cast<AActor>(this);
+
+			Eye = GetWorld()->SpawnActor<AActor>(EyeClass, 
+				EyePoint->GetComponentLocation(), EyePoint->GetComponentRotation(), params);
+
+			FAttachmentTransformRules attachRules(
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::KeepRelative,
+				false);
+
+			if (!!Eye)
+				Eye->AttachToComponent(GetMesh(), attachRules, "EyeEffect");
+		}
+	}
 }
 
 void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

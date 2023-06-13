@@ -46,9 +46,6 @@ void ACCommonCharacter::BeginPlay()
 
 	if (!!TargetingPoint)
 		TargetingPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Targeting");
-
-	//if (!!TargetingPoint)
-	//	TargetingPoint->SetWorldLocation(FindComponentByClass<USceneComponent>()->GetSocketLocation("Targeting"));
 }
 
 void ACCommonCharacter::Tick(float DeltaSeconds)
