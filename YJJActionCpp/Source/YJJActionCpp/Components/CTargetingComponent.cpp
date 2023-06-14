@@ -106,7 +106,7 @@ void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 	}
 }
 
-void UCTargetingComponent::SetVisibleTargetUI(bool bVisible)
+void UCTargetingComponent::SetVisibleTargetUI(bool bVisible) const
 {
 	CheckNull(Target.Get());
 	CheckNull(Target->TargetingWidgetComp);

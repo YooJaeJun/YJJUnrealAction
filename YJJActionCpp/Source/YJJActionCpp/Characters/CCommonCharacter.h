@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Characters/CInterface_CharacterAnim.h"
 #include "Characters/CInterface_CharacterBody.h"
+#include "Characters/CInterface_IK.h"
 #include "CCommonCharacter.generated.h"
 
 class UCStateComponent;
@@ -27,7 +28,8 @@ UCLASS(Abstract)
 class YJJACTIONCPP_API ACCommonCharacter :
 	public ACharacter,
 	public ICInterface_CharacterAnim,
-	public ICInterface_CharacterBody
+	public ICInterface_CharacterBody,
+	public ICInterface_IK
 {
 	GENERATED_BODY()
 

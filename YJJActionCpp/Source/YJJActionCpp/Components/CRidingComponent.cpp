@@ -294,7 +294,6 @@ void UCRidingComponent::PossessAndInterpToCamera()
 		eMoveAction, latentInfo);
 }
 
-
 void UCRidingComponent::Tick_Mounting()
 {
 	// 탑승 후 위치, 방향으로
@@ -369,6 +368,8 @@ void UCRidingComponent::Tick_MountingEnd()
 		MovementComp->Move();
 
 		SpringArm->bUsePawnControlRotation = true;
+
+		Rider->SetLegIKAlpha(LegIKAlpha);
 
 
 		// TODO Riding Info

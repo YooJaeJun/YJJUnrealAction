@@ -2,7 +2,9 @@
 #include "Global.h"
 #include "Animals/CAnimal_AI.h"
 #include "Characters/CCommonCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Player/CPlayableCharacter.h"
 
 void UCAnimInstance_Human::NativeBeginPlay()
 {
@@ -27,20 +29,29 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 
 		if (!!animal)
 		{
-			Speed = animal->GetVelocity().Size2D();
 			bRidingFalling = animal->StateComp->IsFallMode();
 
-			const FRotator rotator = animal->GetVelocity().ToOrientationRotator();
-			const FRotator rotator2 = animal->GetControlRotation();
-			const FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotator, rotator2);
+			Speed = animal->GetVelocity().Size();
 
-			PrevRotation = UKismetMathLibrary::RInterpTo(PrevRotation, delta, DeltaSeconds, 25);
+			Look = CHelpers::GetLook(
+				animal->GetCapsuleComponent()->GetForwardVector(),
+				UKismetMathLibrary::GetForwardVector(Owner->GetControlRotation()),
+				animal->GetCapsuleComponent()->GetUpVector());
 
-			Direction = PrevRotation.Yaw;
+			Look *= 180.0f;
 
-			Pitch = UKismetMathLibrary::FInterpTo(
-				Pitch, animal->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
+			CLog::Log(Look);
+
+			bFootIK = false;
+			bRidingIK = true;
+
+			LegIKAlpha = Owner->GetLegIKAlpha();
 		}
+	}//bRiding
+	else
+	{
+		bFootIK = true;
+		bRidingIK = false;
 	}
 }
 

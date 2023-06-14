@@ -192,6 +192,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		USoundBase* UnmountSound;
 
+	UPROPERTY(EditDefaultsOnly, Category = "IK")
+		float LegIKAlpha;
+
 private:
 	TWeakObjectPtr<ACAnimal_AI> Owner;
 	TEnumAsByte<EMoveComponentAction::Type> eMoveAction;

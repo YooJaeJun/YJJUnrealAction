@@ -214,6 +214,13 @@ public:
 		return outTarget;
 	}
 
+	static float GetLook(FVector InForward, FVector InToTarget, FVector InUp)
+	{
+		return UKismetMathLibrary::Dot_VectorVector(
+			InUp, 
+			UKismetMathLibrary::Cross_VectorVector(InForward, InToTarget));
+	}
+
 	static void AddNearSideCharacters(
 		TWeakObjectPtr<ACCommonCharacter> InCenter,
 		TArray<TWeakObjectPtr<ACCommonCharacter>> InArray,
@@ -226,16 +233,16 @@ public:
 		{
 			if (!!otherCharacter.Get())
 			{
-				FVector diff = (otherCharacter->GetActorLocation() - InCenter->GetActorLocation());
-				diff.Normalize();
+				FVector toTarget = (otherCharacter->GetActorLocation() - InCenter->GetActorLocation());
+				toTarget.Normalize();
 
 				const FVector forward = UKismetMathLibrary::GetForwardVector(InController->GetControlRotation());
 
-				const FVector cross = UKismetMathLibrary::Cross_VectorVector(forward, diff);
+				const FVector up = InCenter->GetActorUpVector();
 
-				const float dot = UKismetMathLibrary::Dot_VectorVector(cross, InCenter->GetActorUpVector());
+				const float direction = GetLook(forward, toTarget, up);
 
-				OutNearCharacters.Add(dot, otherCharacter);
+				OutNearCharacters.Add(direction, otherCharacter);
 			}
 		}
 	}

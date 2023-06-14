@@ -52,6 +52,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 		SpringArm->TargetArmLength = 280;
 		SpringArm->bUsePawnControlRotation = true;
 		SpringArm->bEnableCameraLag = true;
+		SpringArm->bDoCollisionTest = false;
 	}
 
 	if (!!StateComp)

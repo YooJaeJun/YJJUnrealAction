@@ -36,6 +36,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
 		bool BowAiming;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
+		float LegIKAlpha;
+
 private:
 	TWeakObjectPtr<UCWeaponComponent> WeaponComp;
 };

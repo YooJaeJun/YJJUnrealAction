@@ -27,7 +27,7 @@ public:
 	void Begin_Targeting();
 	void End_Targeting();
 	void ChangeTarget(ACCommonCharacter* InTarget);
-	void SetVisibleTargetUI(bool bVisible);
+	void SetVisibleTargetUI(bool bVisible) const;
 	void Tick_MoveFocusCoolTIme(const float InDelta);
 	void Tick_Targeting();
 	void ChangeFocus(const bool InbRight);

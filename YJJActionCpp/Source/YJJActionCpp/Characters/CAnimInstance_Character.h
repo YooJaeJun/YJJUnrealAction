@@ -27,7 +27,13 @@ protected:
 		float Pitch;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
+		float Yaw;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
 		float Direction;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
+		float Look;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
 		EStateType StateType = EStateType::Idle;
@@ -40,6 +46,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
 		bool bHitting;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
+		bool bFootIK = true;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
+		bool bRidingIK;
 
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
