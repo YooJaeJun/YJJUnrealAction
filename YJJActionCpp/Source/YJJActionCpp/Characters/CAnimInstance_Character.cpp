@@ -19,7 +19,7 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	
-	// 라이딩 시 GetPawnOwner가 변경될 경우 대비
+	// 라이딩 탑승 시점 TryGetPawnOwner가 변경될 경우 대비
 	if (nullptr == Owner)
 	{
 		Owner = Cast<ACCommonCharacter>(TryGetPawnOwner());

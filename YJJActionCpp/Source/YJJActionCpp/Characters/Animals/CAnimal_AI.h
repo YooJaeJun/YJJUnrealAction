@@ -53,16 +53,6 @@ public:
 	FORCEINLINE UCZoomComponent* GetZoomComp() const { return ZoomComp; }
 
 protected:
-	UPROPERTY(EditAnywhere)
-		float LandEffectScaleFactor = 1.0f;
-
-private:
-	UPROPERTY(VisibleAnywhere)
-		USpringArmComponent* SpringArm;
-
-	UPROPERTY(VisibleAnywhere)
-		UCameraComponent* Camera;
-
 	UPROPERTY(VisibleAnywhere)
 		UCZoomComponent* ZoomComp;
 
@@ -73,10 +63,17 @@ private:
 		UCGameUIComponent* GameUIComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCPatrolComponent* PatrolComp;
+		UCRidingComponent* RidingComp;
+
+private:
+	UPROPERTY(VisibleAnywhere)
+		USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
-		UCRidingComponent* RidingComp;
+		UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere)
+		UCPatrolComponent* PatrolComp;
 
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* MountLeftPoint;

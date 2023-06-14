@@ -26,8 +26,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void EnableControlRotation();
-	void DisableControlRotation();
+	void EnableControlRotation() const;
+	void DisableControlRotation() const;
 
 	void SetSpeeds(const TArray<float> InSpeeds);
 	void SetSpeed(const ESpeedType Index) const;
@@ -35,14 +35,14 @@ public:
 	void SetWalkSpeed() const;
 	void SetRunSpeed() const;
 	void SetSprintSpeed() const;
-	void SetLerpMove();
+	void SetLerpMove() const;
 	void IsLerpMove() const;
 
-	void SetGravity();
-	void AddGravity();
+	void SetGravity(const float InValue) const;
+	void AddGravity(const float InValue) const;
 
-	void SetFriction(const float InFriction, const float InBraking);
-	void SetJumpZ(const float InVelocity);
+	void SetFriction(const float InFriction, const float InBraking) const;
+	void SetJumpZ(const float InVelocity) const;
 
 public:
 	void InputAxis_MoveForward(const float InAxis);
@@ -54,13 +54,14 @@ public:
 	void InputAction_Jump();
 
 public:
+	bool CanMove(const float InAxis) const;
 	FORCEINLINE bool CanMove() const { return bCanMove; }
 	FORCEINLINE void Move() { bCanMove = true; }
 	FORCEINLINE void Stop() { bCanMove = false; }
 
-	FORCEINLINE float GetWalkSpeed() const { return Speeds[(uint8)ESpeedType::Walk]; }
-	FORCEINLINE float GetRunSpeed() const { return Speeds[(uint8)ESpeedType::Run]; }
-	FORCEINLINE float GetSprintSpeed() const { return Speeds[(uint8)ESpeedType::Sprint]; }
+	FORCEINLINE float GetWalkSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Walk)]; }
+	FORCEINLINE float GetRunSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Run)]; }
+	FORCEINLINE float GetSprintSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Sprint)]; }
 
 	FORCEINLINE bool GetFixedCamera() const { return bFixedCamera; }
 	FORCEINLINE void FixCamera() { bFixedCamera = true; }

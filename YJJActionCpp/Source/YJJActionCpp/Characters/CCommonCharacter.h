@@ -84,7 +84,7 @@ public:
 	void SetInteractor(ACCommonCharacter* InCharacter);
 	FORCEINLINE ACCommonCharacter* GetInteractor() const { return Interactor; };
 
-protected:
+public:
 	void InputAction_Interact();
 
 public:
@@ -114,6 +114,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Land")
 		UFXSystemAsset* LandEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Land")
+		float LandEffectScaleFactor = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 		USceneComponent* TargetingPoint;

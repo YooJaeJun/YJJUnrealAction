@@ -22,7 +22,7 @@ private:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ACAttachment> SkillClass;
 
-	enum { SkillMax = 10 };
+	enum { SkillMax = 0 };
 
 	UPROPERTY(EditAnywhere)
 		TArray<ACAttachment*> Skills;

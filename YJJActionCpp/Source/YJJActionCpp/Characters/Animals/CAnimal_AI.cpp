@@ -97,13 +97,13 @@ void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("VerticalLook", MovementComp, &UCMovementComponent::InputAxis_VerticalLook);
 	PlayerInputComponent->BindAxis("Zoom", ZoomComp, &UCZoomComponent::InputAxis_Zoom);
 
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Walk);
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComp, &UCMovementComponent::InputAction_Run);
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Jump);
-	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComp, &UCTargetingComponent::InputAction_Targeting);
-	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
-	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
-	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, RidingComp, &UCRidingComponent::InputAction_Act);
+	PlayerInputComponent->BindAction("Walk", IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Walk);
+	PlayerInputComponent->BindAction("Walk", IE_Released, MovementComp, &UCMovementComponent::InputAction_Run);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Jump);
+	PlayerInputComponent->BindAction("Targeting", IE_Pressed, TargetingComp, &UCTargetingComponent::InputAction_Targeting);
+	PlayerInputComponent->BindAction("Menu", IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
+	PlayerInputComponent->BindAction("Menu", IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
+	PlayerInputComponent->BindAction("Action", IE_Pressed, RidingComp, &UCRidingComponent::InputAction_Act);
 }
 
 void ACAnimal_AI::Landed(const FHitResult& Hit)
@@ -112,7 +112,8 @@ void ACAnimal_AI::Landed(const FHitResult& Hit)
 
 	UGameplayStatics::PlaySoundAtLocation(this, LandSound, GetActorLocation());
 
-	FTransform landTransform = GetActorTransform();
-	landTransform.SetScale3D(landTransform.GetScale3D() * LandEffectScaleFactor);
-	CHelpers::PlayEffect(GetWorld(), LandEffect, landTransform);
+	FTransform landEffectTransform = GetActorTransform();
+	landEffectTransform.SetScale3D(landEffectTransform.GetScale3D() * LandEffectScaleFactor);
+
+	CHelpers::PlayEffect(GetWorld(), LandEffect, landEffectTransform);
 }

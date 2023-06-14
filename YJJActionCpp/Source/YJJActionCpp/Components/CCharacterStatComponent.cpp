@@ -32,7 +32,7 @@ void UCCharacterStatComponent::InitializeComponent()
 
 void UCCharacterStatComponent::SetNewLevel(const int32 InNewLevel, const float InRemainExp)
 {
-	UCGameInstance* gameInst = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	const UCGameInstance* gameInst = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	CheckNull(gameInst);
 
@@ -66,8 +66,8 @@ void UCCharacterStatComponent::SetExp(const float InNewExp)
 
 	OnExpChanged.Broadcast();
 
-	CLog::Print("Level : " + FString::FromInt(CurLevel), -1, 5, FColor::Cyan);
-	CLog::Print("Exp : " + FString::FromInt((int)CurExp), -1, 5, FColor::Cyan);
+	//CLog::Print("Level : " + FString::FromInt(CurLevel), -1, 5, FColor::Cyan);
+	//CLog::Print("Exp : " + FString::FromInt(static_cast<int>(CurExp)), -1, 5, FColor::Cyan);
 }
 
 void UCCharacterStatComponent::SetDamage(const float InNewDamage)

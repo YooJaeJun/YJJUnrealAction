@@ -26,7 +26,21 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 		const auto animal = Cast<ACAnimal_AI>(Owner->GetMyCurController()->GetCharacter());
 
 		if (!!animal)
+		{
+			Speed = animal->GetVelocity().Size2D();
 			bRidingFalling = animal->StateComp->IsFallMode();
+
+			const FRotator rotator = animal->GetVelocity().ToOrientationRotator();
+			const FRotator rotator2 = animal->GetControlRotation();
+			const FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotator, rotator2);
+
+			PrevRotation = UKismetMathLibrary::RInterpTo(PrevRotation, delta, DeltaSeconds, 25);
+
+			Direction = PrevRotation.Yaw;
+
+			Pitch = UKismetMathLibrary::FInterpTo(
+				Pitch, animal->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
+		}
 	}
 }
 

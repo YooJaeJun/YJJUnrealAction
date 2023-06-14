@@ -14,13 +14,13 @@ void UCMovementComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UCMovementComponent::EnableControlRotation()
+void UCMovementComponent::EnableControlRotation() const
 {
 	Owner->bUseControllerRotationYaw = true;
 	Owner->GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
-void UCMovementComponent::DisableControlRotation()
+void UCMovementComponent::DisableControlRotation() const
 {
 	Owner->bUseControllerRotationYaw = false;
 	Owner->GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -57,7 +57,7 @@ void UCMovementComponent::SetSprintSpeed() const
 	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[(uint8)ESpeedType::Sprint];
 }
 
-void UCMovementComponent::SetLerpMove()
+void UCMovementComponent::SetLerpMove() const
 {
 }
 
@@ -65,20 +65,22 @@ void UCMovementComponent::IsLerpMove() const
 {
 }
 
-void UCMovementComponent::SetGravity()
+void UCMovementComponent::SetGravity(const float InValue) const
 {
+	Owner->GetCharacterMovement()->GravityScale = InValue;
 }
 
-void UCMovementComponent::AddGravity()
+void UCMovementComponent::AddGravity(const float InValue) const
 {
+	SetGravity(Owner->GetCharacterMovement()->GravityScale + InValue);
 }
 
-void UCMovementComponent::SetJumpZ(const float InVelocity)
+void UCMovementComponent::SetJumpZ(const float InVelocity) const
 {
 	Owner->GetCharacterMovement()->JumpZVelocity = InVelocity;
 }
 
-void UCMovementComponent::SetFriction(const float InFriction, const float InBraking)
+void UCMovementComponent::SetFriction(const float InFriction, const float InBraking) const
 {
 	Owner->GetCharacterMovement()->GroundFriction = InFriction;
 	Owner->GetCharacterMovement()->BrakingDecelerationWalking = InBraking;
@@ -89,8 +91,8 @@ void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 	CheckFalse(bCanMove);
 	CheckTrue(Owner->StateComp->IsFallMode());
 
-	FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
-	FVector direction = FQuat(rotator).GetForwardVector();
+	const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
+	const FVector direction = FQuat(rotator).GetForwardVector();
 
 	Owner->AddMovementInput(direction, InAxis);
 }
@@ -100,8 +102,8 @@ void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 	CheckFalse(bCanMove);
 	CheckTrue(Owner->StateComp->IsFallMode());
 
-	FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
-	FVector direction = FQuat(rotator).GetRightVector();
+	const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
+	const FVector direction = FQuat(rotator).GetRightVector();
 
 	Owner->AddMovementInput(direction, InAxis);
 }
@@ -109,14 +111,12 @@ void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 void UCMovementComponent::InputAxis_HorizontalLook(const float InAxis)
 {
 	CheckTrue(bFixedCamera);
-
 	Owner->AddControllerYawInput(InAxis * HorizontalLook * GetWorld()->GetDeltaSeconds());
 }
 
 void UCMovementComponent::InputAxis_VerticalLook(const float InAxis)
 {
 	CheckTrue(bFixedCamera);
-
 	Owner->AddControllerPitchInput(InAxis * VerticalLook * GetWorld()->GetDeltaSeconds());
 }
 
@@ -135,6 +135,13 @@ void UCMovementComponent::InputAction_Jump()
 	CheckFalse(CanMove());
 
 	Owner->Jump();
-
 	Owner->StateComp->SetFallMode();
+}
+
+bool UCMovementComponent::CanMove(const float InAxis) const
+{
+	if (InAxis > 0.5f)
+		return CanMove();
+
+	return false;
 }

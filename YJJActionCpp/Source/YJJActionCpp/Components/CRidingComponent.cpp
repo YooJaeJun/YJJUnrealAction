@@ -83,7 +83,6 @@ void UCRidingComponent::BeginPlay()
 		CHelpers::LoadAsset<USoundBase>(&UnmountSound,
 			TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
-		// TODO Eye
 		// TODO Rider Info
 	}
 }
@@ -194,9 +193,7 @@ void UCRidingComponent::Tick_ToMountPoint()
 		Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 		Rider->GetCharacterMovement()->bEnablePhysicsInteraction = false;
 
-
 		PossessAndInterpToCamera();
-
 
 		SetRidingState(ERidingState::Mounting);
 	}
@@ -215,7 +212,7 @@ void UCRidingComponent::CheckValidPoint()
 
 	const float minCandidate = UKismetMathLibrary::Min(candidateLeft, UKismetMathLibrary::Min(candidateRight, candidateBack));
 
-	if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateLeft, 15.0f))
+	if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateLeft, 50))
 	{
 		MountDir = EDirection::Left;
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
@@ -226,7 +223,7 @@ void UCRidingComponent::CheckValidPoint()
 
 		MountRotationZFactor = 100.0f;
 	}
-	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateRight, 15.0f))
+	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateRight, 50))
 	{
 		MountDir = EDirection::Right;
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
@@ -237,7 +234,7 @@ void UCRidingComponent::CheckValidPoint()
 
 		MountRotationZFactor = -100.0f;
 	}
-	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateBack, 15.0f))
+	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateBack, 50))
 	{
 		MountDir = EDirection::Back;
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =

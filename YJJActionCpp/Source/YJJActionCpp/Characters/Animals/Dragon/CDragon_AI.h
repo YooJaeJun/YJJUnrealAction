@@ -3,6 +3,7 @@
 #include "Characters/Animals/CAnimal_AI.h"
 #include "CDragon_AI.generated.h"
 
+class UCFlyComponent;
 class ACDragonSkill;
 
 UCLASS()
@@ -22,4 +23,8 @@ protected:
 public:
 	UPROPERTY(EditAnywhere)
 		ACDragonSkill* Skill;
+
+protected:
+	UPROPERTY(VisibleAnywhere)
+		UCFlyComponent* FlyComp;
 };
