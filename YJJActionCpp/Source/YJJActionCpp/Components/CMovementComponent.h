@@ -89,6 +89,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Lerp")
 		float InterpSpeed = 5;
 
+	UPROPERTY(EditAnywhere, Category = "Animation")
+		float Forward;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+		float Right;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+		float SpeedFactor = 4;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Camera")
 		float HorizontalLook = 45;

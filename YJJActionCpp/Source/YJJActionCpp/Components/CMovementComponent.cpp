@@ -91,6 +91,8 @@ void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 	CheckFalse(bCanMove);
 	CheckTrue(Owner->StateComp->IsFallMode());
 
+	Forward = InAxis;
+
 	const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 	const FVector direction = FQuat(rotator).GetForwardVector();
 
@@ -101,6 +103,8 @@ void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 {
 	CheckFalse(bCanMove);
 	CheckTrue(Owner->StateComp->IsFallMode());
+
+	Right = InAxis;
 
 	const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 	const FVector direction = FQuat(rotator).GetRightVector();
@@ -123,11 +127,15 @@ void UCMovementComponent::InputAxis_VerticalLook(const float InAxis)
 void UCMovementComponent::InputAction_Walk()
 {
 	SetMaxWalkSpeed(Speeds[static_cast<uint8>(ESpeedType::Walk)]);
+
+	SpeedFactor = 1.0f;
 }
 
 void UCMovementComponent::InputAction_Run()
 {
 	SetMaxWalkSpeed(Speeds[static_cast<uint8>(ESpeedType::Sprint)]);
+
+	SpeedFactor = 4.0f;
 }
 
 void UCMovementComponent::InputAction_Jump()

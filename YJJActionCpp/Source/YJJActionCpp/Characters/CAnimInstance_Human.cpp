@@ -40,8 +40,6 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 
 			Look *= 180.0f;
 
-			CLog::Log(Look);
-
 			bFootIK = false;
 			bRidingIK = true;
 
@@ -52,6 +50,8 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		bFootIK = true;
 		bRidingIK = false;
+		Forward = 0.0f;
+		Side = 0.0f;
 	}
 }
 

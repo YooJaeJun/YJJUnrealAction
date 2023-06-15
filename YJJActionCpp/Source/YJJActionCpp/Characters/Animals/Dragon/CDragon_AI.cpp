@@ -16,6 +16,7 @@ void ACDragon_AI::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetZoomMinRange(50.0f);
 	SetZoomMaxRange(1000.0f);
 
 	LandEffectScaleFactor = 2.0f;

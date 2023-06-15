@@ -5,6 +5,8 @@
 #include "CAnimInstance_Character.generated.h"
 
 class ACCommonCharacter;
+class UCMovementComponent;
+class UCFlyComponent;
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API UCAnimInstance_Character : public UAnimInstance
@@ -35,6 +37,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
 		float Look;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
+		float Forward;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
+		float Side;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
 		EStateType StateType = EStateType::Idle;
 
@@ -56,5 +64,7 @@ protected:
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCStateComponent> StateComp;
+	TWeakObjectPtr<UCMovementComponent> MovementComp;
+	TWeakObjectPtr<UCFlyComponent> FlyComp;
 	FRotator PrevRotation;
 };

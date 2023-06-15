@@ -78,7 +78,7 @@ void ACAnimal_AI::BeginPlay()
 			Eye = GetWorld()->SpawnActor<AActor>(EyeClass, 
 				EyePoint->GetComponentLocation(), EyePoint->GetComponentRotation(), params);
 
-			FAttachmentTransformRules attachRules(
+			const FAttachmentTransformRules attachRules(
 				EAttachmentRule::SnapToTarget,
 				EAttachmentRule::SnapToTarget,
 				EAttachmentRule::KeepRelative,
@@ -119,4 +119,15 @@ void ACAnimal_AI::Landed(const FHitResult& Hit)
 	landEffectTransform.SetScale3D(landEffectTransform.GetScale3D() * LandEffectScaleFactor);
 
 	CHelpers::PlayEffect(GetWorld(), LandEffect, landEffectTransform);
+}
+
+void ACAnimal_AI::SetZoomMinRange(const float InMinRange)
+{
+	CheckNull(ZoomComp);
+	ZoomComp->ZoomData.MinRange = InMinRange;
+}
+void ACAnimal_AI::SetZoomMaxRange(const float InMaxRange)
+{
+	CheckNull(ZoomComp);
+	ZoomComp->ZoomData.MaxRange = InMaxRange;
 }

@@ -90,12 +90,6 @@ public:
 	void InputAction_Interact();
 
 public:
-	UPROPERTY()
-		FMount OnMount;
-
-	UPROPERTY()
-		FUnmount OnUnmount;
-
 	UPROPERTY(VisibleAnywhere)
 		UCStateComponent* StateComp;
 
@@ -111,15 +105,6 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Status")
 		UCCharacterStatComponent* CharacterStatComp;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Land")
-		USoundBase* LandSound;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Land")
-		UFXSystemAsset* LandEffect;
-
-	UPROPERTY(EditAnywhere, Category = "Land")
-		float LandEffectScaleFactor = 1.0f;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 		USceneComponent* TargetingPoint;
 
@@ -128,6 +113,21 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 		TSubclassOf<UCUserWidget_Custom> TargetingWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		FMount OnMount;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		FUnmount OnUnmount;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Land")
+		USoundBase* LandSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Land")
+		UFXSystemAsset* LandEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Land")
+		float LandEffectScaleFactor = 1.0f;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Color")

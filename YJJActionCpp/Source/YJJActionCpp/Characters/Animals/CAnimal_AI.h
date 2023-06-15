@@ -37,7 +37,8 @@ protected:
 	virtual void Landed(const FHitResult& Hit) override;
 
 public:
-	FORCEINLINE void SetZoomMaxRange(const float InMaxRange) { ZoomComp->ZoomData.MaxRange = InMaxRange; }
+	void SetZoomMinRange(const float InMinRange);
+	void SetZoomMaxRange(const float InMaxRange);
 
 	FORCEINLINE UBoxComponent* GetInteractionCollision() const { return InteractionCollision; }
 	FORCEINLINE USceneComponent* GetMountLeftPoint() const { return MountLeftPoint; }

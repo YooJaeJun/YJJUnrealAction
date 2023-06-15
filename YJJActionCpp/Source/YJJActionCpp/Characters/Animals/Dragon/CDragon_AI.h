@@ -24,7 +24,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		ACDragonSkill* Skill;
 
-protected:
 	UPROPERTY(VisibleAnywhere)
 		UCFlyComponent* FlyComp;
 };

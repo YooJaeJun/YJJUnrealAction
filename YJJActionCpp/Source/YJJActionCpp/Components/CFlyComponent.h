@@ -28,6 +28,13 @@ public:
 
 	bool IsFlying() const;
 
+public:
+	UPROPERTY(EditAnywhere, Category = "Animation")
+		float Forward;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+		float Right;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Camera")
 		float HorizontalLook = 45;
@@ -36,7 +43,7 @@ private:
 		float VerticalLook = 45;
 
 	UPROPERTY(EditAnywhere, Category = "Move")
-		float MoveingFactor = 1000;
+		float MovingFactor = 1000;
 
 	UPROPERTY(EditAnywhere, Category = "Move")
 		float InterpSpeed = 2;

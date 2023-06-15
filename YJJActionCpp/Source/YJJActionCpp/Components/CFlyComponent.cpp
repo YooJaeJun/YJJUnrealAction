@@ -26,6 +26,8 @@ void UCFlyComponent::InputAxis_MoveForward(const float InAxis)
 	CheckNull(Owner->MovementComp);
 	CheckFalse(Owner->MovementComp->CanMove());
 
+	Forward = InAxis;
+
 	const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 	const FVector direction = FQuat(rotator).GetForwardVector();
 
@@ -35,7 +37,7 @@ void UCFlyComponent::InputAxis_MoveForward(const float InAxis)
 
 	const FVector targetLocation = 
 		Owner->GetActorLocation() +
-		Owner->GetCapsuleComponent()->GetForwardVector() * InAxis * MoveingFactor * GetWorld()->DeltaTimeSeconds;
+		Owner->GetCapsuleComponent()->GetForwardVector() * InAxis * MovingFactor * GetWorld()->DeltaTimeSeconds;
 
 	Owner->SetActorLocation(targetLocation);
 }
@@ -43,6 +45,8 @@ void UCFlyComponent::InputAxis_MoveForward(const float InAxis)
 void UCFlyComponent::InputAxis_MoveRight(const float InAxis)
 {
 	CheckNull(Owner->MovementComp);
+
+	Right = InAxis;
 
 	if (Owner->MovementComp->CanMove())
 	{
@@ -57,7 +61,7 @@ void UCFlyComponent::InputAxis_MoveRight(const float InAxis)
 
 		targetTransform.SetLocation(
 			Owner->GetActorLocation() +
-			Owner->GetCapsuleComponent()->GetForwardVector() * InAxis * MoveingFactor * GetWorld()->DeltaTimeSeconds
+			Owner->GetCapsuleComponent()->GetForwardVector() * InAxis * MovingFactor * GetWorld()->DeltaTimeSeconds
 		);
 
 		const FRotator tempTargetRotator(

@@ -188,8 +188,11 @@ void UCTargetingComponent::ChangeFocus(const bool InbRight)
 
 	for (const auto& elem : hitResults)
 	{
-		if (!!elem.GetActor() && 
-			elem.GetActor()->GetClass() != Owner->GetClass())
+		bool bCheck = true;
+		bCheck &= !!elem.GetActor();
+		bCheck &= (elem.GetActor()->GetClass() != Owner->GetClass());
+
+		if (bCheck)
 		{
 			targets.AddUnique(Cast<ACCommonCharacter>(elem.GetActor()));
 			bTargeting = true;
