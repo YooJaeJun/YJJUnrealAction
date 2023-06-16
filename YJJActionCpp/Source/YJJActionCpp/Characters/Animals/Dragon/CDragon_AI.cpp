@@ -42,3 +42,12 @@ void ACDragon_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Action", IE_Pressed, RidingComp, &UCRidingComponent::InputAction_Act);
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ACCommonCharacter::InputAction_Interact);
 }
+
+void ACDragon_AI::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	CheckNull(FlyComp);
+
+	FlyComp->LandOn();
+}

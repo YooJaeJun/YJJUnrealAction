@@ -439,6 +439,10 @@ void UCRidingComponent::Tick_Unmounting()
 		true, true, 0.6f, false,
 		eMoveAction, latentInfo);
 
+	Owner->MovementComp->Stop();
+	Owner->MovementComp->Right = 0.0f;
+	Owner->MovementComp->Forward = 0.0f;
+
 	Owner->SetbRiding(false);
 	Rider->SetbRiding(false);
 	Rider->StateComp->SetFallMode();

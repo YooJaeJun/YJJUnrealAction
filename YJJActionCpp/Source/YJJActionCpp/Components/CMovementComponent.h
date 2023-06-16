@@ -69,9 +69,6 @@ public:
 
 public:	
 	UPROPERTY(VisibleAnywhere, Category = "Move")
-		bool Moveable;
-
-	UPROPERTY(VisibleAnywhere, Category = "Move")
 		bool CameraFixed;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Move")

@@ -84,6 +84,8 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 			Direction = currentRotator.Yaw;
 	}//Owner->GetVelocity().Size() > 0.0f
 
+	// Animation
+
 	if (!!MovementComp.Get())
 	{
 		const FRotator rotator(0, Owner->GetControlRotation().Yaw, 0);

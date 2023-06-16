@@ -19,6 +19,7 @@ protected:
 
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void Landed(const FHitResult& Hit) override;
 
 public:
 	UPROPERTY(EditAnywhere)

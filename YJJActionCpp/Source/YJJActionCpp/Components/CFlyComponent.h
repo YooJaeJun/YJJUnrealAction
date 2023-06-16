@@ -27,6 +27,7 @@ public:
 	void InputAction_Jump();
 
 	bool IsFlying() const;
+	void LandOn() const;
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
@@ -43,10 +44,13 @@ private:
 		float VerticalLook = 45;
 
 	UPROPERTY(EditAnywhere, Category = "Move")
-		float MovingFactor = 1000;
+		float MovingFactor = 40;
 
 	UPROPERTY(EditAnywhere, Category = "Move")
 		float InterpSpeed = 2;
+
+	UPROPERTY(EditAnywhere, Category = "Move")
+		float UpFactor;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
