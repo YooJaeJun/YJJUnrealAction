@@ -57,8 +57,8 @@ void ACAnimal_AI::BeginPlay()
 
 	if (!!InteractionCollision)
 	{
-		InteractionCollision->OnComponentBeginOverlap.AddDynamic(RidingComp, &UCRidingComponent::BeginOverlap);
-		InteractionCollision->OnComponentEndOverlap.AddDynamic(RidingComp, &UCRidingComponent::EndOverlap);
+		InteractionCollision->OnComponentBeginOverlap.AddUniqueDynamic(RidingComp, &UCRidingComponent::BeginOverlap);
+		InteractionCollision->OnComponentEndOverlap.AddUniqueDynamic(RidingComp, &UCRidingComponent::EndOverlap);
 	}
 
 	if (!!RiderPoint)

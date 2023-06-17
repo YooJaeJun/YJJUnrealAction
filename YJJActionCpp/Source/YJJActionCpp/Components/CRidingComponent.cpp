@@ -142,7 +142,7 @@ void UCRidingComponent::BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	SetInteractor(Owner, interactor);
 
 	if (false == interactor->OnMount.IsBound())
-		interactor->OnMount.AddDynamic(this, &UCRidingComponent::SetRider);
+		interactor->OnMount.AddUniqueDynamic(this, &UCRidingComponent::SetRider);
 
 	Interaction->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
@@ -181,7 +181,7 @@ void UCRidingComponent::SetRider(ACCommonCharacter* InCharacter)
 	RiderWeaponComp = CHelpers::GetComponent<UCWeaponComponent>(InCharacter);
 
 	if (false == Owner->OnUnmount.IsBound())
-		Owner->OnUnmount.AddDynamic(this, &UCRidingComponent::Unmount);
+		Owner->OnUnmount.AddUniqueDynamic(this, &UCRidingComponent::Unmount);
 }
 
 void UCRidingComponent::Tick_ToMountPoint()
@@ -315,12 +315,12 @@ void UCRidingComponent::Tick_Mounting()
 	// 탑승중애니 - 탑승후루프애니
 	// MoveComponentTo - 몽타주 블렌드 아웃 되는 시점에 딱
 	if (false == Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.IsBound())
-		Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddDynamic(
+		Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddUniqueDynamic(
 			this, &UCRidingComponent::InterpToRidingPos);
 
 	// Attach - 몽타주 끝나는 시점에 딱
 	if (false == Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.IsBound())
-		Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(
+		Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.AddUniqueDynamic(
 			this, &UCRidingComponent::AttachToRiderPoint);
 
 

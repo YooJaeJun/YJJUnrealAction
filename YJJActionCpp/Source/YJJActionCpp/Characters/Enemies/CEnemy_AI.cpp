@@ -31,7 +31,7 @@ ACEnemy_AI::ACEnemy_AI()
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
 	
 	if (!!StateComp)
-		StateComp->OnStateTypeChanged.AddDynamic(this, &ACEnemy_AI::OnStateTypeChanged);
+		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACEnemy_AI::OnStateTypeChanged);
 
 	if (!!MovementComp)
 	{

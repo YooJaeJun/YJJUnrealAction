@@ -12,7 +12,7 @@ void UCAnimInstance_Human::NativeBeginPlay()
 
 	WeaponComp = CHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
 	CheckNull(WeaponComp);
-	WeaponComp->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance_Human::OnWeaponTypeChanged);
+	WeaponComp->OnWeaponTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Human::OnWeaponTypeChanged);
 }
 
 void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)

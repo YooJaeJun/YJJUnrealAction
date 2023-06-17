@@ -17,7 +17,7 @@ void UCAnimInstance_Character::NativeBeginPlay()
 	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
 
 	if (!!StateComp.Get())
-		StateComp->OnStateTypeChanged.AddDynamic(this, &UCAnimInstance_Character::OnStateTypeChanged);
+		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Character::OnStateTypeChanged);
 
 	MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
 	FlyComp = CHelpers::GetComponent<UCFlyComponent>(Owner.Get());

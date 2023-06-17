@@ -36,7 +36,7 @@ void UCGameUIComponent::BeginPlay()
 			{
 				for (auto& elem : EquipMenu->EquipMenuButtons)
 				{
-					elem->OnWeaponEquipped.AddDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
+					elem->OnWeaponEquipped.AddUniqueDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
 					EquipMenuButtons.Push(elem);
 				}
 			}

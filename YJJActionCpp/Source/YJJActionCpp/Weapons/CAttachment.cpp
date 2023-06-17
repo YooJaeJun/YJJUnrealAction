@@ -22,8 +22,8 @@ void ACAttachment::BeginPlay()
 
 		if (!!shape)
 		{
-			shape->OnComponentBeginOverlap.AddDynamic(this, &ACAttachment::OnComponentBeginOverlap);
-			shape->OnComponentEndOverlap.AddDynamic(this, &ACAttachment::OnComponentEndOverlap);
+			shape->OnComponentBeginOverlap.AddUniqueDynamic(this, &ACAttachment::OnComponentBeginOverlap);
+			shape->OnComponentEndOverlap.AddUniqueDynamic(this, &ACAttachment::OnComponentEndOverlap);
 
 			Collisions.Add(shape);
 		}

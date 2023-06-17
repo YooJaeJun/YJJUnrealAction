@@ -58,7 +58,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	if (!!StateComp)
 	{
 		StateComp->SetIdleMode();
-		StateComp->OnStateTypeChanged.AddDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
+		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
 	}
 
 	if (!!MovementComp)

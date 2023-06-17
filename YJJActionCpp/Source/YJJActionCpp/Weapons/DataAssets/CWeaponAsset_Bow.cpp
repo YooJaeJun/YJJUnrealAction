@@ -29,15 +29,15 @@ void UCWeaponAsset_Bow::BeginPlay(ACCommonCharacter* InOwner)
 			{
 				CheckNull(skill);
 
-				Equipment->OnEquipmentBeginEquip.AddDynamic(skill, &ACAttachment::OnBeginEquip);
-				Equipment->OnEquipmentUnequip.AddDynamic(skill, &ACAttachment::OnUnequip);
+				Equipment->OnEquipmentBeginEquip.AddUniqueDynamic(skill, &ACAttachment::OnBeginEquip);
+				Equipment->OnEquipmentUnequip.AddUniqueDynamic(skill, &ACAttachment::OnUnequip);
 
 				if (!!Act)
 				{
-					skill->OnAttachmentBeginCollision.AddDynamic(Act, &UCAct::OnAttachmentBeginCollision);
-					skill->OnAttachmentEndCollision.AddDynamic(Act, &UCAct::OnAttachmentEndCollision);
-					skill->OnAttachmentBeginOverlap.AddDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
-					skill->OnAttachmentEndOverlap.AddDynamic(Act, &UCAct::OnAttachmentEndOverlap);
+					skill->OnAttachmentBeginCollision.AddUniqueDynamic(Act, &UCAct::OnAttachmentBeginCollision);
+					skill->OnAttachmentEndCollision.AddUniqueDynamic(Act, &UCAct::OnAttachmentEndCollision);
+					skill->OnAttachmentBeginOverlap.AddUniqueDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
+					skill->OnAttachmentEndOverlap.AddUniqueDynamic(Act, &UCAct::OnAttachmentEndOverlap);
 				}
 			}
 		}
