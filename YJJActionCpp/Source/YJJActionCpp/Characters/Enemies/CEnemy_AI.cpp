@@ -35,7 +35,7 @@ ACEnemy_AI::ACEnemy_AI()
 
 	if (!!MovementComp)
 	{
-		MovementComp->SetSpeed(ESpeedType::Sprint);
+		MovementComp->SetSpeeds(Speeds);
 		MovementComp->InputAction_Run();
 	}
 }
@@ -51,7 +51,6 @@ void ACEnemy_AI::BeginPlay()
 void ACEnemy_AI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ACEnemy_AI::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)

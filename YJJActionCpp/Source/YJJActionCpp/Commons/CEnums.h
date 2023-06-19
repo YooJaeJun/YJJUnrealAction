@@ -13,3 +13,17 @@ enum class EDirection : uint8
 	Bottom,
 	Max
 };
+
+UENUM(BlueprintType)
+enum class EBehaviorType : uint8
+{
+	Wait,
+	Patrol,
+	Approach,
+	Action,
+	Dead,
+	DownFlying,
+	DownLand,
+	Ride,
+	Max
+};

@@ -36,6 +36,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		UCWeaponComponent* WeaponComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+		TArray<float> Speeds{ 200, 400, 600 };
+
 private:
 	EAttackType CurAttackType = EAttackType::None;
 };

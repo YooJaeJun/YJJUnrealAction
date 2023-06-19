@@ -15,7 +15,7 @@ void UCUserWidget_EquipMenuButton::OnHovered()
 
 void UCUserWidget_EquipMenuButton::OnUnhovered()
 {
-	EWeaponType weaponType = CHelpers::ConvertTCHARToEnum<EWeaponType>(GetName()[GetName().Len() - 1]);
+	const EWeaponType weaponType = CHelpers::ConvertTCHARToEnum<EWeaponType>(GetName()[GetName().Len() - 1]);
 
 	if (OnWeaponEquipped.IsBound())
 		OnWeaponEquipped.Broadcast(weaponType);

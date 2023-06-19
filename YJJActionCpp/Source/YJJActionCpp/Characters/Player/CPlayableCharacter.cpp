@@ -61,7 +61,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 		MovementComp->SetSpeeds(Speeds);
 		MovementComp->DisableControlRotation();
 		MovementComp->UnFixCamera();
-		MovementComp->SetFriction(2, 256);
+		MovementComp->SetFriction(2.0f, 2048.0f);
 		MovementComp->SetJumpZ(700.0f);
 	}
 

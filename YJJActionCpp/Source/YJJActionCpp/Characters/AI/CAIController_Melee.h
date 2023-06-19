@@ -10,23 +10,4 @@ UCLASS()
 class YJJACTIONCPP_API ACAIController_Melee : public ACAIController
 {
 	GENERATED_BODY()
-
-public:
-	ACAIController_Melee();
-	virtual void OnPossess(APawn* InPawn) override;
-
-	void RunAI();
-	void StopAI() const;
-
-private:
-	static const FName Target;
-	static const FName Behavior;
-	static const FName EQLocation;
-
-private:
-	UPROPERTY()
-		UBehaviorTree* BTAsset;
-
-	UPROPERTY()
-		UBlackboardData* BBAsset;
 };
