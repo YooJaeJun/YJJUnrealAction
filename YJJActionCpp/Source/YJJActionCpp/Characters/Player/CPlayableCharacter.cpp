@@ -38,7 +38,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	TSubclassOf<UCAnimInstance_Human> animInstance;
-	CHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/ABP_CHuman.ABP_CHuman_C'");
+	CHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/CABP_Human.CABP_Human_C'");
 	GetMesh()->SetAnimClass(animInstance);
 
 	if (!!SpringArm)

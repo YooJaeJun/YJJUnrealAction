@@ -10,7 +10,7 @@ class AController;
 class UCWeaponComponent;
 struct FDamageEvent;
 
-UCLASS()
+UCLASS(Abstract)
 class YJJACTIONCPP_API ACEnemy_AI : public ACEnemy
 {
 	GENERATED_BODY()

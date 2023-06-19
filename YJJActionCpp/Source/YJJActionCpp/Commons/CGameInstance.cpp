@@ -2,14 +2,13 @@
 #include "Global.h"
 
 UCGameInstance::UCGameInstance()
-	: UGameInstance()
 {
-	CHelpers::GetAsset(&CharacterInfoTable, "DataTable'/Game/Character/DT_CCharacterInfo.DT_CCharacterInfo'");
-	CHelpers::GetAsset(&CharacterStatTable, "DataTable'/Game/Character/DT_CCharacterStat.DT_CCharacterStat'");
+	CHelpers::GetAsset(&CharacterInfoTable, "DataTable'/Game/Character/CDT_CharacterInfo.CDT_CharacterInfo'");
+	CHelpers::GetAsset(&CharacterStatTable, "DataTable'/Game/Character/CDT_CharacterStat.CDT_CharacterStat'");
 
-	if (CharacterInfoTable->GetRowMap().Num() <= 0)
+	if (!!CharacterInfoTable && CharacterInfoTable->GetRowMap().Num() <= 0)
 		CLog::Log("CharacterInfoTable is Empty.");
-	if (CharacterStatTable->GetRowMap().Num() <= 0)
+	if (!!CharacterStatTable && CharacterStatTable->GetRowMap().Num() <= 0)
 		CLog::Log("CharacterStatTable is Empty.");
 }
 

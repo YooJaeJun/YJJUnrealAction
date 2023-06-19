@@ -2,10 +2,13 @@
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
 #include "GameFramework/Character.h"
+#include "Commons/CEnums.h"
 
 UCMontagesComponent::UCMontagesComponent()
 {
 	Owner = Cast<ACCommonCharacter>(GetOwner());
+
+	CHelpers::GetAsset<UDataTable>(&DataTable, "DataTable'/Game/Character/CDT_HumanAnim.CDT_HumanAnim'");
 }
 
 void UCMontagesComponent::BeginPlay()
@@ -14,22 +17,21 @@ void UCMontagesComponent::BeginPlay()
 
 	if (nullptr == DataTable)
 	{
-		GLog->Log(ELogVerbosity::Error, "DataTable is not selected");
-
+		CLog::Log("DataTable is not selected");
 		return;
 	}
 
 	TArray<FMontagesData*> datas;
 	DataTable->GetAllRows<FMontagesData>("", datas);
 
-	for (int32 i=0; i<static_cast<int32>(EStateType::Max); i++)
+	const uint32 size = static_cast<int32>(EStateType::Max);
+	for (uint32 i=0; i<size; i++)
 	{
-		for (FMontagesData* data : datas)
+		for (const FMontagesData* data : datas)
 		{
 			if (static_cast<EStateType>(i) == data->StateType)
 			{
 				Datas[i] = *data;
-
 				continue;
 			}
 		}//for(data)
@@ -68,8 +70,7 @@ void UCMontagesComponent::PlayAnimMontage(const EStateType InType)
 
 	if (nullptr == data.Montage)
 	{
-		GLog->Log(ELogVerbosity::Error, "No Montages Data");
-
+		CLog::Log("No Montages Data");
 		return;
 	}
 
@@ -84,7 +85,7 @@ void UCMontagesComponent::PlayAnimMontage(const EStateType InType, const TWeakOb
 
 	if (nullptr == data.Montage)
 	{
-		GLog->Log(ELogVerbosity::Error, "No Montages Data");
+		CLog::Log("No Montages Data");
 		return;
 	}
 
@@ -92,14 +93,14 @@ void UCMontagesComponent::PlayAnimMontage(const EStateType InType, const TWeakOb
 
 	FName startSectionName;
 
-	if (InInput->GetAxisValue("MoveForward") > 0)
-		startSectionName = "Front";
-	else if (InInput->GetAxisValue("MoveForward") < 0)
-		startSectionName = "Back";
-	else if (InInput->GetAxisValue("MoveRight") > 0)
+	if (InInput->GetAxisValue("MoveRight") > 0)
 		startSectionName = "Right";
-	else
+	else if (InInput->GetAxisValue("MoveRight") < 0)
 		startSectionName = "Left";
+	else if (InInput->GetAxisValue("MoveForward") > 0)
+		startSectionName = "Front";
+	else
+		startSectionName = "Back";
 
 	Owner->PlayAnimMontage(data.Montage, data.PlayRate, startSectionName);
 }

@@ -25,7 +25,7 @@ ACEnemy_AI::ACEnemy_AI()
 	GetMesh()->SetSkeletalMesh(mesh);
 
 	TSubclassOf<UCAnimInstance_Human> animInstance;
-	CHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/ABP_CHuman.ABP_CHuman_C'");
+	CHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/CABP_Human.CABP_Human_C'");
 	GetMesh()->SetAnimClass(animInstance);
 
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);

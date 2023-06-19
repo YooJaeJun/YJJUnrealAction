@@ -21,7 +21,7 @@ ACCommonCharacter::ACCommonCharacter()
 	CHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
 	CHelpers::CreateComponent<USceneComponent>(this, &TargetingPoint, "TargetingPoint", GetMesh());
 	CHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", TargetingPoint);
-	CHelpers::GetClass<UCUserWidget_Custom>(&TargetingWidget, "WidgetBlueprint'/Game/Widgets/Interaction/WB_CTargeting.WB_CTargeting_C'");
+	CHelpers::GetClass<UCUserWidget_Custom>(&TargetingWidget, "WidgetBlueprint'/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C'");
 
 	CharacterStatComp->OnHpIsZero.AddUObject(this, &ACCommonCharacter::Dead);
 

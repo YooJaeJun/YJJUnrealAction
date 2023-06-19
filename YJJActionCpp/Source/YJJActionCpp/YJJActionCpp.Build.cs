@@ -8,7 +8,18 @@ public class YJJActionCpp : ModuleRules
 
 		PublicIncludePaths.Add(ModuleDirectory);	// ../ 상대경로 없애기 위함
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Niagara" });
+		PublicDependencyModuleNames.AddRange(new string[]
+        {
+            "Core", 
+            "CoreUObject", 
+            "Engine", 
+            "InputCore", 
+            "UMG", 
+            "Niagara",
+			"AIModule",
+			"GameplayTasks",
+			"NavigationSystem"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

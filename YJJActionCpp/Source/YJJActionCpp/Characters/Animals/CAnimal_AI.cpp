@@ -45,7 +45,7 @@ ACAnimal_AI::ACAnimal_AI()
 	CHelpers::LoadAsset<UFXSystemAsset>(&LandEffect,
 		TEXT("NiagaraSystem'/Game/Assets/Effects/SuperheroFlight/VFX/Niagara/System/SuperheroLanding/NS_Superhero_Landing_Concrete.NS_Superhero_Landing_Concrete'"));
 
-	CHelpers::GetClass<AActor>(&EyeClass, "Blueprint'/Game/Character/Animals/BP_Eye.BP_Eye_C'");
+	CHelpers::GetClass<AActor>(&EyeClass, "Blueprint'/Game/Character/Animals/CBP_Eye.CBP_Eye_C'");
 
 	if (!!SpringArm)
 		SpringArm->bDoCollisionTest = false;

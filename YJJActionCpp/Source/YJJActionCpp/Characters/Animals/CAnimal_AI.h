@@ -19,7 +19,7 @@ class CUserWidget_HUD;
 class CUserWidget_Interaction;
 class ACCommonCharacter;
 
-UCLASS()
+UCLASS(Abstract)
 class YJJACTIONCPP_API ACAnimal_AI :
 	public ACAnimal
 {
