@@ -1,7 +1,7 @@
 ﻿#include "Components/CRidingComponent.h"
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
-#include "Game/CGameMode.h"
+#include "Commons/CGameMode.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Interaction/CUserWidget_Interaction.h"
 #include "Characters/Animals/CAnimal_AI.h"

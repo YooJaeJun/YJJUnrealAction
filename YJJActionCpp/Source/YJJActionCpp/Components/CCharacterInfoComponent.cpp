@@ -1,6 +1,6 @@
 #include "Components/CCharacterInfoComponent.h"
 #include "Global.h"
-#include "Game/CGameInstance.h"
+#include "Commons/CGameInstance.h"
 
 UCCharacterInfoComponent::UCCharacterInfoComponent()
 {

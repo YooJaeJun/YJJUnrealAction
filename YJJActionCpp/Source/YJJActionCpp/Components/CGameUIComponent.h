@@ -1,7 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Characters/CInterface_CharacterUI.h"
+#include "Interfaces/CInterface_CharacterUI.h"
 #include "Widgets/Weapons/CUserWidget_EquipMenu.h"
 #include "Widgets/Weapons/CUserWidget_EquipMenuButton.h"
 #include "CGameUIComponent.generated.h"

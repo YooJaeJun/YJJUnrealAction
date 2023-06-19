@@ -1,4 +1,4 @@
-#include "Characters/CInterface_CharacterBody.h"
+#include "Interfaces/CInterface_CharacterBody.h"
 #include "Characters/CCommonCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"

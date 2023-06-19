@@ -10,5 +10,6 @@ enum class EDirection : uint8
 	Forward,
 	Back,
 	Top,
-	Bottom
+	Bottom,
+	Max
 };

@@ -1,13 +1,11 @@
 #include "Components/CGameUIComponent.h"
-
-#include "CMovementComponent.h"
 #include "Global.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Characters/CCommonCharacter.h"
 #include "Characters/Player/CPlayableCharacter.h"
 #include "Blueprint/UserWidget.h"
-#include "Game/CGameMode.h"
+#include "Commons/CGameMode.h"
 #include "Widgets/CUserWidget_HUD.h"
 
 UCGameUIComponent::UCGameUIComponent()

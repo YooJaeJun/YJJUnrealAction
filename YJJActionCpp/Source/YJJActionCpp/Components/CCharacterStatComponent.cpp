@@ -1,6 +1,6 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Global.h"
-#include "Game/CGameInstance.h"
+#include "Commons/CGameInstance.h"
 #include "Characters/CCommonCharacter.h"
 #include "Components/CStateComponent.h"
 

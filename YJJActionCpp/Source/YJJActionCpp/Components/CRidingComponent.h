@@ -1,8 +1,8 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Characters/CInterface_Interactable.h"
-#include "Game/CEnums.h"
+#include "Interfaces/CInterface_Interactable.h"
+#include "Commons/CEnums.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "CRidingComponent.generated.h"
 
