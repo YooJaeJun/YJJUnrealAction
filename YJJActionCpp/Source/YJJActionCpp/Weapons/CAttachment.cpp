@@ -68,8 +68,13 @@ void ACAttachment::DetachToCollision(FName InCollisionName)
 			collision->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 }
 
-void ACAttachment::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACAttachment::OnComponentBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex, 
+	bool bFromSweep, 
+	const FHitResult& SweepResult)
 {
 	CheckTrue(Owner == OtherActor);
 	CheckTrue(Owner->GetClass() == OtherActor->GetClass());
@@ -78,8 +83,11 @@ void ACAttachment::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompon
 		OnAttachmentBeginOverlap.Broadcast(Owner.Get(), this, Cast<ACCommonCharacter>(OtherActor));
 }
 
-void ACAttachment::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ACAttachment::OnComponentEndOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex)
 {
 	CheckTrue(Owner == OtherActor);
 	CheckTrue(Owner->GetClass() == OtherActor->GetClass());

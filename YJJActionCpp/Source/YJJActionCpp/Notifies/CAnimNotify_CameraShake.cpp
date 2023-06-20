@@ -14,11 +14,11 @@ void UCAnimNotify_CameraShake::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 
-	ACCommonCharacter* character = Cast<ACCommonCharacter>(MeshComp->GetOwner());
-	CheckNull(character);
+	const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(MeshComp->GetOwner());
+	CheckNull(character.Get());
 
-	APlayerController* controller = Cast<APlayerController>(character->MyCurController);
-	CheckNull(controller);
+	const TWeakObjectPtr<APlayerController> controller = Cast<APlayerController>(character->MyCurController);
+	CheckNull(controller.Get());
 
 	controller->PlayerCameraManager->StartCameraShake(CameraShakeClass);
 }

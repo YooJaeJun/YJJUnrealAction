@@ -15,11 +15,11 @@ void UCAnimNotifyState_Combo::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 	CheckNull(MeshComp->GetOwner());
 
 	const TWeakObjectPtr<UCWeaponComponent> weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
-	CheckNull(weapon);
+	CheckNull(weapon.Get());
 	CheckNull(weapon->GetAct());
 
 	const TWeakObjectPtr<UCAct_Combo> combo = Cast<UCAct_Combo>(weapon->GetAct());
-	CheckNull(combo);
+	CheckNull(combo.Get());
 
 	combo->EnableCombo();
 }
@@ -31,11 +31,11 @@ void UCAnimNotifyState_Combo::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 	CheckNull(MeshComp->GetOwner());
 
 	const TWeakObjectPtr<UCWeaponComponent> weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
-	CheckNull(weapon);
+	CheckNull(weapon.Get());
 	CheckNull(weapon->GetAct());
 
 	const TWeakObjectPtr<UCAct_Combo> combo = Cast<UCAct_Combo>(weapon->GetAct());
-	CheckNull(combo);
+	CheckNull(combo.Get());
 
 	combo->DisableCombo();
 }

@@ -11,12 +11,13 @@ void UCUserWidget_EquipMenuButton::BindEquipMenuButton()
 
 void UCUserWidget_EquipMenuButton::OnHovered()
 {
+	const EWeaponType weaponType =
+		CHelpers::ConvertTCHARToEnum<EWeaponType>(GetName()[GetName().Len() - 1]);
+
+	if (OnWeaponEquipped.IsBound())
+		OnWeaponEquipped.Broadcast(weaponType);
 }
 
 void UCUserWidget_EquipMenuButton::OnUnhovered()
 {
-	const EWeaponType weaponType = CHelpers::ConvertTCHARToEnum<EWeaponType>(GetName()[GetName().Len() - 1]);
-
-	if (OnWeaponEquipped.IsBound())
-		OnWeaponEquipped.Broadcast(weaponType);
 }

@@ -4,8 +4,6 @@
 #include "Components/CWeaponComponent.h"
 #include "CBTTask_Act.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponEquipped, const EWeaponType, InNewType);
-
 UCLASS()
 class YJJACTIONCPP_API UCBTTask_Act : public UBTTaskNode
 {
@@ -19,6 +17,6 @@ public:
 		uint8* NodeMemory) override;
 
 public:
-	UPROPERTY()
-		FWeaponEquipped OnWeaponEquipped;
+	UPROPERTY(EditAnywhere)
+		EWeaponType WeaponType = EWeaponType::Sword;
 };

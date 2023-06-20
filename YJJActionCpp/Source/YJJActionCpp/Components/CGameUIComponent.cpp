@@ -19,36 +19,28 @@ void UCGameUIComponent::BeginPlay()
 
 	PlayerController = Cast<APlayerController>(Owner->GetController());
 
-	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	const TWeakObjectPtr<UCUserWidget_HUD> hud = CHelpers::GetHud(Owner);
+	CheckNull(hud.Get());
 
-	if (!!GameMode.Get())
+	hud->SetChildren();
+
+	EquipMenu = hud->EquipMenu;
+	CheckNull(EquipMenu.Get());
+
+	for (const auto& EquipMenuButton : EquipMenu->EquipMenuButtons)
 	{
-		TWeakObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
-		if (hud.Get())
-		{
-			hud->SetChildren();
-
-			EquipMenu = hud->EquipMenu;
-
-			if (!!EquipMenu.Get())
-			{
-				for (auto& elem : EquipMenu->EquipMenuButtons)
-				{
-					elem->OnWeaponEquipped.AddUniqueDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
-					EquipMenuButtons.Push(elem);
-				}
-			}
-		}
+		EquipMenuButton->OnWeaponEquipped.AddUniqueDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
+		EquipMenuButtons.Push(EquipMenuButton);
 	}
 }
 
 void UCGameUIComponent::OnWeaponEquipped(const EWeaponType InNewType)
 {
-	ACPlayableCharacter* player = Cast<ACPlayableCharacter>(Owner);
-	CheckNull(player);
+	const TWeakObjectPtr<ACPlayableCharacter> player = Cast<ACPlayableCharacter>(Owner);
+	CheckNull(player.Get());
 
-	UCWeaponComponent* weaponComp = CHelpers::GetComponent<UCWeaponComponent>(player);
-	CheckNull(weaponComp);
+	const TWeakObjectPtr<UCWeaponComponent> weaponComp = CHelpers::GetComponent<UCWeaponComponent>(player.Get());
+	CheckNull(weaponComp.Get());
 
 	weaponComp->SetMode(InNewType);
 }

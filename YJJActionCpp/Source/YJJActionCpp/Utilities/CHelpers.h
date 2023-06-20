@@ -4,16 +4,20 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Characters/CCommonCharacter.h"
+#include "Commons/CGameMode.h"
 #include "GameFramework/Controller.h"
 
 #define CheckTrue(x) { if (x == true) return; }
 #define CheckTrueResult(x, y) { if (x == true) return y; }
 
-#define CheckFalse(x) { if(x == false) return;}
-#define CheckFalseResult(x, y) { if(x == false) return y;}
+#define CheckFalse(x) { if(x == false) return; }
+#define CheckFalseResult(x, y) { if(x == false) return y; }
 
-#define CheckNull(x) { if(x == nullptr) return;}
-#define CheckNullResult(x, y) { if(x == nullptr) return y;}
+#define CheckNull(x) { if(x == nullptr) return; }
+#define CheckNullResult(x, y) { if(x == nullptr) return y; }
+
+#define CheckNullLog(x) { if(x == nullptr) { CLog::Log(x); return; }}
+#define CheckNullResultLog(x, y) { if(x == nullptr) { CLog::Log(x); return y; } }
 
 #define CreateTextRender()\
 {\
@@ -179,6 +183,21 @@ public:
 	{
 		*OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *Path));
 	}
+
+	static TWeakObjectPtr<UCUserWidget_HUD> GetHud(TWeakObjectPtr<ACCommonCharacter> InOwner)
+	{
+		const TWeakObjectPtr<ACGameMode> gameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(InOwner->GetWorld()));
+		CheckNullResult(gameMode.Get(), nullptr);
+
+		const TWeakObjectPtr<UCUserWidget_HUD> hud = gameMode->GetHUD();
+		CheckNullResult(hud.Get(), nullptr);
+
+		return hud;
+	}
+
+	//////////////////
+	// Sub Features //
+	//////////////////
 
 	static TWeakObjectPtr<ACCommonCharacter> GetNearForward(
 		TWeakObjectPtr<ACCommonCharacter> InCenter,

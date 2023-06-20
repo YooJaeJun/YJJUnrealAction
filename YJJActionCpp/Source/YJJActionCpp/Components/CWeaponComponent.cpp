@@ -47,8 +47,12 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 
 	if (!!DataAssets[static_cast<uint8>(InType)])
 	{
-		DataAssets[static_cast<uint8>(InType)]->GetEquipment()->Equip();
-		ChangeType(InType);
+		const TWeakObjectPtr<UCEquipment> equipment = DataAssets[static_cast<uint8>(InType)]->GetEquipment();
+		if (!!equipment.Get())
+		{
+			equipment->Equip();
+			ChangeType(InType);
+		}
 	}
 }
 

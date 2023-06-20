@@ -14,13 +14,16 @@ EBTNodeResult::Type UCBTTask_Act::ExecuteTask(
 	UBehaviorTreeComponent& OwnerComp,
 	uint8* NodeMemory)
 {
-	const TWeakObjectPtr<ACEnemy_AI> owner = Cast<ACEnemy_AI>(
-		OwnerComp.GetAIOwner()->GetPawn());
+	const TWeakObjectPtr<ACEnemy_AI> owner = 
+		Cast<ACEnemy_AI>(OwnerComp.GetAIOwner()->GetPawn());
 	CheckNullResult(owner, EBTNodeResult::Failed);
 
 	const TWeakObjectPtr<UCWeaponComponent> weaponComp = 
 		CHelpers::GetComponent<UCWeaponComponent>(owner.Get());
-	CheckNullResult(owner, EBTNodeResult::Failed);
+	CheckNullResult(weaponComp, EBTNodeResult::Failed);
+
+	if (weaponComp->IsUnarmedMode())
+		weaponComp->SetMode(WeaponType);
 
 	weaponComp->InputAction_Act();
 

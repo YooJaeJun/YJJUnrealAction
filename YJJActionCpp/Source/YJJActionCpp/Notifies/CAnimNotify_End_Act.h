@@ -10,7 +10,7 @@ class YJJACTIONCPP_API UCAnimNotify_End_Act : public UAnimNotify
 	GENERATED_BODY()
 
 public:
-	FString GetNotifyName_Implementation() const override;
+	virtual FString GetNotifyName_Implementation() const override;
 
-	void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };

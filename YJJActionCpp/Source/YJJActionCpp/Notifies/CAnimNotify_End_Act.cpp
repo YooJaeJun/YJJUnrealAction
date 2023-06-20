@@ -15,7 +15,7 @@ void UCAnimNotify_End_Act::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	CheckNull(MeshComp->GetOwner());
 
 	const TWeakObjectPtr<UCWeaponComponent> weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
-	CheckNull(weapon);
+	CheckNull(weapon.Get());
 	CheckNull(weapon->GetAct());
 
 	weapon->GetAct()->End_Act();

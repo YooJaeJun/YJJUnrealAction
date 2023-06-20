@@ -29,4 +29,7 @@ public:
 
 	UPROPERTY()
 		FWeaponEquipped OnWeaponEquipped;
+
+	UPROPERTY()
+		EWeaponType WeaponType;
 };

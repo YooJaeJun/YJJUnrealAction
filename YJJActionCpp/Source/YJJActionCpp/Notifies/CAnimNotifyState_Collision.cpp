@@ -15,7 +15,7 @@ void UCAnimNotifyState_Collision::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	CheckNull(MeshComp->GetOwner());
 
 	const TWeakObjectPtr<UCWeaponComponent> weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
-	CheckNull(weapon);
+	CheckNull(weapon.Get());
 	CheckNull(weapon->GetAttachment());
 
 	weapon->GetAttachment()->OnCollisions();
@@ -28,7 +28,7 @@ void UCAnimNotifyState_Collision::NotifyEnd(USkeletalMeshComponent* MeshComp, UA
 	CheckNull(MeshComp->GetOwner());
 
 	const TWeakObjectPtr<UCWeaponComponent> weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
-	CheckNull(weapon);
+	CheckNull(weapon.Get());
 	CheckNull(weapon->GetAttachment());
 
 	weapon->GetAttachment()->OffCollisions();
