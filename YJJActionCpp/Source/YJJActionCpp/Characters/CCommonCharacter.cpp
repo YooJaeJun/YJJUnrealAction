@@ -41,7 +41,7 @@ void ACCommonCharacter::BeginPlay()
 
 	MyCurController = GetController();
 
-	CHelpers::LoadAsset<USoundBase>(&LandSound,
+	CHelpers::GetAssetDynamic<USoundBase>(&LandSound,
 		TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
 	if (!!TargetingPoint)

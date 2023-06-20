@@ -1,11 +1,10 @@
-#include "Components/CWeaponComponent.h"
+﻿#include "Components/CWeaponComponent.h"
 #include "Global.h"
 #include "Components/CStateComponent.h"
 #include "Characters/CCommonCharacter.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CEquipment.h"
 #include "Weapons/CAct.h"
-#include "Weapons/CWeaponAsset.h"
 
 UCWeaponComponent::UCWeaponComponent()
 {
@@ -17,11 +16,19 @@ void UCWeaponComponent::BeginPlay()
 	Super::BeginPlay();
 	CheckNull(Owner);
 
-	uint8 size = (uint8)EWeaponType::Max;
+	constexpr uint8 size = static_cast<uint8>(EWeaponType::Max);
+
 	for (int32 i = 0; i < size; i++)
 	{
 		if (!!DataAssets[i])
-			DataAssets[i]->BeginPlay(Owner.Get());
+		{
+			DataAssetsCopy[i] = NewObject<UCWeaponAsset>(
+				this, 
+				DataAssets[i]->GetClass(), 
+				static_cast<FName>(DataAssets[i]->GetClass()->GetName()));
+
+			DataAssetsCopy[i]->CopyDeep(*DataAssets[i], Owner);
+		}
 	}
 }
 
@@ -47,7 +54,7 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 
 	if (!!DataAssets[static_cast<uint8>(InType)])
 	{
-		const TWeakObjectPtr<UCEquipment> equipment = DataAssets[static_cast<uint8>(InType)]->GetEquipment();
+		const TWeakObjectPtr<UCEquipment> equipment = DataAssetsCopy[static_cast<uint8>(InType)]->GetEquipment();
 		if (!!equipment.Get())
 		{
 			equipment->Equip();
@@ -70,7 +77,7 @@ ACAttachment* UCWeaponComponent::GetAttachment() const
 	CheckTrueResult(IsUnarmedMode(), nullptr);
 	CheckFalseResult(!!DataAssets[static_cast<uint8>(Type)], nullptr);
 
-	return DataAssets[static_cast<uint8>(Type)]->GetAttachment();
+	return DataAssetsCopy[static_cast<uint8>(Type)]->GetAttachment();
 }
 
 UCEquipment* UCWeaponComponent::GetEquipment() const
@@ -78,7 +85,7 @@ UCEquipment* UCWeaponComponent::GetEquipment() const
 	CheckTrueResult(IsUnarmedMode(), nullptr);
 	CheckFalseResult(!!DataAssets[static_cast<uint8>(Type)], nullptr);
 
-	return DataAssets[static_cast<uint8>(Type)]->GetEquipment();
+	return DataAssetsCopy[static_cast<uint8>(Type)]->GetEquipment();
 }
 
 UCAct* UCWeaponComponent::GetAct() const
@@ -86,7 +93,7 @@ UCAct* UCWeaponComponent::GetAct() const
 	CheckTrueResult(IsUnarmedMode(), nullptr);
 	CheckFalseResult(!!DataAssets[static_cast<uint8>(Type)], nullptr);
 
-	return DataAssets[static_cast<uint8>(Type)]->GetAct();
+	return DataAssetsCopy[static_cast<uint8>(Type)]->GetAct();
 }
 
 bool UCWeaponComponent::IsIdleStateMode() const

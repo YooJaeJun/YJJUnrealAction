@@ -39,10 +39,10 @@ ACAnimal_AI::ACAnimal_AI()
 		MovementComp->SetJumpZ(700.0f);
 	}
 
-	CHelpers::LoadAsset<USoundBase>(&LandSound,
+	CHelpers::GetAssetDynamic<USoundBase>(&LandSound,
 		TEXT("SoundCue'/Game/Assets/Sounds/Footsteps/Run/Stone/SC_Footstep_Stone_Run.SC_Footstep_Stone_Run'"));
 
-	CHelpers::LoadAsset<UFXSystemAsset>(&LandEffect,
+	CHelpers::GetAssetDynamic<UFXSystemAsset>(&LandEffect,
 		TEXT("NiagaraSystem'/Game/Assets/Effects/SuperheroFlight/VFX/Niagara/System/SuperheroLanding/NS_Superhero_Landing_Concrete.NS_Superhero_Landing_Concrete'"));
 
 	CHelpers::GetClass<AActor>(&EyeClass, "Blueprint'/Game/Character/Animals/CBP_Eye.CBP_Eye_C'");

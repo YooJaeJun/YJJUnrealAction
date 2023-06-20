@@ -178,12 +178,6 @@ public:
 		}
 	}
 
-	template<typename T>
-	static void LoadAsset(T** OutObject, const FString& Path)
-	{
-		*OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *Path));
-	}
-
 	static TWeakObjectPtr<UCUserWidget_HUD> GetHud(TWeakObjectPtr<ACCommonCharacter> InOwner)
 	{
 		const TWeakObjectPtr<ACGameMode> gameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(InOwner->GetWorld()));

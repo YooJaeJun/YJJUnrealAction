@@ -67,9 +67,9 @@ void UCAct_Combo::OnAttachmentEndCollision()
 		FVector direction = hitted->GetActorLocation() - Owner->GetActorLocation();
 		direction = direction.GetSafeNormal2D();
 
-		FVector forward = FQuat(Owner->GetActorRotation()).GetForwardVector();
+		const FVector forward = FQuat(Owner->GetActorRotation()).GetForwardVector();
 
-		float dot = FVector::DotProduct(direction, forward);
+		const float dot = FVector::DotProduct(direction, forward);
 		if (dot >= 0.7f && angle <= dot)
 		{
 			angle = dot;
@@ -79,7 +79,8 @@ void UCAct_Combo::OnAttachmentEndCollision()
 
 	if (!!candidate.Get())
 	{
-		FRotator rotator = UKismetMathLibrary::FindLookAtRotation(Owner->GetActorLocation(),
+		const FRotator rotator = UKismetMathLibrary::FindLookAtRotation(
+			Owner->GetActorLocation(),
 			candidate->GetActorLocation());
 
 		Owner->TogglebTickLerpForTarget();

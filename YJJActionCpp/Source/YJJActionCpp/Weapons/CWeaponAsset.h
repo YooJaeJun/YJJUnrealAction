@@ -20,7 +20,12 @@ public:
 
 	virtual void BeginPlay(ACCommonCharacter* InOwner);
 
+	const UCWeaponAsset& CopyDeep(
+		const UCWeaponAsset& InOther, 
+		const TWeakObjectPtr<ACCommonCharacter> Owner);
+
 public:
+
 	FORCEINLINE ACAttachment* GetAttachment() const { return Attachment; }
 	FORCEINLINE UCEquipment* GetEquipment() const { return Equipment; }
 	FORCEINLINE UCAct* GetAct() const { return Act; }
@@ -35,20 +40,20 @@ protected:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UCEquipment> EquipmentClass;
 
-	UPROPERTY(EditAnywhere)
-		FEquipmentData EquipmentData;
-
 	UPROPERTY()
 		UCEquipment* Equipment;
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<UCAct> ActClass;
+		FEquipmentData EquipmentData;
 
 	UPROPERTY(EditAnywhere)
-		TArray<FActData> ActDatas;
+		TSubclassOf<UCAct> ActClass;
 
 	UPROPERTY()
 		UCAct* Act;
+
+	UPROPERTY(EditAnywhere)
+		TArray<FActData> ActDatas;
 
 	UPROPERTY(EditAnywhere)
 		TArray<FHitData> HitDatas;

@@ -21,8 +21,6 @@ void UCBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 	FVector currentLocation = owner->GetActorLocation();
 
-	const float traceDistance = 600.0f;
-
 	const TArray<AActor*> ignores{ owner.Get() };
 	TArray<FHitResult> hitResults;
 

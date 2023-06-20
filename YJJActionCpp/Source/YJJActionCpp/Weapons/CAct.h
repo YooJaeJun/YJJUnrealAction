@@ -12,7 +12,7 @@ class UWorld;
 class UCMovementComponent;
 class UCStateComponent;
 
-UCLASS(Abstract)
+UCLASS()
 class YJJACTIONCPP_API UCAct : public UObject
 {
 	GENERATED_BODY()

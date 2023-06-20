@@ -8,6 +8,20 @@
 UCBTTask_Act::UCBTTask_Act()
 {
 	NodeName = TEXT("CAct");
+
+	//const int32 randomWeaponType = FMath::RandRange(0, 2);
+	//switch (randomWeaponType)
+	//{
+	//case static_cast<int32>(EWeaponType::Fist):
+	//	WeaponType = EWeaponType::Fist;
+	//	break;
+	//case static_cast<int32>(EWeaponType::Sword):
+	//	WeaponType = EWeaponType::Sword;
+	//	break;
+	//case static_cast<int32>(EWeaponType::Hammer):
+	//	WeaponType = EWeaponType::Hammer;
+	//	break;
+	//}
 }
 
 EBTNodeResult::Type UCBTTask_Act::ExecuteTask(

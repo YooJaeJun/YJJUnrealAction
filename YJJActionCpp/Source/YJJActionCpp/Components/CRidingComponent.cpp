@@ -44,7 +44,7 @@ void UCRidingComponent::BeginPlay()
 		Hud->SetChildren();
 		Interaction = Hud->Interaction;
 
-		CHelpers::LoadAsset<UTexture2D>(&InteractionKeyTexture,
+		CHelpers::GetAssetDynamic<UTexture2D>(&InteractionKeyTexture,
 			TEXT("Texture2D'/Game/Assets/Textures/ButtonPrompts/F_Key_Dark.F_Key_Dark'"));
 
 		InteractionText = FText::FromString(TEXT("탑승"));
@@ -74,13 +74,13 @@ void UCRidingComponent::BeginPlay()
 		if (!!SpringArm)
 			Zooming = SpringArm->TargetArmLength;
 
-		CHelpers::LoadAsset<USoundBase>(&MountSound,
+		CHelpers::GetAssetDynamic<USoundBase>(&MountSound,
 			TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
-		CHelpers::LoadAsset<UAnimMontage>(&UnmountAnim,
+		CHelpers::GetAssetDynamic<UAnimMontage>(&UnmountAnim,
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Dismount_Front_Right_Montage.Rider_Dismount_Front_Right_Montage'"));
 
-		CHelpers::LoadAsset<USoundBase>(&UnmountSound,
+		CHelpers::GetAssetDynamic<USoundBase>(&UnmountSound,
 			TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
 		// TODO Rider Info
@@ -218,7 +218,7 @@ void UCRidingComponent::CheckValidPoint()
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateLeft)];
 
-		CHelpers::LoadAsset<UAnimMontage>(&MountAnim,
+		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnim,
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Left_Montage.Rider_Mount_Front_Left_Montage'"));
 
 		MountRotationZFactor = 100.0f;
@@ -229,7 +229,7 @@ void UCRidingComponent::CheckValidPoint()
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateRight)];
 
-		CHelpers::LoadAsset<UAnimMontage>(&MountAnim,
+		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnim,
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Right_Montage.Rider_Mount_Front_Right_Montage'"));
 
 		MountRotationZFactor = -100.0f;
@@ -240,7 +240,7 @@ void UCRidingComponent::CheckValidPoint()
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateBack)];
 
-		CHelpers::LoadAsset<UAnimMontage>(&MountAnim,
+		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnim,
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Back_Montage.Rider_Mount_Back_Montage'"));
 
 		MountRotationZFactor = 0.0f;

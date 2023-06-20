@@ -1,13 +1,13 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Weapons/CWeaponAsset.h"
 #include "CWeaponComponent.generated.h"
 
 class ACCommonCharacter;
 class ACAttachment;
 class UCEquipment;
 class UCAct;
-class UCWeaponAsset;
 
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
@@ -80,8 +80,12 @@ public:
 	FORCEINLINE bool IsYonduMode() const { return Type == EWeaponType::Yondu; }
 
 private:
+	// DataAsset을 객체마다 만들지 않게 하기 위해 Copy를 따로 만듦
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
 		UCWeaponAsset* DataAssets[static_cast<uint8>(EWeaponType::Max)];
+
+	UPROPERTY(EditAnywhere, Category = "DataAsset")
+		UCWeaponAsset* DataAssetsCopy[static_cast<uint8>(EWeaponType::Max)];
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
 		EWeaponType Type = EWeaponType::Unarmed;
