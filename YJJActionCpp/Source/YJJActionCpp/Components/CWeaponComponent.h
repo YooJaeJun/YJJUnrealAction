@@ -43,6 +43,7 @@ protected:
 public:
 	void InputAction_Act();
 	void SetMode(EWeaponType InType);
+	void SetModeFromDataTable();
 
 private:
 	void ChangeType(EWeaponType InType);
@@ -51,6 +52,9 @@ public:
 	ACAttachment* GetAttachment() const;
 	UCEquipment* GetEquipment() const;
 	UCAct* GetAct() const;
+
+	FORCEINLINE EWeaponType GetType() const { return Type; }
+	FORCEINLINE EWeaponType GetPrevType() const { return PrevType; }
 
 	bool IsIdleStateMode() const;
 

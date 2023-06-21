@@ -52,7 +52,7 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		GetEquipment()->Unequip();
 	}
 
-	if (!!DataAssets[static_cast<uint8>(InType)])
+	if (!!DataAssetsCopy[static_cast<uint8>(InType)])
 	{
 		const TWeakObjectPtr<UCEquipment> equipment = DataAssetsCopy[static_cast<uint8>(InType)]->GetEquipment();
 		if (!!equipment.Get())
@@ -61,6 +61,15 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 			ChangeType(InType);
 		}
 	}
+}
+
+void UCWeaponComponent::SetModeFromDataTable()
+{
+	constexpr uint32 size = static_cast<uint32>(EWeaponType::Max);
+
+	for (int32 i=0; i<size; i++)
+		if (!!DataAssetsCopy[i])
+			SetMode(static_cast<EWeaponType>(i));
 }
 
 void UCWeaponComponent::ChangeType(EWeaponType InType)
@@ -75,7 +84,7 @@ void UCWeaponComponent::ChangeType(EWeaponType InType)
 ACAttachment* UCWeaponComponent::GetAttachment() const
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!DataAssets[static_cast<uint8>(Type)], nullptr);
+	CheckFalseResult(!!DataAssetsCopy[static_cast<uint8>(Type)], nullptr);
 
 	return DataAssetsCopy[static_cast<uint8>(Type)]->GetAttachment();
 }
@@ -83,7 +92,7 @@ ACAttachment* UCWeaponComponent::GetAttachment() const
 UCEquipment* UCWeaponComponent::GetEquipment() const
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!DataAssets[static_cast<uint8>(Type)], nullptr);
+	CheckFalseResult(!!DataAssetsCopy[static_cast<uint8>(Type)], nullptr);
 
 	return DataAssetsCopy[static_cast<uint8>(Type)]->GetEquipment();
 }
@@ -91,7 +100,7 @@ UCEquipment* UCWeaponComponent::GetEquipment() const
 UCAct* UCWeaponComponent::GetAct() const
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!DataAssets[static_cast<uint8>(Type)], nullptr);
+	CheckFalseResult(!!DataAssetsCopy[static_cast<uint8>(Type)], nullptr);
 
 	return DataAssetsCopy[static_cast<uint8>(Type)]->GetAct();
 }

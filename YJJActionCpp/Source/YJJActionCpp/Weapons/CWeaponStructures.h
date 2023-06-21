@@ -28,7 +28,7 @@ struct FEquipmentData
 	GENERATED_BODY()
 
 public:
-	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner);
+	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const;
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -54,10 +54,10 @@ struct FActData
 	GENERATED_BODY()
 
 public:
-	void Act(const TWeakObjectPtr<ACCommonCharacter> InOwner);
-	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner);
-	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation);
-	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation);
+	void Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const;
+	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const;
+	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation) const;
+	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation) const;
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -104,13 +104,14 @@ struct FHitData
 	GENERATED_BODY()
 
 public:
-	void SendDamage(const TWeakObjectPtr<ACCommonCharacter> InAttacker, const TWeakObjectPtr<AActor> InAttackCauser,
+	void SendDamage(const TWeakObjectPtr<ACCommonCharacter> InAttacker, 
+		const TWeakObjectPtr<AActor> InAttackCauser,
 		const TWeakObjectPtr<ACCommonCharacter> InOther);
-	void PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner);
-	void PlayHitStop(const TWeakObjectPtr<UWorld> InWorld);
-	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner);
-	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation);
-	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation);
+	void PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner) const;
+	void PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const;
+	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const;
+	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation) const;
+	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation) const;
 
 public:
 	UPROPERTY(EditAnywhere)

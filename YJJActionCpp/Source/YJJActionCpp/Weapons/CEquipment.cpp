@@ -23,8 +23,8 @@ void UCEquipment::Equip_Implementation()
 	if (Data.bUseControlRotation)
 		MovementComp->EnableControlRotation();
 
-	const TWeakObjectPtr<UCMovementComponent> movement = Cast<UCMovementComponent>(
-		Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
+	const TWeakObjectPtr<UCMovementComponent> movement = 
+		Cast<UCMovementComponent>(Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
 	movement->SetRunSpeed();
 
 	if (!!Data.Montage)
@@ -62,8 +62,8 @@ void UCEquipment::Unequip_Implementation()
 	bEquipped = false;
 	MovementComp->DisableControlRotation();
 
-	const TWeakObjectPtr<UCMovementComponent> movement = Cast<UCMovementComponent>(
-		Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
+	const TWeakObjectPtr<UCMovementComponent> movement = 
+		Cast<UCMovementComponent>(Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
 	movement->SetSprintSpeed();
 
 	if (OnEquipmentUnequip.IsBound())

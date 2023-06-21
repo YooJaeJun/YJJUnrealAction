@@ -16,5 +16,5 @@ protected:
 		uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
-	constexpr float traceDistance = 800.0f;
+	const float traceDistance = 1000.0f;
 };

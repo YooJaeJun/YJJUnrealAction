@@ -5,7 +5,7 @@
 #include "Animation/AnimMontage.h"
 #include "Components/CCharacterStatComponent.h"
 
-void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner)
+void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
 	for (const auto& sound : Sounds)
 		CheckNull(sound);
@@ -17,7 +17,7 @@ void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwn
 		UGameplayStatics::SpawnSoundAtLocation(world.Get(), sound, location);
 }
 
-void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner)
+void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
 	TWeakObjectPtr<UCCharacterStatComponent> stat = 
 		Cast<UCCharacterStatComponent>(InOwner->GetComponentByClass(UCCharacterStatComponent::StaticClass()));
@@ -33,7 +33,7 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner)
 	stat->SetStaminaDamage(Stamina);
 	stat->SetManaDamage(Mana);
 
-	TWeakObjectPtr<UCMovementComponent> movement = CHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
+	const TWeakObjectPtr<UCMovementComponent> movement = CHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
 
 	if (!!movement.Get())
 	{
@@ -54,10 +54,10 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner)
 		PlayEffect(InOwner->GetWorld(), InOwner->GetActorLocation(), InOwner->GetActorRotation());
 }
 
-void FActData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner)
+void FActData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
-	TWeakObjectPtr<UWorld> world = InOwner->GetWorld();
-	FVector location = InOwner->GetActorLocation();
+	const TWeakObjectPtr<UWorld> world = InOwner->GetWorld();
+	const FVector location = InOwner->GetActorLocation();
 
 	for (const auto& sound : Sounds)
 	{
@@ -66,7 +66,7 @@ void FActData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner)
 	}
 }
 
-void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation)
+void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation) const
 {
 	CheckNull(Effect);
 
@@ -78,7 +78,7 @@ void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& I
 	CHelpers::PlayEffect(InWorld.Get(), Effect, transform);
 }
 
-void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation)
+void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation) const
 {
 	CheckNull(Effect);
 
@@ -100,13 +100,13 @@ void FHitData::SendDamage(const TWeakObjectPtr<ACCommonCharacter> InAttacker,
 	InOther->TakeDamage(Power, e, InAttacker->GetMyCurController().Get(), InAttackCauser.Get());
 }
 
-void FHitData::PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner)
+void FHitData::PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
 	if (!!Montage)
 		InOwner->PlayAnimMontage(Montage, PlayRate);
 }
 
-void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld)
+void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const
 {
 	CheckTrue(FMath::IsNearlyZero(StopTime));
 
@@ -133,19 +133,19 @@ void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld)
 	InWorld->GetTimerManager().SetTimer(timerHandle, timerDelegate, StopTime, false);
 }
 
-void FHitData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner)
+void FHitData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
 	for (const auto& sound : Sounds)
 		CheckNull(sound);
 
-	TWeakObjectPtr<UWorld> world = InOwner->GetWorld();
-	FVector location = InOwner->GetActorLocation();
+	const TWeakObjectPtr<UWorld> world = InOwner->GetWorld();
+	const FVector location = InOwner->GetActorLocation();
 
 	for (const auto& sound : Sounds)
 		UGameplayStatics::SpawnSoundAtLocation(world.Get(), sound, location);
 }
 
-void FHitData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation)
+void FHitData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation) const
 {
 	CheckNull(Effect);
 
@@ -157,7 +157,7 @@ void FHitData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& I
 	CHelpers::PlayEffect(InWorld.Get(), Effect, transform);
 }
 
-void FHitData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation)
+void FHitData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation) const
 {
 	CheckNull(Effect);
 

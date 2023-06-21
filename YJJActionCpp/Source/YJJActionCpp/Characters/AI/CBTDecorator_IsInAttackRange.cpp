@@ -19,6 +19,6 @@ bool UCBTDecorator_IsInAttackRange::CalculateRawConditionValue(
 		OwnerComp.GetBlackboardComponent()->GetValueAsObject(ACAIController::Target));
 	CheckNullResult(target, false);
 
-	const bool bResult = (target->GetDistanceTo(owner.Get()) <= 200.0f);
+	const bool bResult = (target->GetDistanceTo(owner.Get()) <= AttackRange);
 	return bResult;
 }
