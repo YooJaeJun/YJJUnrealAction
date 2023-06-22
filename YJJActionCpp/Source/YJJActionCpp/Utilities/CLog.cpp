@@ -51,6 +51,11 @@ void CLog::Log(const FString& InFileName, const FString& InFuncName, const int32
 	UE_LOG(YJJ, Warning, TEXT("%s, %s, %d"), *fileName, *InFuncName, InLineNumber);
 }
 
+void CLog::Log(const FTableRowBase& InValue)
+{
+	UE_LOG(YJJ, Warning, TEXT("YJJ Data Table Log"));
+}
+
 void CLog::Print(const int32 InValue, const int32 InKey, const float InDuration, const FColor InColor)
 {
 	GEngine->AddOnScreenDebugMessage(InKey, InDuration, InColor, FString::FromInt(InValue));

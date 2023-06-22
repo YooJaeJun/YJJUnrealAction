@@ -15,6 +15,7 @@
 #include "Components/CTargetingComponent.h"
 #include "Components/CGameUIComponent.h"
 #include "Commons/CGameMode.h"
+#include "Components/CCharacterInfoComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
 #include "Components/CRidingComponent.h"
@@ -91,6 +92,9 @@ void ACPlayableCharacter::BeginPlay()
 		if (!!playerInfo.Get())
 			playerInfo->BindStats(CharacterStatComp);
 	}
+
+	if (!!CharacterInfoComp)
+		CharacterInfoComp->SetCharacterType(ECharacterType::Player);
 }
 
 void ACPlayableCharacter::Tick(float DeltaTime)

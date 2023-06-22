@@ -10,8 +10,10 @@
 #include "Components/CRidingComponent.h"
 #include "Components/CPatrolComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/CCharacterInfoComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/SceneComponent.h"
+#include "Characters/AI/CAIController_Melee.h"
 
 ACAnimal_AI::ACAnimal_AI()
 {
@@ -49,6 +51,10 @@ ACAnimal_AI::ACAnimal_AI()
 
 	if (!!SpringArm)
 		SpringArm->bDoCollisionTest = false;
+
+
+	AIControllerClass = ACAIController_Melee::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void ACAnimal_AI::BeginPlay()
@@ -88,6 +94,9 @@ void ACAnimal_AI::BeginPlay()
 				Eye->AttachToComponent(GetMesh(), attachRules, "EyeEffect");
 		}
 	}
+
+	if (!!CharacterInfoComp)
+		CharacterInfoComp->SetCharacterType(ECharacterType::Companion);
 }
 
 void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

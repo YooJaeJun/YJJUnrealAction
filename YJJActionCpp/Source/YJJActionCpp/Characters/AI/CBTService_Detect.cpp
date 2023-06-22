@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/AI/CAIController.h"
+#include "Components/CCharacterInfoComponent.h"
 
 UCBTService_Detect::UCBTService_Detect()
 {
@@ -13,7 +14,8 @@ void UCBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	const TWeakObjectPtr<APawn> owner = OwnerComp.GetAIOwner()->GetPawn();
+	const TWeakObjectPtr<ACCommonCharacter> owner = 
+		Cast<ACCommonCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	CheckNull(owner);
 
 	const TWeakObjectPtr<UWorld> world = owner->GetWorld();
@@ -35,17 +37,20 @@ void UCBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		hitResults,
 		false);
 
-	if (!!bResult)
+	if (false == bResult)
 	{
-		for (const auto& hitResult : hitResults)
-		{
-			TWeakObjectPtr<ACCommonCharacter> target = Cast<ACCommonCharacter>(hitResult.GetActor());
-
-			if (!!target.Get() && 
-				target->GetMyCurController()->IsPlayerController())
-				OwnerComp.GetBlackboardComponent()->SetValueAsObject(ACAIController::Target, target.Get());
-		}
-	}//bResult
-	else
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ACAIController::Target, nullptr);
+		return;
+	}
+
+	for (const auto& hitResult : hitResults)
+	{
+		TWeakObjectPtr<ACCommonCharacter> target = Cast<ACCommonCharacter>(hitResult.GetActor());
+ 
+		if (!!target.Get() &&
+			false == target->CharacterInfoComp->IsSameGroup(owner))
+		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsObject(ACAIController::Target, target.Get());
+		}
+	}
 }

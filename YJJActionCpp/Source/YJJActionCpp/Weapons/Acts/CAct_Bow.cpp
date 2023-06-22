@@ -29,7 +29,7 @@ void UCAct_Bow::OnAttachmentBeginOverlap(ACCommonCharacter* InAttacker, AActor* 
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
 	CheckNull(InOther);
 
-	for (ACCommonCharacter* hitted : Hitted)
+	for (const ACCommonCharacter* const hitted : Hitted)
 		CheckTrue(hitted == InOther);
 
 	Hitted.AddUnique(InOther);

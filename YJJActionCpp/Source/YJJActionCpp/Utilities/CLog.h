@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 
+struct FTableRowBase;
+
 #define  LogLine() {CLog::Log(__FILE__, __FUNCTION__, __LINE__);}
 #define  PrintLine() {CLog::Print(__FILE__, __FUNCTION__, __LINE__);}
 
@@ -15,6 +17,7 @@ public:
 	static void Log(const FRotator& InValue);
 	static void Log(const UObject* InValue);
 	static void Log(const FString& InFileName, const FString& InFuncName, int32 InLineNumber);
+	static void Log(const FTableRowBase& InValue);
 
 	static void Print(const int32 InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::Blue);
 	static void Print(const float InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::Blue);

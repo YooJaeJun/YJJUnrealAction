@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "Components/CStateComponent.h"
 #include "Characters/CCommonCharacter.h"
+#include "Components/CCharacterInfoComponent.h"
 #include "UMG/Public/Blueprint/WidgetLayoutLibrary.h"
 
 void UCAct_Combo::Act()
@@ -40,13 +41,17 @@ void UCAct_Combo::End_Act()
 	Index = 0;
 }
 
-void UCAct_Combo::OnAttachmentBeginOverlap(ACCommonCharacter* InAttacker, AActor* InAttackCauser,
-                                           ACCommonCharacter* InOther)
+void UCAct_Combo::OnAttachmentBeginOverlap(
+	ACCommonCharacter* InAttacker, 
+	AActor* InAttackCauser,
+	ACCommonCharacter* InOther)
 {
-	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
 	CheckNull(InOther);
+	CheckTrue(InAttacker->CharacterInfoComp->IsSameGroup(InOther));
 
-	for (ACCommonCharacter* hitted : Hitted)
+	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
+
+	for (const ACCommonCharacter* const hitted : Hitted)
 		CheckTrue(hitted == InOther);
 
 	Hitted.AddUnique(InOther);
@@ -62,7 +67,7 @@ void UCAct_Combo::OnAttachmentEndCollision()
 	float angle = -1.0f;
 	TWeakObjectPtr<ACCommonCharacter> candidate = nullptr;
 
-	for (ACCommonCharacter* hitted : Hitted)
+	for (ACCommonCharacter* const hitted : Hitted)
 	{
 		FVector direction = hitted->GetActorLocation() - Owner->GetActorLocation();
 		direction = direction.GetSafeNormal2D();

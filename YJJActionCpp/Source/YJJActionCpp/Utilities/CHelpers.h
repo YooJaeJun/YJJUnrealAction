@@ -6,18 +6,22 @@
 #include "Characters/CCommonCharacter.h"
 #include "Commons/CGameMode.h"
 #include "GameFramework/Controller.h"
+#include "Engine/DataTable.h"
 
-#define CheckTrue(x) { if (x == true) return; }
-#define CheckTrueResult(x, y) { if (x == true) return y; }
+#define CheckTrue(x) { if (true == (x)) return; }
+#define CheckTrueResult(x, y) { if (true == (x)) return (y); }
 
-#define CheckFalse(x) { if(x == false) return; }
-#define CheckFalseResult(x, y) { if(x == false) return y; }
+#define CheckFalse(x) { if(false == (x)) return; }
+#define CheckFalseResult(x, y) { if(false == (x)) return (y); }
 
-#define CheckNull(x) { if(x == nullptr) return; }
-#define CheckNullResult(x, y) { if(x == nullptr) return y; }
+#define CheckNull(x) { if(nullptr == (x)) return; }
+#define CheckNullResult(x, y) { if(nullptr == (x)) return (y); }
 
-#define CheckNullLog(x) { if(x == nullptr) { CLog::Log(x); return; }}
-#define CheckNullResultLog(x, y) { if(x == nullptr) { CLog::Log(x); return y; } }
+#define CheckNullLog(x) { if(nullptr == (x)) { CLog::Log((x)); return; }}
+#define CheckNullResultLog(x, y) { if(nullptr == (x)) { CLog::Log((x)); return (y); } }
+
+#define CheckRefNullLog(x, y) { if (nullptr == &(x)) { CLog::Log((y)); return; }}
+#define CheckRefNullResultLog(x, y, z) { if (nullptr == &(x)) { CLog::Log((y)); return (z); }}
 
 #define CreateTextRender()\
 {\
@@ -189,6 +193,12 @@ public:
 		return hud;
 	}
 
+	template<typename T>
+	static T* FindRow(UDataTable* table, int32 InValue, const TCHAR* contextString = TEXT(""))
+	{
+		return table->FindRow<T>(*FString::FromInt(InValue), contextString);
+	}
+
 	//////////////////
 	// Sub Features //
 	//////////////////
@@ -211,7 +221,7 @@ public:
 				FVector diff = (otherCharacter->GetActorLocation() - InCenter->GetActorLocation());
 				diff.Normalize();
 
-				FVector forward = UKismetMathLibrary::GetForwardVector(InController->GetControlRotation());
+				const FVector forward = UKismetMathLibrary::GetForwardVector(InController->GetControlRotation());
 
 				float curAngle = diff.DotProduct(diff, forward);
 

@@ -21,8 +21,10 @@ public:
 	virtual void End_Act() override;
 
 public:
-	virtual void OnAttachmentBeginOverlap(ACCommonCharacter* InAttacker, 
-		AActor* InAttackCauser, ACCommonCharacter* InOther) override;
+	virtual void OnAttachmentBeginOverlap(
+		ACCommonCharacter* InAttacker, 
+		AActor* InAttackCauser, 
+		ACCommonCharacter* InOther) override;
 
 	virtual void OnAttachmentEndCollision() override;
 

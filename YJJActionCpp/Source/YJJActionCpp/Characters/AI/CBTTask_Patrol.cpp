@@ -27,7 +27,7 @@ EBTNodeResult::Type UCBTTask_Patrol::ExecuteTask(
 
 	FNavLocation nextLocation;
 
-	if (navSystem->GetRandomPointInNavigableRadius(currentLocation, 500.0f, nextLocation))
+	if (navSystem->GetRandomPointInNavigableRadius(currentLocation, PatrolDistance, nextLocation))
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector(ACAIController::TargetLocation, nextLocation);
 		return EBTNodeResult::Succeeded;

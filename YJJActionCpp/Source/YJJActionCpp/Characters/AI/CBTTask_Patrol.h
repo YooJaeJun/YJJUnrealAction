@@ -14,4 +14,7 @@ public:
 	virtual EBTNodeResult::Type ExecuteTask(
 		UBehaviorTreeComponent& OwnerComp, 
 		uint8* NodeMemory) override;
+
+private:
+	const float PatrolDistance = 600.0f;
 };

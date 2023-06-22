@@ -27,3 +27,13 @@ enum class EBehaviorType : uint8
 	Ride,
 	Max
 };
+
+UENUM(BlueprintType)
+enum class ECharacterType : uint8
+{
+	None,
+	Player,
+	Companion,
+	Enemy_1,
+	Enemy_2
+};

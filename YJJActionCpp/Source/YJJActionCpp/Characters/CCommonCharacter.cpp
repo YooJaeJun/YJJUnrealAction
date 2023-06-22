@@ -86,7 +86,7 @@ void ACCommonCharacter::Landed(const FHitResult& Hit)
 float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
                                     AController* EventInstigator, AActor* DamageCauser)
 {
-	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	Damage.Power = damage;
 	Damage.Attacker = Cast<ACCommonCharacter>(EventInstigator->GetPawn());
@@ -95,7 +95,6 @@ float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	// UObject가 아니기 때문에 Cast 사용 불가
 	// 일반 캐스팅 사용 시, 부모와 자식의 크기가 다르기 때문에
 	// '포인터'로 통일해 크기 동일하게 맞춰줌
-	// Damage.Event = (FActDamageEvent*)&DamageEvent;
 	Damage.Event = (FActDamageEvent*)&DamageEvent;
 
 	StateComp->SetHitMode();

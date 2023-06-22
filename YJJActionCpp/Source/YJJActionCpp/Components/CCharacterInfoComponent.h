@@ -1,11 +1,14 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Commons/CGameInstance.h"
 #include "Components/ActorComponent.h"
+#include "Commons/CEnums.h"
 #include "CCharacterInfoComponent.generated.h"
 
 class UCGameInstance;
 struct FCCharacterInfo;
 struct FLinearColor;
+class ACCommonCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCCharacterInfoComponent : public UActorComponent
@@ -17,26 +20,33 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void InitializeComponent() override;
 
 public:
-	void SetGroupIndex(int32 InNewGroupIndex);
-	void SetCharacterName(const FString InNewName);
-	void SetBodyColor(const FLinearColor& InNewColor);
+	bool IsSameGroup(TWeakObjectPtr<ACCommonCharacter> InOther) const;
 
-	const FName GetCharacterName() const;
-	int32 GetGroupIndex() const;
+	void SetCharacterType(const ECharacterType InNewType);
+	FORCEINLINE void SetCharacterGroup(const int32 InNewGroup) { CurGroup = InNewGroup; }
+	FORCEINLINE void SetCharacterName(const FName& InNewName) { CurName = InNewName; }
+	FORCEINLINE void SetBodyColor(const FLinearColor& InNewColor) { CurBodyColor = InNewColor; }
+
+	FORCEINLINE int32 GetCharacterType() const { return CurInfo.Type; }
+	FORCEINLINE int32 GetCharacterGroup() const { return CurInfo.Group; }
+	FORCEINLINE FName GetCharacterName() const { return CurInfo.Name; }
+
+public:
+	UPROPERTY(EditAnywhere)
+		int32 CurType;
 
 private:
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
-		FString CurName;
+	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
+		int32 CurGroup;
 
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
-		int32 CurGroupIndex;
+	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
+		FName CurName;
 
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
 		FLinearColor CurBodyColor;
 
 private:
-	FCCharacterInfo* CurInfo;
+	FCCharacterInfo CurInfo;
 };

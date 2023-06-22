@@ -10,8 +10,10 @@ void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwn
 	for (const auto& sound : Sounds)
 		CheckNull(sound);
 
-	TWeakObjectPtr<UWorld> world = InOwner->GetWorld();
-	FVector location = InOwner->GetActorLocation();
+	const TWeakObjectPtr<UWorld> world = InOwner->GetWorld();
+	CheckNull(world);
+
+	const FVector location = InOwner->GetActorLocation();
 
 	for (const auto& sound : Sounds)
 		UGameplayStatics::SpawnSoundAtLocation(world.Get(), sound, location);
@@ -19,10 +21,9 @@ void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwn
 
 void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
-	TWeakObjectPtr<UCCharacterStatComponent> stat = 
+	const TWeakObjectPtr<UCCharacterStatComponent> stat = 
 		Cast<UCCharacterStatComponent>(InOwner->GetComponentByClass(UCCharacterStatComponent::StaticClass()));
-
-	CheckNull(stat.Get());
+	CheckNull(stat);
 
 	if (stat->GetCurStamina() < Stamina)
 	{
@@ -57,6 +58,8 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 void FActData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
 	const TWeakObjectPtr<UWorld> world = InOwner->GetWorld();
+	CheckNull(world);
+
 	const FVector location = InOwner->GetActorLocation();
 
 	for (const auto& sound : Sounds)
@@ -139,6 +142,8 @@ void FHitData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) co
 		CheckNull(sound);
 
 	const TWeakObjectPtr<UWorld> world = InOwner->GetWorld();
+	CheckNull(world);
+
 	const FVector location = InOwner->GetActorLocation();
 
 	for (const auto& sound : Sounds)

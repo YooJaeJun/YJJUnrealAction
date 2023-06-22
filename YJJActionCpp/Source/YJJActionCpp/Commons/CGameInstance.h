@@ -11,13 +11,16 @@ struct FCCharacterInfo : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Status")
-		int32 GroupIndex;
+	UPROPERTY(EditAnywhere)
+		int32 Type;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
+		int32 Group;
+
+	UPROPERTY(EditAnywhere)
 		FName Name;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		FLinearColor BodyColor;
 };
 
@@ -27,37 +30,37 @@ struct FCCharacterStat : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		int32 Level = 1;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float MaxExp = 100;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float MaxHp = 100;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float MaxStamina = 100;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float MaxMana = 100;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float StaminaAccelRestore;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float StaminaDefaultRestore;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float ManaAccelRestore;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float ManaDefaultRestore;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float Attack;
 
-	UPROPERTY(EditAnywhere, Category = "Status")
+	UPROPERTY(EditAnywhere)
 		float DropExp;
 };
 
@@ -71,7 +74,7 @@ public:
 
 	virtual void Init() override;
 
-	FCCharacterInfo* GetInfo(const int32 InGroupIndex) const;
+	FCCharacterInfo* GetInfo(const int32 InCharacterType) const;
 	FCCharacterStat* GetStat(const int32 InLevel) const;
 
 private:

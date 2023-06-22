@@ -1,10 +1,12 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Commons/CGameInstance.h"
 #include "Components/ActorComponent.h"
 #include "CCharacterStatComponent.generated.h"
 
 class UCGameInstance;
 struct FCCharacterStat;
+class ACCommonCharacter;
 
 DECLARE_MULTICAST_DELEGATE(FLevelChanged);
 DECLARE_MULTICAST_DELEGATE(FExpChanged);
@@ -48,52 +50,48 @@ public:
 	void SetStamina(const float InNewStamina);
 	void SetMana(const float InNewMana);
 
-	float GetCurLevel() const;
+	FORCEINLINE float GetCurLevel() const { return CurLevel; }
+
+	float GetRatio(const float InMaxValue, const float InCurValue) const;
 	float GetExpRatio() const;
-	float GetCurExp() const;
-	float GetMaxExp() const;
-
+	FORCEINLINE float GetCurExp() const { return CurExp; }
+	FORCEINLINE float GetMaxExp() const { return CurStat.MaxExp; }
 	float GetHpRatio() const;
-	UFUNCTION(BlueprintCallable)
-		float GetCurHp() const;
-	float GetMaxHp() const;
-
+	FORCEINLINE float GetCurHp() const { return CurHp; }
+	FORCEINLINE float GetMaxHp() const { return CurStat.MaxHp; }
 	float GetStaminaRatio() const;
-	float GetCurStamina() const;
-	float GetMaxStamina() const;
-
+	FORCEINLINE float GetCurStamina() const { return CurStamina; }
+	FORCEINLINE float GetMaxStamina() const { return CurStat.MaxStamina; }
 	float GetManaRatio() const;
-	float GetCurMana() const;
-	float GetMaxMana() const;
-
-	float GetAttack() const;
+	FORCEINLINE float GetCurMana() const { return CurMana; }
+	FORCEINLINE float GetMaxMana() const { return CurStat.MaxMana; }
+	FORCEINLINE float GetAttack() const { return CurStat.Attack; }
+	FORCEINLINE float GetHealth() const { return CurHp; }
+	FORCEINLINE bool IsDead() const { return CurHp <= 0.0f; }
 
 	void Damage(const float InAmount);
 
 public:
-	FORCEINLINE float GetHealth() const { return CurHp; }
-	FORCEINLINE bool IsDead() const { return CurHp <= 0.0f; }
-
-private:
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere)
 		int32 CurLevel;
 
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
+private:
+	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
 		float CurExp;
 
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
 		float CurHp;
 
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
 		float CurStamina;
 
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
 		float CurMana;
 
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
 		bool EnoughStamina;
 
-	UPROPERTY(EditInstanceOnly, Category = "Status", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
 		bool EnoughMana;
 
 public:
@@ -107,6 +105,6 @@ public:
 	FManaIsZero OnManaIsZero;
 
 private:
-	FCCharacterStat* CurStat;
+	FCCharacterStat CurStat;
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 };

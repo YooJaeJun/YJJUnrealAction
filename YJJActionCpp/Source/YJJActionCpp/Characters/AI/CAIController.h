@@ -3,6 +3,9 @@
 #include "AIController.h"
 #include "CAIController.generated.h"
 
+class UBehaviorTree;
+class UBlackboardData;
+
 UCLASS()
 class YJJACTIONCPP_API ACAIController : public AAIController
 {
