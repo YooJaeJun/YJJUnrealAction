@@ -74,6 +74,16 @@ void UCRidingComponent::BeginPlay()
 		if (!!SpringArm)
 			Zooming = SpringArm->TargetArmLength;
 
+
+		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Left)],
+			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Left_Montage.Rider_Mount_Front_Left_Montage'"));
+
+		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Right)],
+			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Right_Montage.Rider_Mount_Front_Right_Montage'"));
+
+		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Back)],
+			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Back_Montage.Rider_Mount_Back_Montage'"));
+
 		CHelpers::GetAssetDynamic<USoundBase>(&MountSound,
 			TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
@@ -218,8 +228,7 @@ void UCRidingComponent::CheckValidPoint()
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateLeft)];
 
-		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnim,
-			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Left_Montage.Rider_Mount_Front_Left_Montage'"));
+		MountDirection = EDirection::Left;
 
 		MountRotationZFactor = 100.0f;
 	}
@@ -229,8 +238,7 @@ void UCRidingComponent::CheckValidPoint()
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateRight)];
 
-		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnim,
-			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Right_Montage.Rider_Mount_Front_Right_Montage'"));
+		MountDirection = EDirection::Right;
 
 		MountRotationZFactor = -100.0f;
 	}
@@ -240,8 +248,7 @@ void UCRidingComponent::CheckValidPoint()
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateBack)];
 
-		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnim,
-			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Back_Montage.Rider_Mount_Back_Montage'"));
+		MountDirection = EDirection::Back;
 
 		MountRotationZFactor = 0.0f;
 	}
@@ -276,7 +283,7 @@ void UCRidingComponent::PossessAndInterpToCamera()
 	// Controller Possess
 	ControllerSave = Owner->GetController();
 
-	TWeakObjectPtr<ACCommonCharacter> animal = Cast<ACCommonCharacter>(Owner);
+	const TWeakObjectPtr<ACCommonCharacter> animal = Cast<ACCommonCharacter>(Owner);
 
 	GetWorld()->GetFirstPlayerController()->UnPossess();
 
@@ -289,7 +296,8 @@ void UCRidingComponent::PossessAndInterpToCamera()
 	latentInfo.CallbackTarget = Camera;
 
 	UKismetSystemLibrary::MoveComponentTo(Camera,
-		FVector::ZeroVector, FRotator::ZeroRotator,
+		FVector::ZeroVector, 
+		FRotator::ZeroRotator,
 		true, true, 0.7f, false,
 		eMoveAction, latentInfo);
 }
@@ -298,18 +306,21 @@ void UCRidingComponent::Tick_Mounting()
 {
 	// 탑승 후 위치, 방향으로
 	FVector targetPos = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentLocation();
-	targetPos.Z += 20.0f;
+	targetPos.Z += 50.0f;
+
 	FRotator targetRot = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentRotation();
 	targetRot = FRotator(0, targetRot.Yaw + MountRotationZFactor, 0);
 
 	latentInfo.CallbackTarget = Rider;
 
-	UKismetSystemLibrary::MoveComponentTo(Rider->GetRootComponent(), targetPos, targetRot,
+	UKismetSystemLibrary::MoveComponentTo(
+		Rider->GetRootComponent(), 
+		targetPos, targetRot,
 		true, true, 0.3f, false,
 		eMoveAction, latentInfo);
 
 
-	Rider->PlayAnimMontage(MountAnim, 1.5f);
+	Rider->PlayAnimMontage(MountAnims[static_cast<uint8>(MountDirection)], 1.0f);
 
 
 	// 탑승중애니 - 탑승후루프애니
@@ -334,7 +345,9 @@ void UCRidingComponent::InterpToRidingPos(UAnimMontage* Anim, bool bInterrupted)
 	const FVector ridingPos = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentLocation();
 	const FRotator ridingRot = RidingPoints[static_cast<uint8>(ERidingPoint::Rider)]->GetComponentRotation();
 
-	UKismetSystemLibrary::MoveComponentTo(Rider->GetRootComponent(), ridingPos, ridingRot,
+	UKismetSystemLibrary::MoveComponentTo(
+		Rider->GetRootComponent(), 
+		ridingPos, ridingRot,
 		true, true, 0.2f, false,
 		eMoveAction, latentInfo);
 
@@ -422,7 +435,7 @@ void UCRidingComponent::Tick_Unmounting()
 
 	Rider->SetActorRotation(FRotator(0, 0, 0));
 
-	Rider->PlayAnimMontage(UnmountAnim, 2.0f);
+	Rider->PlayAnimMontage(UnmountAnim, 1.2f);
 
 
 	UnpossessAndInterpToCamera();
@@ -435,8 +448,10 @@ void UCRidingComponent::Tick_Unmounting()
 
 	latentInfo.CallbackTarget = Rider;
 
-	UKismetSystemLibrary::MoveComponentTo(Rider->GetRootComponent(), targetPos, targetRot,
-		true, true, 0.6f, false,
+	UKismetSystemLibrary::MoveComponentTo(
+		Rider->GetRootComponent(), 
+		targetPos, targetRot,
+		true, true, 1.0f, false,
 		eMoveAction, latentInfo);
 
 	Owner->MovementComp->Stop();
@@ -477,7 +492,8 @@ void UCRidingComponent::UnpossessAndInterpToCamera()
 	latentInfo.CallbackTarget = Camera;
 
 	UKismetSystemLibrary::MoveComponentTo(Camera,
-		FVector::ZeroVector, FRotator::ZeroRotator,
+		FVector::ZeroVector, 
+		FRotator::ZeroRotator,
 		true, true, 0.7f, false,
 		eMoveAction, latentInfo);
 }

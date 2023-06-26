@@ -105,6 +105,17 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Status")
 		UCCharacterStatComponent* CharacterStatComp;
 
+
+	UPROPERTY(EditDefaultsOnly, Category = "Info")
+		USceneComponent* InfoPoint;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Info")
+		UWidgetComponent* InfoWidgetComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Info")
+		TSubclassOf<UCUserWidget_Custom> InfoWidget;
+
+
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 		USceneComponent* TargetingPoint;
 
@@ -114,11 +125,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 		TSubclassOf<UCUserWidget_Custom> TargetingWidget;
 
+
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		FMount OnMount;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		FUnmount OnUnmount;
+
 
 	UPROPERTY(EditDefaultsOnly, Category = "Land")
 		USoundBase* LandSound;

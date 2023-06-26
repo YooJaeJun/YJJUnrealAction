@@ -172,7 +172,10 @@ private:
 		EDirection MountDir;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		UAnimMontage* MountAnim;
+		UAnimMontage* MountAnims[static_cast<uint8>(EDirection::Max)];
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		EDirection MountDirection;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		float MountRotationZFactor = 0.0f;

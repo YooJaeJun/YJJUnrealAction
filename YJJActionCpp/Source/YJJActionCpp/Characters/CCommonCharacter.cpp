@@ -19,6 +19,9 @@ ACCommonCharacter::ACCommonCharacter()
 	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
 	CHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
 	CHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
+	CHelpers::CreateComponent<USceneComponent>(this, &InfoPoint, "InfoPoint", GetMesh());
+	CHelpers::CreateComponent<UWidgetComponent>(this, &InfoWidgetComp, "InfoWidgetComp", InfoPoint);
+	CHelpers::GetClass<UCUserWidget_Custom>(&InfoWidget, "WidgetBlueprint'/Game/Widgets/Enemy/CWB_Enemy_HpBar_Guage.CWB_Enemy_HpBar_Guage_C'");
 	CHelpers::CreateComponent<USceneComponent>(this, &TargetingPoint, "TargetingPoint", GetMesh());
 	CHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", TargetingPoint);
 	CHelpers::GetClass<UCUserWidget_Custom>(&TargetingWidget, "WidgetBlueprint'/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C'");
@@ -32,6 +35,18 @@ ACCommonCharacter::ACCommonCharacter()
 
 		TargetingWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 		TargetingWidgetComp->SetVisibility(false);
+	}
+
+	if (!!InfoPoint)
+		InfoPoint->SetWorldLocation(FVector(0, 0, 200));
+
+	if (!!InfoWidgetComp)
+	{
+		if (!!InfoWidget)
+			InfoWidgetComp->SetWidgetClass(InfoWidget);
+
+		InfoWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+		InfoWidgetComp->SetVisibility(false);
 	}
 }
 
@@ -119,7 +134,7 @@ void ACCommonCharacter::Hit()
 	if (!!Damage.Event &&
 		!!Damage.Event->HitData)
 	{
-		FHitData* data = Damage.Event->HitData;
+		const FHitData* data = Damage.Event->HitData;
 
 		data->PlayMontage(this);
 		data->PlayHitStop(GetWorld());

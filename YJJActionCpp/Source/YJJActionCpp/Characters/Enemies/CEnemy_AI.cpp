@@ -38,6 +38,9 @@ ACEnemy_AI::ACEnemy_AI()
 		MovementComp->SetSpeeds(Speeds);
 		MovementComp->InputAction_Run();
 	}
+
+	if (!!InfoWidgetComp)
+		InfoWidgetComp->SetVisibility(true);
 }
 
 void ACEnemy_AI::BeginPlay()

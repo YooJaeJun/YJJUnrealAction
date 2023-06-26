@@ -65,13 +65,13 @@ ACPlayableCharacter::ACPlayableCharacter()
 		MovementComp->SetFriction(2.0f, 2048.0f);
 		MovementComp->SetJumpZ(700.0f);
 	}
-
-	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));
 }
 
 void ACPlayableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));
 
 	if (!!MovementComp)
 		MovementComp->SetSpeed(ESpeedType::Sprint);
