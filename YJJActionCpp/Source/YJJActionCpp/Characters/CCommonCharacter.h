@@ -5,6 +5,7 @@
 #include "Interfaces/CInterface_CharacterAnim.h"
 #include "Interfaces/CInterface_CharacterBody.h"
 #include "Interfaces/CInterface_IK.h"
+#include "Weapons/CWeaponStructures.h"
 #include "CCommonCharacter.generated.h"
 
 class UCStateComponent;
@@ -12,7 +13,6 @@ class UCMovementComponent;
 class UCMontagesComponent;
 class UCCharacterInfoComponent;
 class UCCharacterStatComponent;
-struct FActDamageEvent;
 class UCWeaponStructures;
 class ACAnimal_AI;
 class USoundBase;
@@ -23,6 +23,17 @@ class USceneComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMount, ACCommonCharacter*, Object);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnmount);
+
+USTRUCT()
+struct FDamageData
+{
+	GENERATED_BODY()
+
+	float Power;
+	TWeakObjectPtr<ACCommonCharacter> Attacker;
+	TWeakObjectPtr<AActor> Causer;
+	FActDamageEvent Event;
+};
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API ACCommonCharacter :
@@ -47,8 +58,11 @@ public:
 	virtual void Landed(const FHitResult& Hit) override;
 
 public:
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-		AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(
+		float DamageAmount, 
+		FDamageEvent const& DamageEvent,
+		AController* EventInstigator, 
+		AActor* DamageCauser) override;
 
 protected:
 	virtual void Rise();
@@ -161,16 +175,7 @@ public:
 
 protected:
 	FTimerHandle RestoreColor_TimerHandle;
-
-protected:
-	struct FDamageData
-	{
-		float Power;
-		const ACCommonCharacter* Attacker;
-		const AActor* Causer;
-
-		const FActDamageEvent* Event;
-	} Damage;
+	FDamageData Damage;
 
 private:
 	bool bTickLerpForTarget = false;

@@ -98,8 +98,11 @@ void ACCommonCharacter::Landed(const FHitResult& Hit)
 	StateComp->GoBack();
 }
 
-float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
-                                    AController* EventInstigator, AActor* DamageCauser)
+float ACCommonCharacter::TakeDamage(
+	float DamageAmount, 
+	FDamageEvent const& DamageEvent,
+	AController* EventInstigator, 
+	AActor* DamageCauser)
 {
 	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
@@ -107,10 +110,8 @@ float ACCommonCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	Damage.Attacker = Cast<ACCommonCharacter>(EventInstigator->GetPawn());
 	Damage.Causer = DamageCauser;
 
-	// UObject가 아니기 때문에 Cast 사용 불가
-	// 일반 캐스팅 사용 시, 부모와 자식의 크기가 다르기 때문에
-	// '포인터'로 통일해 크기 동일하게 맞춰줌
-	Damage.Event = (FActDamageEvent*)&DamageEvent;
+	//UObject Casting이 아니기 때문에 강제로 맞춰줌
+	Damage.Event = *(FActDamageEvent*)&DamageEvent;
 
 	StateComp->SetHitMode();
 
@@ -131,26 +132,22 @@ void ACCommonCharacter::Hit()
 	}
 
 	// Interaction
-	if (!!Damage.Event &&
-		!!Damage.Event->HitData)
+	const FHitData data = Damage.Event.HitData;
+
+	data.PlayMontage(this);
+	data.PlayHitStop(GetWorld());
+	data.PlaySoundWave(this);
+	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
+
+	if (false == CharacterStatComp->IsDead())
 	{
-		const FHitData* data = Damage.Event->HitData;
+		const FVector start = GetActorLocation();
+		const FVector target = Damage.Attacker->GetActorLocation();
+		FVector direction = target - start;
+		direction.Normalize();
 
-		data->PlayMontage(this);
-		data->PlayHitStop(GetWorld());
-		data->PlaySoundWave(this);
-		data->PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
-
-		if (false == CharacterStatComp->IsDead())
-		{
-			const FVector start = GetActorLocation();
-			const FVector target = Damage.Attacker->GetActorLocation();
-			FVector direction = target - start;
-			direction.Normalize();
-
-			LaunchCharacter(-direction * data->Launch, false, false);
-			SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
-		}
+		LaunchCharacter(-direction * data.Launch, false, false);
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
 	}
 
 	if (CharacterStatComp->IsDead())
@@ -161,7 +158,6 @@ void ACCommonCharacter::Hit()
 
 	Damage.Attacker = nullptr;
 	Damage.Causer = nullptr;
-	Damage.Event = nullptr;
 }
 
 void ACCommonCharacter::Dead()

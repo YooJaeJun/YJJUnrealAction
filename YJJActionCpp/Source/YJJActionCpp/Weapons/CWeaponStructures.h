@@ -152,7 +152,7 @@ struct FActDamageEvent
 	GENERATED_BODY()
 
 public:
-	FHitData* HitData;
+	FHitData HitData;
 };
 
 UCLASS()

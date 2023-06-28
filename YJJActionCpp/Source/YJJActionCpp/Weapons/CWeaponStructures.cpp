@@ -98,7 +98,7 @@ void FHitData::SendDamage(const TWeakObjectPtr<ACCommonCharacter> InAttacker,
 	const TWeakObjectPtr<AActor> InAttackCauser, const TWeakObjectPtr<ACCommonCharacter> InOther)
 {
 	FActDamageEvent e;
-	e.HitData = this;
+	e.HitData = *this;
 
 	InOther->TakeDamage(Power, e, InAttacker->GetMyCurController().Get(), InAttackCauser.Get());
 }
