@@ -16,6 +16,7 @@ enum class EStateType : uint8
 	Hit			UMETA(DisplayName = "Hit"),
 	Dead		UMETA(DisplayName = "Dead"),
 	Rise		UMETA(DisplayName = "Rise"),
+	Land		UMETA(DisplayName = "Land"),
 	Max			UMETA(DisplayName = "Max")
 };
 

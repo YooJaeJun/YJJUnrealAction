@@ -14,6 +14,7 @@
 #include "Components/CTargetingComponent.h"
 #include "Components/SceneComponent.h"
 #include "Characters/AI/CAIController_Melee.h"
+#include "Components/CMontagesComponent.h"
 
 ACAnimal_AI::ACAnimal_AI()
 {
@@ -23,6 +24,7 @@ ACAnimal_AI::ACAnimal_AI()
 	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 	CHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
 	CHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
+	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
 	CHelpers::CreateComponent<USceneComponent>(this, &MountLeftPoint, "MountLeftPoint", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &MountRightPoint, "MountRightPoint", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &MountBackPoint, "MountBackPoint", GetMesh());
@@ -31,13 +33,16 @@ ACAnimal_AI::ACAnimal_AI()
 	CHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
 	CHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 
+	if (!!StateComp)
+		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACAnimal_AI::OnStateTypeChanged);
+
 	if (!!MovementComp)
 	{
 		MovementComp->SetSpeeds(Speeds);
 		MovementComp->EnableControlRotation();
 		MovementComp->UnFixCamera();
 		MovementComp->SetSpeed(ESpeedType::Sprint);
-		MovementComp->SetFriction(2, 256);
+		MovementComp->SetFriction(2.0f, 256.0f);
 		MovementComp->SetJumpZ(700.0f);
 	}
 
@@ -115,6 +120,7 @@ void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Targeting", IE_Pressed, TargetingComp, &UCTargetingComponent::InputAction_Targeting);
 	PlayerInputComponent->BindAction("Menu", IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
 	PlayerInputComponent->BindAction("Menu", IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
+	PlayerInputComponent->BindAction("Action", IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Act);
 	PlayerInputComponent->BindAction("Action", IE_Pressed, RidingComp, &UCRidingComponent::InputAction_Act);
 }
 
@@ -130,12 +136,35 @@ void ACAnimal_AI::Landed(const FHitResult& Hit)
 	CHelpers::PlayEffect(GetWorld(), LandEffect, landEffectTransform);
 }
 
-void ACAnimal_AI::SetZoomMinRange(const float InMinRange)
+void ACAnimal_AI::Hit()
+{
+	CheckNull(MontagesComp);
+	MontagesComp->PlayHitAnim();
+}
+
+void ACAnimal_AI::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
+{
+	switch (InNewType)
+	{
+	case EStateType::Land:
+		Land();
+		break;
+	case EStateType::Hit:
+		Hit();
+		break;
+	case EStateType::Dead:
+		Dead();
+		break;
+	}
+}
+
+void ACAnimal_AI::SetZoomMinRange(const float InMinRange) const
 {
 	CheckNull(ZoomComp);
 	ZoomComp->ZoomData.MinRange = InMinRange;
 }
-void ACAnimal_AI::SetZoomMaxRange(const float InMaxRange)
+
+void ACAnimal_AI::SetZoomMaxRange(const float InMaxRange) const
 {
 	CheckNull(ZoomComp);
 	ZoomComp->ZoomData.MaxRange = InMaxRange;

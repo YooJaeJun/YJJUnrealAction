@@ -50,11 +50,6 @@ void ACEnemy_AI::BeginPlay()
 	Create_DynamicMaterial(this);
 	ChangeColor(this, OriginColor);
 
-	//if (!!CharacterInfoComp)
-	//	if (CharacterInfoComp->GetCharacterType() == 0)
-	//		CharacterInfoComp->SetCharacterType(ECharacterType::Enemy_1);
-
-
 	if (!!CharacterInfoComp)
 		if (CharacterInfoComp->GetCharacterType() == 0)
 			CharacterInfoComp->SetCharacterType(ECharacterType::Enemy_1);

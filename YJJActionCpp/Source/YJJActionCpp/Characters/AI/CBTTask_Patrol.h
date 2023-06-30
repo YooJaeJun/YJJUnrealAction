@@ -16,5 +16,6 @@ public:
 		uint8* NodeMemory) override;
 
 private:
-	const float PatrolDistance = 600.0f;
+	UPROPERTY(EditAnywhere)
+		float PatrolDistance = 1200.0f;
 };

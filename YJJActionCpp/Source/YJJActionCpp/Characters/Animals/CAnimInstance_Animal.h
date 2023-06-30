@@ -9,6 +9,12 @@ class YJJACTIONCPP_API UCAnimInstance_Animal : public UCAnimInstance_Character
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+public:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		bool bRotating;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		bool bRiding;
 };

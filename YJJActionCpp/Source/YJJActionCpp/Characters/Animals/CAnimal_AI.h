@@ -4,6 +4,7 @@
 #include "Characters/Animals/CAnimal.h"
 #include "Components/CZoomComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
+#include "Components/CStateComponent.h"
 #include "CAnimal_AI.generated.h"
 
 class USpringArmComponent;
@@ -18,6 +19,7 @@ class UBoxComponent;
 class CUserWidget_HUD;
 class CUserWidget_Interaction;
 class ACCommonCharacter;
+class UCWeaponComponent;
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API ACAnimal_AI :
@@ -36,9 +38,16 @@ protected:
 
 	virtual void Landed(const FHitResult& Hit) override;
 
+protected:
+	virtual void Hit() override;
+
+private:
+	UFUNCTION()
+		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
+
 public:
-	void SetZoomMinRange(const float InMinRange);
-	void SetZoomMaxRange(const float InMaxRange);
+	void SetZoomMinRange(const float InMinRange) const;
+	void SetZoomMaxRange(const float InMaxRange) const;
 
 	FORCEINLINE UBoxComponent* GetInteractionCollision() const { return InteractionCollision; }
 	FORCEINLINE USceneComponent* GetMountLeftPoint() const { return MountLeftPoint; }
@@ -66,12 +75,18 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		UCRidingComponent* RidingComp;
 
+	UPROPERTY(EditAnywhere)
+		UCWeaponComponent* WeaponComp;
+
 private:
 	UPROPERTY(VisibleAnywhere)
 		USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
 		UCameraComponent* Camera;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+		TArray<float> Speeds{ 400, 1000, 1600 };
 
 	UPROPERTY(VisibleAnywhere)
 		UCPatrolComponent* PatrolComp;
@@ -102,7 +117,4 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		UBoxComponent* InteractionCollision;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-		TArray<float> Speeds{ 400, 1000, 1600 };
 };

@@ -66,6 +66,7 @@ public:
 
 protected:
 	virtual void Rise();
+	virtual void Land();
 	virtual void Hit();
 	virtual void Dead();
 

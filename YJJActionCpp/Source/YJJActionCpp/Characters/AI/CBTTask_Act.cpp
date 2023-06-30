@@ -22,6 +22,7 @@ EBTNodeResult::Type UCBTTask_Act::ExecuteTask(
 		CHelpers::GetComponent<UCWeaponComponent>(owner.Get());
 	CheckNullResult(weaponComp, EBTNodeResult::Failed);
 
+
 	weaponComp->InputAction_Act();
 
 	return EBTNodeResult::Succeeded;

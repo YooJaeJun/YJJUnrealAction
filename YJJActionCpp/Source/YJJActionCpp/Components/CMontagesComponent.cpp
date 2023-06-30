@@ -52,6 +52,11 @@ void UCMontagesComponent::PlayRiseAnim()
 	PlayAnimMontage(EStateType::Rise);
 }
 
+void UCMontagesComponent::PlayLandAnim()
+{
+	PlayAnimMontage(EStateType::Land);
+}
+
 void UCMontagesComponent::PlayHitAnim()
 {
 	PlayAnimMontage(EStateType::Hit);

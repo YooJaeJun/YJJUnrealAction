@@ -133,7 +133,8 @@ void UCRidingComponent::SetRidingState(const ERidingState InState)
 	RidingState = InState;
 }
 
-void UCRidingComponent::BeginOverlap(UPrimitiveComponent* OverlappedComponent, 
+void UCRidingComponent::BeginOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
 	AActor* OtherActor, 
 	UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, 
@@ -157,7 +158,8 @@ void UCRidingComponent::BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	Interaction->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 
-void UCRidingComponent::EndOverlap(UPrimitiveComponent* OverlappedComponent, 
+void UCRidingComponent::EndOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
 	AActor* OtherActor, 
 	UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex)
@@ -179,7 +181,8 @@ void UCRidingComponent::EndOverlap(UPrimitiveComponent* OverlappedComponent,
 	Interaction->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UCRidingComponent::SetInteractor(TWeakObjectPtr<ACCommonCharacter> InCharacter, 
+void UCRidingComponent::SetInteractor(
+	TWeakObjectPtr<ACCommonCharacter> InCharacter, 
 	const TWeakObjectPtr<ACCommonCharacter> InOtherCharacter)
 {
 	InCharacter->SetInteractor(InOtherCharacter.Get());

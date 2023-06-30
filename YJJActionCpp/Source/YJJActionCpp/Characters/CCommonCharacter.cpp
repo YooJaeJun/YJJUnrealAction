@@ -95,7 +95,11 @@ void ACCommonCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
 
+	CheckNull(StateComp);
 	StateComp->GoBack();
+
+	CheckNull(MontagesComp);
+	MontagesComp->PlayLandAnim();
 }
 
 float ACCommonCharacter::TakeDamage(
@@ -120,7 +124,14 @@ float ACCommonCharacter::TakeDamage(
 
 void ACCommonCharacter::Rise()
 {
+	CheckNull(MontagesComp);
 	MontagesComp->PlayRiseAnim();
+}
+
+void ACCommonCharacter::Land()
+{
+	CheckNull(MontagesComp);
+	MontagesComp->PlayLandAnim();
 }
 
 void ACCommonCharacter::Hit()
@@ -164,6 +175,7 @@ void ACCommonCharacter::Dead()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	CheckNull(MontagesComp);
 	MontagesComp->PlayDeadAnim();
 
 	FTimerHandle DestroyDelayTimerHandle;
@@ -184,6 +196,7 @@ void ACCommonCharacter::End_Dead()
 
 void ACCommonCharacter::End_Rise()
 {
+	CheckNull(StateComp);
 	StateComp->SetIdleMode();
 }
 

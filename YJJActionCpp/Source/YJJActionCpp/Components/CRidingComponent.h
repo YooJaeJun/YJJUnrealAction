@@ -68,7 +68,8 @@ public:
 	void SetRidingState(const ERidingState InState);
 
 	UFUNCTION()
-		void BeginOverlap(UPrimitiveComponent* OverlappedComponent,
+		void BeginOverlap(
+			UPrimitiveComponent* OverlappedComponent,
 			AActor* OtherActor, 
 			UPrimitiveComponent* OtherComp,
 			int32 OtherBodyIndex, 
@@ -76,13 +77,15 @@ public:
 			const FHitResult& SweepResult);
 
 	UFUNCTION()
-		void EndOverlap(UPrimitiveComponent* OverlappedComponent, 
+		void EndOverlap(
+			UPrimitiveComponent* OverlappedComponent, 
 			AActor* OtherActor, 
 			UPrimitiveComponent* OtherComp, 
 			int32 OtherBodyIndex);
 
 public:
-	void SetInteractor(TWeakObjectPtr<ACCommonCharacter> InCharacter, 
+	void SetInteractor(
+		TWeakObjectPtr<ACCommonCharacter> InCharacter, 
 		const TWeakObjectPtr<ACCommonCharacter> InOtherCharacter);
 
 	UFUNCTION()

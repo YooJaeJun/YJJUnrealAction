@@ -160,6 +160,9 @@ void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const 
 	case EStateType::Rise:
 		Rise();
 		break;
+	case EStateType::Land:
+		Land();
+		break;
 	case EStateType::Hit:
 		Hit();
 		break;
