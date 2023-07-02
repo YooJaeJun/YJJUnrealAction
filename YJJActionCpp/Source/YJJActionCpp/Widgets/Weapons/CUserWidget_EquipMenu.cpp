@@ -11,13 +11,14 @@ void UCUserWidget_EquipMenu::BindChildren()
 		buttonStr += FString::FromInt(i);
 		FName buttonName = FName(*buttonStr);
 
-		UCUserWidget_EquipMenuButton* button = Cast<UCUserWidget_EquipMenuButton>(GetWidgetFromName(buttonName));
+		const TWeakObjectPtr<UCUserWidget_EquipMenuButton> button = 
+			Cast<UCUserWidget_EquipMenuButton>(GetWidgetFromName(buttonName));
 
 		if (nullptr == button)
 			break;
 
 		button->BindEquipMenuButton();
-		EquipMenuButtons.Add(button);
+		EquipMenuButtons.Add(button.Get());
 	}
 }
 
@@ -28,8 +29,11 @@ void UCUserWidget_EquipMenu::Activate(const float TimeDilation)
 	if (!!GetOwningPlayer())
 	{
 		GetOwningPlayer()->SetShowMouseCursor(true);
-		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(GetOwningPlayer(), nullptr,
-			EMouseLockMode::LockInFullscreen, true);
+		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(
+			GetOwningPlayer(), 
+			nullptr,
+			EMouseLockMode::LockInFullscreen, 
+			true);
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilation);
 	}
 }

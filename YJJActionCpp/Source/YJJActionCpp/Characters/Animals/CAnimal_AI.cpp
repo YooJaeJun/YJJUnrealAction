@@ -11,6 +11,7 @@
 #include "Components/CPatrolComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/CCharacterInfoComponent.h"
+#include "Components/CCharacterStatComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/SceneComponent.h"
 #include "Characters/AI/CAIController_Melee.h"
@@ -102,6 +103,9 @@ void ACAnimal_AI::BeginPlay()
 
 	if (!!CharacterInfoComp)
 		CharacterInfoComp->SetCharacterType(ECharacterType::Companion);
+
+	if (!!CharacterStatComp)
+		CharacterStatComp->SetAttackRange(250.0f);
 }
 
 void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -140,6 +144,40 @@ void ACAnimal_AI::Hit()
 {
 	CheckNull(MontagesComp);
 	MontagesComp->PlayHitAnim();
+
+	// µ¿¹°: HitDataÀÇ Montage, Launch ¾È ¾¸
+
+	// Apply Damage
+	{
+		CharacterStatComp->Damage(Damage.Power);
+		Damage.Power = 0;
+	}
+
+	// Interaction
+	const FHitData data = Damage.Event.HitData;
+
+	data.PlayHitStop(GetWorld());
+	data.PlaySoundWave(this);
+	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
+
+	if (false == CharacterStatComp->IsDead())
+	{
+		const FVector start = GetActorLocation();
+		const FVector target = Damage.Attacker->GetActorLocation();
+		FVector direction = target - start;
+		direction.Normalize();
+
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
+	}
+
+	if (CharacterStatComp->IsDead())
+	{
+		StateComp->SetDeadMode();
+		return;
+	}
+
+	Damage.Attacker = nullptr;
+	Damage.Causer = nullptr;
 }
 
 void ACAnimal_AI::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)

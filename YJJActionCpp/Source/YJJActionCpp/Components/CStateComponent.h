@@ -43,6 +43,7 @@ public:
 	void SetDeadMode();
 	void SetRiseMode();
 
+	bool CanAttack() const;
 	void GoBack();
 
 private:

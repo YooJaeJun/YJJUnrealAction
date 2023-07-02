@@ -37,6 +37,8 @@
 class YJJACTIONCPP_API CHelpers
 {
 public:
+	static int32 Npos() { return -1; }
+
 	template<typename T>
 	static void CreateComponent(AActor* InActor, T** OutComponent, const FName InName, 
 		USceneComponent* InParent = nullptr, const FName InSocketName = NAME_None)

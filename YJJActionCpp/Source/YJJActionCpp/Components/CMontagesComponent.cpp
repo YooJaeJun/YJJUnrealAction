@@ -24,7 +24,8 @@ void UCMontagesComponent::BeginPlay()
 	TArray<FMontagesData*> datas;
 	DataTable->GetAllRows<FMontagesData>("", datas);
 
-	const uint32 size = static_cast<int32>(EStateType::Max);
+	constexpr uint32 size = static_cast<int32>(EStateType::Max);
+
 	for (uint32 i=0; i<size; i++)
 	{
 		for (const FMontagesData* data : datas)

@@ -14,28 +14,34 @@ UCWeaponComponent::UCWeaponComponent()
 void UCWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
 	CheckNull(Owner);
 
-	constexpr uint8 size = static_cast<uint8>(EWeaponType::Max);
-
-	for (int32 i = 0; i < size; i++)
+	for (int32 i = 0; i < DataAssets.Num(); i++)
 	{
 		if (!!DataAssets[i])
 		{
-			DataAssetsCopy[i] = NewObject<UCWeaponAsset>(
-				this, 
-				DataAssets[i]->GetClass(), 
-				static_cast<FName>(DataAssets[i]->GetClass()->GetName()));
+			// 주석처럼 쓰면 객체 공유하게 됨
+			//UCWeaponAsset* asset = NewObject<UCWeaponAsset>(this, DataAssets[i]->GetClass(), static_cast<FName>(DataAssets[i]->GetClass()->GetName()));
+			UCWeaponAsset* asset = NewObject<UCWeaponAsset>(this, UCWeaponAsset::StaticClass());
 
-			DataAssetsCopy[i]->CopyDeep(*DataAssets[i], Owner);
+			DataAssetsCopied.Add(asset);
+
+			DataAssetsCopied[i]->DeepCopy(*DataAssets[i], Owner);
 		}
 	}
 }
 
 void UCWeaponComponent::InputAction_Act()
 {
-	if (!!GetAct())
-		GetAct()->Act();
+	CheckNull(GetAct());
+	GetAct()->Act();
+}
+
+void UCWeaponComponent::SetModeFromZeroIndex()
+{
+	CheckFalse(DataAssetsCopied.Num() > 0);
+	SetMode(DataAssetsCopied[0]->GetType());
 }
 
 void UCWeaponComponent::SetMode(EWeaponType InType)
@@ -52,24 +58,31 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		GetEquipment()->Unequip();
 	}
 
-	if (!!DataAssetsCopy[static_cast<uint8>(InType)])
-	{
-		const TWeakObjectPtr<UCEquipment> equipment = DataAssetsCopy[static_cast<uint8>(InType)]->GetEquipment();
-		if (!!equipment.Get())
-		{
-			equipment->Equip();
-			ChangeType(InType);
-		}
-	}
+	const int32 index = FindType(InType);
+
+	CheckTrue(index == CHelpers::Npos());
+	CheckNull(DataAssetsCopied[index]);
+
+	const TWeakObjectPtr<UCEquipment> equipment = DataAssetsCopied[index]->GetEquipment();
+	CheckNull(equipment);
+
+	equipment->Equip();
+	ChangeType(InType);
 }
 
-void UCWeaponComponent::SetModeFromDataTable()
+int32 UCWeaponComponent::FindType(const EWeaponType InType)
 {
-	constexpr uint32 size = static_cast<uint32>(EWeaponType::Max);
+	for (int32 i = 0; i < DataAssetsCopied.Num(); i++)
+		if (DataAssetsCopied[i]->GetType() == InType)
+			return i;
 
-	for (int32 i=0; i<size; i++)
-		if (!!DataAssetsCopy[i])
-			SetMode(static_cast<EWeaponType>(i));
+	return -1;
+}
+
+void UCWeaponComponent::CancelAct()
+{
+	CheckNull(GetAct());
+	GetAct()->End_Act();
 }
 
 void UCWeaponComponent::ChangeType(EWeaponType InType)
@@ -81,32 +94,39 @@ void UCWeaponComponent::ChangeType(EWeaponType InType)
 		OnWeaponTypeChanged.Broadcast(PrevType, InType);
 }
 
-ACAttachment* UCWeaponComponent::GetAttachment() const
+ACAttachment* UCWeaponComponent::GetAttachment()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!DataAssetsCopy[static_cast<uint8>(Type)], nullptr);
 
-	return DataAssetsCopy[static_cast<uint8>(Type)]->GetAttachment();
+	const int32 weaponType = FindType(Type);
+	CheckTrueResult(weaponType == CHelpers::Npos(), nullptr);
+
+	return DataAssetsCopied[weaponType]->GetAttachment();
 }
 
-UCEquipment* UCWeaponComponent::GetEquipment() const
+UCEquipment* UCWeaponComponent::GetEquipment()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!DataAssetsCopy[static_cast<uint8>(Type)], nullptr);
 
-	return DataAssetsCopy[static_cast<uint8>(Type)]->GetEquipment();
+	const int32 weaponType = FindType(Type);
+	CheckTrueResult(weaponType == CHelpers::Npos(), nullptr);
+
+	return DataAssetsCopied[weaponType]->GetEquipment();
 }
 
-UCAct* UCWeaponComponent::GetAct() const
+UCAct* UCWeaponComponent::GetAct()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!DataAssetsCopy[static_cast<uint8>(Type)], nullptr);
 
-	return DataAssetsCopy[static_cast<uint8>(Type)]->GetAct();
+	const int32 weaponType = FindType(Type);
+	CheckTrueResult(weaponType == CHelpers::Npos(), nullptr);
+
+	return DataAssetsCopied[weaponType]->GetAct();
 }
 
 bool UCWeaponComponent::IsIdleStateMode() const
 {
+	CheckNullResult(Owner->StateComp, false);
 	return Owner->StateComp->IsIdleMode();
 }
 

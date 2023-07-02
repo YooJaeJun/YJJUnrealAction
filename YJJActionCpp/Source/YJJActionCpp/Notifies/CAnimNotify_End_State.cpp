@@ -14,22 +14,22 @@ void UCAnimNotify_End_State::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 
-	ICInterface_CharacterAnim* character = Cast<ICInterface_CharacterAnim>(MeshComp->GetOwner());
-	CheckNull(character);
+	ICInterface_CharacterAnim* characterAnim = Cast<ICInterface_CharacterAnim>(MeshComp->GetOwner());
+	CheckNull(characterAnim);
 
 	switch(StateType)
 	{
 	case EStateType::Avoid:
-		character->End_Avoid();
+		characterAnim->End_Avoid();
 		break;
 	case EStateType::Hit:
-		character->End_Hit();
+		characterAnim->End_Hit();
 		break;
 	case EStateType::Dead:
-		character->End_Dead();
+		characterAnim->End_Dead();
 		break;
 	case EStateType::Rise:
-		character->End_Rise();
+		characterAnim->End_Rise();
 		break;
 	}
 }

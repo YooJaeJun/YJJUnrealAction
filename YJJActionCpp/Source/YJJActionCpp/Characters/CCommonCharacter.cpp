@@ -38,7 +38,7 @@ ACCommonCharacter::ACCommonCharacter()
 	}
 
 	if (!!InfoPoint)
-		InfoPoint->SetWorldLocation(FVector(0, 0, 200));
+		InfoPoint->SetWorldLocation(FVector(0, 0, 0));
 
 	if (!!InfoWidgetComp)
 	{
@@ -96,10 +96,7 @@ void ACCommonCharacter::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 
 	CheckNull(StateComp);
-	StateComp->GoBack();
-
-	CheckNull(MontagesComp);
-	MontagesComp->PlayLandAnim();
+	StateComp->SetIdleMode();
 }
 
 float ACCommonCharacter::TakeDamage(
@@ -186,7 +183,6 @@ void ACCommonCharacter::Dead()
 
 void ACCommonCharacter::End_Hit()
 {
-	ICInterface_CharacterAnim::End_Hit();
 }
 
 void ACCommonCharacter::End_Dead()

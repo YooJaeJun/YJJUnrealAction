@@ -11,7 +11,8 @@ class UCWeaponComponent;
 struct FDamageEvent;
 
 UCLASS(Abstract)
-class YJJACTIONCPP_API ACEnemy_AI : public ACEnemy
+class YJJACTIONCPP_API ACEnemy_AI :
+	public ACEnemy
 {
 	GENERATED_BODY()
 
@@ -40,5 +41,5 @@ private:
 		TArray<float> Speeds{ 200, 400, 600 };
 
 private:
-	EAttackType CurAttackType = EAttackType::None;
+	EHitType CurHitType = EHitType::None;
 };

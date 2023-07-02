@@ -70,8 +70,8 @@ void UCCharacterStatComponent::SetDamage(const float InNewDamage)
 {
 	SetHp(FMath::Clamp<float>(CurHp - InNewDamage, 0.0f, CurStat.MaxHp));
 
-	const TWeakObjectPtr<UCStateComponent> state = 
-		Cast<UCStateComponent>(Owner->GetComponentByClass(UCStateComponent::StaticClass()));
+	const TWeakObjectPtr<UCStateComponent> state =
+		CHelpers::GetComponent<UCStateComponent>(Owner.Get());
 
 	state->SetHitMode();
 }

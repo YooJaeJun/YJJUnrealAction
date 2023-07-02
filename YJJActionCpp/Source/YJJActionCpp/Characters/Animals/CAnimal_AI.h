@@ -88,33 +88,33 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 		TArray<float> Speeds{ 400, 1000, 1600 };
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "AI")
 		UCPatrolComponent* PatrolComp;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
 		USceneComponent* MountLeftPoint;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
 		USceneComponent* MountRightPoint;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
 		USceneComponent* MountBackPoint;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
 		USceneComponent* RiderPoint;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
 		USceneComponent* UnmountPoint;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
 		USceneComponent* EyePoint;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
 		TSubclassOf<AActor> EyeClass;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
 		AActor* Eye;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
 		UBoxComponent* InteractionCollision;
 };

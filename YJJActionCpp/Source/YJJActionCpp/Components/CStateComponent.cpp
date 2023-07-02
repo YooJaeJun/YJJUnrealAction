@@ -52,6 +52,11 @@ void UCStateComponent::SetRiseMode()
 	ChangeType(EStateType::Rise);
 }
 
+bool UCStateComponent::CanAttack() const
+{
+	return IsIdleMode() || IsHitMode();
+}
+
 void UCStateComponent::GoBack()
 {
 	SetIdleMode();
@@ -65,7 +70,11 @@ void UCStateComponent::ChangeType(const EStateType InType)
 	if (OnStateTypeChanged.IsBound())
 	{
 		CLog::Print(Owner->GetName() + " : " 
-			+ CHelpers::ConvertEnumToString(CurType), -1, 5, FColor::Emerald);
+			+ CHelpers::ConvertEnumToString(CurType), 
+			-1, 
+			5, 
+			FColor::Emerald);
+
 		OnStateTypeChanged.Broadcast(PrevType, CurType);
 	}
 }

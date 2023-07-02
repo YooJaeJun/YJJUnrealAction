@@ -1,12 +1,15 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "CAIController.generated.h"
 
 class UBehaviorTree;
 class UBlackboardData;
+class UAISenseConfig_Sight;
+class UAISenseConfig_Hearing;
 
-UCLASS()
+UCLASS(Abstract)
 class YJJACTIONCPP_API ACAIController : public AAIController
 {
 	GENERATED_BODY()
@@ -17,6 +20,9 @@ public:
 
 	void RunAI();
 	void StopAI() const;
+
+	UFUNCTION()
+		void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
 
 public:
 	static const FName SelfActor;
@@ -30,4 +36,22 @@ private:
 
 	UPROPERTY()
 		UBlackboardData* BBAsset;
+
+	UPROPERTY(EditAnywhere)
+		UAISenseConfig_Sight* SightConfig;
+
+	UPROPERTY(EditAnywhere)
+		UAISenseConfig_Hearing* HearingConfig;
+
+	UPROPERTY(EditAnywhere)
+		float SightRadius = 1500.0f;
+
+	UPROPERTY(EditAnywhere)
+		float LoseSightRadius = 1800.0f;
+
+	UPROPERTY(EditAnywhere)
+		float Angle = 120.0f;
+
+	UPROPERTY(EditAnywhere)
+		float MaxAge = 5.0f;
 };

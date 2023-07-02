@@ -1,6 +1,6 @@
 #include "Characters/Animals/Dragon/CDragon_AI.h"
 #include "Global.h"
-#include "Components/CStateComponent.h"
+#include "Components/CCharacterStatComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/CGameUIComponent.h"
@@ -20,6 +20,9 @@ void ACDragon_AI::BeginPlay()
 	SetZoomMaxRange(1000.0f);
 
 	LandEffectScaleFactor = 2.0f;
+
+	if (!!CharacterStatComp)
+		CharacterStatComp->SetAttackRange(1200.0f);
 }
 
 void ACDragon_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

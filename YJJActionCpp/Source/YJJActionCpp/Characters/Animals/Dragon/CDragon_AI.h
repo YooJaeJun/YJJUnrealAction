@@ -22,9 +22,6 @@ protected:
 	virtual void Landed(const FHitResult& Hit) override;
 
 public:
-	UPROPERTY(EditAnywhere)
-		ACDragonSkill* Skill;
-
 	UPROPERTY(VisibleAnywhere)
 		UCFlyComponent* FlyComp;
 };

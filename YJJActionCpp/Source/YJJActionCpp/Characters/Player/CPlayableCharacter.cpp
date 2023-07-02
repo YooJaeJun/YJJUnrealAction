@@ -127,6 +127,16 @@ void ACPlayableCharacter::Avoid()
 	MontagesComp->PlayAvoidAnim();
 }
 
+void ACPlayableCharacter::Hit()
+{
+	CurHitType = Damage.Event.HitData.AttackType;
+
+	Super::Hit();
+
+	if (StateComp->IsActMode())
+		End_Hit();
+}
+
 void ACPlayableCharacter::End_Avoid()
 {
 	StateComp->GoBack();
@@ -134,7 +144,21 @@ void ACPlayableCharacter::End_Avoid()
 
 void ACPlayableCharacter::End_Hit()
 {
-	StateComp->GoBack();
+	Super::End_Hit();
+
+	switch (CurHitType)
+	{
+	case EHitType::Knockback:
+		StateComp->SetRiseMode();
+		break;
+	case EHitType::Air:
+	case EHitType::Fly:
+		StateComp->SetFallMode();
+		break;
+	default:
+		StateComp->SetIdleMode();
+		break;
+	}
 }
 
 void ACPlayableCharacter::End_Rise()

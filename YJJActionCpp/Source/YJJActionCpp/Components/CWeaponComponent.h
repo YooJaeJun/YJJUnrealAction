@@ -2,30 +2,13 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Weapons/CWeaponAsset.h"
+#include "Commons/CEnums.h"
 #include "CWeaponComponent.generated.h"
 
 class ACCommonCharacter;
 class ACAttachment;
 class UCEquipment;
 class UCAct;
-
-UENUM(BlueprintType)
-enum class EWeaponType : uint8
-{
-	Unarmed,
-	Fist,
-	Sword,
-	Hammer,
-	Dual,
-	Guard,
-	Bow,
-	Warp,
-	Around,
-	Fireball,
-	Bomb,
-	Yondu,
-	Max
-};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, const EWeaponType, InPrevType, const EWeaponType, InNewType);
 
@@ -42,16 +25,18 @@ protected:
 
 public:
 	void InputAction_Act();
+	void SetModeFromZeroIndex();
 	void SetMode(EWeaponType InType);
-	void SetModeFromDataTable();
+	int32 FindType(const EWeaponType InType);
+	void CancelAct();
 
 private:
 	void ChangeType(EWeaponType InType);
 
 public:
-	ACAttachment* GetAttachment() const;
-	UCEquipment* GetEquipment() const;
-	UCAct* GetAct() const;
+	ACAttachment* GetAttachment();
+	UCEquipment* GetEquipment();
+	UCAct* GetAct();
 
 	FORCEINLINE EWeaponType GetType() const { return Type; }
 	FORCEINLINE EWeaponType GetPrevType() const { return PrevType; }
@@ -86,10 +71,10 @@ public:
 private:
 	// DataAsset을 객체마다 만들지 않게 하기 위해 Copy를 따로 만듦
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
-		UCWeaponAsset* DataAssets[static_cast<uint8>(EWeaponType::Max)];
+		TArray<UCWeaponAsset*> DataAssets;
 
-	UPROPERTY(EditAnywhere, Category = "DataAsset")
-		UCWeaponAsset* DataAssetsCopy[static_cast<uint8>(EWeaponType::Max)];
+	UPROPERTY(VisibleAnywhere, Category = "DataAsset")
+		TArray<UCWeaponAsset*> DataAssetsCopied;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
 		EWeaponType Type = EWeaponType::Unarmed;

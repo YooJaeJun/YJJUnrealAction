@@ -49,10 +49,11 @@ void UCWeaponAsset::BeginPlay(ACCommonCharacter* InOwner)
 	}
 }
 
-const UCWeaponAsset& UCWeaponAsset::CopyDeep(
+const UCWeaponAsset& UCWeaponAsset::DeepCopy(
 	const UCWeaponAsset& InOther, 
 	const TWeakObjectPtr<ACCommonCharacter> Owner)
 {
+	Type = InOther.GetType();
 	AttachmentClass = InOther.AttachmentClass;
 	Attachment = InOther.GetAttachment();
 	EquipmentClass = InOther.EquipmentClass;

@@ -9,6 +9,7 @@
 #include "Components/CCharacterInfoComponent.h"
 #include "Components/CCharacterStatComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Weapons/CWeaponStructures.h"
 
 ACEnemy_AI::ACEnemy_AI()
@@ -53,6 +54,9 @@ void ACEnemy_AI::BeginPlay()
 	if (!!CharacterInfoComp)
 		if (CharacterInfoComp->GetCharacterType() == 0)
 			CharacterInfoComp->SetCharacterType(ECharacterType::Enemy_1);
+
+	if (!!CharacterStatComp)
+		CharacterStatComp->SetAttackRange(250.0f);
 }
 
 void ACEnemy_AI::Tick(float DeltaTime)
@@ -88,22 +92,26 @@ void ACEnemy_AI::Hit()
 		GetWorld()->GetTimerManager().SetTimer(RestoreColor_TimerHandle, timerDelegate, 0.2f, false);
 	}
 
-	CurAttackType = Damage.Event.HitData.AttackType;
+	CurHitType = Damage.Event.HitData.AttackType;
 
 	Super::Hit();
+
+	// Cancel Hit
+	CheckNull(WeaponComp);
+	WeaponComp->CancelAct();
 }
 
 void ACEnemy_AI::End_Hit()
 {
 	Super::End_Hit();
 
-	switch (CurAttackType)
+	switch (CurHitType)
 	{
-	case EAttackType::Knockback:
+	case EHitType::Knockback:
 		StateComp->SetRiseMode();
 		break;
-	case EAttackType::Air:
-	case EAttackType::Fly:
+	case EHitType::Air:
+	case EHitType::Fly:
 		StateComp->SetFallMode();
 		break;
 	default:

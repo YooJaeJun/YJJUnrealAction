@@ -25,6 +25,7 @@ void UCEquipment::Equip_Implementation()
 
 	const TWeakObjectPtr<UCMovementComponent> movement = 
 		Cast<UCMovementComponent>(Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
+
 	movement->SetRunSpeed();
 
 	if (!!Data.Montage)
@@ -64,6 +65,7 @@ void UCEquipment::Unequip_Implementation()
 
 	const TWeakObjectPtr<UCMovementComponent> movement = 
 		Cast<UCMovementComponent>(Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
+
 	movement->SetSprintSpeed();
 
 	if (OnEquipmentUnequip.IsBound())

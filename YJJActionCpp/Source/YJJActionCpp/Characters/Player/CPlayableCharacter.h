@@ -35,7 +35,8 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 private:
-	void Avoid();
+	virtual void Avoid();
+	virtual void Hit() override;
 
 	virtual void End_Avoid() override;
 	virtual void End_Hit() override;
@@ -78,4 +79,7 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 		TArray<float> Speeds{ 200, 500, 800 };
+
+private:
+	EHitType CurHitType = EHitType::None;
 };

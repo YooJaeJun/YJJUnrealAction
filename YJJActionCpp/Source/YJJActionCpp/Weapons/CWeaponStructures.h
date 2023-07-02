@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Commons/CEnums.h"
 #include "CWeaponStructures.generated.h"
 
 class UAnimMontage;
@@ -9,18 +10,6 @@ class UFXSystemAsset;
 class ACCommonCharacter;
 class UCCharacterStatComponent;
 class USoundWave;
-
-UENUM()
-enum class EAttackType
-{
-	None,
-	Knockback,
-	Air,
-	Fly,
-	FlyingPutDown,
-	Down,
-	Max
-};
 
 USTRUCT()
 struct FEquipmentData
@@ -142,7 +131,7 @@ public:
 		FVector EffectScale = FVector::OneVector;
 
 	UPROPERTY(EditAnywhere)
-		EAttackType AttackType = EAttackType::None;
+		EHitType AttackType = EHitType::None;
 };
 
 USTRUCT()

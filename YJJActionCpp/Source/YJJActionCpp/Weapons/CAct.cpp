@@ -31,6 +31,7 @@ void UCAct::BeginPlay(ACCommonCharacter* InOwner,
 
 void UCAct::Act()
 {
+	CheckNull(StateComp);
 	StateComp->SetActMode();
 }
 

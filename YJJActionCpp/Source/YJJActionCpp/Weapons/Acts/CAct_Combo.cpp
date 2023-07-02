@@ -18,7 +18,7 @@ void UCAct_Combo::Act()
 		return;
 	}
 
-	CheckFalse(StateComp->IsIdleMode());
+	CheckFalse(StateComp->CanAttack());
 
 	Super::Act();
 

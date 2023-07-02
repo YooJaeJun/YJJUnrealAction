@@ -72,8 +72,15 @@ public:
 	void Damage(const float InAmount);
 
 public:
+	FORCEINLINE void SetAttackRange(const float InAttackRange) { AttackRange = InAttackRange; }
+	FORCEINLINE float GetAttackRange() const { return AttackRange; }
+
+public:
 	UPROPERTY(EditAnywhere)
 		int32 CurLevel;
+
+	UPROPERTY(EditAnywhere)
+		float AttackRange = 100.0f;
 
 private:
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))

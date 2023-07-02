@@ -14,43 +14,43 @@ void UCBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	const TWeakObjectPtr<ACCommonCharacter> owner = 
-		Cast<ACCommonCharacter>(OwnerComp.GetAIOwner()->GetPawn());
-	CheckNull(owner);
+	//const TWeakObjectPtr<ACCommonCharacter> owner = 
+	//	Cast<ACCommonCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+	//CheckNull(owner);
 
-	const TWeakObjectPtr<UWorld> world = owner->GetWorld();
-	CheckNull(world);
+	//const TWeakObjectPtr<UWorld> world = owner->GetWorld();
+	//CheckNull(world);
 
-	FVector currentLocation = owner->GetActorLocation();
+	//FVector currentLocation = owner->GetActorLocation();
 
-	const TArray<AActor*> ignores{ owner.Get() };
-	TArray<FHitResult> hitResults;
+	//const TArray<AActor*> ignores{ owner.Get() };
+	//TArray<FHitResult> hitResults;
 
-	const bool bResult = UKismetSystemLibrary::SphereTraceMultiByProfile(GetWorld(),
-		owner->GetActorLocation(),
-		owner->GetActorLocation(),
-		traceDistance,
-		"Pawn",
-		false,
-		ignores,
-		EDrawDebugTrace::None,
-		hitResults,
-		false);
+	//const bool bResult = UKismetSystemLibrary::SphereTraceMultiByProfile(GetWorld(),
+	//	owner->GetActorLocation(),
+	//	owner->GetActorLocation(),
+	//	traceDistance,
+	//	"Pawn",
+	//	false,
+	//	ignores,
+	//	EDrawDebugTrace::None,
+	//	hitResults,
+	//	false);
 
-	if (false == bResult)
-	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ACAIController::Target, nullptr);
-		return;
-	}
+	//if (false == bResult)
+	//{
+	//	OwnerComp.GetBlackboardComponent()->SetValueAsObject(ACAIController::Target, nullptr);
+	//	return;
+	//}
 
-	for (const auto& hitResult : hitResults)
-	{
-		TWeakObjectPtr<ACCommonCharacter> target = Cast<ACCommonCharacter>(hitResult.GetActor());
- 
-		if (!!target.Get() &&
-			false == target->CharacterInfoComp->IsSameGroup(owner))
-		{
-			OwnerComp.GetBlackboardComponent()->SetValueAsObject(ACAIController::Target, target.Get());
-		}
-	}
+	//for (const auto& hitResult : hitResults)
+	//{
+	//	TWeakObjectPtr<ACCommonCharacter> target = Cast<ACCommonCharacter>(hitResult.GetActor());
+	//
+	//	if (!!target.Get() &&
+	//		false == target->CharacterInfoComp->IsSameGroup(owner))
+	//	{
+	//		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ACAIController::Target, target.Get());
+	//	}
+	//}
 }

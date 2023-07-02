@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Weapons/CWeaponStructures.h"
+#include "Commons/CEnums.h"
 #include "CWeaponAsset.generated.h"
 
 class ACCommonCharacter;
@@ -20,17 +21,20 @@ public:
 
 	virtual void BeginPlay(ACCommonCharacter* InOwner);
 
-	const UCWeaponAsset& CopyDeep(
+	const UCWeaponAsset& DeepCopy(
 		const UCWeaponAsset& InOther, 
 		const TWeakObjectPtr<ACCommonCharacter> Owner);
 
 public:
-
+	FORCEINLINE EWeaponType GetType() const { return Type; }
 	FORCEINLINE ACAttachment* GetAttachment() const { return Attachment; }
 	FORCEINLINE UCEquipment* GetEquipment() const { return Equipment; }
 	FORCEINLINE UCAct* GetAct() const { return Act; }
 
 protected:
+	UPROPERTY(EditAnywhere)
+		EWeaponType Type;
+
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ACAttachment> AttachmentClass;
 
