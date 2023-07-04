@@ -108,13 +108,13 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 		else
 		{
 			forward = UKismetMathLibrary::GetForwardVector(rotator)
-				* Owner->MovementComp->Forward;
+				* MovementComp->Forward;
 
 			right = UKismetMathLibrary::GetRightVector(rotator)
-				* Owner->MovementComp->Right;
+				* MovementComp->Right;
 		}
 
-		const FVector current = (forward + right) * Owner->MovementComp->SpeedFactor;
+		const FVector current = (forward + right) * MovementComp->SpeedFactor;
 
 		const float dotForward = UKismetMathLibrary::Dot_VectorVector(current, Owner->GetActorForwardVector());
 		const float dotRight = UKismetMathLibrary::Dot_VectorVector(current, Owner->GetActorRightVector());

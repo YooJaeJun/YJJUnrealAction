@@ -7,6 +7,9 @@
 UCMovementComponent::UCMovementComponent()
 {
 	Owner = Cast<ACCommonCharacter>(GetOwner());
+
+	if (!!Owner.Get())
+		StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
 }
 
 void UCMovementComponent::BeginPlay()
@@ -89,7 +92,7 @@ void UCMovementComponent::SetFriction(const float InFriction, const float InBrak
 void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 {
 	//CheckFalse(CanMove(InAxis));
-	CheckTrue(Owner->StateComp->IsFallMode());
+	CheckTrue(StateComp->IsFallMode());
 
 	Forward = InAxis;
 
@@ -102,7 +105,7 @@ void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 {
 	//CheckFalse(CanMove(InAxis));
-	CheckTrue(Owner->StateComp->IsFallMode());
+	CheckTrue(StateComp->IsFallMode());
 
 	Right = InAxis;
 
@@ -143,7 +146,7 @@ void UCMovementComponent::InputAction_Jump()
 	CheckFalse(CanMove());
 
 	Owner->Jump();
-	Owner->StateComp->SetFallMode();
+	StateComp->SetFallMode();
 }
 
 bool UCMovementComponent::CanMove(const float InAxis) const

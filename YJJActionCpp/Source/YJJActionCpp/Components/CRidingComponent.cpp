@@ -57,8 +57,8 @@ void UCRidingComponent::BeginPlay()
 		Mesh = Owner->GetMesh();
 		SpringArm = Owner->GetSpringArm();
 		Camera = Owner->GetCamera();
-		MovementComp = Owner->MovementComp;
-		StateComp = Owner->StateComp;
+		MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+		StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
 
 		RidingPoints[static_cast<uint8>(ERidingPoint::CandidateLeft)] = Owner->GetMountLeftPoint();
 		RidingPoints[static_cast<uint8>(ERidingPoint::CandidateRight)] = Owner->GetMountRightPoint();
@@ -192,6 +192,7 @@ void UCRidingComponent::SetRider(ACCommonCharacter* InCharacter)
 {
 	Rider = InCharacter;
 	RiderWeaponComp = CHelpers::GetComponent<UCWeaponComponent>(InCharacter);
+	RiderMovementComp = CHelpers::GetComponent<UCMovementComponent>(InCharacter);
 
 	if (false == Owner->OnUnmount.IsBound())
 		Owner->OnUnmount.AddUniqueDynamic(this, &UCRidingComponent::Unmount);
@@ -405,7 +406,7 @@ void UCRidingComponent::Tick_Riding()
 	else
 		MovementComp->DisableControlRotation();
 
-	if (!!Rider->MovementComp->GetFixedCamera())
+	if (!!RiderMovementComp->GetFixedCamera())
 		MovementComp->FixCamera();
 	else
 		MovementComp->UnFixCamera();
@@ -457,14 +458,14 @@ void UCRidingComponent::Tick_Unmounting()
 		true, true, 1.0f, false,
 		eMoveAction, latentInfo);
 
-	Owner->MovementComp->Stop();
-	Owner->MovementComp->Right = 0.0f;
-	Owner->MovementComp->Forward = 0.0f;
+	RiderMovementComp->Stop();
+	RiderMovementComp->Right = 0.0f;
+	RiderMovementComp->Forward = 0.0f;
 
 	Owner->SetbRiding(false);
 	Rider->SetbRiding(false);
-	Rider->StateComp->SetFallMode();
-	Rider->StateComp->SetFallMode();
+	RiderStateComp->SetFallMode();
+	RiderStateComp->SetFallMode();
 
 
 	// TODO Riding Info

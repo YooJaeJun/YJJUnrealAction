@@ -77,10 +77,20 @@ void UCTargetingComponent::End_Targeting()
 	SetVisibleTargetUI(false);
 
 	CheckNull(Target);
-	CheckNull(Target->MovementComp);
 
-	Target->MovementComp->UnFixCamera();
+	const TWeakObjectPtr<UCStateComponent> targetState =
+		CHelpers::GetComponent<UCStateComponent>(Target.Get());
+	CheckNull(targetState);
+
+	const TWeakObjectPtr<UCMovementComponent> targetMovement =
+		CHelpers::GetComponent<UCMovementComponent>(Target.Get());
+	CheckNull(targetMovement);
+
+	targetMovement->UnFixCamera();
 	Target = nullptr;
+	TargetStateComp = nullptr;
+	TargetMovementComp = nullptr;
+	TargetingWidgetComp = nullptr;
 	bTargeting = false;
 }
 
@@ -96,7 +106,12 @@ void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 		if (!!Target.Get())
 		{
 			SetVisibleTargetUI(true);
-			Target->MovementComp->FixCamera();
+			TargetStateComp = CHelpers::GetComponent<UCStateComponent>(Target.Get());
+			TargetMovementComp = CHelpers::GetComponent<UCMovementComponent>(Target.Get());
+			TargetingWidgetComp = CHelpers::GetComponent<UWidgetComponent>(Target.Get());
+
+			if (!!TargetMovementComp.Get())
+				TargetMovementComp->FixCamera();
 		}
 	}
 	else
@@ -108,10 +123,10 @@ void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 
 void UCTargetingComponent::SetVisibleTargetUI(bool bVisible) const
 {
-	CheckNull(Target.Get());
-	CheckNull(Target->TargetingWidgetComp);
+	CheckNull(Target);
+	CheckNull(TargetingWidgetComp);
 
-	Target->TargetingWidgetComp->SetVisibility(bVisible);
+	TargetingWidgetComp->SetVisibility(bVisible);
 }
 
 void UCTargetingComponent::Tick_MoveFocusCoolTIme(const float InDelta)
@@ -129,10 +144,10 @@ void UCTargetingComponent::Tick_MoveFocusCoolTIme(const float InDelta)
 
 void UCTargetingComponent::Tick_Targeting()
 {
-	CheckNull(Target.Get());
-	CheckNull(Target->StateComp);
+	CheckNull(Target);
+	CheckNull(TargetStateComp);
 	
-	if (false == Target->StateComp->IsDeadMode() &&
+	if (false == TargetStateComp->IsDeadMode() &&
 		!!(Owner->GetDistanceTo(Target.Get()) <= TraceDistance))
 	{
 		if (nullptr == Controller.Get())

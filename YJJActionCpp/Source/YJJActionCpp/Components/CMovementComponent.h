@@ -4,6 +4,7 @@
 #include "CMovementComponent.generated.h"
 
 class ACCommonCharacter;
+class UCStateComponent;
 
 UENUM()
 enum class ESpeedType : uint8
@@ -104,6 +105,7 @@ private:
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
+	TWeakObjectPtr<UCStateComponent> StateComp;
 	bool bCanMove = true;
 	bool bFixedCamera = false;
 };

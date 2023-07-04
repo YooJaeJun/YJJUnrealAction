@@ -1,10 +1,12 @@
 ﻿#include "Components/CWeaponComponent.h"
 #include "Global.h"
 #include "Components/CStateComponent.h"
+#include "Components/CMovementComponent.h"
 #include "Characters/CCommonCharacter.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CEquipment.h"
 #include "Weapons/CAct.h"
+#include "Weapons/CSkill.h"
 
 UCWeaponComponent::UCWeaponComponent()
 {
@@ -34,6 +36,20 @@ void UCWeaponComponent::BeginPlay()
 	}
 }
 
+void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	const TWeakObjectPtr<UCAct> act = GetAct();
+	if (!!act.Get())
+		act->Tick(DeltaTime);
+
+	const TWeakObjectPtr<UCSkill> skill = GetSkill();
+	if (!!skill.Get())
+		skill->Tick(DeltaTime);
+}
+
 void UCWeaponComponent::InputAction_Act()
 {
 	const TWeakObjectPtr<UCAct> act = GetAct();
@@ -43,11 +59,16 @@ void UCWeaponComponent::InputAction_Act()
 
 void UCWeaponComponent::InputAction_Skill_Pressed()
 {
-	CheckNull(GetSkill());
+	const TWeakObjectPtr<UCSkill> skill = GetSkill();
+	CheckNull(skill);
+	skill->Pressed();
 }
 
 void UCWeaponComponent::InputAction_Skill_Released()
 {
+	const TWeakObjectPtr<UCSkill> skill = GetSkill();
+	CheckNull(skill);
+	skill->Released();
 }
 
 void UCWeaponComponent::SetModeFromZeroIndex()
@@ -137,10 +158,11 @@ UCSkill* UCWeaponComponent::GetSkill()
 	return asset->GetSkill();
 }
 
-bool UCWeaponComponent::IsIdleStateMode() const
+bool UCWeaponComponent::IsIdleStateMode()
 {
-	CheckNullResult(Owner->StateComp, false);
-	return Owner->StateComp->IsIdleMode();
+	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+	CheckNullResult(StateComp, false);
+	return StateComp->IsIdleMode();
 }
 
 void UCWeaponComponent::SetUnarmedMode()

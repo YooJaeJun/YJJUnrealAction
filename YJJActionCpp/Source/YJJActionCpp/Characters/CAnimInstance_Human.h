@@ -6,6 +6,7 @@
 #include "CAnimInstance_Human.generated.h"
 
 class ACCommonCharacter;
+class UCStateComponent;
 
 UCLASS()
 class YJJACTIONCPP_API UCAnimInstance_Human : public UCAnimInstance_Character
@@ -41,4 +42,5 @@ public:
 
 private:
 	TWeakObjectPtr<UCWeaponComponent> WeaponComp;
+	TWeakObjectPtr<UCStateComponent> StateComp;
 };

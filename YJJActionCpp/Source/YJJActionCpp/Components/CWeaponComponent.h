@@ -9,8 +9,12 @@ class ACCommonCharacter;
 class ACAttachment;
 class UCEquipment;
 class UCAct;
+class UCStateComponent;
+class UCMovementComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, const EWeaponType, InPrevType, const EWeaponType, InNewType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, 
+	const EWeaponType, InPrevType, 
+	const EWeaponType, InNewType);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCWeaponComponent : public UActorComponent
@@ -22,6 +26,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
 	void InputAction_Act();
@@ -45,7 +52,7 @@ public:
 	FORCEINLINE constexpr EWeaponType GetType() const { return Type; }
 	FORCEINLINE constexpr EWeaponType GetPrevType() const { return PrevType; }
 
-	bool IsIdleStateMode() const;
+	bool IsIdleStateMode();
 
 	void SetUnarmedMode();
 	void SetSwordMode();
@@ -89,4 +96,6 @@ public:
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TMap<EWeaponType, TWeakObjectPtr<UCWeaponAsset>> DataAssetMap;
+	TWeakObjectPtr<UCStateComponent> StateComp;
+	TWeakObjectPtr<UCMovementComponent> MovementComp;
 };

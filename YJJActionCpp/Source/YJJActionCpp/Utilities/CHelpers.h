@@ -42,8 +42,12 @@ public:
 	static int32 Npos() { return -1; }
 
 	template<typename T>
-	static void CreateComponent(AActor* InActor, T** OutComponent, const FName InName, 
-		USceneComponent* InParent = nullptr, const FName InSocketName = NAME_None)
+	static void CreateComponent(
+		AActor* InActor, 
+		T** OutComponent, 
+		const FName InName, 
+		USceneComponent* InParent = nullptr, 
+		const FName InSocketName = NAME_None)
 	{
 		*OutComponent = InActor->CreateDefaultSubobject<T>(InName);
 

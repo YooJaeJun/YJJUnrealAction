@@ -1,10 +1,14 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/WidgetComponent.h"
 #include "CTargetingComponent.generated.h"
 
 class ACCommonCharacter;
 class AController;
+class UCStateComponent;
+class UCMovementComponent;
+class UWidgetComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCTargetingComponent : public UActorComponent
@@ -61,4 +65,7 @@ private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<ACCommonCharacter> Target;
 	TWeakObjectPtr<AController> Controller;
+	TWeakObjectPtr<UCStateComponent> TargetStateComp;
+	TWeakObjectPtr<UCMovementComponent> TargetMovementComp;
+	TWeakObjectPtr<UWidgetComponent> TargetingWidgetComp;
 };

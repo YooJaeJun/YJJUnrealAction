@@ -11,6 +11,7 @@
 
 void UCSkill_Sword::Pressed()
 {
+	CheckNull(StateComp);
 	CheckFalse(StateComp->IsIdleMode());
 	CheckTrue(StateComp->IsSkillMode());
 
@@ -27,7 +28,7 @@ void UCSkill_Sword::Pressed()
 void UCSkill_Sword::Begin_Skill_Implementation()
 {
 	Super::Begin_Skill_Implementation();
-
+	CheckNull(Attachment);
 	Attachment->OnAttachmentBeginOverlap.Remove(Act.Get(), "OnAttachmentBeginOverlap");
 	Attachment->OnAttachmentBeginOverlap.AddDynamic(this, &UCSkill_Sword::OnAttachmentBeginOverlap);
 
@@ -151,7 +152,6 @@ void UCSkill_Sword::Tick_Implementation(float InDeltaTime)
 
 		return;
 	}
-
 	const FVector direction = (End - Start).GetSafeNormal2D();
 	Owner->AddActorWorldOffset(direction * Speed, true);
 }

@@ -22,13 +22,13 @@ void UCZoomComponent::BeginPlay()
 	{
 		Zooming = OwnerPlayer->GetSpringArm()->TargetArmLength;
 		TargetingComp = OwnerPlayer->GetTargetingComp();
-		MovementComp = OwnerPlayer->MovementComp;
+		MovementComp = CHelpers::GetComponent<UCMovementComponent>(OwnerPlayer.Get());;
 	}
 	else if (!!OwnerAnimal.Get())
 	{
 		Zooming = OwnerAnimal->GetSpringArm()->TargetArmLength;
 		TargetingComp = OwnerAnimal->GetTargetingComp();
-		MovementComp = OwnerAnimal->MovementComp;
+		MovementComp = CHelpers::GetComponent<UCMovementComponent>(OwnerAnimal.Get());
 	}
 }
 

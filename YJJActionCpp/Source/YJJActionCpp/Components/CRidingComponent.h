@@ -129,18 +129,6 @@ public:
 
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		ACCommonCharacter* Rider;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCWeaponComponent* RiderWeaponComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCUserWidget_HUD* Hud;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		ERidingState RidingState;
-
 	UPROPERTY(VisibleAnywhere, Category = "Settings")
 		USkeletalMeshComponent* Mesh;
 
@@ -155,6 +143,24 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		UCStateComponent* StateComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		UCUserWidget_HUD* Hud;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		ERidingState RidingState;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		ACCommonCharacter* Rider;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		UCMovementComponent* RiderMovementComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		UCStateComponent* RiderStateComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		UCWeaponComponent* RiderWeaponComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		USceneComponent* RidingPoints[static_cast<uint8>(ERidingPoint::Max)];

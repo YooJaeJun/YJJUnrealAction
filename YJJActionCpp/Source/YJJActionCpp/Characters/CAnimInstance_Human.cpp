@@ -13,6 +13,8 @@ void UCAnimInstance_Human::NativeBeginPlay()
 	WeaponComp = CHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
 	CheckNull(WeaponComp);
 	WeaponComp->OnWeaponTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Human::OnWeaponTypeChanged);
+
+	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
 }
 
 void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
@@ -29,7 +31,7 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 
 		if (!!animal)
 		{
-			bRidingFalling = animal->StateComp->IsFallMode();
+			bRidingFalling = StateComp->IsFallMode();
 
 			Speed = animal->GetVelocity().Size();
 

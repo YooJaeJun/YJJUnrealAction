@@ -1,6 +1,5 @@
 #include "Weapons/Acts/CAct_Combo.h"
 #include "Global.h"
-#include "GameFramework/Character.h"
 #include "Components/CStateComponent.h"
 #include "Characters/CCommonCharacter.h"
 #include "Components/CCharacterInfoComponent.h"
@@ -47,7 +46,12 @@ void UCAct_Combo::OnAttachmentBeginOverlap(
 	ACCommonCharacter* InOther)
 {
 	CheckNull(InOther);
-	CheckTrue(InAttacker->CharacterInfoComp->IsSameGroup(InOther));
+
+	const TWeakObjectPtr<UCCharacterInfoComponent> characterInfoComp = 
+		CHelpers::GetComponent<UCCharacterInfoComponent>(InAttacker);
+
+	CheckNull(characterInfoComp);
+	CheckTrue(characterInfoComp->IsSameGroup(InOther));
 
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
 

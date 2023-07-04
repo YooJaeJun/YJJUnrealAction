@@ -9,6 +9,12 @@ UCFlyComponent::UCFlyComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	Owner = Cast<ACCommonCharacter>(GetOwner());
+
+	if (!!Owner.Get())
+	{
+		StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+		MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+	}
 }
 
 void UCFlyComponent::BeginPlay()
@@ -23,10 +29,10 @@ void UCFlyComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 void UCFlyComponent::InputAxis_MoveForward(const float InAxis)
 {
-	CheckNull(Owner->MovementComp);
+	CheckNull(MovementComp);
 	//CheckFalse(Owner->MovementComp->CanMove(InAxis));
 
-	if (Owner->MovementComp->CanMove(InAxis))
+	if (MovementComp->CanMove(InAxis))
 	{
 		const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 		const FVector direction = FQuat(rotator).GetForwardVector();
@@ -45,12 +51,12 @@ void UCFlyComponent::InputAxis_MoveForward(const float InAxis)
 
 void UCFlyComponent::InputAxis_MoveRight(const float InAxis)
 {
-	CheckNull(Owner->MovementComp);
+	CheckNull(MovementComp);
 	//CheckFalse(Owner->MovementComp->CanMove(InAxis));
 
 	Right = InAxis;
 
-	if (Owner->MovementComp->CanMove(InAxis))
+	if (MovementComp->CanMove(InAxis))
 	{
 		const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 		const FVector direction = FQuat(rotator).GetRightVector();
@@ -88,26 +94,26 @@ void UCFlyComponent::InputAxis_MoveRight(const float InAxis)
 
 void UCFlyComponent::InputAxis_HorizontalLook(const float InAxis)
 {
-	CheckNull(Owner->MovementComp);
-	CheckTrue(Owner->MovementComp->GetFixedCamera());
+	CheckNull(MovementComp);
+	CheckTrue(MovementComp->GetFixedCamera());
 
 	Owner->AddControllerYawInput(InAxis * HorizontalLook * GetWorld()->GetDeltaSeconds());
 }
 
 void UCFlyComponent::InputAxis_VerticalLook(const float InAxis)
 {
-	CheckNull(Owner->MovementComp);
-	CheckTrue(Owner->MovementComp->GetFixedCamera());
+	CheckNull(MovementComp);
+	CheckTrue(MovementComp->GetFixedCamera());
 
 	Owner->AddControllerPitchInput(InAxis * VerticalLook * GetWorld()->GetDeltaSeconds());
 }
 
 void UCFlyComponent::InputAxis_FlyUp(const float InAxis)
 {
-	CheckNull(Owner->MovementComp);
-	CheckFalse(Owner->MovementComp->CanMove(InAxis));
+	CheckNull(MovementComp);
+	CheckFalse(MovementComp->CanMove(InAxis));
 
-	if (!!Owner->MovementComp->CanMove())
+	if (!!MovementComp->CanMove())
 	{
 		UpFactor = (InAxis > 0.0f) ? 20.0f : -50.0f;
 
@@ -149,38 +155,38 @@ void UCFlyComponent::InputAxis_FlyUp(const float InAxis)
 
 void UCFlyComponent::InputAction_Jump()
 {
-	CheckNull(Owner->StateComp);
+	CheckNull(StateComp);
 
 	if (IsFlying())
 		LandOn();
 	else
 	{
-		CheckNull(Owner->MovementComp);
-		CheckFalse(Owner->MovementComp->CanMove());
+		CheckNull(MovementComp);
+		CheckFalse(MovementComp->CanMove());
 
 		Owner->Jump();
-		Owner->StateComp->SetFallMode();
-		Owner->MovementComp->SetGravity(0.0f);
+		StateComp->SetFallMode();
+		MovementComp->SetGravity(0.0f);
 
 		FTransform landEffectTransform = Owner->GetActorTransform();
-		landEffectTransform.SetScale3D(landEffectTransform.GetScale3D() *Owner->LandEffectScaleFactor);
+		landEffectTransform.SetScale3D(landEffectTransform.GetScale3D() *Owner->GetLandEffectScaleFactor());
 
-		CHelpers::PlayEffect(GetWorld(), Owner->LandEffect, landEffectTransform);
+		CHelpers::PlayEffect(GetWorld(), Owner->GetLandEffect(), landEffectTransform);
 	}
 }
 
 bool UCFlyComponent::IsFlying() const
 {
 	CheckNullResult(Owner, false);
-	CheckNullResult(Owner->StateComp, false);
+	CheckNullResult(StateComp, false);
 
-	return Owner->StateComp->IsFallMode();
+	return StateComp->IsFallMode();
 }
 
 void UCFlyComponent::LandOn() const
 {
-	CheckNull(Owner->StateComp);
-	CheckNull(Owner->MovementComp);
+	CheckNull(StateComp);
+	CheckNull(MovementComp);
 
 	const FVector start = Owner->GetActorLocation();
 
@@ -212,8 +218,8 @@ void UCFlyComponent::LandOn() const
 
 	CheckFalse(bHit);
 
-	Owner->StateComp->SetFallMode();
-	Owner->MovementComp->SetGravity(1.0f);
+	StateComp->SetFallMode();
+	MovementComp->SetGravity(1.0f);
 
 	const FVector targetLocation =
 		hitResult.ImpactPoint + 

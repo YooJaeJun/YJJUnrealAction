@@ -12,7 +12,7 @@ class UWorld;
 class UCMovementComponent;
 class UCStateComponent;
 
-UCLASS()
+UCLASS(Abstract)
 class YJJACTIONCPP_API UCAct : public UObject
 {
 	GENERATED_BODY()
@@ -26,6 +26,8 @@ public:
 		TWeakObjectPtr<UCEquipment> InEquipment,
 		const TArray<FActData>& InActDatas,
 		const TArray<FHitData>& InHitDatas);
+
+	virtual void Tick(float InDeltaTime) {}
 
 public:
 	UFUNCTION()

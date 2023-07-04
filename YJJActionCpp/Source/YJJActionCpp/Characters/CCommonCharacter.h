@@ -101,10 +101,20 @@ public:
 	void SetInteractor(ACCommonCharacter* InCharacter);
 	FORCEINLINE constexpr ACCommonCharacter* GetInteractor() const { return Interactor; };
 
+	FORCEINLINE constexpr UFXSystemAsset* GetLandEffect() const { return LandEffect; }
+	FORCEINLINE constexpr float GetLandEffectScaleFactor() const { return LandEffectScaleFactor; }
+
 public:
 	void InputAction_Interact();
 
 public:
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		FMount OnMount;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		FUnmount OnUnmount;
+
+protected:
 	UPROPERTY(VisibleAnywhere)
 		UCStateComponent* StateComp;
 
@@ -141,13 +151,6 @@ public:
 		TSubclassOf<UCUserWidget_Custom> TargetingWidget;
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		FMount OnMount;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		FUnmount OnUnmount;
-
-
 	UPROPERTY(EditDefaultsOnly, Category = "Land")
 		USoundBase* LandSound;
 
@@ -157,7 +160,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Land")
 		float LandEffectScaleFactor = 1.0f;
 
-protected:
+
 	UPROPERTY(EditAnywhere, Category = "Color")
 		FLinearColor OriginColor = FLinearColor::White;
 

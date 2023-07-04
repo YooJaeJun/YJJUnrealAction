@@ -42,8 +42,7 @@ void UCMontagesComponent::BeginPlay()
 
 void UCMontagesComponent::PlayAvoidAnim()
 {
-	const TWeakObjectPtr<UInputComponent> input = 
-		Cast<UInputComponent>(Owner->GetComponentByClass(UInputComponent::StaticClass()));
+	const TWeakObjectPtr<UInputComponent> input = CHelpers::GetComponent<UInputComponent>(Owner.Get());
 
 	PlayAnimMontage(EStateType::Avoid, input);
 }

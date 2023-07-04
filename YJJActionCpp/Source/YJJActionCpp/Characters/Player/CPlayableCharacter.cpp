@@ -120,6 +120,8 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
 	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Act);
+	PlayerInputComponent->BindAction("Skill", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Skill_Pressed);
+	PlayerInputComponent->BindAction("Skill", EInputEvent::IE_Released, WeaponComp, &UCWeaponComponent::InputAction_Skill_Released);
 }
 
 void ACPlayableCharacter::Avoid()

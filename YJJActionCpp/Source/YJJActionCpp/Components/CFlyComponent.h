@@ -1,6 +1,8 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/CMovementComponent.h"
+#include "Components/CStateComponent.h"
 #include "CFlyComponent.generated.h"
 
 class ACCommonCharacter;
@@ -54,4 +56,6 @@ private:
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
+	TWeakObjectPtr<UCStateComponent> StateComp;
+	TWeakObjectPtr<UCMovementComponent> MovementComp;
 };

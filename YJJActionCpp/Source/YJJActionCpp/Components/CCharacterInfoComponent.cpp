@@ -19,7 +19,11 @@ void UCCharacterInfoComponent::BeginPlay()
 
 bool UCCharacterInfoComponent::IsSameGroup(TWeakObjectPtr<ACCommonCharacter> InOther) const
 {
-	return GetCharacterGroup() == InOther->CharacterInfoComp->GetCharacterGroup();
+	const TWeakObjectPtr<UCCharacterInfoComponent> characterInfoComp = 
+		CHelpers::GetComponent<UCCharacterInfoComponent>(InOther.Get());
+	CheckNullResult(characterInfoComp, false);
+
+	return GetCharacterGroup() == characterInfoComp->GetCharacterGroup();
 }
 
 void UCCharacterInfoComponent::SetCharacterType(const ECharacterType InNewType)

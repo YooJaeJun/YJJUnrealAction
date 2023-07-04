@@ -10,7 +10,9 @@ UCWeaponAsset::UCWeaponAsset()
 {
 	AttachmentClass = ACAttachment::StaticClass();
 	EquipmentClass = UCEquipment::StaticClass();
-	ActClass = UCAct::StaticClass();
+	// Abstract 클래스는 기본값 초기화 x
+	// ActClass = UCAct::StaticClass();
+	// SkillClass = UCSkill::StaticClass();
 }
 
 void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
@@ -70,6 +72,8 @@ const UCWeaponAsset& UCWeaponAsset::DeepCopy(
 	ActDatas = InOther.ActDatas;
 	Act = InOther.GetAct();
 	HitDatas = InOther.HitDatas;
+	SkillClass = InOther.SkillClass;
+	Skill = InOther.Skill;
 
 	BeginPlay(Owner.Get());
 

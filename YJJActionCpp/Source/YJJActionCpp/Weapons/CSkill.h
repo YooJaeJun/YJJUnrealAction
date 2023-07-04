@@ -9,7 +9,7 @@ class UCAct;
 class UCStateComponent;
 class UCMovementComponent;
 
-UCLASS()
+UCLASS(Abstract)
 class YJJACTIONCPP_API UCSkill : public UObject
 {
 	GENERATED_BODY()
