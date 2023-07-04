@@ -54,20 +54,20 @@ public:
 
 	float GetRatio(const float InMaxValue, const float InCurValue) const;
 	float GetExpRatio() const;
-	FORCEINLINE float GetCurExp() const { return CurExp; }
-	FORCEINLINE float GetMaxExp() const { return CurStat.MaxExp; }
+	FORCEINLINE constexpr float GetCurExp() const { return CurExp; }
+	FORCEINLINE constexpr float GetMaxExp() const { return CurStat.MaxExp; }
 	float GetHpRatio() const;
-	FORCEINLINE float GetCurHp() const { return CurHp; }
-	FORCEINLINE float GetMaxHp() const { return CurStat.MaxHp; }
+	FORCEINLINE constexpr float GetCurHp() const { return CurHp; }
+	FORCEINLINE constexpr float GetMaxHp() const { return CurStat.MaxHp; }
 	float GetStaminaRatio() const;
-	FORCEINLINE float GetCurStamina() const { return CurStamina; }
-	FORCEINLINE float GetMaxStamina() const { return CurStat.MaxStamina; }
+	FORCEINLINE constexpr float GetCurStamina() const { return CurStamina; }
+	FORCEINLINE constexpr float GetMaxStamina() const { return CurStat.MaxStamina; }
 	float GetManaRatio() const;
-	FORCEINLINE float GetCurMana() const { return CurMana; }
-	FORCEINLINE float GetMaxMana() const { return CurStat.MaxMana; }
-	FORCEINLINE float GetAttack() const { return CurStat.Attack; }
-	FORCEINLINE float GetHealth() const { return CurHp; }
-	FORCEINLINE bool IsDead() const { return CurHp <= 0.0f; }
+	FORCEINLINE constexpr float GetCurMana() const { return CurMana; }
+	FORCEINLINE constexpr float GetMaxMana() const { return CurStat.MaxMana; }
+	FORCEINLINE constexpr float GetAttack() const { return CurStat.Attack; }
+	FORCEINLINE constexpr float GetHealth() const { return CurHp; }
+	FORCEINLINE constexpr bool IsDead() const { return CurHp <= 0.0f; }
 
 	void Damage(const float InAmount);
 

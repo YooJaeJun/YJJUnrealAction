@@ -11,10 +11,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttachmentBeginCollision);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttachmentEndCollision);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAttachmentBeginOverlap,
-	ACCommonCharacter*, InAttacker, AActor*, InAttackCauser, ACCommonCharacter*, InOther);
+	ACCommonCharacter*, InAttacker, 
+		AActor*, InAttackCauser,
+		ACCommonCharacter*, InOther);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAttachmentEndOverlap,
-	ACCommonCharacter*, InAttacker, ACCommonCharacter*, InOther);
+	ACCommonCharacter*, InAttacker,
+		ACCommonCharacter*, InOther);
 
 UCLASS()
 class YJJACTIONCPP_API ACAttachment : public AActor

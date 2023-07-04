@@ -49,8 +49,8 @@ private:
 		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
 
 public:
-	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
-	FORCEINLINE UCTargetingComponent* GetTargetingComp() const { return TargetingComp; }
+	FORCEINLINE constexpr USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	FORCEINLINE constexpr UCTargetingComponent* GetTargetingComp() const { return TargetingComp; }
 
 private:
 	UPROPERTY(VisibleAnywhere)

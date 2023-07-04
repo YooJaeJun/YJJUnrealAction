@@ -42,7 +42,7 @@ void UCAct_Combo::End_Act()
 }
 
 void UCAct_Combo::OnAttachmentBeginOverlap(
-	ACCommonCharacter* InAttacker, 
+	ACCommonCharacter* InAttacker,
 	AActor* InAttackCauser,
 	ACCommonCharacter* InOther)
 {
@@ -51,7 +51,7 @@ void UCAct_Combo::OnAttachmentBeginOverlap(
 
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
 
-	for (const ACCommonCharacter* const hitted : Hitted)
+	for (const TWeakObjectPtr<ACCommonCharacter> hitted : Hitted)
 		CheckTrue(hitted == InOther);
 
 	Hitted.AddUnique(InOther);
@@ -67,7 +67,7 @@ void UCAct_Combo::OnAttachmentEndCollision()
 	float angle = -1.0f;
 	TWeakObjectPtr<ACCommonCharacter> candidate = nullptr;
 
-	for (ACCommonCharacter* const hitted : Hitted)
+	for (const TWeakObjectPtr<ACCommonCharacter> hitted : Hitted)
 	{
 		FVector direction = hitted->GetActorLocation() - Owner->GetActorLocation();
 		direction = direction.GetSafeNormal2D();

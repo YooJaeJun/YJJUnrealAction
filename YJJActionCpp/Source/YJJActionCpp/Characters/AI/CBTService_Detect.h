@@ -12,8 +12,10 @@ public:
 	UCBTService_Detect();
 
 protected:
-	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, 
-		uint8* NodeMemory, float DeltaSeconds) override;
+	virtual void TickNode(
+		UBehaviorTreeComponent& OwnerComp, 
+		uint8* NodeMemory, 
+		float DeltaSeconds) override;
 
 private:
 	const float traceDistance = 1000.0f;

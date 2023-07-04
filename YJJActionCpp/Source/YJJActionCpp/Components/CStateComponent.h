@@ -42,6 +42,8 @@ public:
 	void SetHitMode();
 	void SetDeadMode();
 	void SetRiseMode();
+	FORCEINLINE void OnSkillMode() { bInSkillMode = true; }
+	FORCEINLINE void OffSkillMode() { bInSkillMode = false; }
 
 	bool CanAttack() const;
 	void GoBack();
@@ -50,16 +52,17 @@ private:
 	void ChangeType(const EStateType InType);
 
 public:
-	FORCEINLINE EStateType GetCurMode() const { return CurType; }
-	FORCEINLINE EStateType GetPrevMode() const { return PrevType; }
-	FORCEINLINE bool IsIdleMode() const { return CurType == EStateType::Idle; }
-	FORCEINLINE bool IsFallMode() const { return CurType == EStateType::Fall; }
-	FORCEINLINE bool IsAvoidMode() const { return CurType == EStateType::Avoid; }
-	FORCEINLINE bool IsEquipMode() const { return CurType == EStateType::Equip; }
-	FORCEINLINE bool IsActMode() const { return CurType == EStateType::Act; }
-	FORCEINLINE bool IsHitMode() const { return CurType == EStateType::Hit; }
-	FORCEINLINE bool IsDeadMode() const { return CurType == EStateType::Dead; }
-	FORCEINLINE bool IsRiseMode() const { return CurType == EStateType::Rise; }
+	FORCEINLINE constexpr EStateType GetCurMode() const { return CurType; }
+	FORCEINLINE constexpr EStateType GetPrevMode() const { return PrevType; }
+	FORCEINLINE constexpr bool IsIdleMode() const { return CurType == EStateType::Idle; }
+	FORCEINLINE constexpr bool IsFallMode() const { return CurType == EStateType::Fall; }
+	FORCEINLINE constexpr bool IsAvoidMode() const { return CurType == EStateType::Avoid; }
+	FORCEINLINE constexpr bool IsEquipMode() const { return CurType == EStateType::Equip; }
+	FORCEINLINE constexpr bool IsActMode() const { return CurType == EStateType::Act; }
+	FORCEINLINE constexpr bool IsHitMode() const { return CurType == EStateType::Hit; }
+	FORCEINLINE constexpr bool IsDeadMode() const { return CurType == EStateType::Dead; }
+	FORCEINLINE constexpr bool IsRiseMode() const { return CurType == EStateType::Rise; }
+	FORCEINLINE constexpr bool IsSkillMode() const { return bInSkillMode; }
 
 private:
 	UPROPERTY(EditAnyWhere, Category = "Settings")
@@ -73,4 +76,5 @@ public:
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
+	bool bInSkillMode = false;
 };

@@ -29,8 +29,8 @@ public:
 	FORCEINLINE void SetCharacterName(const FName& InNewName) { CurName = InNewName; }
 	FORCEINLINE void SetBodyColor(const FLinearColor& InNewColor) { CurBodyColor = InNewColor; }
 
-	FORCEINLINE int32 GetCharacterType() const { return CurInfo.Type; }
-	FORCEINLINE int32 GetCharacterGroup() const { return CurInfo.Group; }
+	FORCEINLINE constexpr int32 GetCharacterType() const { return CurInfo.Type; }
+	FORCEINLINE constexpr int32 GetCharacterGroup() const { return CurInfo.Group; }
 	FORCEINLINE FName GetCharacterName() const { return CurInfo.Name; }
 
 public:

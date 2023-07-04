@@ -76,7 +76,7 @@ public:
 	virtual void End_Rise() override;
 
 	FORCEINLINE void SetbRiding(const bool InbRiding) { bRiding = InbRiding; }
-	FORCEINLINE const bool GetbRiding() const { return bRiding; }
+	FORCEINLINE constexpr bool GetbRiding() const { return bRiding; }
 
 private:
 	UFUNCTION()
@@ -99,7 +99,7 @@ public:
 
 public:
 	void SetInteractor(ACCommonCharacter* InCharacter);
-	FORCEINLINE ACCommonCharacter* GetInteractor() const { return Interactor; };
+	FORCEINLINE constexpr ACCommonCharacter* GetInteractor() const { return Interactor; };
 
 public:
 	void InputAction_Interact();

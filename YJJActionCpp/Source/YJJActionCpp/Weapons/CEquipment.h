@@ -17,7 +17,7 @@ class YJJACTIONCPP_API UCEquipment : public UObject
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay(ACCommonCharacter* InOwner, const FEquipmentData& InData);
+	virtual void BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEquipmentData& InData);
 
 public:
 	UFUNCTION(BlueprintNativeEvent)
@@ -37,8 +37,8 @@ public:
 	virtual void Unequip_Implementation();
 
 public:
-	bool GetBeginEquip() const { return bBeginEquip; }
-	bool GetEquipped() const { return bEquipped; }
+	constexpr bool GetBeginEquip() const { return bBeginEquip; }
+	constexpr bool GetEquipped() const { return bEquipped; }
 
 public:
 	FEquipmentBeginEquip OnEquipmentBeginEquip;

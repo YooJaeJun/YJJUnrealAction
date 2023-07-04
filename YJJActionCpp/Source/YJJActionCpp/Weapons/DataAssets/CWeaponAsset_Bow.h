@@ -16,14 +16,5 @@ class YJJACTIONCPP_API UCWeaponAsset_Bow : public UCWeaponAsset
 public:
 	UCWeaponAsset_Bow();
 
-	virtual void BeginPlay(ACCommonCharacter* InOwner) override;
-
-private:
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<ACAttachment> SkillClass;
-
-	enum { SkillMax = 0 };
-
-	UPROPERTY(EditAnywhere)
-		TArray<ACAttachment*> Skills;
+	virtual void BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner) override;
 };

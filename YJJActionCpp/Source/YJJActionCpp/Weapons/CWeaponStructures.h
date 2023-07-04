@@ -95,7 +95,7 @@ struct FHitData
 public:
 	void SendDamage(const TWeakObjectPtr<ACCommonCharacter> InAttacker, 
 		const TWeakObjectPtr<AActor> InAttackCauser,
-		const TWeakObjectPtr<ACCommonCharacter> InOther);
+		const TWeakObjectPtr<ACCommonCharacter> InOther) const;
 	void PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner) const;
 	void PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const;
 	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const;

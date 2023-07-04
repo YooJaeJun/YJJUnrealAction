@@ -20,14 +20,12 @@ class YJJACTIONCPP_API UCAct : public UObject
 public:
 	UCAct();
 
-	virtual void BeginPlay
-	(
-		ACCommonCharacter* InOwner,
-		ACAttachment* InAttachment,
-		UCEquipment* InEquipment,
+	virtual void BeginPlay(
+		TWeakObjectPtr<ACCommonCharacter> InOwner,
+		TWeakObjectPtr<ACAttachment> InAttachment,
+		TWeakObjectPtr<UCEquipment> InEquipment,
 		const TArray<FActData>& InActDatas,
-		const TArray<FHitData>& InHitDatas
-	);
+		const TArray<FHitData>& InHitDatas);
 
 public:
 	UFUNCTION()
@@ -37,11 +35,14 @@ public:
 		virtual void OnAttachmentEndCollision() {}
 
 	UFUNCTION()
-		virtual void OnAttachmentBeginOverlap(ACCommonCharacter* InAttacker, 
-			AActor* InAttackCauser, ACCommonCharacter* InOther) {}
+		virtual void OnAttachmentBeginOverlap(
+			ACCommonCharacter* InAttacker,
+			AActor* InAttackCauser,
+			ACCommonCharacter* InOther) {}
 
 	UFUNCTION()
-		virtual void OnAttachmentEndOverlap(ACCommonCharacter* InAttacker,
+		virtual void OnAttachmentEndOverlap(
+			ACCommonCharacter* InAttacker,
 			ACCommonCharacter* InOther) {}
 
 public:

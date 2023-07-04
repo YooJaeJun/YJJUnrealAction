@@ -10,9 +10,10 @@ UCAct::UCAct()
 {
 }
 
-void UCAct::BeginPlay(ACCommonCharacter* InOwner, 
-	ACAttachment* InAttachment, 
-	UCEquipment* InEquipment, 
+void UCAct::BeginPlay(
+	TWeakObjectPtr<ACCommonCharacter> InOwner,
+	TWeakObjectPtr<ACAttachment> InAttachment,
+	TWeakObjectPtr<UCEquipment> InEquipment,
 	const TArray<FActData>& InActDatas, 
 	const TArray<FHitData>& InHitDatas)
 {

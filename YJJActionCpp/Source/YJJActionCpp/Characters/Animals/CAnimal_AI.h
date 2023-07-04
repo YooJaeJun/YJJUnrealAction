@@ -49,18 +49,18 @@ public:
 	void SetZoomMinRange(const float InMinRange) const;
 	void SetZoomMaxRange(const float InMaxRange) const;
 
-	FORCEINLINE UBoxComponent* GetInteractionCollision() const { return InteractionCollision; }
-	FORCEINLINE USceneComponent* GetMountLeftPoint() const { return MountLeftPoint; }
-	FORCEINLINE USceneComponent* GetMountRightPoint() const { return MountRightPoint; }
-	FORCEINLINE USceneComponent* GetMountBackPoint() const { return MountBackPoint; }
-	FORCEINLINE USceneComponent* GetRiderPoint() const { return RiderPoint; }
-	FORCEINLINE USceneComponent* GetUnmountPoint() const { return UnmountPoint; }
-	FORCEINLINE USceneComponent* GetEyePoint() const { return EyePoint; }
+	FORCEINLINE constexpr UBoxComponent* GetInteractionCollision() const { return InteractionCollision; }
+	FORCEINLINE constexpr USceneComponent* GetMountLeftPoint() const { return MountLeftPoint; }
+	FORCEINLINE constexpr USceneComponent* GetMountRightPoint() const { return MountRightPoint; }
+	FORCEINLINE constexpr USceneComponent* GetMountBackPoint() const { return MountBackPoint; }
+	FORCEINLINE constexpr USceneComponent* GetRiderPoint() const { return RiderPoint; }
+	FORCEINLINE constexpr USceneComponent* GetUnmountPoint() const { return UnmountPoint; }
+	FORCEINLINE constexpr USceneComponent* GetEyePoint() const { return EyePoint; }
 
-	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
-	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
-	FORCEINLINE UCTargetingComponent* GetTargetingComp() const { return TargetingComp; }
-	FORCEINLINE UCZoomComponent* GetZoomComp() const { return ZoomComp; }
+	FORCEINLINE constexpr USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	FORCEINLINE constexpr UCameraComponent* GetCamera() const { return Camera; }
+	FORCEINLINE constexpr UCTargetingComponent* GetTargetingComp() const { return TargetingComp; }
+	FORCEINLINE constexpr UCZoomComponent* GetZoomComp() const { return ZoomComp; }
 
 protected:
 	UPROPERTY(VisibleAnywhere)

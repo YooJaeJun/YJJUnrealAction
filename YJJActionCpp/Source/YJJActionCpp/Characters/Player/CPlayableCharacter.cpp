@@ -132,14 +132,11 @@ void ACPlayableCharacter::Hit()
 	CurHitType = Damage.Event.HitData.AttackType;
 
 	Super::Hit();
-
-	if (StateComp->IsActMode())
-		End_Hit();
 }
 
 void ACPlayableCharacter::End_Avoid()
 {
-	StateComp->GoBack();
+	StateComp->SetIdleMode();
 }
 
 void ACPlayableCharacter::End_Hit()
@@ -163,7 +160,7 @@ void ACPlayableCharacter::End_Hit()
 
 void ACPlayableCharacter::End_Rise()
 {
-	StateComp->GoBack();
+	StateComp->SetIdleMode();
 }
 
 void ACPlayableCharacter::InputAction_Avoid()

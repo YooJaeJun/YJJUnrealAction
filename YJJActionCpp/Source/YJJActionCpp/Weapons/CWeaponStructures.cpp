@@ -94,8 +94,10 @@ void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& I
 
 ///////////////////////////////////////////////////////////////
 
-void FHitData::SendDamage(const TWeakObjectPtr<ACCommonCharacter> InAttacker,
-	const TWeakObjectPtr<AActor> InAttackCauser, const TWeakObjectPtr<ACCommonCharacter> InOther)
+void FHitData::SendDamage(
+	const TWeakObjectPtr<ACCommonCharacter> InAttacker,
+	const TWeakObjectPtr<AActor> InAttackCauser, 
+	const TWeakObjectPtr<ACCommonCharacter> InOther) const
 {
 	FActDamageEvent e;
 	e.HitData = *this;
@@ -113,12 +115,12 @@ void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const
 {
 	CheckTrue(FMath::IsNearlyZero(StopTime));
 
-	TArray<ACCommonCharacter*> characters;
-	for (AActor* actor : InWorld->GetCurrentLevel()->Actors)
+	TArray<TWeakObjectPtr<ACCommonCharacter>> characters;
+	for (TWeakObjectPtr<AActor> actor : InWorld->GetCurrentLevel()->Actors)
 	{
-		ACCommonCharacter* character = Cast<ACCommonCharacter>(actor);
+		const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(actor);
 
-		if (!!character)
+		if (!!character.Get())
 		{
 			character->CustomTimeDilation = 1e-3f;
 			characters.Add(character);
@@ -128,7 +130,7 @@ void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const
 	FTimerDelegate timerDelegate;
 	timerDelegate.BindLambda([=]()
 	{
-		for (ACCommonCharacter* character : characters)
+		for (const TWeakObjectPtr<ACCommonCharacter> character : characters)
 			character->CustomTimeDilation = 1;
 	});
 

@@ -5,6 +5,8 @@
 #include "CUserWidget_PlayerLevel.generated.h"
 
 class UCCharacterStatComponent;
+class UProgressBar;
+class UTextBlock;
 
 UCLASS()
 class YJJACTIONCPP_API UCUserWidget_PlayerLevel : public UCUserWidget_Custom

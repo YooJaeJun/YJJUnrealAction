@@ -23,25 +23,37 @@ void UCWeaponComponent::BeginPlay()
 		{
 			// 주석처럼 쓰면 객체 공유하게 됨
 			//UCWeaponAsset* asset = NewObject<UCWeaponAsset>(this, DataAssets[i]->GetClass(), static_cast<FName>(DataAssets[i]->GetClass()->GetName()));
+
+			// 깊은 복사로 객체 공유 막고, map에 넣어 find 용이하게 관리
 			UCWeaponAsset* asset = NewObject<UCWeaponAsset>(this, UCWeaponAsset::StaticClass());
 
-			DataAssetsCopied.Add(asset);
+			asset->DeepCopy(*DataAssets[i], Owner);
 
-			DataAssetsCopied[i]->DeepCopy(*DataAssets[i], Owner);
+			DataAssetMap.Emplace(asset->GetType(), asset);
 		}
 	}
 }
 
 void UCWeaponComponent::InputAction_Act()
 {
-	CheckNull(GetAct());
-	GetAct()->Act();
+	const TWeakObjectPtr<UCAct> act = GetAct();
+	CheckNull(act);
+	act->Act();
+}
+
+void UCWeaponComponent::InputAction_Skill_Pressed()
+{
+	CheckNull(GetSkill());
+}
+
+void UCWeaponComponent::InputAction_Skill_Released()
+{
 }
 
 void UCWeaponComponent::SetModeFromZeroIndex()
 {
-	CheckFalse(DataAssetsCopied.Num() > 0);
-	SetMode(DataAssetsCopied[0]->GetType());
+	CheckFalse(DataAssetMap.Num() > 0);
+	SetMode(DataAssetMap.begin().Key());
 }
 
 void UCWeaponComponent::SetMode(EWeaponType InType)
@@ -58,25 +70,13 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		GetEquipment()->Unequip();
 	}
 
-	const int32 index = FindType(InType);
-
-	CheckTrue(index == CHelpers::Npos());
-	CheckNull(DataAssetsCopied[index]);
-
-	const TWeakObjectPtr<UCEquipment> equipment = DataAssetsCopied[index]->GetEquipment();
+	const TWeakObjectPtr<UCWeaponAsset> asset = *DataAssetMap.Find(InType);
+	CheckNull(asset);
+	const TWeakObjectPtr<UCEquipment> equipment = asset->GetEquipment();
 	CheckNull(equipment);
 
 	equipment->Equip();
 	ChangeType(InType);
-}
-
-int32 UCWeaponComponent::FindType(const EWeaponType InType)
-{
-	for (int32 i = 0; i < DataAssetsCopied.Num(); i++)
-		if (DataAssetsCopied[i]->GetType() == InType)
-			return i;
-
-	return -1;
 }
 
 void UCWeaponComponent::CancelAct()
@@ -94,34 +94,47 @@ void UCWeaponComponent::ChangeType(EWeaponType InType)
 		OnWeaponTypeChanged.Broadcast(PrevType, InType);
 }
 
-ACAttachment* UCWeaponComponent::GetAttachment()
+TWeakObjectPtr<UCWeaponAsset> UCWeaponComponent::GetWeaponAsset()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
 
-	const int32 weaponType = FindType(Type);
-	CheckTrueResult(weaponType == CHelpers::Npos(), nullptr);
+	const TWeakObjectPtr<UCWeaponAsset>* weaponAsset = DataAssetMap.Find(Type);
+	CheckNullResult(*weaponAsset, nullptr);
 
-	return DataAssetsCopied[weaponType]->GetAttachment();
+	const TWeakObjectPtr<UCWeaponAsset> ret = *weaponAsset;
+	return ret;
+}
+
+ACAttachment* UCWeaponComponent::GetAttachment()
+{
+	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
+	CheckNullResult(asset, nullptr);
+
+	return asset->GetAttachment();
 }
 
 UCEquipment* UCWeaponComponent::GetEquipment()
 {
-	CheckTrueResult(IsUnarmedMode(), nullptr);
+	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
+	CheckNullResult(asset, nullptr);
 
-	const int32 weaponType = FindType(Type);
-	CheckTrueResult(weaponType == CHelpers::Npos(), nullptr);
-
-	return DataAssetsCopied[weaponType]->GetEquipment();
+	return asset->GetEquipment();
 }
 
 UCAct* UCWeaponComponent::GetAct()
 {
-	CheckTrueResult(IsUnarmedMode(), nullptr);
+	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
+	CheckNullResult(asset, nullptr);
 
-	const int32 weaponType = FindType(Type);
-	CheckTrueResult(weaponType == CHelpers::Npos(), nullptr);
+	return asset->GetAct();
+}
 
-	return DataAssetsCopied[weaponType]->GetAct();
+UCSkill* UCWeaponComponent::GetSkill()
+{
+	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
+	CheckNullResult(asset, nullptr);
+
+	return asset->GetSkill();
 }
 
 bool UCWeaponComponent::IsIdleStateMode() const

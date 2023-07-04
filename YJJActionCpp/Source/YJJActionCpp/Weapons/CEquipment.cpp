@@ -4,13 +4,13 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
 
-void UCEquipment::BeginPlay(ACCommonCharacter* InOwner, const FEquipmentData& InData)
+void UCEquipment::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEquipmentData& InData)
 {
 	Owner = InOwner;
 	Data = InData;
 
-	MovementComp = CHelpers::GetComponent<UCMovementComponent>(InOwner);
-	StateComp = CHelpers::GetComponent<UCStateComponent>(InOwner);
+	MovementComp = CHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
+	StateComp = CHelpers::GetComponent<UCStateComponent>(InOwner.Get());
 }
 
 void UCEquipment::Equip_Implementation()

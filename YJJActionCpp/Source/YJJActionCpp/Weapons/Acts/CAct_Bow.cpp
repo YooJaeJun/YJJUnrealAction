@@ -23,13 +23,15 @@ void UCAct_Bow::End_Act()
 	Super::End_Act();
 }
 
-void UCAct_Bow::OnAttachmentBeginOverlap(ACCommonCharacter* InAttacker, AActor* InAttackCauser,
+void UCAct_Bow::OnAttachmentBeginOverlap(
+	ACCommonCharacter* InAttacker, 
+	AActor* InAttackCauser,
 	ACCommonCharacter* InOther)
 {
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
 	CheckNull(InOther);
 
-	for (const ACCommonCharacter* const hitted : Hitted)
+	for (const TWeakObjectPtr<ACCommonCharacter> hitted : Hitted)
 		CheckTrue(hitted == InOther);
 
 	Hitted.AddUnique(InOther);
@@ -43,7 +45,7 @@ void UCAct_Bow::OnAttachmentEndCollision()
 	Super::OnAttachmentEndCollision();
 
 	float angle = -1.0f;
-	TWeakObjectPtr<ACCommonCharacter> candidate = nullptr;
+	// TWeakObjectPtr<ACCommonCharacter> candidate = nullptr;
 
 	Hitted.Empty();
 }

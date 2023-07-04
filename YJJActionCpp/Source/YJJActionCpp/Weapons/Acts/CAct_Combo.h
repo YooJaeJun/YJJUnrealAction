@@ -22,8 +22,8 @@ public:
 
 public:
 	virtual void OnAttachmentBeginOverlap(
-		ACCommonCharacter* InAttacker, 
-		AActor* InAttackCauser, 
+		ACCommonCharacter* InAttacker,
+		AActor* InAttackCauser,
 		ACCommonCharacter* InOther) override;
 
 	virtual void OnAttachmentEndCollision() override;
@@ -34,5 +34,5 @@ private:
 	bool bEnable;
 	bool bExist;
 
-	TArray<ACCommonCharacter*> Hitted;
+	TArray<TWeakObjectPtr<ACCommonCharacter>> Hitted;
 };

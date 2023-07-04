@@ -17,7 +17,7 @@ public:
 	virtual void BeginPlay() override;
 
 public:
-	FORCEINLINE UCUserWidget_HUD* GetHUD() const { return PlayerHUD; }
+	FORCEINLINE constexpr UCUserWidget_HUD* GetHUD() const { return PlayerHUD; }
 
 private:
 	UPROPERTY(EditAnywhere, Category = "UI")

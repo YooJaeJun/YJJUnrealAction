@@ -59,13 +59,13 @@ public:
 	FORCEINLINE void Move() { bCanMove = true; }
 	FORCEINLINE void Stop() { bCanMove = false; }
 
-	FORCEINLINE float GetWalkSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Walk)]; }
-	FORCEINLINE float GetRunSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Run)]; }
-	FORCEINLINE float GetSprintSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Sprint)]; }
+	FORCEINLINE constexpr float GetWalkSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Walk)]; }
+	FORCEINLINE constexpr float GetRunSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Run)]; }
+	FORCEINLINE constexpr float GetSprintSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Sprint)]; }
 
-	FORCEINLINE bool GetFixedCamera() const { return bFixedCamera; }
-	FORCEINLINE void FixCamera() { bFixedCamera = true; }
-	FORCEINLINE void UnFixCamera() { bFixedCamera = false; }
+	FORCEINLINE constexpr bool GetFixedCamera() const { return bFixedCamera; }
+	FORCEINLINE constexpr void FixCamera() { bFixedCamera = true; }
+	FORCEINLINE constexpr void UnFixCamera() { bFixedCamera = false; }
 
 public:	
 	UPROPERTY(VisibleAnywhere, Category = "Move")

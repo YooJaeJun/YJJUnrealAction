@@ -4,6 +4,7 @@
 #include "Weapons/CAttachment.h"
 #include "Weapons/CEquipment.h"
 #include "Weapons/CAct.h"
+#include "Weapons/CSkill.h"
 
 UCWeaponAsset::UCWeaponAsset()
 {
@@ -12,7 +13,7 @@ UCWeaponAsset::UCWeaponAsset()
 	ActClass = UCAct::StaticClass();
 }
 
-void UCWeaponAsset::BeginPlay(ACCommonCharacter* InOwner)
+void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
 {
 	if (!!AttachmentClass)
 	{
@@ -46,6 +47,12 @@ void UCWeaponAsset::BeginPlay(ACCommonCharacter* InOwner)
 			Attachment->OnAttachmentBeginOverlap.AddUniqueDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
 			Attachment->OnAttachmentEndOverlap.AddUniqueDynamic(Act, &UCAct::OnAttachmentEndOverlap);
 		}
+	}
+
+	if (!!SkillClass)
+	{
+		Skill = NewObject<UCSkill>(this, SkillClass);
+		Skill->BeginPlay(InOwner, Attachment, Act);
 	}
 }
 

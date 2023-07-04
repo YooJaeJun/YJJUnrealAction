@@ -5,8 +5,10 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Characters/CCommonCharacter.h"
 #include "Commons/CGameMode.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/Controller.h"
 #include "Engine/DataTable.h"
+#include "Weapons/AddOns/CMotionTrail.h"
 
 #define CheckTrue(x) { if (true == (x)) return; }
 #define CheckTrueResult(x, y) { if (true == (x)) return (y); }
@@ -270,5 +272,25 @@ public:
 				OutNearCharacters.Add(direction, otherCharacter);
 			}
 		}
+	}
+
+	static ACMotionTrail* PlayMotionTrail(
+		TSubclassOf<ACMotionTrail>& InClass,
+		TWeakObjectPtr<ACCommonCharacter> InOwner)
+	{
+		CheckNullResult(InClass, nullptr);
+		CheckNullResult(InOwner, nullptr);
+
+		FActorSpawnParameters params;
+		params.Owner = InOwner.Get();
+		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		FVector location = InOwner->GetActorLocation();
+		location.Z -= InOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+		FTransform transform;
+		transform.SetTranslation(location);
+
+		return InOwner->GetWorld()->SpawnActor<ACMotionTrail>(InClass, transform, params);
 	}
 };

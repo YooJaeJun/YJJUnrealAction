@@ -142,7 +142,9 @@ void ACCommonCharacter::Hit()
 	// Interaction
 	const FHitData data = Damage.Event.HitData;
 
-	data.PlayMontage(this);
+	if (false == StateComp->IsActMode())
+		data.PlayMontage(this);
+
 	data.PlayHitStop(GetWorld());
 	data.PlaySoundWave(this);
 	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
