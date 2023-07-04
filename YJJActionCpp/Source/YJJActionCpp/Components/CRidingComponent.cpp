@@ -44,7 +44,7 @@ void UCRidingComponent::BeginPlay()
 		Hud->SetChildren();
 		Interaction = Hud->Interaction;
 
-		CHelpers::GetAssetDynamic<UTexture2D>(&InteractionKeyTexture,
+		YJJHelpers::GetAssetDynamic<UTexture2D>(&InteractionKeyTexture,
 			TEXT("Texture2D'/Game/Assets/Textures/ButtonPrompts/F_Key_Dark.F_Key_Dark'"));
 
 		InteractionText = FText::FromString(TEXT("탑승"));
@@ -57,8 +57,8 @@ void UCRidingComponent::BeginPlay()
 		Mesh = Owner->GetMesh();
 		SpringArm = Owner->GetSpringArm();
 		Camera = Owner->GetCamera();
-		MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
-		StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+		MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+		StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 
 		RidingPoints[static_cast<uint8>(ERidingPoint::CandidateLeft)] = Owner->GetMountLeftPoint();
 		RidingPoints[static_cast<uint8>(ERidingPoint::CandidateRight)] = Owner->GetMountRightPoint();
@@ -75,22 +75,22 @@ void UCRidingComponent::BeginPlay()
 			Zooming = SpringArm->TargetArmLength;
 
 
-		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Left)],
+		YJJHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Left)],
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Left_Montage.Rider_Mount_Front_Left_Montage'"));
 
-		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Right)],
+		YJJHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Right)],
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Right_Montage.Rider_Mount_Front_Right_Montage'"));
 
-		CHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Back)],
+		YJJHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Back)],
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Back_Montage.Rider_Mount_Back_Montage'"));
 
-		CHelpers::GetAssetDynamic<USoundBase>(&MountSound,
+		YJJHelpers::GetAssetDynamic<USoundBase>(&MountSound,
 			TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
-		CHelpers::GetAssetDynamic<UAnimMontage>(&UnmountAnim,
+		YJJHelpers::GetAssetDynamic<UAnimMontage>(&UnmountAnim,
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Dismount_Front_Right_Montage.Rider_Dismount_Front_Right_Montage'"));
 
-		CHelpers::GetAssetDynamic<USoundBase>(&UnmountSound,
+		YJJHelpers::GetAssetDynamic<USoundBase>(&UnmountSound,
 			TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
 		// TODO Rider Info
@@ -191,8 +191,8 @@ void UCRidingComponent::SetInteractor(
 void UCRidingComponent::SetRider(ACCommonCharacter* InCharacter)
 {
 	Rider = InCharacter;
-	RiderWeaponComp = CHelpers::GetComponent<UCWeaponComponent>(InCharacter);
-	RiderMovementComp = CHelpers::GetComponent<UCMovementComponent>(InCharacter);
+	RiderWeaponComp = YJJHelpers::GetComponent<UCWeaponComponent>(InCharacter);
+	RiderMovementComp = YJJHelpers::GetComponent<UCMovementComponent>(InCharacter);
 
 	if (false == Owner->OnUnmount.IsBound())
 		Owner->OnUnmount.AddUniqueDynamic(this, &UCRidingComponent::Unmount);

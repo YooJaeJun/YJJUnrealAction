@@ -14,13 +14,13 @@ void UCAnimInstance_Character::NativeBeginPlay()
 	Owner = Cast<ACCommonCharacter>(TryGetPawnOwner());
 	CheckNull(Owner);
 
-	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 
 	if (!!StateComp.Get())
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Character::OnStateTypeChanged);
 
-	MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
-	FlyComp = CHelpers::GetComponent<UCFlyComponent>(Owner.Get());
+	MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+	FlyComp = YJJHelpers::GetComponent<UCFlyComponent>(Owner.Get());
 }
 
 void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)

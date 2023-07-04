@@ -14,7 +14,7 @@ void UCAnimNotifyState_Combo::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 
-	const TWeakObjectPtr<UCWeaponComponent> weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
+	const TWeakObjectPtr<UCWeaponComponent> weapon = YJJHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
 	CheckNull(weapon.Get());
 	CheckNull(weapon->GetAct());
 
@@ -30,7 +30,7 @@ void UCAnimNotifyState_Combo::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 
-	const TWeakObjectPtr<UCWeaponComponent> weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
+	const TWeakObjectPtr<UCWeaponComponent> weapon = YJJHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
 	CheckNull(weapon.Get());
 	CheckNull(weapon->GetAct());
 

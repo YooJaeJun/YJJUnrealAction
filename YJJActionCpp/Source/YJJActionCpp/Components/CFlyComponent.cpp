@@ -12,8 +12,8 @@ UCFlyComponent::UCFlyComponent()
 
 	if (!!Owner.Get())
 	{
-		StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
-		MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+		StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
+		MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
 	}
 }
 
@@ -171,7 +171,7 @@ void UCFlyComponent::InputAction_Jump()
 		FTransform landEffectTransform = Owner->GetActorTransform();
 		landEffectTransform.SetScale3D(landEffectTransform.GetScale3D() *Owner->GetLandEffectScaleFactor());
 
-		CHelpers::PlayEffect(GetWorld(), Owner->GetLandEffect(), landEffectTransform);
+		YJJHelpers::PlayEffect(GetWorld(), Owner->GetLandEffect(), landEffectTransform);
 	}
 }
 

@@ -22,7 +22,7 @@ bool UCBTDecorator_IsInAttackRange::CalculateRawConditionValue(
 	CheckNullResult(target, false);
 
 	const TWeakObjectPtr<UCCharacterStatComponent> statComp =
-		CHelpers::GetComponent<UCCharacterStatComponent>(owner.Get());
+		YJJHelpers::GetComponent<UCCharacterStatComponent>(owner.Get());
 	CheckNullResult(statComp, false);
 
 	const float attackRange = statComp->GetAttackRange();

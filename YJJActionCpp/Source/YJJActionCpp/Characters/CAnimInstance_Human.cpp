@@ -10,11 +10,11 @@ void UCAnimInstance_Human::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
-	WeaponComp = CHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
+	WeaponComp = YJJHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
 	CheckNull(WeaponComp);
 	WeaponComp->OnWeaponTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Human::OnWeaponTypeChanged);
 
-	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 }
 
 void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
@@ -35,7 +35,7 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 
 			Speed = animal->GetVelocity().Size();
 
-			Look = CHelpers::GetLook(
+			Look = YJJHelpers::GetLook(
 				animal->GetCapsuleComponent()->GetForwardVector(),
 				UKismetMathLibrary::GetForwardVector(Owner->GetControlRotation()),
 				animal->GetCapsuleComponent()->GetUpVector());

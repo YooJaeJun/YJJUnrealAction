@@ -27,7 +27,7 @@
 
 #define CreateTextRender()\
 {\
-	CHelpers::CreateComponent<UTextRenderComponent>(this, &Text, "Text", Root);\
+	YJJHelpers::CreateComponent<UTextRenderComponent>(this, &Text, "Text", Root);\
 	Text->SetRelativeLocation(FVector(0, 0, 100));\
 	Text->SetRelativeRotation(FRotator(0, 100, 0));\
 	Text->SetRelativeScale3D(FVector(2));\
@@ -36,7 +36,7 @@
 	Text->Text = FText::FromString(GetName().Replace(TEXT("Default__"), TEXT("")));\
 }
 
-class YJJACTIONCPP_API CHelpers
+class YJJACTIONCPP_API YJJHelpers
 {
 public:
 	static int32 Npos() { return -1; }

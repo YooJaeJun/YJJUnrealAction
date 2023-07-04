@@ -19,6 +19,6 @@ void UCSkill::BeginPlay(
     Attachment = InAttachment;
     Act = InAct;
 
-    StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
-    MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+    StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
+    MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
 }

@@ -9,8 +9,8 @@ void UCEquipment::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEq
 	Owner = InOwner;
 	Data = InData;
 
-	MovementComp = CHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
-	StateComp = CHelpers::GetComponent<UCStateComponent>(InOwner.Get());
+	MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
+	StateComp = YJJHelpers::GetComponent<UCStateComponent>(InOwner.Get());
 }
 
 void UCEquipment::Equip_Implementation()

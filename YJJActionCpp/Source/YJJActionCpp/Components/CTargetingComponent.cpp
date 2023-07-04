@@ -67,7 +67,7 @@ void UCTargetingComponent::Begin_Targeting()
 	}
 
 	const TWeakObjectPtr<ACCommonCharacter> target = 
-		CHelpers::GetNearForward(Owner, targets, Owner->GetMyCurController());
+		YJJHelpers::GetNearForward(Owner, targets, Owner->GetMyCurController());
 
 	ChangeTarget(target.Get());
 }
@@ -79,11 +79,11 @@ void UCTargetingComponent::End_Targeting()
 	CheckNull(Target);
 
 	const TWeakObjectPtr<UCStateComponent> targetState =
-		CHelpers::GetComponent<UCStateComponent>(Target.Get());
+		YJJHelpers::GetComponent<UCStateComponent>(Target.Get());
 	CheckNull(targetState);
 
 	const TWeakObjectPtr<UCMovementComponent> targetMovement =
-		CHelpers::GetComponent<UCMovementComponent>(Target.Get());
+		YJJHelpers::GetComponent<UCMovementComponent>(Target.Get());
 	CheckNull(targetMovement);
 
 	targetMovement->UnFixCamera();
@@ -106,9 +106,9 @@ void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 		if (!!Target.Get())
 		{
 			SetVisibleTargetUI(true);
-			TargetStateComp = CHelpers::GetComponent<UCStateComponent>(Target.Get());
-			TargetMovementComp = CHelpers::GetComponent<UCMovementComponent>(Target.Get());
-			TargetingWidgetComp = CHelpers::GetComponent<UWidgetComponent>(Target.Get());
+			TargetStateComp = YJJHelpers::GetComponent<UCStateComponent>(Target.Get());
+			TargetMovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Target.Get());
+			TargetingWidgetComp = YJJHelpers::GetComponent<UWidgetComponent>(Target.Get());
 
 			if (!!TargetMovementComp.Get())
 				TargetMovementComp->FixCamera();
@@ -216,7 +216,7 @@ void UCTargetingComponent::ChangeFocus(const bool InbRight)
 
 	TMap<float, TWeakObjectPtr<ACCommonCharacter>> nearCharacters;
 
-	CHelpers::AddNearSideCharacters(Owner, targets, Owner->GetMyCurController(), nearCharacters);
+	YJJHelpers::AddNearSideCharacters(Owner, targets, Owner->GetMyCurController(), nearCharacters);
 
 	float minAngle = 1e9;
 

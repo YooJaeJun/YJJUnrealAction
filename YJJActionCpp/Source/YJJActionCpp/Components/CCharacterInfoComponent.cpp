@@ -20,7 +20,7 @@ void UCCharacterInfoComponent::BeginPlay()
 bool UCCharacterInfoComponent::IsSameGroup(TWeakObjectPtr<ACCommonCharacter> InOther) const
 {
 	const TWeakObjectPtr<UCCharacterInfoComponent> characterInfoComp = 
-		CHelpers::GetComponent<UCCharacterInfoComponent>(InOther.Get());
+		YJJHelpers::GetComponent<UCCharacterInfoComponent>(InOther.Get());
 	CheckNullResult(characterInfoComp, false);
 
 	return GetCharacterGroup() == characterInfoComp->GetCharacterGroup();

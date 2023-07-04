@@ -16,17 +16,17 @@ ACEnemy_AI::ACEnemy_AI()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "Weapon");
+	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "Weapon");
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	USkeletalMesh* mesh;
-	CHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Enemies/Skeleton_archer/mesh/SK_Skeleton_archer.SK_Skeleton_archer'");
+	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Enemies/Skeleton_archer/mesh/SK_Skeleton_archer.SK_Skeleton_archer'");
 	GetMesh()->SetSkeletalMesh(mesh);
 
 	TSubclassOf<UCAnimInstance_Human> animInstance;
-	CHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/CABP_Human.CABP_Human_C'");
+	YJJHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/CABP_Human.CABP_Human_C'");
 	GetMesh()->SetAnimClass(animInstance);
 
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);

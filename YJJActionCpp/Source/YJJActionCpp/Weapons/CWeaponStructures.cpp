@@ -34,7 +34,7 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 	stat->SetStaminaDamage(Stamina);
 	stat->SetManaDamage(Mana);
 
-	const TWeakObjectPtr<UCMovementComponent> movement = CHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
+	const TWeakObjectPtr<UCMovementComponent> movement = YJJHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
 
 	if (!!movement.Get())
 	{
@@ -78,7 +78,7 @@ void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& I
 	transform.SetScale3D(EffectScale);
 	transform.AddToTranslation(InLocation);
 
-	CHelpers::PlayEffect(InWorld.Get(), Effect, transform);
+	YJJHelpers::PlayEffect(InWorld.Get(), Effect, transform);
 }
 
 void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation) const
@@ -89,7 +89,7 @@ void FActData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& I
 	transform.SetLocation(InLocation + InRotation.RotateVector(EffectLocation));
 	transform.SetScale3D(EffectScale);
 
-	CHelpers::PlayEffect(InWorld.Get(), Effect, transform);
+	YJJHelpers::PlayEffect(InWorld.Get(), Effect, transform);
 }
 
 ///////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ void FHitData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& I
 	transform.SetScale3D(EffectScale);
 	transform.AddToTranslation(InLocation);
 
-	CHelpers::PlayEffect(InWorld.Get(), Effect, transform);
+	YJJHelpers::PlayEffect(InWorld.Get(), Effect, transform);
 }
 
 void FHitData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation) const
@@ -172,5 +172,5 @@ void FHitData::PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& I
 	transform.SetLocation(InLocation + InRotation.RotateVector(EffectLocation));
 	transform.SetScale3D(EffectScale);
 
-	CHelpers::PlayEffect(InWorld.Get(), Effect, transform);
+	YJJHelpers::PlayEffect(InWorld.Get(), Effect, transform);
 }

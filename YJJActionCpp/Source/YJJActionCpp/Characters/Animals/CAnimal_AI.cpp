@@ -19,20 +19,20 @@
 
 ACAnimal_AI::ACAnimal_AI()
 {
-	CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
-	CHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
-	CHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComp, "ZoomComponent");
-	CHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
-	CHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
-	CHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
-	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
-	CHelpers::CreateComponent<USceneComponent>(this, &MountLeftPoint, "MountLeftPoint", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &MountRightPoint, "MountRightPoint", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &MountBackPoint, "MountBackPoint", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &RiderPoint, "RiderPoint", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &UnmountPoint, "UnmountPoint", GetMesh());
-	CHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
-	CHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
+	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
+	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
+	YJJHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComp, "ZoomComponent");
+	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
+	YJJHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
+	YJJHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
+	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
+	YJJHelpers::CreateComponent<USceneComponent>(this, &MountLeftPoint, "MountLeftPoint", GetMesh());
+	YJJHelpers::CreateComponent<USceneComponent>(this, &MountRightPoint, "MountRightPoint", GetMesh());
+	YJJHelpers::CreateComponent<USceneComponent>(this, &MountBackPoint, "MountBackPoint", GetMesh());
+	YJJHelpers::CreateComponent<USceneComponent>(this, &RiderPoint, "RiderPoint", GetMesh());
+	YJJHelpers::CreateComponent<USceneComponent>(this, &UnmountPoint, "UnmountPoint", GetMesh());
+	YJJHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
+	YJJHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 
 	if (!!StateComp)
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACAnimal_AI::OnStateTypeChanged);
@@ -47,13 +47,13 @@ ACAnimal_AI::ACAnimal_AI()
 		MovementComp->SetJumpZ(700.0f);
 	}
 
-	CHelpers::GetAssetDynamic<USoundBase>(&LandSound,
+	YJJHelpers::GetAssetDynamic<USoundBase>(&LandSound,
 		TEXT("SoundCue'/Game/Assets/Sounds/Footsteps/Run/Stone/SC_Footstep_Stone_Run.SC_Footstep_Stone_Run'"));
 
-	CHelpers::GetAssetDynamic<UFXSystemAsset>(&LandEffect,
+	YJJHelpers::GetAssetDynamic<UFXSystemAsset>(&LandEffect,
 		TEXT("NiagaraSystem'/Game/Assets/Effects/SuperheroFlight/VFX/Niagara/System/SuperheroLanding/NS_Superhero_Landing_Concrete.NS_Superhero_Landing_Concrete'"));
 
-	CHelpers::GetClass<AActor>(&EyeClass, "Blueprint'/Game/Character/Animals/CBP_Eye.CBP_Eye_C'");
+	YJJHelpers::GetClass<AActor>(&EyeClass, "Blueprint'/Game/Character/Animals/CBP_Eye.CBP_Eye_C'");
 
 	if (!!SpringArm)
 		SpringArm->bDoCollisionTest = false;
@@ -137,7 +137,7 @@ void ACAnimal_AI::Landed(const FHitResult& Hit)
 	FTransform landEffectTransform = GetActorTransform();
 	landEffectTransform.SetScale3D(landEffectTransform.GetScale3D() * LandEffectScaleFactor);
 
-	CHelpers::PlayEffect(GetWorld(), LandEffect, landEffectTransform);
+	YJJHelpers::PlayEffect(GetWorld(), LandEffect, landEffectTransform);
 }
 
 void ACAnimal_AI::Hit()

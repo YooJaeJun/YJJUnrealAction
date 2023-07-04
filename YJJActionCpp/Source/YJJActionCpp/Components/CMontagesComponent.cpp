@@ -8,7 +8,7 @@ UCMontagesComponent::UCMontagesComponent()
 {
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
-	CHelpers::GetAsset<UDataTable>(&DataTable, "DataTable'/Game/Character/CDT_HumanAnim.CDT_HumanAnim'");
+	YJJHelpers::GetAsset<UDataTable>(&DataTable, "DataTable'/Game/Character/CDT_HumanAnim.CDT_HumanAnim'");
 }
 
 void UCMontagesComponent::BeginPlay()
@@ -42,7 +42,7 @@ void UCMontagesComponent::BeginPlay()
 
 void UCMontagesComponent::PlayAvoidAnim()
 {
-	const TWeakObjectPtr<UInputComponent> input = CHelpers::GetComponent<UInputComponent>(Owner.Get());
+	const TWeakObjectPtr<UInputComponent> input = YJJHelpers::GetComponent<UInputComponent>(Owner.Get());
 
 	PlayAnimMontage(EStateType::Avoid, input);
 }

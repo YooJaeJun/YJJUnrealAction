@@ -14,17 +14,17 @@
 
 ACCommonCharacter::ACCommonCharacter()
 {
-	CHelpers::CreateActorComponent<UCStateComponent>(this, &StateComp, "StateComponent");
-	CHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "MovementComponent");
-	CHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
-	CHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
-	CHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
-	CHelpers::CreateComponent<USceneComponent>(this, &InfoPoint, "InfoPoint", GetMesh());
-	CHelpers::CreateComponent<UWidgetComponent>(this, &InfoWidgetComp, "InfoWidgetComp", InfoPoint);
-	CHelpers::GetClass<UCUserWidget_Custom>(&InfoWidget, "WidgetBlueprint'/Game/Widgets/Enemy/CWB_Enemy_HpBar_Guage.CWB_Enemy_HpBar_Guage_C'");
-	CHelpers::CreateComponent<USceneComponent>(this, &TargetingPoint, "TargetingPoint", GetMesh());
-	CHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", TargetingPoint);
-	CHelpers::GetClass<UCUserWidget_Custom>(&TargetingWidget, "WidgetBlueprint'/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C'");
+	YJJHelpers::CreateActorComponent<UCStateComponent>(this, &StateComp, "StateComponent");
+	YJJHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "MovementComponent");
+	YJJHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
+	YJJHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
+	YJJHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
+	YJJHelpers::CreateComponent<USceneComponent>(this, &InfoPoint, "InfoPoint", GetMesh());
+	YJJHelpers::CreateComponent<UWidgetComponent>(this, &InfoWidgetComp, "InfoWidgetComp", InfoPoint);
+	YJJHelpers::GetClass<UCUserWidget_Custom>(&InfoWidget, "WidgetBlueprint'/Game/Widgets/Enemy/CWB_Enemy_HpBar_Guage.CWB_Enemy_HpBar_Guage_C'");
+	YJJHelpers::CreateComponent<USceneComponent>(this, &TargetingPoint, "TargetingPoint", GetMesh());
+	YJJHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", TargetingPoint);
+	YJJHelpers::GetClass<UCUserWidget_Custom>(&TargetingWidget, "WidgetBlueprint'/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C'");
 
 	CharacterStatComp->OnHpIsZero.AddUObject(this, &ACCommonCharacter::Dead);
 
@@ -56,7 +56,7 @@ void ACCommonCharacter::BeginPlay()
 
 	MyCurController = GetController();
 
-	CHelpers::GetAssetDynamic<USoundBase>(&LandSound,
+	YJJHelpers::GetAssetDynamic<USoundBase>(&LandSound,
 		TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
 	if (!!TargetingPoint)

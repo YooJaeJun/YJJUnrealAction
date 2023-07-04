@@ -20,8 +20,8 @@ void UCAct::BeginPlay(
 	Owner = InOwner;
 	World = Owner->GetWorld();
 
-	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
-	MovementComp = CHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
+	MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
 	
 	for (int i = 0; i < InActDatas.Num(); i++)
 		ActDatas.Emplace(InActDatas[i]);

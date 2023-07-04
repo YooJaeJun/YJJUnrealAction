@@ -9,7 +9,7 @@ UCMovementComponent::UCMovementComponent()
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
 	if (!!Owner.Get())
-		StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+		StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 }
 
 void UCMovementComponent::BeginPlay()

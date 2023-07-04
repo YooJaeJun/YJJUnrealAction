@@ -16,7 +16,7 @@ EBTNodeResult::Type UCBTTask_Speed::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	CheckNullResult(owner, EBTNodeResult::Failed);
 
 	const TWeakObjectPtr<UCMovementComponent> movement =
-		CHelpers::GetComponent<UCMovementComponent>(owner.Get());
+		YJJHelpers::GetComponent<UCMovementComponent>(owner.Get());
 	CheckNullResult(movement, EBTNodeResult::Failed);
 
 

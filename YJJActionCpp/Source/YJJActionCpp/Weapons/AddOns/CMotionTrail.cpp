@@ -8,7 +8,7 @@
 
 ACMotionTrail::ACMotionTrail()
 {
-	CHelpers::CreateComponent<UPoseableMeshComponent>(this, &Mesh, "Mesh");
+	YJJHelpers::CreateComponent<UPoseableMeshComponent>(this, &Mesh, "Mesh");
 }
 
 void ACMotionTrail::BeginPlay()
@@ -16,7 +16,7 @@ void ACMotionTrail::BeginPlay()
 	Super::BeginPlay();
 
 	UMaterialInstanceConstant* material;
-	CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(
+	YJJHelpers::GetAssetDynamic<UMaterialInstanceConstant>(
 		&material, "MaterialInstanceConstant'/Game/Assets/Materials/M_GhostTrail_Inst.M_GhostTrail_Inst'");
 
 	Material = UMaterialInstanceDynamic::Create(material, this);

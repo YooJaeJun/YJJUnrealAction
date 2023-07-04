@@ -71,7 +71,7 @@ void UCCharacterStatComponent::SetDamage(const float InNewDamage)
 	SetHp(FMath::Clamp<float>(CurHp - InNewDamage, 0.0f, CurStat.MaxHp));
 
 	const TWeakObjectPtr<UCStateComponent> state =
-		CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+		YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 
 	state->SetHitMode();
 }

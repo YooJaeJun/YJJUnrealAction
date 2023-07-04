@@ -15,11 +15,11 @@ const FName ACAIController::TargetLocation(TEXT("TargetLocation"));
 
 ACAIController::ACAIController()
 {
-	CHelpers::GetAsset(&BBAsset, "BlackboardData'/Game/Character/Enemies/CBB_Enemy.CBB_Enemy'");
-	CHelpers::GetAsset(&BTAsset, "BehaviorTree'/Game/Character/Enemies/Melee/CBT_Melee.CBT_Melee'");
-	CHelpers::CreateActorComponent<UAIPerceptionComponent>(this, &PerceptionComponent, "Perception");
-	CHelpers::CreateActorComponent<UAISenseConfig_Sight>(this, &SightConfig, "SenseSight");
-	CHelpers::CreateActorComponent<UAISenseConfig_Hearing>(this, &HearingConfig, "SenseHearing");
+	YJJHelpers::GetAsset(&BBAsset, "BlackboardData'/Game/Character/Enemies/CBB_Enemy.CBB_Enemy'");
+	YJJHelpers::GetAsset(&BTAsset, "BehaviorTree'/Game/Character/Enemies/Melee/CBT_Melee.CBT_Melee'");
+	YJJHelpers::CreateActorComponent<UAIPerceptionComponent>(this, &PerceptionComponent, "Perception");
+	YJJHelpers::CreateActorComponent<UAISenseConfig_Sight>(this, &SightConfig, "SenseSight");
+	YJJHelpers::CreateActorComponent<UAISenseConfig_Hearing>(this, &HearingConfig, "SenseHearing");
 
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
@@ -68,7 +68,7 @@ void ACAIController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)
 	CheckNull(GetPawn());
 
 	const TWeakObjectPtr<UCCharacterInfoComponent> infoComp =
-		CHelpers::GetComponent<UCCharacterInfoComponent>(Cast<ACCommonCharacter>(GetPawn()));
+		YJJHelpers::GetComponent<UCCharacterInfoComponent>(Cast<ACCommonCharacter>(GetPawn()));
 	CheckNull(infoComp);
 
 	const TWeakObjectPtr<ACCommonCharacter> other = Cast<ACCommonCharacter>(Actor);

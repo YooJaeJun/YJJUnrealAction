@@ -22,13 +22,13 @@ void UCZoomComponent::BeginPlay()
 	{
 		Zooming = OwnerPlayer->GetSpringArm()->TargetArmLength;
 		TargetingComp = OwnerPlayer->GetTargetingComp();
-		MovementComp = CHelpers::GetComponent<UCMovementComponent>(OwnerPlayer.Get());;
+		MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(OwnerPlayer.Get());;
 	}
 	else if (!!OwnerAnimal.Get())
 	{
 		Zooming = OwnerAnimal->GetSpringArm()->TargetArmLength;
 		TargetingComp = OwnerAnimal->GetTargetingComp();
-		MovementComp = CHelpers::GetComponent<UCMovementComponent>(OwnerAnimal.Get());
+		MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(OwnerAnimal.Get());
 	}
 }
 

@@ -70,7 +70,7 @@ void UCStateComponent::ChangeType(const EStateType InType)
 	if (OnStateTypeChanged.IsBound())
 	{
 		CLog::Print(Owner->GetName() + " : " 
-			+ CHelpers::ConvertEnumToString(CurType), 
+			+ YJJHelpers::ConvertEnumToString(CurType), 
 			-1, 
 			5, 
 			FColor::Emerald);

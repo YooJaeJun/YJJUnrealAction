@@ -20,7 +20,7 @@ void UCSkill_Sword::Pressed()
 	StateComp->SetActMode();
 	StateComp->OnSkillMode();
 
-	MotionTrail = CHelpers::PlayMotionTrail(MotionTrailClass, Owner);
+	MotionTrail = YJJHelpers::PlayMotionTrail(MotionTrailClass, Owner);
 
 	ActData.Act(Owner);
 }

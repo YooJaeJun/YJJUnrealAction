@@ -9,7 +9,7 @@
 
 ACDragon_AI::ACDragon_AI()
 {
-	CHelpers::CreateActorComponent<UCFlyComponent>(this, &FlyComp, "FlyComponent");
+	YJJHelpers::CreateActorComponent<UCFlyComponent>(this, &FlyComp, "FlyComponent");
 }
 
 void ACDragon_AI::BeginPlay()

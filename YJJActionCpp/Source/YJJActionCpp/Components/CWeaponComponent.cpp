@@ -160,7 +160,7 @@ UCSkill* UCWeaponComponent::GetSkill()
 
 bool UCWeaponComponent::IsIdleStateMode()
 {
-	StateComp = CHelpers::GetComponent<UCStateComponent>(Owner.Get());
+	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 	CheckNullResult(StateComp, false);
 	return StateComp->IsIdleMode();
 }

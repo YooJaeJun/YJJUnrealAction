@@ -48,7 +48,7 @@ void UCAct_Combo::OnAttachmentBeginOverlap(
 	CheckNull(InOther);
 
 	const TWeakObjectPtr<UCCharacterInfoComponent> characterInfoComp = 
-		CHelpers::GetComponent<UCCharacterInfoComponent>(InAttacker);
+		YJJHelpers::GetComponent<UCCharacterInfoComponent>(InAttacker);
 
 	CheckNull(characterInfoComp);
 	CheckTrue(characterInfoComp->IsSameGroup(InOther));

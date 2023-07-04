@@ -19,7 +19,7 @@ void UCGameUIComponent::BeginPlay()
 
 	PlayerController = Cast<APlayerController>(Owner->GetController());
 
-	const TWeakObjectPtr<UCUserWidget_HUD> hud = CHelpers::GetHud(Owner);
+	const TWeakObjectPtr<UCUserWidget_HUD> hud = YJJHelpers::GetHud(Owner);
 	CheckNull(hud.Get());
 
 	hud->SetChildren();
@@ -39,7 +39,7 @@ void UCGameUIComponent::OnWeaponEquipped(const EWeaponType InNewType)
 	const TWeakObjectPtr<ACPlayableCharacter> player = Cast<ACPlayableCharacter>(Owner);
 	CheckNull(player.Get());
 
-	const TWeakObjectPtr<UCWeaponComponent> weaponComp = CHelpers::GetComponent<UCWeaponComponent>(player.Get());
+	const TWeakObjectPtr<UCWeaponComponent> weaponComp = YJJHelpers::GetComponent<UCWeaponComponent>(player.Get());
 	CheckNull(weaponComp.Get());
 
 	weaponComp->SetMode(InNewType);
