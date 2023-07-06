@@ -14,10 +14,11 @@ void UCUserWidget_EquipMenu::BindChildren()
 		const TWeakObjectPtr<UCUserWidget_EquipMenuButton> button = 
 			Cast<UCUserWidget_EquipMenuButton>(GetWidgetFromName(buttonName));
 
-		if (nullptr == button)
-			break;
+		CheckNull(button);
 
 		button->BindEquipMenuButton();
+		button->OnWeaponTypeHovered.BindUFunction(this, "SetWeaponType");
+
 		EquipMenuButtons.Add(button.Get());
 	}
 }
@@ -42,10 +43,19 @@ void UCUserWidget_EquipMenu::Deactivate(const float TimeDilation)
 {
 	SetVisibility(ESlateVisibility::Collapsed);
 
-	if (!!GetOwningPlayer())
-	{
-		GetOwningPlayer()->SetShowMouseCursor(false);
-		UWidgetBlueprintLibrary::SetInputMode_GameOnly(GetOwningPlayer());
-		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilation);
-	}
+	CheckNull(GetOwningPlayer());
+
+	GetOwningPlayer()->SetShowMouseCursor(false);
+
+	UWidgetBlueprintLibrary::SetInputMode_GameOnly(GetOwningPlayer());
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilation);
+
+	if (OnWeaponEquipped.IsBound())
+		OnWeaponEquipped.Broadcast(CurWeaponType);
+}
+
+void UCUserWidget_EquipMenu::SetWeaponType(const EWeaponType InNewType)
+{
+	CurWeaponType = InNewType;
 }

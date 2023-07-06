@@ -465,7 +465,6 @@ void UCRidingComponent::Tick_Unmounting()
 	Owner->SetbRiding(false);
 	Rider->SetbRiding(false);
 	RiderStateComp->SetFallMode();
-	RiderStateComp->SetFallMode();
 
 
 	// TODO Riding Info

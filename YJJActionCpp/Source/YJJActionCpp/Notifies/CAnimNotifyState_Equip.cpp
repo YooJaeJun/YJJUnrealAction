@@ -8,8 +8,7 @@ FString UCAnimNotifyState_Equip::GetNotifyName_Implementation() const
 	return "Equip";
 }
 
-void UCAnimNotifyState_Equip::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
-	float TotalDuration)
+void UCAnimNotifyState_Equip::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 	CheckNull(MeshComp);

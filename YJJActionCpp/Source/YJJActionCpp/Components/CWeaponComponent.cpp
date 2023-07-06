@@ -10,6 +10,8 @@
 
 UCWeaponComponent::UCWeaponComponent()
 {
+	PrimaryComponentTick.bCanEverTick = true;
+
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 }
 
@@ -91,12 +93,17 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		GetEquipment()->Unequip();
 	}
 
-	const TWeakObjectPtr<UCWeaponAsset> asset = *DataAssetMap.Find(InType);
+	const TWeakObjectPtr<UCWeaponAsset>* assetForCheckingNull = DataAssetMap.Find(InType);
+	CheckNull(assetForCheckingNull);
+
+	const TWeakObjectPtr<UCWeaponAsset> asset = *assetForCheckingNull;
 	CheckNull(asset);
+
 	const TWeakObjectPtr<UCEquipment> equipment = asset->GetEquipment();
 	CheckNull(equipment);
 
 	equipment->Equip();
+
 	ChangeType(InType);
 }
 
@@ -119,11 +126,11 @@ TWeakObjectPtr<UCWeaponAsset> UCWeaponComponent::GetWeaponAsset()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
 
-	const TWeakObjectPtr<UCWeaponAsset>* weaponAsset = DataAssetMap.Find(Type);
-	CheckNullResult(*weaponAsset, nullptr);
+	const TWeakObjectPtr<UCWeaponAsset>* assetForCheckingNull = DataAssetMap.Find(Type);
+	CheckNullResult(*assetForCheckingNull, nullptr);
 
-	const TWeakObjectPtr<UCWeaponAsset> ret = *weaponAsset;
-	return ret;
+	const TWeakObjectPtr<UCWeaponAsset> assetForReturn = *assetForCheckingNull;
+	return assetForReturn;
 }
 
 ACAttachment* UCWeaponComponent::GetAttachment()

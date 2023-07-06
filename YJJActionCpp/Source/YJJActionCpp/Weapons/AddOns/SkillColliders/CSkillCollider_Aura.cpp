@@ -1,12 +1,11 @@
-﻿#include "Weapons/AddOns/CAura.h"
+﻿#include "Weapons/AddOns/SkillColliders/CSkillCollider_Aura.h"
 #include "Global.h"
 #include "NiagaraComponent.h"
 #include "Characters/CCommonCharacter.h"
 #include "Components/BoxComponent.h"
 
-ACAura::ACAura()
+ACSkillCollider_Aura::ACSkillCollider_Aura()
 {
-
 	YJJHelpers::CreateComponent<USceneComponent>(this, &Root, "Root");
 	YJJHelpers::CreateComponent<UNiagaraComponent>(this, &Niagara, "Niagara", Root);
 	YJJHelpers::CreateComponent<UBoxComponent>(this, &Box, "Box", Root);
@@ -16,15 +15,15 @@ ACAura::ACAura()
 	Niagara->SetAsset(niagara);
 }
 
-void ACAura::BeginPlay()
+void ACSkillCollider_Aura::BeginPlay()
 {
 	Super::BeginPlay();
 
 	Niagara->SetNiagaraVariableObject("Mesh_Scale", this);
-	Niagara->OnSystemFinished.AddDynamic(this, &ACAura::OnSystemFinished);
+	Niagara->OnSystemFinished.AddDynamic(this, &ACSkillCollider_Aura::OnSystemFinished);
 
-	Box->OnComponentBeginOverlap.AddDynamic(this, &ACAura::OnComponentBeginOverlap);
-	Box->OnComponentEndOverlap.AddDynamic(this, &ACAura::OnComponentEndOverlap);
+	Box->OnComponentBeginOverlap.AddDynamic(this, &ACSkillCollider_Aura::OnComponentBeginOverlap);
+	Box->OnComponentEndOverlap.AddDynamic(this, &ACSkillCollider_Aura::OnComponentEndOverlap);
 
 	const FTimerDelegate timerDelegate = FTimerDelegate::CreateLambda([this]()
 		{
@@ -44,14 +43,14 @@ void ACAura::BeginPlay()
 }
 
 
-void ACAura::OnSystemFinished(UNiagaraComponent* PSystem)
+void ACSkillCollider_Aura::OnSystemFinished(UNiagaraComponent* PSystem)
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 
 	Destroy();
 }
 
-void ACAura::ReceiveParticleData_Implementation(const TArray<FBasicParticleData>& ParticleData, UNiagaraSystem* NiagaraSystem)
+void ACSkillCollider_Aura::ReceiveParticleData_Implementation(const TArray<FBasicParticleData>& ParticleData, UNiagaraSystem* NiagaraSystem)
 {
 	Box->SetRelativeScale3D(ParticleData[0].Position);
 
@@ -63,7 +62,7 @@ void ACAura::ReceiveParticleData_Implementation(const TArray<FBasicParticleData>
 }
 
 
-void ACAura::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACSkillCollider_Aura::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	CheckTrue(GetOwner() == OtherActor);
 
@@ -72,7 +71,7 @@ void ACAura::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 		Hitted.AddUnique(character.Get());
 }
 
-void ACAura::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ACSkillCollider_Aura::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	CheckTrue(GetOwner() == OtherActor);
 

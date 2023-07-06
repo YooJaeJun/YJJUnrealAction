@@ -1,4 +1,4 @@
-#include "Weapons/Skills/CSkill_Sword.h"
+#include "Weapons/Skills/CSkill_Thrust.h"
 #include "Global.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CAct.h"
@@ -9,7 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Weapons/AddOns/CMotionTrail.h"
 
-void UCSkill_Sword::Pressed()
+void UCSkill_Thrust::Pressed()
 {
 	CheckNull(StateComp);
 	CheckFalse(StateComp->IsIdleMode());
@@ -20,17 +20,15 @@ void UCSkill_Sword::Pressed()
 	StateComp->SetActMode();
 	StateComp->OnSkillMode();
 
-	MotionTrail = YJJHelpers::PlayMotionTrail(MotionTrailClass, Owner);
-
 	ActData.Act(Owner);
 }
 
-void UCSkill_Sword::Begin_Skill_Implementation()
+void UCSkill_Thrust::Begin_Skill_Implementation()
 {
 	Super::Begin_Skill_Implementation();
 	CheckNull(Attachment);
 	Attachment->OnAttachmentBeginOverlap.Remove(Act.Get(), "OnAttachmentBeginOverlap");
-	Attachment->OnAttachmentBeginOverlap.AddDynamic(this, &UCSkill_Sword::OnAttachmentBeginOverlap);
+	Attachment->OnAttachmentBeginOverlap.AddDynamic(this, &UCSkill_Thrust::OnAttachmentBeginOverlap);
 
 	bMoving = true;
 
@@ -111,7 +109,7 @@ void UCSkill_Sword::Begin_Skill_Implementation()
 			3);
 }
 
-void UCSkill_Sword::End_Skill_Implementation()
+void UCSkill_Thrust::End_Skill_Implementation()
 {
 	Super::End_Skill_Implementation();
 
@@ -131,12 +129,9 @@ void UCSkill_Sword::End_Skill_Implementation()
 
 	Overlapped.Empty();
 	Hitted.Empty();
-
-	if (!!MotionTrail.Get())
-		MotionTrail->Destroy();
 }
 
-void UCSkill_Sword::Tick_Implementation(float InDeltaTime)
+void UCSkill_Thrust::Tick_Implementation(float InDeltaTime)
 {
 	Super::Tick_Implementation(InDeltaTime);
 
@@ -156,7 +151,7 @@ void UCSkill_Sword::Tick_Implementation(float InDeltaTime)
 	Owner->AddActorWorldOffset(direction * Speed, true);
 }
 
-void UCSkill_Sword::OnAttachmentBeginOverlap(
+void UCSkill_Thrust::OnAttachmentBeginOverlap(
 	ACCommonCharacter* InAttacker,
 	AActor* InAttackCauser,
 	ACCommonCharacter* InOther)

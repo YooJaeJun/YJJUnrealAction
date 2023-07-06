@@ -1,13 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Commons/CEnums.h"
 #include "Widgets/CUserWidget_Custom.h"
-#include "Components/CWeaponComponent.h"
 #include "CUserWidget_EquipMenuButton.generated.h"
 
-class UButton;
+DECLARE_DYNAMIC_DELEGATE_OneParam(FWeaponTypeHovered, const EWeaponType, InNewType);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponEquipped, const EWeaponType, InNewType);
+class UButton;
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API UCUserWidget_EquipMenuButton : public UCUserWidget_Custom
@@ -28,8 +28,8 @@ public:
 		UButton* Button;
 
 	UPROPERTY()
-		FWeaponEquipped OnWeaponEquipped;
+		FWeaponTypeHovered OnWeaponTypeHovered;
 
-	UPROPERTY()
-		EWeaponType WeaponType;
+public:
+	EWeaponType CurWeaponType;
 };

@@ -27,11 +27,7 @@ void UCGameUIComponent::BeginPlay()
 	EquipMenu = hud->EquipMenu;
 	CheckNull(EquipMenu.Get());
 
-	for (const auto& EquipMenuButton : EquipMenu->EquipMenuButtons)
-	{
-		EquipMenuButton->OnWeaponEquipped.AddUniqueDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
-		EquipMenuButtons.Push(EquipMenuButton);
-	}
+	EquipMenu->OnWeaponEquipped.AddUniqueDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
 }
 
 void UCGameUIComponent::OnWeaponEquipped(const EWeaponType InNewType)

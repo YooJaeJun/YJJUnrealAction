@@ -1,23 +1,24 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Weapons/AddOns/CSkillCollider.h"
 #include "GameFramework/Actor.h"
 #include "Weapons/CWeaponStructures.h"
 #include "NiagaraDataInterfaceExport.h"
-#include "CAura.generated.h"
+#include "CSkillCollider_Aura.generated.h"
 
 class ACCommonCharacter;
 class USceneComponent;
 class UBoxComponent;
 
 UCLASS()
-class YJJACTIONCPP_API ACAura :
-	public AActor,
+class YJJACTIONCPP_API ACSkillCollider_Aura :
+	public ACSkillCollider,
 	public INiagaraParticleCallbackHandler
 {
 	GENERATED_BODY()
 
 public:	
-	ACAura();
+	ACSkillCollider_Aura();
 
 protected:
 	virtual void BeginPlay() override;

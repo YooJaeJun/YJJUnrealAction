@@ -280,7 +280,7 @@ public:
 
 	static ACMotionTrail* PlayMotionTrail(
 		TSubclassOf<ACMotionTrail>& InClass,
-		TWeakObjectPtr<ACCommonCharacter> InOwner)
+		const TWeakObjectPtr<ACCommonCharacter> InOwner)
 	{
 		CheckNullResult(InClass, nullptr);
 		CheckNullResult(InOwner, nullptr);

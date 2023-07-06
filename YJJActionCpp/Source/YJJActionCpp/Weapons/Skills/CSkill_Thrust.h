@@ -3,13 +3,13 @@
 #include "Weapons/CSkill.h"
 #include "Weapons/CWeaponStructures.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "CSkill_Sword.generated.h"
+#include "CSkill_Thrust.generated.h"
 
 class ACMotionTrail;
 class ACCommonCharacter;
 
 UCLASS(Blueprintable)
-class YJJACTIONCPP_API UCSkill_Sword : public UCSkill
+class YJJACTIONCPP_API UCSkill_Thrust : public UCSkill
 {
 	GENERATED_BODY()
 
@@ -43,10 +43,6 @@ private:
     UPROPERTY(EditDefaultsOnly, Category = "Action")
         FHitData HitData;
 
-
-    UPROPERTY(EditDefaultsOnly, Category = "Add-On")
-        TSubclassOf<ACMotionTrail> MotionTrailClass;
-
 private:
     bool bMoving;
     FVector Start;
@@ -54,7 +50,4 @@ private:
 
     TArray<TWeakObjectPtr<ACCommonCharacter>> Overlapped;
     TArray<TWeakObjectPtr<ACCommonCharacter>> Hitted;
-
-private:
-    TWeakObjectPtr<ACMotionTrail> MotionTrail;
 };

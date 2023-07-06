@@ -17,7 +17,7 @@ void ACMotionTrail::BeginPlay()
 
 	UMaterialInstanceConstant* material;
 	YJJHelpers::GetAssetDynamic<UMaterialInstanceConstant>(
-		&material, "MaterialInstanceConstant'/Game/Assets/Materials/M_GhostTrail_Inst.M_GhostTrail_Inst'");
+		&material, "MaterialInstanceConstant'/Game/Materials/MotionTrail/M_MotionTrail_Inst.M_MotionTrail_Inst'");
 
 	Material = UMaterialInstanceDynamic::Create(material, this);
 	Material->SetVectorParameterValue("Color", Color);

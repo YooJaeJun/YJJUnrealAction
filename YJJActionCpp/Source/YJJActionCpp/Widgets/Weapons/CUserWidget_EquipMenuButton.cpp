@@ -11,11 +11,9 @@ void UCUserWidget_EquipMenuButton::BindEquipMenuButton()
 
 void UCUserWidget_EquipMenuButton::OnHovered()
 {
-	const EWeaponType weaponType =
-		YJJHelpers::ConvertTCHARToEnum<EWeaponType>(GetName()[GetName().Len() - 1]);
+	CurWeaponType = YJJHelpers::ConvertTCHARToEnum<EWeaponType>(GetName()[GetName().Len() - 1]);
 
-	if (OnWeaponEquipped.IsBound())
-		OnWeaponEquipped.Broadcast(weaponType);
+	OnWeaponTypeHovered.ExecuteIfBound(CurWeaponType);
 }
 
 void UCUserWidget_EquipMenuButton::OnUnhovered()
