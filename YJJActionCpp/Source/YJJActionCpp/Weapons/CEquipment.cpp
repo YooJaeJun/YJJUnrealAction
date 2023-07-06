@@ -54,7 +54,7 @@ void UCEquipment::End_Equip_Implementation()
 	bBeginEquip = false;
 	bEquipped = true;
 
-	StateComp->GoBack();
+	StateComp->SetIdleMode();
 	MovementComp->Move();
 }
 

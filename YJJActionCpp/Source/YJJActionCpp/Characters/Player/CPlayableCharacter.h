@@ -35,6 +35,8 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 private:
+	void InputAction_Avoid();
+
 	virtual void Avoid();
 	virtual void Hit() override;
 
@@ -42,11 +44,12 @@ private:
 	virtual void End_Hit() override;
 	virtual void End_Rise() override;
 
-	void InputAction_Avoid();
-
 private:
 	UFUNCTION()
 		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
+
+	UFUNCTION()
+		void OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType);
 
 public:
 	FORCEINLINE constexpr USpringArmComponent* GetSpringArm() const { return SpringArm; }
@@ -81,5 +84,5 @@ private:
 		TArray<float> Speeds{ 200, 500, 800 };
 
 private:
-	EHitType CurHitType = EHitType::None;
+	EHitType CurHitType = EHitType::Common;
 };

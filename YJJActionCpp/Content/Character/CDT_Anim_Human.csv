@@ -1,0 +1,7 @@
+---,StateType,HitType,Montage,PlayRate
+1,"Avoid","None","AnimMontage'/Game/Character/Player/Montages/Common/CAvoid_Montage.CAvoid_Montage'","1.000000"
+2,"Dead","None","AnimMontage'/Game/Character/Player/Montages/Common/CDead_Montage.CDead_Montage'","1.000000"
+3,"Rise","None","AnimMontage'/Game/Character/Player/Montages/Common/CRise_Montage.CRise_Montage'","1.000000"
+4,"Land","None","AnimMontage'/Game/Character/Player/Montages/Parkour/CLand_Human.CLand_Human'","1.000000"
+5,"Idle","Common","AnimMontage'/Game/Character/Player/Montages/Common/CHitReaction_Stop_Montage.CHitReaction_Stop_Montage'","1.000000"
+6,"Idle","Knockback","AnimMontage'/Game/Character/Player/Montages/Common/CHit_KnockBack_Montage.CHit_KnockBack_Montage'","1.000000"

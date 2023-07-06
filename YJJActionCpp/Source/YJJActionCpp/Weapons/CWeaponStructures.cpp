@@ -116,6 +116,7 @@ void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const
 	CheckTrue(FMath::IsNearlyZero(StopTime));
 
 	TArray<TWeakObjectPtr<ACCommonCharacter>> characters;
+
 	for (TWeakObjectPtr<AActor> actor : InWorld->GetCurrentLevel()->Actors)
 	{
 		const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(actor);

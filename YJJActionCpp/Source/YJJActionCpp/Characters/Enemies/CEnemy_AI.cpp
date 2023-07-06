@@ -32,7 +32,10 @@ ACEnemy_AI::ACEnemy_AI()
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
 	
 	if (!!StateComp)
+	{
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACEnemy_AI::OnStateTypeChanged);
+		StateComp->OnHitStateTypeChanged.AddUniqueDynamic(this, &ACEnemy_AI::OnHitStateTypeChanged);
+	}
 
 	if (!!MovementComp)
 	{
@@ -71,9 +74,6 @@ void ACEnemy_AI::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 	case EStateType::Rise:
 		Rise();
 		break;
-	case EStateType::Hit:
-		Hit();
-		break;
 	case EStateType::Dead:
 		Dead();
 		break;
@@ -95,6 +95,37 @@ void ACEnemy_AI::Hit()
 	CurHitType = Damage.Event.HitData.AttackType;
 
 	Super::Hit();
+
+	// Interaction
+	const FHitData data = Damage.Event.HitData;
+
+	if (StateComp->IsIdleMode())
+		data.PlayMontage(this);
+
+	data.PlayHitStop(GetWorld());
+	data.PlaySoundWave(this);
+	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
+
+	if (false == CharacterStatComp->IsDead())
+	{
+		const FVector start = GetActorLocation();
+		const FVector target = Damage.Attacker->GetActorLocation();
+		FVector direction = target - start;
+		direction.Normalize();
+
+		LaunchCharacter(-direction * data.Launch, false, false);
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
+	}
+
+	if (CharacterStatComp->IsDead())
+	{
+		StateComp->SetDeadMode();
+		return;
+	}
+
+	Damage.Attacker = nullptr;
+	Damage.Causer = nullptr;
+
 
 	// Cancel Hit
 	CheckNull(WeaponComp);
@@ -118,4 +149,9 @@ void ACEnemy_AI::End_Hit()
 		StateComp->SetIdleMode();
 		break;
 	}
+}
+
+void ACEnemy_AI::OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType)
+{
+	Hit();
 }

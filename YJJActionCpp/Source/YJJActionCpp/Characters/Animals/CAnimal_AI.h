@@ -45,6 +45,9 @@ private:
 	UFUNCTION()
 		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
 
+	UFUNCTION()
+		void OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType);
+
 public:
 	void SetZoomMinRange(const float InMinRange) const;
 	void SetZoomMaxRange(const float InMaxRange) const;

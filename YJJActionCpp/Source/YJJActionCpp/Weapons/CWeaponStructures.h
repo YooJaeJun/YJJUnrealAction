@@ -81,9 +81,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		float Mana;
-
-	UPROPERTY(EditAnywhere)
-		bool bMotionTrail;
 };
 
 
@@ -131,7 +128,7 @@ public:
 		FVector EffectScale = FVector::OneVector;
 
 	UPROPERTY(EditAnywhere)
-		EHitType AttackType = EHitType::None;
+		EHitType AttackType = EHitType::Common;
 };
 
 USTRUCT()

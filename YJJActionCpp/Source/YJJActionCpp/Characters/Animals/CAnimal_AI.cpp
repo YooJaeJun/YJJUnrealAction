@@ -143,15 +143,11 @@ void ACAnimal_AI::Landed(const FHitResult& Hit)
 void ACAnimal_AI::Hit()
 {
 	CheckNull(MontagesComp);
-	MontagesComp->PlayHitAnim();
+	MontagesComp->PlayAvoidAnim();
+
+	Super::Hit();
 
 	// µ¿¹°: HitDataÀÇ Montage, Launch ¾È ¾¸
-
-	// Apply Damage
-	{
-		CharacterStatComp->Damage(Damage.Power);
-		Damage.Power = 0;
-	}
 
 	// Interaction
 	const FHitData data = Damage.Event.HitData;
@@ -187,9 +183,6 @@ void ACAnimal_AI::OnStateTypeChanged(const EStateType InPrevType, const EStateTy
 	case EStateType::Land:
 		Land();
 		break;
-	case EStateType::Hit:
-		Hit();
-		break;
 	case EStateType::Dead:
 		Dead();
 		break;
@@ -206,4 +199,9 @@ void ACAnimal_AI::SetZoomMaxRange(const float InMaxRange) const
 {
 	CheckNull(ZoomComp);
 	ZoomComp->ZoomData.MaxRange = InMaxRange;
+}
+
+void ACAnimal_AI::OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType)
+{
+	Hit();
 }

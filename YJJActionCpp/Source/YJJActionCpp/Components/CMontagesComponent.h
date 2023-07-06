@@ -19,6 +19,9 @@ public:
 		EStateType StateType;
 
 	UPROPERTY(EditAnywhere)
+		EHitType HitType;
+
+	UPROPERTY(EditAnywhere)
 		UAnimMontage* Montage;
 
 	UPROPERTY(EditAnywhere)
@@ -40,14 +43,19 @@ public:
 	void PlayAvoidAnim();
 	void PlayRiseAnim();
 	void PlayLandAnim();
-	void PlayHitAnim();
 	void PlayDeadAnim();
+
+	void PlayHitCommonAnim();
+	void PlayHitKnockbackAnim();
 
 private:
 	UFUNCTION(BlueprintCallable)
 		void PlayAnimMontage(const EStateType InType);
 
-	void PlayAnimMontage(const EStateType InType, const TWeakObjectPtr<UInputComponent> InInput);
+	UFUNCTION(BlueprintCallable)
+		void PlayHitAnimMontage(const EHitType InType);
+
+	void PlayAnimMontage(const EStateType InType, const TWeakObjectPtr<UInputComponent> InInput) const;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "DataTable")
@@ -55,6 +63,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "DataTable")
 		FMontagesData Datas[static_cast<uint8>(EStateType::Max)];
+
+	UPROPERTY(EditAnywhere, Category = "DataTable")
+		FMontagesData HitDatas[static_cast<uint8>(EHitType::Max)];
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

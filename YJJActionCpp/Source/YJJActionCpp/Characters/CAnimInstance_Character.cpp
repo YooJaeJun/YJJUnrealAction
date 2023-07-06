@@ -39,10 +39,13 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 		StateType = StateComp->GetCurMode();
 
 		bFalling = (StateComp->IsFallMode());
-		bHitting = (StateComp->IsHitMode());
+		bHitting = (false == StateComp->IsHitNoneMode());
 	}
 
 	// Move
+
+
+	// Old Version
 
 	//Speed = Owner->GetVelocity().Size2D();
 
@@ -56,6 +59,9 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 	//Pitch = UKismetMathLibrary::FInterpTo(
 	//	Pitch, Owner->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
+
+
+	// New Version
 
 	Speed = Owner->GetVelocity().Size();
 

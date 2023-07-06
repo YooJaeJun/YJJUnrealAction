@@ -22,3 +22,13 @@ void UCSkill::BeginPlay(
     StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
     MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
 }
+
+void UCSkill::Begin_Skill_Implementation()
+{
+    bInAction = true;
+}
+
+void UCSkill::End_Skill_Implementation()
+{
+    bInAction = false;
+}

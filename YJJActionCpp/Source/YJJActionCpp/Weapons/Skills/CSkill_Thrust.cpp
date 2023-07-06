@@ -27,7 +27,10 @@ void UCSkill_Thrust::Begin_Skill_Implementation()
 {
 	Super::Begin_Skill_Implementation();
 	CheckNull(Attachment);
-	Attachment->OnAttachmentBeginOverlap.Remove(Act.Get(), "OnAttachmentBeginOverlap");
+
+	if (Attachment->OnAttachmentBeginOverlap.IsBound())
+		Attachment->OnAttachmentBeginOverlap.Remove(Act.Get(), "OnAttachmentBeginOverlap");
+
 	Attachment->OnAttachmentBeginOverlap.AddDynamic(this, &UCSkill_Thrust::OnAttachmentBeginOverlap);
 
 	bMoving = true;
@@ -113,13 +116,19 @@ void UCSkill_Thrust::End_Skill_Implementation()
 {
 	Super::End_Skill_Implementation();
 
-	Attachment->OnAttachmentBeginOverlap.Remove(this, "OnAttachmentBeginOverlap");
+	if (Attachment->OnAttachmentBeginOverlap.IsBound())
+		Attachment->OnAttachmentBeginOverlap.Remove(this, "OnAttachmentBeginOverlap");
+
 	Attachment->OnAttachmentBeginOverlap.AddDynamic(Act.Get(), &UCAct::OnAttachmentBeginOverlap);
 
 	bMoving = false;
 
+	CheckNull(StateComp);
+
 	StateComp->SetIdleMode();
 	StateComp->OffSkillMode();
+
+	CheckNull(MovementComp);
 
 	MovementComp->Move();
 	MovementComp->UnFixCamera();

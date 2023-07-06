@@ -29,6 +29,9 @@ private:
 	UFUNCTION()
 		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
 
+	UFUNCTION()
+		void OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType);
+
 private:
 	virtual void Hit() override;
 	virtual void End_Hit() override;
@@ -41,5 +44,5 @@ private:
 		TArray<float> Speeds{ 200, 400, 600 };
 
 private:
-	EHitType CurHitType = EHitType::None;
+	EHitType CurHitType = EHitType::Common;
 };

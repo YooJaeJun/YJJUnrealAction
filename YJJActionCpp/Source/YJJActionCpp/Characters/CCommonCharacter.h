@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Interfaces/CInterface_CharacterAnim.h"
+#include "Interfaces/CInterface_CharacterState.h"
 #include "Interfaces/CInterface_CharacterBody.h"
 #include "Interfaces/CInterface_IK.h"
 #include "Weapons/CWeaponStructures.h"
@@ -38,7 +38,7 @@ struct FDamageData
 UCLASS(Abstract)
 class YJJACTIONCPP_API ACCommonCharacter :
 	public ACharacter,
-	public ICInterface_CharacterAnim,
+	public ICInterface_CharacterState,
 	public ICInterface_CharacterBody,
 	public ICInterface_IK
 {

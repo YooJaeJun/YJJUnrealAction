@@ -1,4 +1,0 @@
-,StateType,Montage,PlayRate
-1,Avoid,AnimMontage'/Game/Character/AnimationMontages/Common/CAvoid_Montage.CAvoid_Montage',1
-2,Hit,AnimMontage'/Game/Character/AnimationMontages/Common/CHitReaction_Stop_Montage.CHitReaction_Stop_Montage',1
-3,Dead,AnimMontage'/Game/Character/AnimationMontages/Common/Dead_Montage.Dead_Montage',1

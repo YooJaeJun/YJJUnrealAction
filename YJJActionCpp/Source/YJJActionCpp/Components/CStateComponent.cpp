@@ -37,11 +37,6 @@ void UCStateComponent::SetActMode()
 	ChangeType(EStateType::Act);
 }
 
-void UCStateComponent::SetHitMode()
-{
-	ChangeType(EStateType::Hit);
-}
-
 void UCStateComponent::SetDeadMode()
 {
 	ChangeType(EStateType::Dead);
@@ -54,12 +49,7 @@ void UCStateComponent::SetRiseMode()
 
 bool UCStateComponent::CanAttack() const
 {
-	return IsIdleMode() || IsHitMode();
-}
-
-void UCStateComponent::GoBack()
-{
-	SetIdleMode();
+	return IsIdleMode();
 }
 
 void UCStateComponent::ChangeType(const EStateType InType)
@@ -76,5 +66,57 @@ void UCStateComponent::ChangeType(const EStateType InType)
 			FColor::Emerald);
 
 		OnStateTypeChanged.Broadcast(PrevType, CurType);
+	}
+}
+
+void UCStateComponent::SetHitNoneMode()
+{
+	ChangeHitType(EHitType::None);
+}
+
+void UCStateComponent::SetHitCommonMode()
+{
+	ChangeHitType(EHitType::Common);
+}
+
+void UCStateComponent::SetHitDownMode()
+{
+	ChangeHitType(EHitType::Down);
+}
+
+void UCStateComponent::SetHitFlyMode()
+{
+	ChangeHitType(EHitType::Fly);
+}
+
+void UCStateComponent::SetHitKnockbackMode()
+{
+	ChangeHitType(EHitType::Knockback);
+}
+
+void UCStateComponent::SetHitAirMode()
+{
+	ChangeHitType(EHitType::Air);
+}
+
+void UCStateComponent::SetHitFlyingPutDownMode()
+{
+	ChangeHitType(EHitType::FlyingPutDown);
+}
+
+void UCStateComponent::ChangeHitType(const EHitType InType)
+{
+	PrevHitType = CurHitType;
+	CurHitType = InType;
+
+	if (OnHitStateTypeChanged.IsBound())
+	{
+		CLog::Print(Owner->GetName() + " : "
+			+ YJJHelpers::ConvertEnumToString(CurHitType),
+			-1,
+			5,
+			FColor::Orange);
+
+		OnHitStateTypeChanged.Broadcast(PrevHitType, CurHitType);
 	}
 }

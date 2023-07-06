@@ -111,10 +111,10 @@ float ACCommonCharacter::TakeDamage(
 	Damage.Attacker = Cast<ACCommonCharacter>(EventInstigator->GetPawn());
 	Damage.Causer = DamageCauser;
 
-	//UObject Casting이 아니기 때문에 강제로 맞춰줌
+	//UObject Casting이 아니기 때문에 강제로 메모리 크기 맞춰줌
 	Damage.Event = *(FActDamageEvent*)&DamageEvent;
 
-	StateComp->SetHitMode();
+	StateComp->SetHitCommonMode();
 
 	return damage;
 }
@@ -134,40 +134,8 @@ void ACCommonCharacter::Land()
 void ACCommonCharacter::Hit()
 {
 	// Apply Damage
-	{
-		CharacterStatComp->Damage(Damage.Power);
-		Damage.Power = 0;
-	}
-
-	// Interaction
-	const FHitData data = Damage.Event.HitData;
-
-	if (false == StateComp->IsActMode())
-		data.PlayMontage(this);
-
-	data.PlayHitStop(GetWorld());
-	data.PlaySoundWave(this);
-	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
-
-	if (false == CharacterStatComp->IsDead())
-	{
-		const FVector start = GetActorLocation();
-		const FVector target = Damage.Attacker->GetActorLocation();
-		FVector direction = target - start;
-		direction.Normalize();
-
-		LaunchCharacter(-direction * data.Launch, false, false);
-		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
-	}
-
-	if (CharacterStatComp->IsDead())
-	{
-		StateComp->SetDeadMode();
-		return;
-	}
-
-	Damage.Attacker = nullptr;
-	Damage.Causer = nullptr;
+	CharacterStatComp->Damage(Damage.Power);
+	Damage.Power = 0;
 }
 
 void ACCommonCharacter::Dead()

@@ -14,6 +14,8 @@ void UCBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
+
+
 	//const TWeakObjectPtr<ACCommonCharacter> owner = 
 	//	Cast<ACCommonCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	//CheckNull(owner);
@@ -33,7 +35,7 @@ void UCBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	//	"Pawn",
 	//	false,
 	//	ignores,
-	//	EDrawDebugTrace::None,
+	//	EDrawDebugTrace::Common,
 	//	hitResults,
 	//	false);
 

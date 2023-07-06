@@ -2,15 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "CInterface_CharacterAnim.generated.h"
+#include "CInterface_CharacterState.generated.h"
 
 UINTERFACE(MinimalAPI)
-class UCInterface_CharacterAnim : public UInterface
+class UCInterface_CharacterState : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class YJJACTIONCPP_API ICInterface_CharacterAnim
+class YJJACTIONCPP_API ICInterface_CharacterState
 {
 	GENERATED_BODY()
 

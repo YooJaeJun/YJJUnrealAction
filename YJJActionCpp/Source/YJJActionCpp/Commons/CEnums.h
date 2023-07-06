@@ -25,6 +25,33 @@ enum class ECharacterType : uint8
 };
 
 UENUM(BlueprintType)
+enum class EStateType : uint8
+{
+	Idle,
+	Fall,
+	Avoid,
+	Equip,
+	Act,
+	Dead,
+	Rise,
+	Land,
+	Max	
+};
+
+UENUM(BlueprintType)
+enum class EHitType : uint8
+{
+	None,
+	Common,
+	Knockback,
+	Air,
+	Fly,
+	FlyingPutDown,
+	Down,
+	Max
+};
+
+UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	Unarmed,
@@ -55,17 +82,5 @@ enum class EBehaviorType : uint8
 	DownFlying,
 	DownLand,
 	Ride,
-	Max
-};
-
-UENUM()
-enum class EHitType
-{
-	None,
-	Knockback,
-	Air,
-	Fly,
-	FlyingPutDown,
-	Down,
 	Max
 };

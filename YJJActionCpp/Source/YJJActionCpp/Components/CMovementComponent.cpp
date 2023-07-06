@@ -91,7 +91,7 @@ void UCMovementComponent::SetFriction(const float InFriction, const float InBrak
 
 void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 {
-	//CheckFalse(CanMove(InAxis));
+	CheckFalse(CanMove(InAxis));
 	CheckTrue(StateComp->IsFallMode());
 
 	Forward = InAxis;
@@ -104,7 +104,7 @@ void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 
 void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 {
-	//CheckFalse(CanMove(InAxis));
+	CheckFalse(CanMove(InAxis));
 	CheckTrue(StateComp->IsFallMode());
 
 	Right = InAxis;

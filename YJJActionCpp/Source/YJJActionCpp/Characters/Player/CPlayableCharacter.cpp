@@ -16,6 +16,7 @@
 #include "Components/CGameUIComponent.h"
 #include "Commons/CGameMode.h"
 #include "Components/CCharacterInfoComponent.h"
+#include "Components/CCharacterStatComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
 #include "Components/CRidingComponent.h"
@@ -55,6 +56,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	{
 		StateComp->SetIdleMode();
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
+		StateComp->OnHitStateTypeChanged.AddUniqueDynamic(this, &ACPlayableCharacter::OnHitStateTypeChanged);
 	}
 
 	if (!!MovementComp)
@@ -120,8 +122,16 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
 	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Act);
-	PlayerInputComponent->BindAction("Skill", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Skill_Pressed);
-	PlayerInputComponent->BindAction("Skill", EInputEvent::IE_Released, WeaponComp, &UCWeaponComponent::InputAction_Skill_Released);
+	PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Skill_Pressed);
+	PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Released, WeaponComp, &UCWeaponComponent::InputAction_Skill_Released);
+}
+
+void ACPlayableCharacter::InputAction_Avoid()
+{
+	CheckFalse(StateComp->IsIdleMode());
+	CheckFalse(MovementComp->CanMove());
+
+	StateComp->SetAvoidMode();
 }
 
 void ACPlayableCharacter::Avoid()
@@ -134,9 +144,43 @@ void ACPlayableCharacter::Hit()
 	CurHitType = Damage.Event.HitData.AttackType;
 
 	Super::Hit();
+
+	// Interaction
+	const FHitData data = Damage.Event.HitData;
+
+	if (StateComp->IsIdleMode())
+		data.PlayMontage(this);
+
+	data.PlayHitStop(GetWorld());
+	data.PlaySoundWave(this);
+	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
+
+	if (false == CharacterStatComp->IsDead())
+	{
+		const FVector start = GetActorLocation();
+		const FVector target = Damage.Attacker->GetActorLocation();
+		FVector direction = target - start;
+		direction.Normalize();
+
+		LaunchCharacter(-direction * data.Launch, false, false);
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
+	}
+	else // if (CharacterStatComp->IsDead())
+	{
+		StateComp->SetDeadMode();
+		return;
+	}
+
+	Damage.Attacker = nullptr;
+	Damage.Causer = nullptr;
 }
 
 void ACPlayableCharacter::End_Avoid()
+{
+	StateComp->SetIdleMode();
+}
+
+void ACPlayableCharacter::End_Rise()
 {
 	StateComp->SetIdleMode();
 }
@@ -160,19 +204,6 @@ void ACPlayableCharacter::End_Hit()
 	}
 }
 
-void ACPlayableCharacter::End_Rise()
-{
-	StateComp->SetIdleMode();
-}
-
-void ACPlayableCharacter::InputAction_Avoid()
-{
-	CheckFalse(StateComp->IsIdleMode());
-	CheckFalse(MovementComp->CanMove());
-
-	StateComp->SetAvoidMode();
-}
-
 void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
 {
 	switch (InNewType)
@@ -186,11 +217,13 @@ void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const 
 	case EStateType::Land:
 		Land();
 		break;
-	case EStateType::Hit:
-		Hit();
-		break;
 	case EStateType::Dead:
 		Dead();
 		break;
 	}
+}
+
+void ACPlayableCharacter::OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType)
+{
+	Hit();
 }

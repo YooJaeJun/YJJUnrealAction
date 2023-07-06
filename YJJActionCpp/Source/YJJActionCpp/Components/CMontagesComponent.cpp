@@ -30,9 +30,15 @@ void UCMontagesComponent::BeginPlay()
 	{
 		for (const FMontagesData* data : datas)
 		{
-			if (static_cast<EStateType>(i) == data->StateType)
+			if (data->StateType == static_cast<EStateType>(i))
 			{
 				Datas[i] = *data;
+				continue;
+			}
+
+			if (data->HitType == static_cast<EHitType>(i))
+			{
+				HitDatas[i] = *data;
 				continue;
 			}
 		}//for(data)
@@ -57,21 +63,26 @@ void UCMontagesComponent::PlayLandAnim()
 	PlayAnimMontage(EStateType::Land);
 }
 
-void UCMontagesComponent::PlayHitAnim()
-{
-	PlayAnimMontage(EStateType::Hit);
-}
-
 void UCMontagesComponent::PlayDeadAnim()
 {
 	PlayAnimMontage(EStateType::Dead);
+}
+
+void UCMontagesComponent::PlayHitCommonAnim()
+{
+	PlayHitAnimMontage(EHitType::Common);
+}
+
+void UCMontagesComponent::PlayHitKnockbackAnim()
+{
+	PlayHitAnimMontage(EHitType::Knockback);
 }
 
 void UCMontagesComponent::PlayAnimMontage(const EStateType InType)
 {
 	CheckNull(Owner);
 
-	const FMontagesData data = Datas[(uint8)InType];
+	const FMontagesData data = Datas[static_cast<uint8>(InType)];
 
 	if (nullptr == data.Montage)
 	{
@@ -82,11 +93,26 @@ void UCMontagesComponent::PlayAnimMontage(const EStateType InType)
 	Owner->PlayAnimMontage(data.Montage, data.PlayRate);
 }
 
-void UCMontagesComponent::PlayAnimMontage(const EStateType InType, const TWeakObjectPtr<UInputComponent> InInput)
+void UCMontagesComponent::PlayHitAnimMontage(const EHitType InType)
 {
 	CheckNull(Owner);
 
-	const FMontagesData data = Datas[(uint8)InType];
+	const FMontagesData data = HitDatas[static_cast<uint8>(InType)];
+
+	if (nullptr == data.Montage)
+	{
+		CLog::Log("No Hit Montages Data");
+		return;
+	}
+
+	Owner->PlayAnimMontage(data.Montage, data.PlayRate);
+}
+
+void UCMontagesComponent::PlayAnimMontage(const EStateType InType, const TWeakObjectPtr<UInputComponent> InInput) const
+{
+	CheckNull(Owner);
+
+	const FMontagesData data = Datas[static_cast<uint8>(InType)];
 
 	if (nullptr == data.Montage)
 	{
