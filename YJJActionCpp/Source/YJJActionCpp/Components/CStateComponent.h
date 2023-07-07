@@ -35,6 +35,7 @@ public:
 	void SetDeadMode();
 	void SetRiseMode();
 
+	void SetHitMode(const EHitType InHitType);
 	void SetHitNoneMode();
 	void SetHitCommonMode();
 	void SetHitDownMode();

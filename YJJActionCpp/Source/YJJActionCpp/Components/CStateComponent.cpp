@@ -12,6 +12,11 @@ void UCStateComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
+bool UCStateComponent::CanAttack() const
+{
+	return IsIdleMode();
+}
+
 void UCStateComponent::SetIdleMode()
 {
 	ChangeType(EStateType::Idle);
@@ -47,11 +52,6 @@ void UCStateComponent::SetRiseMode()
 	ChangeType(EStateType::Rise);
 }
 
-bool UCStateComponent::CanAttack() const
-{
-	return IsIdleMode();
-}
-
 void UCStateComponent::ChangeType(const EStateType InType)
 {
 	PrevType = CurType;
@@ -67,6 +67,11 @@ void UCStateComponent::ChangeType(const EStateType InType)
 
 		OnStateTypeChanged.Broadcast(PrevType, CurType);
 	}
+}
+
+void UCStateComponent::SetHitMode(const EHitType InHitType)
+{
+	ChangeHitType(InHitType);
 }
 
 void UCStateComponent::SetHitNoneMode()

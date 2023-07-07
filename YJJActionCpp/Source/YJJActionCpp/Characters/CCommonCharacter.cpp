@@ -114,7 +114,7 @@ float ACCommonCharacter::TakeDamage(
 	//UObject Casting이 아니기 때문에 강제로 메모리 크기 맞춰줌
 	Damage.Event = *(FActDamageEvent*)&DamageEvent;
 
-	StateComp->SetHitCommonMode();
+	StateComp->SetHitMode(Damage.Event.HitData.AttackType);
 
 	return damage;
 }

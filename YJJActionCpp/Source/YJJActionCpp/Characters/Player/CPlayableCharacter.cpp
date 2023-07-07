@@ -158,7 +158,10 @@ void ACPlayableCharacter::Hit()
 	if (false == CharacterStatComp->IsDead())
 	{
 		const FVector start = GetActorLocation();
+
+		CheckNull(Damage.Attacker);
 		const FVector target = Damage.Attacker->GetActorLocation();
+
 		FVector direction = target - start;
 		direction.Normalize();
 
@@ -202,6 +205,8 @@ void ACPlayableCharacter::End_Hit()
 		StateComp->SetIdleMode();
 		break;
 	}
+
+	StateComp->SetHitNoneMode();
 }
 
 void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
@@ -225,5 +230,12 @@ void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const 
 
 void ACPlayableCharacter::OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType)
 {
-	Hit();
+	switch (InNewType)
+	{
+	case EHitType::None:
+		break;
+	default:
+		Hit();
+		break;
+	}
 }

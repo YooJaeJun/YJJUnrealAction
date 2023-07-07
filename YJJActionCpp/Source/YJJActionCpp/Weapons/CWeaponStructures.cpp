@@ -34,7 +34,8 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 	stat->SetStaminaDamage(Stamina);
 	stat->SetManaDamage(Mana);
 
-	const TWeakObjectPtr<UCMovementComponent> movement = YJJHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
+	const TWeakObjectPtr<UCMovementComponent> movement = 
+		YJJHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
 
 	if (!!movement.Get())
 	{
@@ -43,6 +44,8 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 
 		if (false == bCanMove)
 			movement->Stop();
+		else
+			movement->Move();
 	}
 
 	if (!!Montage)
@@ -99,10 +102,10 @@ void FHitData::SendDamage(
 	const TWeakObjectPtr<AActor> InAttackCauser, 
 	const TWeakObjectPtr<ACCommonCharacter> InOther) const
 {
-	FActDamageEvent e;
-	e.HitData = *this;
+	FActDamageEvent damageEvent;
+	damageEvent.HitData = *this;
 
-	InOther->TakeDamage(Power, e, InAttacker->GetMyCurController().Get(), InAttackCauser.Get());
+	InOther->TakeDamage(Power, damageEvent, InAttacker->GetMyCurController().Get(), InAttackCauser.Get());
 }
 
 void FHitData::PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner) const

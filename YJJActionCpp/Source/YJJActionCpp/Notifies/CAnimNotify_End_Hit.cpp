@@ -17,16 +17,5 @@ void UCAnimNotify_End_Hit::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	ICInterface_CharacterState* characterState = Cast<ICInterface_CharacterState>(MeshComp->GetOwner());
 	CheckNull(characterState);
 
-	switch (HitType)
-	{
-	case EHitType::Common:
-		characterState->End_Hit();
-		break;
-	case EStateType::Dead:
-		characterState->End_Dead();
-		break;
-	case EStateType::Rise:
-		characterState->End_Rise();
-		break;
-	}
+	characterState->End_Hit();
 }

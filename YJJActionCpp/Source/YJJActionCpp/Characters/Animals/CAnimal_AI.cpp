@@ -159,7 +159,10 @@ void ACAnimal_AI::Hit()
 	if (false == CharacterStatComp->IsDead())
 	{
 		const FVector start = GetActorLocation();
+
+		CheckNull(Damage.Attacker);
 		const FVector target = Damage.Attacker->GetActorLocation();
+
 		FVector direction = target - start;
 		direction.Normalize();
 
