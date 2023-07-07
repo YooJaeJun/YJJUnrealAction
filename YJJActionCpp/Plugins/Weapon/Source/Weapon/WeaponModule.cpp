@@ -6,6 +6,9 @@
 #include "AssetToolsModule.h"
 
 #define LOCTEXT_NAMESPACE "FWeaponModule"
+
+// 모듈을 C++ 클래스로 구현하는 매크로.
+// 모듈의 시작과 종료를 관리, 모듈의 이름과 타입을 정의.
 IMPLEMENT_MODULE(FWeaponModule, Weapon)
 
 void FWeaponModule::StartupModule()
@@ -13,6 +16,7 @@ void FWeaponModule::StartupModule()
 	FWeaponStyle::Get();
 
 	IAssetTools& assetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+
 	const EAssetTypeCategories::Type categories = 
 		assetTools.RegisterAdvancedAssetCategory("WeaponAsset", FText::FromString("Weapon"));
 

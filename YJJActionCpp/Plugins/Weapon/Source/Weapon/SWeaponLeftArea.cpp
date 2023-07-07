@@ -7,8 +7,7 @@ void SWeaponTableRow::Construct(const FArguments& InArgs, const TSharedRef<STabl
 {
 	Data = InArgs._RowData;
 
-	SMultiColumnTableRow<FWeaponRowDataPtr>::Construct
-	(
+	SMultiColumnTableRow<FWeaponRowDataPtr>::Construct(
 		FSuperRowType::FArguments().Style(FEditorStyle::Get(), "TableView.DarkRow"), InOwnerTable
 	);
 }
@@ -44,7 +43,7 @@ void SWeaponLeftArea::Construct(const FArguments& InArgs)
 			.OnTextCommitted(this, &SWeaponLeftArea::OnTextCommitted)
 		]
 		+ SVerticalBox::Slot()
-		.FillHeight(1)
+		.FillHeight(1)	// 1 == 100% 한 줄 다 채우겠다.
 		[
 			SAssignNew(ListView, SListView<FWeaponRowDataPtr>)
 			.HeaderRow
@@ -69,6 +68,8 @@ void SWeaponLeftArea::Construct(const FArguments& InArgs)
 		[
 			SNew(STextBlock)
 			.Text(this, &SWeaponLeftArea::OnGetAssetCount)
+			// 여기 Text 내용 변경 시, 자동 갱신.
+			// Attribute를 함수로 줄 수 있다.
 		]
 	];
 
@@ -133,11 +134,10 @@ void SWeaponLeftArea::ReadDataAssetList()
 			continue;
 
 		FString name = asset->GetName();
+
 		if (SearchText.IsEmpty() == false)
-		{
 			if (name.Contains(SearchText.ToString()) == false)
 				continue;
-		}
 
 		RowDatas.Add(FWeaponRowData::Make(++index, name, asset.Get()));
 	}

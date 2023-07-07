@@ -36,9 +36,8 @@ void UCEquipment::Equip_Implementation()
 		End_Equip();
 	}
 
-	for (const auto& sound : Data.Sounds)
-		if (!!sound)
-			Data.PlaySoundWave(Owner.Get());
+	if (!!Data.Sound)
+		Data.PlaySoundWave(Owner.Get());
 }
 
 void UCEquipment::Begin_Equip_Implementation()

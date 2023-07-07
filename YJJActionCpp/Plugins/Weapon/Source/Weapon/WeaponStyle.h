@@ -16,7 +16,11 @@ public:
 	~FWeaponStyle();
 
 private:
-	void RegisterIcon(const FString& InName, const FString& InPath, const FVector2D& InIconSize, FSlateIcon& OutSlateIcon) const;
+	void RegisterIcon(
+		const FString& InName, 
+		const FString& InPath, 
+		const FVector2D& InIconSize, 
+		FSlateIcon& OutSlateIcon) const;
 
 private:
 	static const FName StyleSetName;

@@ -53,8 +53,7 @@ void SWeaponDetailsView::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 			checkBoxes->CheckDefaultValue(index++, data.PlayRate);
 			checkBoxes->CheckDefaultValue(index++, data.bCanMove);
 			checkBoxes->CheckDefaultValue(index++, data.bUseControlRotation);
-			if (data.Sounds.Num() > 0)
-				checkBoxes->CheckDefaultObject(index++, data.Sounds[0]);
+			checkBoxes->CheckDefaultObject(index++, data.Sound);
 		}
 	}
 
@@ -85,8 +84,7 @@ void SWeaponDetailsView::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 				checkBoxes->CheckDefaultValue(index++, data.bCanMove);
 				checkBoxes->CheckDefaultValue(index++, data.bUseControlRotation);
 				checkBoxes->CheckDefaultValue(index++, data.bFixedCamera);
-				if (data.Sounds.Num() > 0)
-					checkBoxes->CheckDefaultObject(index++, data.Sounds[0]);
+				checkBoxes->CheckDefaultObject(index++, data.Sound);
 				checkBoxes->CheckDefaultObject(index++, data.Effect);
 				checkBoxes->CheckDefaultValue(index++, data.EffectLocation);
 				checkBoxes->CheckDefaultValue(index++, data.EffectScale);
@@ -123,8 +121,7 @@ void SWeaponDetailsView::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 				checkBoxes->CheckDefaultValue(index++, data.Power);
 				checkBoxes->CheckDefaultValue(index++, data.Launch);
 				checkBoxes->CheckDefaultValue(index++, data.StopTime);
-				if (data.Sounds.Num() > 0)
-					checkBoxes->CheckDefaultObject(index++, data.Sounds[0]);
+				checkBoxes->CheckDefaultObject(index++, data.Sound);
 				checkBoxes->CheckDefaultObject(index++, data.Effect);
 				checkBoxes->CheckDefaultValue(index++, data.EffectLocation);
 				checkBoxes->CheckDefaultValue(index++, data.EffectScale);

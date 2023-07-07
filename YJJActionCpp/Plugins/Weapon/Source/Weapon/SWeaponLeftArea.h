@@ -25,6 +25,7 @@ struct FWeaponRowData
 	class UCWeaponAsset* Asset;
 };
 
+// 출력할 타입 - 전역 포인터
 typedef TSharedPtr<FWeaponRowData> FWeaponRowDataPtr;
 
 ///////////////////////////////////////////////////////////////////////////////

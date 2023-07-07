@@ -33,7 +33,7 @@ public:
 		bool bUseControlRotation = true;
 
 	UPROPERTY(EditAnywhere)
-		TArray<USoundWave*> Sounds;
+		USoundWave* Sound;
 };
 
 
@@ -65,7 +65,7 @@ public:
 		bool bFixedCamera;
 
 	UPROPERTY(EditAnywhere)
-		TArray<USoundWave*> Sounds;
+		USoundWave* Sound;
 
 	UPROPERTY(EditAnywhere)
 		UFXSystemAsset* Effect;
@@ -116,8 +116,8 @@ public:
 		float StopTime;
 
 	UPROPERTY(EditAnywhere)
-		TArray<USoundWave*> Sounds;
-
+		USoundWave* Sound;
+	
 	UPROPERTY(EditAnywhere)
 		UFXSystemAsset* Effect;
 

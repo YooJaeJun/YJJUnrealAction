@@ -17,7 +17,7 @@ public class Weapon : ModuleRules
 		PrivateDependencyModuleNames.Add("Slate");
 		PrivateDependencyModuleNames.Add("SlateCore");
 
-		PrivateDependencyModuleNames.Add("UnrealEd");
+		PrivateDependencyModuleNames.Add("UnrealEd");	// UFactory
 		PrivateDependencyModuleNames.Add("EditorStyle");
 		PrivateDependencyModuleNames.Add("InputCore");
 	}

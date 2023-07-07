@@ -29,7 +29,7 @@ FWeaponStyle::FWeaponStyle()
     path = FPaths::ProjectPluginsDir() / "Weapon" / "Resources";
     RegisterIcon(
         "ToolBar_Icon", path / "weapon_thumnail_icon.png", 
-        FVector2D(40, 40), 
+        FVector2D(50, 50), 
         ToolBar_Icon);
 
     FSlateStyleRegistry::RegisterSlateStyle(*StyleSet.Get());
@@ -54,7 +54,11 @@ FWeaponStyle::~FWeaponStyle()
     StyleSet.Reset();
 }
 
-void FWeaponStyle::RegisterIcon(const FString& InName, const FString& InPath, const FVector2D& InIconSize, FSlateIcon& OutSlateIcon) const
+void FWeaponStyle::RegisterIcon(
+    const FString& InName, 
+    const FString& InPath, 
+    const FVector2D& InIconSize, 
+    FSlateIcon& OutSlateIcon) const
 {
     FSlateImageBrush* brush = new FSlateImageBrush(InPath, InIconSize);
 

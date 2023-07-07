@@ -60,7 +60,6 @@ void FWeaponAssetEditor::Open(FString InAssetName)
 	LeftArea = SNew(SWeaponLeftArea)
 		.OnSelectedItem(this, &FWeaponAssetEditor::OnListViewSelectedItem);
 
-
 	FPropertyEditorModule& prop = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
 	// DetailsView
