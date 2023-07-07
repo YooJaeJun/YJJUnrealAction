@@ -160,6 +160,7 @@ void FWeaponAssetEditor::Open(FString InAssetName)
 		asset.Get());
 
 	// DetailsView->SetObject(asset);
+
 	// 어느 DetailView든 asset객체가 세팅된다.
 	// 창은 여러개지만 실제 관리는 내부적으로 하나로 관리한다.
 	// 그래서 창이 종료될 때 DetailsView가 해제 안 되어 있으면 터진다.
@@ -196,13 +197,13 @@ void FWeaponAssetEditor::RegisterTabSpawners(const TSharedRef<FTabManager>& InTa
 {
 	FAssetEditorToolkit::RegisterTabSpawners(InTabManager);
 
-	FOnSpawnTab tab;
-	tab.BindSP(this, &FWeaponAssetEditor::Spawn_LeftAreaTab);
-	TabManager->RegisterTabSpawner(LeftAreaTabId, tab);
+	FOnSpawnTab leftAreaTab;
+	leftAreaTab.BindSP(this, &FWeaponAssetEditor::Spawn_LeftAreaTab);
+	TabManager->RegisterTabSpawner(LeftAreaTabId, leftAreaTab);
 
-	FOnSpawnTab tab2;
-	tab2.BindSP(this, &FWeaponAssetEditor::Spawn_DetailsViewTab);
-	TabManager->RegisterTabSpawner(DetailTabId, tab2);
+	FOnSpawnTab detailTab;
+	detailTab.BindSP(this, &FWeaponAssetEditor::Spawn_DetailsViewTab);
+	TabManager->RegisterTabSpawner(DetailTabId, detailTab);
 }
 
 TSharedRef<SDockTab> FWeaponAssetEditor::Spawn_LeftAreaTab(const FSpawnTabArgs& InArgs) const

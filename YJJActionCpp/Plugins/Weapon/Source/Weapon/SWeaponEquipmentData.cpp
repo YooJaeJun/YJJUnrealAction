@@ -3,25 +3,11 @@
 #include "IPropertyUtilities.h"
 #include "IDetailPropertyRow.h"
 #include "IDetailChildrenBuilder.h"
-#include "SWeaponCheckBoxes.h"
 #include "DetailWidgetRow.h"
-
-TSharedPtr<SWeaponCheckBoxes> SWeaponEquipmentData::CheckBoxes;
 
 TSharedRef<IPropertyTypeCustomization> SWeaponEquipmentData::MakeInstance()
 {
 	return MakeShareable(new SWeaponEquipmentData());
-}
-
-TSharedPtr<SWeaponCheckBoxes> SWeaponEquipmentData::CreateCheckBoxes()
-{
-	if (CheckBoxes.IsValid())
-	{
-		CheckBoxes.Reset();
-		CheckBoxes = nullptr;
-	}
-
-	return CheckBoxes = MakeShareable(new SWeaponCheckBoxes());
 }
 
 void SWeaponEquipmentData::CustomizeHeader(
@@ -29,8 +15,6 @@ void SWeaponEquipmentData::CustomizeHeader(
 	FDetailWidgetRow& InHeaderRow,
 	IPropertyTypeCustomizationUtils& InCustomizationUtils)
 {
-	CheckBoxes->SetUtilities(InCustomizationUtils.GetPropertyUtilities());
-
 	InHeaderRow
 	.NameContent()
 	[
@@ -38,10 +22,7 @@ void SWeaponEquipmentData::CustomizeHeader(
 	]
 	.ValueContent()
 	.MinDesiredWidth(FWeaponStyle::Get()->DesiredWidth.X)
-	.MaxDesiredWidth(FWeaponStyle::Get()->DesiredWidth.Y)
-	[
-		CheckBoxes->Draw()
-	];
+	.MaxDesiredWidth(FWeaponStyle::Get()->DesiredWidth.Y);
 }
 
 void SWeaponEquipmentData::CustomizeChildren(
@@ -49,28 +30,24 @@ void SWeaponEquipmentData::CustomizeChildren(
 	IDetailChildrenBuilder& InChildBuilder, 
 	IPropertyTypeCustomizationUtils& InCustomizationUtils)
 {
-	// 체크박스 DrawProperties로 대체
+	uint32 number = 0;
+	InPropertyHandle->GetNumChildren(number);
 
-	//uint32 number = 0;
-	//InPropertyHandle->GetNumChildren(number);
+	for (uint32 i = 0; i < number; i++)
+	{
+		TSharedPtr<IPropertyHandle> handle = InPropertyHandle->GetChildHandle(i);
+		IDetailPropertyRow& row = InChildBuilder.AddProperty(handle.ToSharedRef());
 
-	//for (uint32 i = 0; i < number; i++)
-	//{
-	//	TSharedPtr<IPropertyHandle> handle = InPropertyHandle->GetChildHandle(i);
-	//	IDetailPropertyRow& row = InChildBuilder.AddProperty(handle.ToSharedRef());
-
-	//	row.CustomWidget()
-	//	.NameContent()
-	//	[
-	//		handle->CreatePropertyNameWidget()
-	//	]
-	//	.ValueContent()
-	//	.MinDesiredWidth(FEditorStyle::GetFloat("StandardDialog.MinDesiredSlotWidth"))
-	//	.MaxDesiredWidth(FEditorStyle::GetFloat("StandardDialog.MaxDesiredSlotWidth"))
-	//	[
-	//		handle->CreatePropertyValueWidget()
-	//	];
-	//}
-
-	CheckBoxes->DrawProperties(InPropertyHandle, &InChildBuilder);
+		row.CustomWidget()
+		.NameContent()
+		[
+			handle->CreatePropertyNameWidget()
+		]
+		.ValueContent()
+		.MinDesiredWidth(FWeaponStyle::Get()->DesiredWidth.X)
+		.MaxDesiredWidth(FWeaponStyle::Get()->DesiredWidth.Y)
+		[
+			handle->CreatePropertyValueWidget()
+		];
+	}
 }

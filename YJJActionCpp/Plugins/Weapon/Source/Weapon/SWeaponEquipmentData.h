@@ -19,7 +19,4 @@ public:
 		TSharedRef<IPropertyHandle> InPropertyHandle, 
 		IDetailChildrenBuilder& InChildBuilder, 
 		IPropertyTypeCustomizationUtils& InCustomizationUtils) override;
-
-private:
-	static TSharedPtr<class SWeaponCheckBoxes> CheckBoxes;
 };

@@ -8,8 +8,6 @@ class WEAPON_API SWeaponActData
 {
 public:
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
-	static TSharedPtr<class SWeaponCheckBoxes> AddCheckBoxes();
-	static void EmptyCheckBoxes();
 
 	virtual void CustomizeHeader(
 		TSharedRef<IPropertyHandle> InPropertyHandle, 
@@ -20,7 +18,4 @@ public:
 		TSharedRef<IPropertyHandle> InPropertyHandle, 
 		IDetailChildrenBuilder& InChildBuilder, 
 		IPropertyTypeCustomizationUtils& InCustomizationUtils) override;
-
-private:
-	static TArray<TSharedPtr<class SWeaponCheckBoxes>> CheckBoxes;
 };
