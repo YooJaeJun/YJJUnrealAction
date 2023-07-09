@@ -96,7 +96,7 @@ void ACPlayableCharacter::BeginPlay()
 	}
 
 	if (!!CharacterInfoComp)
-		CharacterInfoComp->SetCharacterType(ECharacterType::Player);
+		CharacterInfoComp->SetCharacterType(CECharacterType::Player);
 }
 
 void ACPlayableCharacter::Tick(float DeltaTime)
@@ -151,7 +151,6 @@ void ACPlayableCharacter::Hit()
 	if (StateComp->IsIdleMode())
 		data.PlayMontage(this);
 
-	data.PlayHitStop(GetWorld());
 	data.PlaySoundWave(this);
 	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
 
@@ -194,11 +193,11 @@ void ACPlayableCharacter::End_Hit()
 
 	switch (CurHitType)
 	{
-	case EHitType::Knockback:
+	case CEHitType::Knockback:
 		StateComp->SetRiseMode();
 		break;
-	case EHitType::Air:
-	case EHitType::Fly:
+	case CEHitType::Air:
+	case CEHitType::Fly:
 		StateComp->SetFallMode();
 		break;
 	default:
@@ -209,30 +208,30 @@ void ACPlayableCharacter::End_Hit()
 	StateComp->SetHitNoneMode();
 }
 
-void ACPlayableCharacter::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
+void ACPlayableCharacter::OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType)
 {
 	switch (InNewType)
 	{
-	case EStateType::Avoid:
+	case CEStateType::Avoid:
 		Avoid();
 		break;
-	case EStateType::Rise:
+	case CEStateType::Rise:
 		Rise();
 		break;
-	case EStateType::Land:
+	case CEStateType::Land:
 		Land();
 		break;
-	case EStateType::Dead:
+	case CEStateType::Dead:
 		Dead();
 		break;
 	}
 }
 
-void ACPlayableCharacter::OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType)
+void ACPlayableCharacter::OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType)
 {
 	switch (InNewType)
 	{
-	case EHitType::None:
+	case CEHitType::None:
 		break;
 	default:
 		Hit();

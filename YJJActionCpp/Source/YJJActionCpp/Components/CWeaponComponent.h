@@ -13,8 +13,8 @@ class UCStateComponent;
 class UCMovementComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, 
-	const EWeaponType, InPrevType, 
-	const EWeaponType, InNewType);
+	const CEWeaponType, InPrevType, 
+	const CEWeaponType, InNewType);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCWeaponComponent : public UActorComponent
@@ -36,11 +36,11 @@ public:
 	void InputAction_Skill_Released();
 
 	void SetModeFromZeroIndex();
-	void SetMode(EWeaponType InType);
+	void SetMode(CEWeaponType InType);
 	void CancelAct();
 
 private:
-	void ChangeType(EWeaponType InType);
+	void ChangeType(CEWeaponType InType);
 
 public:
 	TWeakObjectPtr<UCWeaponAsset> GetWeaponAsset();
@@ -49,8 +49,8 @@ public:
 	UCAct* GetAct();
 	UCSkill* GetSkill();
 
-	FORCEINLINE constexpr EWeaponType GetType() const { return Type; }
-	FORCEINLINE constexpr EWeaponType GetPrevType() const { return PrevType; }
+	FORCEINLINE constexpr CEWeaponType GetType() const { return Type; }
+	FORCEINLINE constexpr CEWeaponType GetPrevType() const { return PrevType; }
 
 	bool IsIdleStateMode();
 
@@ -67,35 +67,37 @@ public:
 	void SetYonduMode();
 
 public:
-	FORCEINLINE constexpr bool IsUnarmedMode() const { return Type == EWeaponType::Unarmed; }
-	FORCEINLINE constexpr bool IsFistMode() const { return Type == EWeaponType::Fist; }
-	FORCEINLINE constexpr bool IsSwordMode() const { return Type == EWeaponType::Sword; }
-	FORCEINLINE constexpr bool IsHammerMode() const { return Type == EWeaponType::Hammer; }
-	FORCEINLINE constexpr bool IsDualMode() const { return Type == EWeaponType::Dual; }
-	FORCEINLINE constexpr bool IsBowMode() const { return Type == EWeaponType::Bow; }
-	FORCEINLINE constexpr bool IsWarpMode() const { return Type == EWeaponType::Warp; }
-	FORCEINLINE constexpr bool IsAroundMode() const { return Type == EWeaponType::Around; }
-	FORCEINLINE constexpr bool IsFireballMode() const { return Type == EWeaponType::Fireball; }
-	FORCEINLINE constexpr bool IsBombMode() const { return Type == EWeaponType::Bomb; }
-	FORCEINLINE constexpr bool IsYonduMode() const { return Type == EWeaponType::Yondu; }
+	FORCEINLINE constexpr bool IsUnarmedMode() const { return Type == CEWeaponType::Unarmed; }
+	FORCEINLINE constexpr bool IsFistMode() const { return Type == CEWeaponType::Fist; }
+	FORCEINLINE constexpr bool IsSwordMode() const { return Type == CEWeaponType::Sword; }
+	FORCEINLINE constexpr bool IsHammerMode() const { return Type == CEWeaponType::Hammer; }
+	FORCEINLINE constexpr bool IsDualMode() const { return Type == CEWeaponType::Dual; }
+	FORCEINLINE constexpr bool IsBowMode() const { return Type == CEWeaponType::Bow; }
+	FORCEINLINE constexpr bool IsWarpMode() const { return Type == CEWeaponType::Warp; }
+	FORCEINLINE constexpr bool IsAroundMode() const { return Type == CEWeaponType::Around; }
+	FORCEINLINE constexpr bool IsFireballMode() const { return Type == CEWeaponType::Fireball; }
+	FORCEINLINE constexpr bool IsBombMode() const { return Type == CEWeaponType::Bomb; }
+	FORCEINLINE constexpr bool IsYonduMode() const { return Type == CEWeaponType::Yondu; }
 
 private:
 	// DataAsset을 객체마다 만들지 않게 하기 위해 Copy를 따로 만듦
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
 		TArray<UCWeaponAsset*> DataAssets;
 
-	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EWeaponType Type = EWeaponType::Unarmed;
+	UPROPERTY(VisibleAnywhere, Category = "DataAsset")
+		TMap<CEWeaponType, UCWeaponAsset*> DataAssetMap;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EWeaponType PrevType = EWeaponType::Max;
+		CEWeaponType Type = CEWeaponType::Unarmed;
+
+	UPROPERTY(EditAnyWhere, Category = "Settings")
+		CEWeaponType PrevType = CEWeaponType::Max;
 
 public:
 	FWeaponTypeChanged OnWeaponTypeChanged;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
-	TMap<EWeaponType, TWeakObjectPtr<UCWeaponAsset>> DataAssetMap;
 	TWeakObjectPtr<UCStateComponent> StateComp;
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
 };

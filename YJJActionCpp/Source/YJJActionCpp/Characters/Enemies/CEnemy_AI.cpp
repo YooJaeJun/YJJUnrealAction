@@ -56,7 +56,7 @@ void ACEnemy_AI::BeginPlay()
 
 	if (!!CharacterInfoComp)
 		if (CharacterInfoComp->GetCharacterType() == 0)
-			CharacterInfoComp->SetCharacterType(ECharacterType::Enemy_1);
+			CharacterInfoComp->SetCharacterType(CECharacterType::Enemy_1);
 
 	if (!!CharacterStatComp)
 		CharacterStatComp->SetAttackRange(250.0f);
@@ -67,14 +67,14 @@ void ACEnemy_AI::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACEnemy_AI::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+void ACEnemy_AI::OnStateTypeChanged(CEStateType InPrevType, CEStateType InNewType)
 {
 	switch (InNewType)
 	{
-	case EStateType::Rise:
+	case CEStateType::Rise:
 		Rise();
 		break;
-	case EStateType::Dead:
+	case CEStateType::Dead:
 		Dead();
 		break;
 	}
@@ -141,11 +141,11 @@ void ACEnemy_AI::End_Hit()
 
 	switch (CurHitType)
 	{
-	case EHitType::Knockback:
+	case CEHitType::Knockback:
 		StateComp->SetRiseMode();
 		break;
-	case EHitType::Air:
-	case EHitType::Fly:
+	case CEHitType::Air:
+	case CEHitType::Fly:
 		StateComp->SetFallMode();
 		break;
 	default:
@@ -154,7 +154,7 @@ void ACEnemy_AI::End_Hit()
 	}
 }
 
-void ACEnemy_AI::OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType)
+void ACEnemy_AI::OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType)
 {
 	Hit();
 }

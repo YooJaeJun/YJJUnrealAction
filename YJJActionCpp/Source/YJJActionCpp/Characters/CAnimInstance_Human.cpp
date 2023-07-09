@@ -57,7 +57,7 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
-void UCAnimInstance_Human::OnWeaponTypeChanged(const EWeaponType InPrevType, const EWeaponType InNewType)
+void UCAnimInstance_Human::OnWeaponTypeChanged(const CEWeaponType InPrevType, const CEWeaponType InNewType)
 {
 	WeaponType = InNewType;
 	WeaponPrevType = InPrevType;

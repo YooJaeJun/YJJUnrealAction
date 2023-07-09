@@ -19,13 +19,13 @@ void UCAnimNotify_End_State::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 
 	switch(StateType)
 	{
-	case EStateType::Avoid:
+	case CEStateType::Avoid:
 		characterState->End_Avoid();
 		break;
-	case EStateType::Dead:
+	case CEStateType::Dead:
 		characterState->End_Dead();
 		break;
-	case EStateType::Rise:
+	case CEStateType::Rise:
 		characterState->End_Rise();
 		break;
 	}

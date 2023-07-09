@@ -46,10 +46,10 @@ private:
 
 private:
 	UFUNCTION()
-		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
+		void OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
 
 	UFUNCTION()
-		void OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType);
+		void OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
 
 public:
 	FORCEINLINE constexpr USpringArmComponent* GetSpringArm() const { return SpringArm; }
@@ -84,5 +84,5 @@ private:
 		TArray<float> Speeds{ 200, 500, 800 };
 
 private:
-	EHitType CurHitType = EHitType::Common;
+	CEHitType CurHitType = CEHitType::Common;
 };

@@ -19,40 +19,40 @@ bool UCStateComponent::CanAttack() const
 
 void UCStateComponent::SetIdleMode()
 {
-	ChangeType(EStateType::Idle);
+	ChangeType(CEStateType::Idle);
 }
 
 void UCStateComponent::SetFallMode()
 {
-	ChangeType(EStateType::Fall);
+	ChangeType(CEStateType::Fall);
 }
 
 void UCStateComponent::SetAvoidMode()
 {
-	ChangeType(EStateType::Avoid);
+	ChangeType(CEStateType::Avoid);
 }
 
 void UCStateComponent::SetEquipMode()
 {
-	ChangeType(EStateType::Equip);
+	ChangeType(CEStateType::Equip);
 }
 
 void UCStateComponent::SetActMode()
 {
-	ChangeType(EStateType::Act);
+	ChangeType(CEStateType::Act);
 }
 
 void UCStateComponent::SetDeadMode()
 {
-	ChangeType(EStateType::Dead);
+	ChangeType(CEStateType::Dead);
 }
 
 void UCStateComponent::SetRiseMode()
 {
-	ChangeType(EStateType::Rise);
+	ChangeType(CEStateType::Rise);
 }
 
-void UCStateComponent::ChangeType(const EStateType InType)
+void UCStateComponent::ChangeType(const CEStateType InType)
 {
 	PrevType = CurType;
 	CurType = InType;
@@ -69,47 +69,47 @@ void UCStateComponent::ChangeType(const EStateType InType)
 	}
 }
 
-void UCStateComponent::SetHitMode(const EHitType InHitType)
+void UCStateComponent::SetHitMode(const CEHitType InHitType)
 {
 	ChangeHitType(InHitType);
 }
 
 void UCStateComponent::SetHitNoneMode()
 {
-	ChangeHitType(EHitType::None);
+	ChangeHitType(CEHitType::None);
 }
 
 void UCStateComponent::SetHitCommonMode()
 {
-	ChangeHitType(EHitType::Common);
+	ChangeHitType(CEHitType::Common);
 }
 
 void UCStateComponent::SetHitDownMode()
 {
-	ChangeHitType(EHitType::Down);
+	ChangeHitType(CEHitType::Down);
 }
 
 void UCStateComponent::SetHitFlyMode()
 {
-	ChangeHitType(EHitType::Fly);
+	ChangeHitType(CEHitType::Fly);
 }
 
 void UCStateComponent::SetHitKnockbackMode()
 {
-	ChangeHitType(EHitType::Knockback);
+	ChangeHitType(CEHitType::Knockback);
 }
 
 void UCStateComponent::SetHitAirMode()
 {
-	ChangeHitType(EHitType::Air);
+	ChangeHitType(CEHitType::Air);
 }
 
 void UCStateComponent::SetHitFlyingPutDownMode()
 {
-	ChangeHitType(EHitType::FlyingPutDown);
+	ChangeHitType(CEHitType::FlyingPutDown);
 }
 
-void UCStateComponent::ChangeHitType(const EHitType InType)
+void UCStateComponent::ChangeHitType(const CEHitType InType)
 {
 	PrevHitType = CurHitType;
 	CurHitType = InType;

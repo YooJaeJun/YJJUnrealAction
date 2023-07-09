@@ -27,7 +27,7 @@ public:
 		const TWeakObjectPtr<ACCommonCharacter> Owner);
 
 public:
-	FORCEINLINE constexpr EWeaponType GetType() const { return Type; }
+	FORCEINLINE constexpr CEWeaponType GetType() const { return Type; }
 	FORCEINLINE constexpr ACAttachment* GetAttachment() const { return Attachment; }
 	FORCEINLINE constexpr UCEquipment* GetEquipment() const { return Equipment; }
 	FORCEINLINE constexpr UCAct* GetAct() const { return Act; }
@@ -35,7 +35,7 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere)
-		EWeaponType Type;
+		CEWeaponType Type;
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ACAttachment> AttachmentClass;

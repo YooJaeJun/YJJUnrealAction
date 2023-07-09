@@ -26,7 +26,7 @@ bool UCCharacterInfoComponent::IsSameGroup(TWeakObjectPtr<ACCommonCharacter> InO
 	return GetCharacterGroup() == characterInfoComp->GetCharacterGroup();
 }
 
-void UCCharacterInfoComponent::SetCharacterType(const ECharacterType InNewType)
+void UCCharacterInfoComponent::SetCharacterType(const CECharacterType InNewType)
 {
 	const int32 newType = static_cast<int32>(InNewType);
 

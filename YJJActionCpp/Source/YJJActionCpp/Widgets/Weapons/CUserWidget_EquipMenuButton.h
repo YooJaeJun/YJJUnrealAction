@@ -5,7 +5,7 @@
 #include "Widgets/CUserWidget_Custom.h"
 #include "CUserWidget_EquipMenuButton.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FWeaponTypeHovered, const EWeaponType, InNewType);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FWeaponTypeHovered, const CEWeaponType, InNewType);
 
 class UButton;
 
@@ -31,5 +31,5 @@ public:
 		FWeaponTypeHovered OnWeaponTypeHovered;
 
 public:
-	EWeaponType CurWeaponType;
+	CEWeaponType CurWeaponType;
 };

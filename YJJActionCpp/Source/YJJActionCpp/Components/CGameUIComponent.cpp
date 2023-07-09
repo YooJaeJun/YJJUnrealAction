@@ -30,7 +30,7 @@ void UCGameUIComponent::BeginPlay()
 	EquipMenu->OnWeaponEquipped.AddUniqueDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
 }
 
-void UCGameUIComponent::OnWeaponEquipped(const EWeaponType InNewType)
+void UCGameUIComponent::OnWeaponEquipped(const CEWeaponType InNewType)
 {
 	const TWeakObjectPtr<ACPlayableCharacter> player = Cast<ACPlayableCharacter>(Owner);
 	CheckNull(player.Get());

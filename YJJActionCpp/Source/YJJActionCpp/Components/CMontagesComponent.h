@@ -16,10 +16,10 @@ struct FMontagesData
 
 public:
 	UPROPERTY(EditAnywhere)
-		EStateType StateType;
+		CEStateType StateType;
 
 	UPROPERTY(EditAnywhere)
-		EHitType HitType;
+		CEHitType HitType;
 
 	UPROPERTY(EditAnywhere)
 		UAnimMontage* Montage;
@@ -50,22 +50,22 @@ public:
 
 private:
 	UFUNCTION(BlueprintCallable)
-		void PlayAnimMontage(const EStateType InType);
+		void PlayAnimMontage(const CEStateType InType);
 
 	UFUNCTION(BlueprintCallable)
-		void PlayHitAnimMontage(const EHitType InType);
+		void PlayHitAnimMontage(const CEHitType InType);
 
-	void PlayAnimMontage(const EStateType InType, const TWeakObjectPtr<UInputComponent> InInput) const;
+	void PlayAnimMontage(const CEStateType InType, const TWeakObjectPtr<UInputComponent> InInput) const;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "DataTable")
 		UDataTable* DataTable;
 
 	UPROPERTY(EditAnywhere, Category = "DataTable")
-		FMontagesData Datas[static_cast<uint8>(EStateType::Max)];
+		FMontagesData Datas[static_cast<uint8>(CEStateType::Max)];
 
 	UPROPERTY(EditAnywhere, Category = "DataTable")
-		FMontagesData HitDatas[static_cast<uint8>(EHitType::Max)];
+		FMontagesData HitDatas[static_cast<uint8>(CEHitType::Max)];
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

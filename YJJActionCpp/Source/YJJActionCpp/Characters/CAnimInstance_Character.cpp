@@ -130,7 +130,7 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 	}//MovementComp
 }
 
-void UCAnimInstance_Character::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
+void UCAnimInstance_Character::OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType)
 {
 	StateType = InNewType;
 	StatePrevType = InPrevType;

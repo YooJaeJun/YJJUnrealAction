@@ -19,7 +19,7 @@ public:
 
 protected:
 	UFUNCTION()
-		void OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType);
+		void OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
@@ -44,10 +44,10 @@ protected:
 		float Side;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		EStateType StateType = EStateType::Idle;
+		CEStateType StateType = CEStateType::Idle;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		EStateType StatePrevType = EStateType::Idle;
+		CEStateType StatePrevType = CEStateType::Idle;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
 		bool bFalling;

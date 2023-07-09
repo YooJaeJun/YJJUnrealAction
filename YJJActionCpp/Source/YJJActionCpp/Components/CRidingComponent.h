@@ -178,13 +178,13 @@ private:
 		FText InteractionText;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		EDirection MountDir;
+		CEDirection MountDir;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		UAnimMontage* MountAnims[static_cast<uint8>(EDirection::Max)];
+		UAnimMontage* MountAnims[static_cast<uint8>(CEDirection::Max)];
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		EDirection MountDirection;
+		CEDirection MountDirection;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		float MountRotationZFactor = 0.0f;

@@ -102,7 +102,7 @@ void ACAnimal_AI::BeginPlay()
 	}
 
 	if (!!CharacterInfoComp)
-		CharacterInfoComp->SetCharacterType(ECharacterType::Companion);
+		CharacterInfoComp->SetCharacterType(CECharacterType::Companion);
 
 	if (!!CharacterStatComp)
 		CharacterStatComp->SetAttackRange(250.0f);
@@ -179,14 +179,14 @@ void ACAnimal_AI::Hit()
 	Damage.Causer = nullptr;
 }
 
-void ACAnimal_AI::OnStateTypeChanged(const EStateType InPrevType, const EStateType InNewType)
+void ACAnimal_AI::OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType)
 {
 	switch (InNewType)
 	{
-	case EStateType::Land:
+	case CEStateType::Land:
 		Land();
 		break;
-	case EStateType::Dead:
+	case CEStateType::Dead:
 		Dead();
 		break;
 	}
@@ -204,7 +204,7 @@ void ACAnimal_AI::SetZoomMaxRange(const float InMaxRange) const
 	ZoomComp->ZoomData.MaxRange = InMaxRange;
 }
 
-void ACAnimal_AI::OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType)
+void ACAnimal_AI::OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType)
 {
 	Hit();
 }

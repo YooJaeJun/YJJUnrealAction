@@ -19,14 +19,14 @@ public:
 
 private:
 	UFUNCTION()
-		void OnWeaponTypeChanged(const EWeaponType InPrevType, const EWeaponType InNewType);
+		void OnWeaponTypeChanged(const CEWeaponType InPrevType, const CEWeaponType InNewType);
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
-		EWeaponType WeaponType = EWeaponType::Unarmed;
+		CEWeaponType WeaponType = CEWeaponType::Unarmed;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
-		EWeaponType WeaponPrevType = EWeaponType::Unarmed;
+		CEWeaponType WeaponPrevType = CEWeaponType::Unarmed;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
 		bool bRiding;

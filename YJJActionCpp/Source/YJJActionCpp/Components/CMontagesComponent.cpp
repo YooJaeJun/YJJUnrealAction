@@ -24,19 +24,19 @@ void UCMontagesComponent::BeginPlay()
 	TArray<FMontagesData*> datas;
 	DataTable->GetAllRows<FMontagesData>("", datas);
 
-	constexpr uint32 size = static_cast<int32>(EStateType::Max);
+	constexpr uint32 size = static_cast<int32>(CEStateType::Max);
 
 	for (uint32 i=0; i<size; i++)
 	{
 		for (const FMontagesData* data : datas)
 		{
-			if (data->StateType == static_cast<EStateType>(i))
+			if (data->StateType == static_cast<CEStateType>(i))
 			{
 				Datas[i] = *data;
 				continue;
 			}
 
-			if (data->HitType == static_cast<EHitType>(i))
+			if (data->HitType == static_cast<CEHitType>(i))
 			{
 				HitDatas[i] = *data;
 				continue;
@@ -50,35 +50,35 @@ void UCMontagesComponent::PlayAvoidAnim()
 {
 	const TWeakObjectPtr<UInputComponent> input = YJJHelpers::GetComponent<UInputComponent>(Owner.Get());
 
-	PlayAnimMontage(EStateType::Avoid, input);
+	PlayAnimMontage(CEStateType::Avoid, input);
 }
 
 void UCMontagesComponent::PlayRiseAnim()
 {
-	PlayAnimMontage(EStateType::Rise);
+	PlayAnimMontage(CEStateType::Rise);
 }
 
 void UCMontagesComponent::PlayLandAnim()
 {
-	PlayAnimMontage(EStateType::Land);
+	PlayAnimMontage(CEStateType::Land);
 }
 
 void UCMontagesComponent::PlayDeadAnim()
 {
-	PlayAnimMontage(EStateType::Dead);
+	PlayAnimMontage(CEStateType::Dead);
 }
 
 void UCMontagesComponent::PlayHitCommonAnim()
 {
-	PlayHitAnimMontage(EHitType::Common);
+	PlayHitAnimMontage(CEHitType::Common);
 }
 
 void UCMontagesComponent::PlayHitKnockbackAnim()
 {
-	PlayHitAnimMontage(EHitType::Knockback);
+	PlayHitAnimMontage(CEHitType::Knockback);
 }
 
-void UCMontagesComponent::PlayAnimMontage(const EStateType InType)
+void UCMontagesComponent::PlayAnimMontage(const CEStateType InType)
 {
 	CheckNull(Owner);
 
@@ -93,7 +93,7 @@ void UCMontagesComponent::PlayAnimMontage(const EStateType InType)
 	Owner->PlayAnimMontage(data.Montage, data.PlayRate);
 }
 
-void UCMontagesComponent::PlayHitAnimMontage(const EHitType InType)
+void UCMontagesComponent::PlayHitAnimMontage(const CEHitType InType)
 {
 	CheckNull(Owner);
 
@@ -108,7 +108,7 @@ void UCMontagesComponent::PlayHitAnimMontage(const EHitType InType)
 	Owner->PlayAnimMontage(data.Montage, data.PlayRate);
 }
 
-void UCMontagesComponent::PlayAnimMontage(const EStateType InType, const TWeakObjectPtr<UInputComponent> InInput) const
+void UCMontagesComponent::PlayAnimMontage(const CEStateType InType, const TWeakObjectPtr<UInputComponent> InInput) const
 {
 	CheckNull(Owner);
 

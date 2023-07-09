@@ -7,7 +7,7 @@
 
 class UCUserWidget_EquipMenuButton;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponEquipped, const EWeaponType, InNewType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponEquipped, const CEWeaponType, InNewType);
 
 UCLASS()
 class YJJACTIONCPP_API UCUserWidget_EquipMenu : public UCUserWidget_Custom
@@ -23,7 +23,7 @@ public:
 
 public:
 	UFUNCTION()
-		void SetWeaponType(const EWeaponType InNewType);
+		void SetWeaponType(const CEWeaponType InNewType);
 
 public:
 	UPROPERTY()
@@ -36,5 +36,5 @@ public:
 		FWeaponEquipped OnWeaponEquipped;
 
 public:
-	EWeaponType CurWeaponType;
+	CEWeaponType CurWeaponType;
 };

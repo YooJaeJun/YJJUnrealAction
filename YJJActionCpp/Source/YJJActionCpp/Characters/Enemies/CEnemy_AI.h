@@ -27,10 +27,10 @@ public:
 
 private:
 	UFUNCTION()
-		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
+		void OnStateTypeChanged(CEStateType InPrevType, CEStateType InNewType);
 
 	UFUNCTION()
-		void OnHitStateTypeChanged(const EHitType InPrevType, const EHitType InNewType);
+		void OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
 
 private:
 	virtual void Hit() override;
@@ -44,5 +44,5 @@ private:
 		TArray<float> Speeds{ 200, 400, 600 };
 
 private:
-	EHitType CurHitType = EHitType::Common;
+	CEHitType CurHitType = CEHitType::Common;
 };

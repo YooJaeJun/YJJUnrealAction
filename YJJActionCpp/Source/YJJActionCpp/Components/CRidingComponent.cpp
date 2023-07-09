@@ -75,13 +75,13 @@ void UCRidingComponent::BeginPlay()
 			Zooming = SpringArm->TargetArmLength;
 
 
-		YJJHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Left)],
+		YJJHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(CEDirection::Left)],
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Left_Montage.Rider_Mount_Front_Left_Montage'"));
 
-		YJJHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Right)],
+		YJJHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(CEDirection::Right)],
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Front_Right_Montage.Rider_Mount_Front_Right_Montage'"));
 
-		YJJHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(EDirection::Back)],
+		YJJHelpers::GetAssetDynamic<UAnimMontage>(&MountAnims[static_cast<uint8>(CEDirection::Back)],
 			TEXT("AnimMontage'/Game/Character/Player/Montages/Riding/Rider_Mount_Back_Montage.Rider_Mount_Back_Montage'"));
 
 		YJJHelpers::GetAssetDynamic<USoundBase>(&MountSound,
@@ -228,31 +228,31 @@ void UCRidingComponent::CheckValidPoint()
 
 	if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateLeft, 50))
 	{
-		MountDir = EDirection::Left;
+		MountDir = CEDirection::Left;
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateLeft)];
 
-		MountDirection = EDirection::Left;
+		MountDirection = CEDirection::Left;
 
 		MountRotationZFactor = 100.0f;
 	}
 	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateRight, 50))
 	{
-		MountDir = EDirection::Right;
+		MountDir = CEDirection::Right;
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateRight)];
 
-		MountDirection = EDirection::Right;
+		MountDirection = CEDirection::Right;
 
 		MountRotationZFactor = -100.0f;
 	}
 	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateBack, 50))
 	{
-		MountDir = EDirection::Back;
+		MountDir = CEDirection::Back;
 		RidingPoints[static_cast<uint8>(ERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(ERidingPoint::CandidateBack)];
 
-		MountDirection = EDirection::Back;
+		MountDirection = CEDirection::Back;
 
 		MountRotationZFactor = 0.0f;
 	}

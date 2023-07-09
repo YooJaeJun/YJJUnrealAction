@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType)
-enum class EDirection : uint8
+enum class CEDirection : uint8
 {
 	Left,
 	Right,
@@ -15,7 +15,7 @@ enum class EDirection : uint8
 };
 
 UENUM(BlueprintType)
-enum class ECharacterType : uint8
+enum class CECharacterType : uint8
 {
 	None,
 	Player,
@@ -25,7 +25,7 @@ enum class ECharacterType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EStateType : uint8
+enum class CEStateType : uint8
 {
 	Idle,
 	Fall,
@@ -39,7 +39,7 @@ enum class EStateType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EHitType : uint8
+enum class CEHitType : uint8
 {
 	None,
 	Common,
@@ -52,7 +52,7 @@ enum class EHitType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EWeaponType : uint8
+enum class CEWeaponType : uint8
 {
 	Unarmed,
 	Fist,
@@ -72,7 +72,7 @@ enum class EWeaponType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EBehaviorType : uint8
+enum class CEBehaviorType : uint8
 {
 	Wait,
 	Patrol,

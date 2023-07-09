@@ -24,7 +24,7 @@ protected:
 public:
 	bool IsSameGroup(TWeakObjectPtr<ACCommonCharacter> InOther) const;
 
-	void SetCharacterType(const ECharacterType InNewType);
+	void SetCharacterType(const CECharacterType InNewType);
 	FORCEINLINE void SetCharacterGroup(const int32 InNewGroup) { CurGroup = InNewGroup; }
 	FORCEINLINE void SetCharacterName(const FName& InNewName) { CurName = InNewName; }
 	FORCEINLINE void SetBodyColor(const FLinearColor& InNewColor) { CurBodyColor = InNewColor; }

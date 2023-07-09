@@ -6,8 +6,8 @@
 
 class ACCommonCharacter;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateTypeChanged, const EStateType, InPrevType, const EStateType, InNewType);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHitStateTypeChanged, const EHitType, InPrevType, const EHitType, InNewType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateTypeChanged, const CEStateType, InPrevType, const CEStateType, InNewType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHitStateTypeChanged, const CEHitType, InPrevType, const CEHitType, InNewType);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCStateComponent : public UActorComponent
@@ -35,7 +35,7 @@ public:
 	void SetDeadMode();
 	void SetRiseMode();
 
-	void SetHitMode(const EHitType InHitType);
+	void SetHitMode(const CEHitType InHitType);
 	void SetHitNoneMode();
 	void SetHitCommonMode();
 	void SetHitDownMode();
@@ -45,46 +45,46 @@ public:
 	void SetHitFlyingPutDownMode();
 
 private:
-	void ChangeType(const EStateType InType);
+	void ChangeType(const CEStateType InType);
 
 private:
-	void ChangeHitType(const EHitType InType);
+	void ChangeHitType(const CEHitType InType);
 
 public:
 	FORCEINLINE constexpr bool IsSkillMode() const { return bInSkillMode; }
 
-	FORCEINLINE constexpr EStateType GetCurMode() const { return CurType; }
-	FORCEINLINE constexpr EStateType GetPrevMode() const { return PrevType; }
-	FORCEINLINE constexpr EHitType GetCurHitMode() const { return CurHitType; }
+	FORCEINLINE constexpr CEStateType GetCurMode() const { return CurType; }
+	FORCEINLINE constexpr CEStateType GetPrevMode() const { return PrevType; }
+	FORCEINLINE constexpr CEHitType GetCurHitMode() const { return CurHitType; }
 
-	FORCEINLINE constexpr bool IsIdleMode() const { return CurType == EStateType::Idle; }
-	FORCEINLINE constexpr bool IsFallMode() const { return CurType == EStateType::Fall; }
-	FORCEINLINE constexpr bool IsAvoidMode() const { return CurType == EStateType::Avoid; }
-	FORCEINLINE constexpr bool IsEquipMode() const { return CurType == EStateType::Equip; }
-	FORCEINLINE constexpr bool IsActMode() const { return CurType == EStateType::Act; }
-	FORCEINLINE constexpr bool IsDeadMode() const { return CurType == EStateType::Dead; }
-	FORCEINLINE constexpr bool IsRiseMode() const { return CurType == EStateType::Rise; }
+	FORCEINLINE constexpr bool IsIdleMode() const { return CurType == CEStateType::Idle; }
+	FORCEINLINE constexpr bool IsFallMode() const { return CurType == CEStateType::Fall; }
+	FORCEINLINE constexpr bool IsAvoidMode() const { return CurType == CEStateType::Avoid; }
+	FORCEINLINE constexpr bool IsEquipMode() const { return CurType == CEStateType::Equip; }
+	FORCEINLINE constexpr bool IsActMode() const { return CurType == CEStateType::Act; }
+	FORCEINLINE constexpr bool IsDeadMode() const { return CurType == CEStateType::Dead; }
+	FORCEINLINE constexpr bool IsRiseMode() const { return CurType == CEStateType::Rise; }
 
-	FORCEINLINE constexpr bool IsHitNoneMode() const { return CurHitType == EHitType::None; }
-	FORCEINLINE constexpr bool IsHitCommonMode() const { return CurHitType == EHitType::Common; }
-	FORCEINLINE constexpr bool IsHitDownMode() const { return CurHitType == EHitType::Down; }
-	FORCEINLINE constexpr bool IsHitFlyMode() const { return CurHitType == EHitType::Fly; }
-	FORCEINLINE constexpr bool IsHitKnockbackMode() const { return CurHitType == EHitType::Knockback; }
-	FORCEINLINE constexpr bool IsHitAirHitMode() const { return CurHitType == EHitType::Air; }
-	FORCEINLINE constexpr bool IsHitFlyingPutDownHitMode() const { return CurHitType == EHitType::FlyingPutDown; }
+	FORCEINLINE constexpr bool IsHitNoneMode() const { return CurHitType == CEHitType::None; }
+	FORCEINLINE constexpr bool IsHitCommonMode() const { return CurHitType == CEHitType::Common; }
+	FORCEINLINE constexpr bool IsHitDownMode() const { return CurHitType == CEHitType::Down; }
+	FORCEINLINE constexpr bool IsHitFlyMode() const { return CurHitType == CEHitType::Fly; }
+	FORCEINLINE constexpr bool IsHitKnockbackMode() const { return CurHitType == CEHitType::Knockback; }
+	FORCEINLINE constexpr bool IsHitAirHitMode() const { return CurHitType == CEHitType::Air; }
+	FORCEINLINE constexpr bool IsHitFlyingPutDownHitMode() const { return CurHitType == CEHitType::FlyingPutDown; }
 
 private:
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EStateType CurType = EStateType::Idle;
+		CEStateType CurType = CEStateType::Idle;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EStateType PrevType = EStateType::Max;
+		CEStateType PrevType = CEStateType::Max;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EHitType CurHitType = EHitType::None;
+		CEHitType CurHitType = CEHitType::None;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		EHitType PrevHitType = EHitType::Max;
+		CEHitType PrevHitType = CEHitType::Max;
 
 public:
 	FStateTypeChanged OnStateTypeChanged;

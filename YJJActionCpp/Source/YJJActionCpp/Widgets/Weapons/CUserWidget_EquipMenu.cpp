@@ -55,7 +55,7 @@ void UCUserWidget_EquipMenu::Deactivate(const float TimeDilation)
 		OnWeaponEquipped.Broadcast(CurWeaponType);
 }
 
-void UCUserWidget_EquipMenu::SetWeaponType(const EWeaponType InNewType)
+void UCUserWidget_EquipMenu::SetWeaponType(const CEWeaponType InNewType)
 {
 	CurWeaponType = InNewType;
 }

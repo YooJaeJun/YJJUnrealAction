@@ -128,7 +128,7 @@ public:
 		FVector EffectScale = FVector::OneVector;
 
 	UPROPERTY(EditAnywhere)
-		EHitType AttackType = EHitType::Common;
+		CEHitType AttackType = CEHitType::Common;
 };
 
 USTRUCT()

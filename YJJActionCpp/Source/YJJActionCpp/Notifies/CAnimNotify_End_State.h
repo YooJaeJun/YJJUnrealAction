@@ -17,5 +17,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Type")
-		EStateType StateType;
+		CEStateType StateType;
 };

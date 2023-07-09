@@ -79,7 +79,7 @@ void UCWeaponComponent::SetModeFromZeroIndex()
 	SetMode(DataAssetMap.begin().Key());
 }
 
-void UCWeaponComponent::SetMode(EWeaponType InType)
+void UCWeaponComponent::SetMode(CEWeaponType InType)
 {
 	if (Type == InType)
 	{
@@ -93,7 +93,7 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		GetEquipment()->Unequip();
 	}
 
-	const TWeakObjectPtr<UCWeaponAsset>* assetForCheckingNull = DataAssetMap.Find(InType);
+	UCWeaponAsset** assetForCheckingNull = DataAssetMap.Find(InType);
 	CheckNull(assetForCheckingNull);
 
 	const TWeakObjectPtr<UCWeaponAsset> asset = *assetForCheckingNull;
@@ -113,7 +113,7 @@ void UCWeaponComponent::CancelAct()
 	GetAct()->End_Act();
 }
 
-void UCWeaponComponent::ChangeType(EWeaponType InType)
+void UCWeaponComponent::ChangeType(CEWeaponType InType)
 {
 	PrevType = Type;
 	Type = InType;
@@ -126,7 +126,7 @@ TWeakObjectPtr<UCWeaponAsset> UCWeaponComponent::GetWeaponAsset()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
 
-	const TWeakObjectPtr<UCWeaponAsset>* assetForCheckingNull = DataAssetMap.Find(Type);
+	UCWeaponAsset** assetForCheckingNull = DataAssetMap.Find(Type);
 	CheckNullResult(*assetForCheckingNull, nullptr);
 
 	const TWeakObjectPtr<UCWeaponAsset> assetForReturn = *assetForCheckingNull;
@@ -176,65 +176,65 @@ void UCWeaponComponent::SetUnarmedMode()
 {
 	CheckNull(GetEquipment());
 	GetEquipment()->Unequip();
-	ChangeType(EWeaponType::Unarmed);
+	ChangeType(CEWeaponType::Unarmed);
 }
 
 void UCWeaponComponent::SetFistMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Fist);
+	SetMode(CEWeaponType::Fist);
 }
 
 void UCWeaponComponent::SetSwordMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Sword);
+	SetMode(CEWeaponType::Sword);
 }
 
 void UCWeaponComponent::SetHammerMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Hammer);
+	SetMode(CEWeaponType::Hammer);
 }
 
 void UCWeaponComponent::SetBowMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Bow);
+	SetMode(CEWeaponType::Bow);
 }
 
 void UCWeaponComponent::SetDualMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Dual);
+	SetMode(CEWeaponType::Dual);
 }
 
 void UCWeaponComponent::SetWarpMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Warp);
+	SetMode(CEWeaponType::Warp);
 }
 
 void UCWeaponComponent::SetAroundMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Around);
+	SetMode(CEWeaponType::Around);
 }
 
 void UCWeaponComponent::SetFireballMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Fireball);
+	SetMode(CEWeaponType::Fireball);
 }
 
 void UCWeaponComponent::SetBombMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Bomb);
+	SetMode(CEWeaponType::Bomb);
 }
 
 void UCWeaponComponent::SetYonduMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(EWeaponType::Yondu);
+	SetMode(CEWeaponType::Yondu);
 }
