@@ -38,7 +38,9 @@ void UCWeaponComponent::BeginPlay()
 	}
 }
 
-void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+void UCWeaponComponent::TickComponent(
+	float DeltaTime, 
+	ELevelTick TickType,
 	FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -47,9 +49,15 @@ void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (!!act.Get())
 		act->Tick(DeltaTime);
 
-	const TWeakObjectPtr<UCSkill> skill = GetSkill();
-	if (!!skill.Get())
+	int index = 0;
+	TWeakObjectPtr<UCSkill> skill = GetSkill(index);
+
+	while (!!skill.Get())
+	{
 		skill->Tick(DeltaTime);
+		index++;
+		skill = GetSkill(index);
+	}
 }
 
 void UCWeaponComponent::InputAction_Act()
@@ -59,16 +67,30 @@ void UCWeaponComponent::InputAction_Act()
 	act->Act();
 }
 
-void UCWeaponComponent::InputAction_Skill_Pressed()
+void UCWeaponComponent::InputAction_Skill_1_Pressed()
 {
-	const TWeakObjectPtr<UCSkill> skill = GetSkill();
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(0);
 	CheckNull(skill);
 	skill->Pressed();
 }
 
-void UCWeaponComponent::InputAction_Skill_Released()
+void UCWeaponComponent::InputAction_Skill_1_Released()
 {
-	const TWeakObjectPtr<UCSkill> skill = GetSkill();
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(0);
+	CheckNull(skill);
+	skill->Released();
+}
+
+void UCWeaponComponent::InputAction_Skill_2_Pressed()
+{
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(1);
+	CheckNull(skill);
+	skill->Pressed();
+}
+
+void UCWeaponComponent::InputAction_Skill_2_Released()
+{
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(1);
 	CheckNull(skill);
 	skill->Released();
 }
@@ -157,12 +179,12 @@ UCAct* UCWeaponComponent::GetAct()
 	return asset->GetAct();
 }
 
-UCSkill* UCWeaponComponent::GetSkill()
+UCSkill* UCWeaponComponent::GetSkill(const int32 SkillIndex)
 {
 	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
 	CheckNullResult(asset, nullptr);
 
-	return asset->GetSkill();
+	return asset->GetSkill(SkillIndex);
 }
 
 bool UCWeaponComponent::IsIdleStateMode()

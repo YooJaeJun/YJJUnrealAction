@@ -8,7 +8,6 @@
 
 UCWeaponAsset_Bow::UCWeaponAsset_Bow()
 {
-	SkillClass = ACAttachment::StaticClass();
 }
 
 void UCWeaponAsset_Bow::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)

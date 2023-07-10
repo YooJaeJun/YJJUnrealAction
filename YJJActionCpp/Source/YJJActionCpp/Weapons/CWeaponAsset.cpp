@@ -12,7 +12,29 @@ UCWeaponAsset::UCWeaponAsset()
 	EquipmentClass = UCEquipment::StaticClass();
 	// Abstract 클래스는 기본값 초기화 x
 	// ActClass = UCAct::StaticClass();
-	// SkillClass = UCSkill::StaticClass();
+	// SkillClasses = UCSkill::StaticClass();
+}
+
+const UCWeaponAsset& UCWeaponAsset::DeepCopy(
+	const UCWeaponAsset& InOther,
+	const TWeakObjectPtr<ACCommonCharacter> Owner)
+{
+	Type = InOther.GetType();
+	AttachmentClass = InOther.AttachmentClass;
+	Attachment = InOther.GetAttachment();
+	EquipmentClass = InOther.EquipmentClass;
+	EquipmentData = InOther.EquipmentData;
+	Equipment = InOther.GetEquipment();
+	ActClass = InOther.ActClass;
+	ActDatas = InOther.ActDatas;
+	Act = InOther.GetAct();
+	HitDatas = InOther.HitDatas;
+	SkillClasses = InOther.SkillClasses;
+	Skills = InOther.Skills;
+
+	BeginPlay(Owner.Get());
+
+	return *this;
 }
 
 void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
@@ -51,31 +73,19 @@ void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
 		}
 	}
 
-	if (!!SkillClass)
+	for (int i=0; i<SkillClasses.Num(); i++)
 	{
-		Skill = NewObject<UCSkill>(this, SkillClass);
-		Skill->BeginPlay(InOwner, Attachment, Act);
+		if (!!SkillClasses[i] && !!Attachment && !!Act)
+		{
+			Skills.Emplace(NewObject<UCSkill>(this, SkillClasses[i]));
+			Skills[i]->BeginPlay(InOwner, Attachment, Act);
+		}
 	}
 }
 
-const UCWeaponAsset& UCWeaponAsset::DeepCopy(
-	const UCWeaponAsset& InOther, 
-	const TWeakObjectPtr<ACCommonCharacter> Owner)
+UCSkill* UCWeaponAsset::GetSkill(const int32 SkillIndex) const
 {
-	Type = InOther.GetType();
-	AttachmentClass = InOther.AttachmentClass;
-	Attachment = InOther.GetAttachment();
-	EquipmentClass = InOther.EquipmentClass;
-	EquipmentData = InOther.EquipmentData;
-	Equipment = InOther.GetEquipment();
-	ActClass = InOther.ActClass;
-	ActDatas = InOther.ActDatas;
-	Act = InOther.GetAct();
-	HitDatas = InOther.HitDatas;
-	SkillClass = InOther.SkillClass;
-	Skill = InOther.Skill;
+	CheckTrueResult(SkillIndex >= Skills.Num(), nullptr);
 
-	BeginPlay(Owner.Get());
-
-	return *this;
+	return Skills[SkillIndex];
 }

@@ -20,8 +20,8 @@ public:
 public:
 	virtual void BeginPlay(
 		TWeakObjectPtr<ACCommonCharacter> InOwner,
-		TWeakObjectPtr<ACAttachment> InAttachment,
-		TWeakObjectPtr<UCAct> InAct);
+		ACAttachment* InAttachment,
+		UCAct* InAct);
 
 	UFUNCTION(BlueprintNativeEvent)
 		void Tick(float InDeltaTime);
@@ -41,10 +41,14 @@ public:
 	FORCEINLINE bool GetInAction() const { return bInAction; }
 
 protected:
-	TWeakObjectPtr<ACCommonCharacter> Owner;
-	TWeakObjectPtr<ACAttachment> Attachment;
-	TWeakObjectPtr<UCAct> Act;
+	UPROPERTY(EditAnywhere, Category = "Act")
+		UCAct* Act;
 
+	UPROPERTY(EditAnywhere, Category = "Act")
+		ACAttachment* Attachment;
+
+protected:
+	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCStateComponent> StateComp;
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
 

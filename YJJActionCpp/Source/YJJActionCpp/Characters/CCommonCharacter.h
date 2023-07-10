@@ -65,10 +65,10 @@ public:
 		AActor* DamageCauser) override;
 
 protected:
-	virtual void Rise();
-	virtual void Land();
-	virtual void Hit();
-	virtual void Dead();
+	virtual void Rise() override;
+	virtual void Land() override;
+	virtual void Hit() override;
+	virtual void Dead() override;
 
 public:
 	virtual void End_Hit() override;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Global.h"
 #include "Engine/DataAsset.h"
 #include "Weapons/CWeaponStructures.h"
 #include "Commons/CEnums.h"
@@ -20,18 +21,18 @@ class YJJACTIONCPP_API UCWeaponAsset : public UDataAsset
 public:
 	UCWeaponAsset();
 
-	virtual void BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner);
-
 	const UCWeaponAsset& DeepCopy(
-		const UCWeaponAsset& InOther, 
+		const UCWeaponAsset& InOther,
 		const TWeakObjectPtr<ACCommonCharacter> Owner);
+
+	virtual void BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner);
 
 public:
 	FORCEINLINE constexpr CEWeaponType GetType() const { return Type; }
 	FORCEINLINE constexpr ACAttachment* GetAttachment() const { return Attachment; }
 	FORCEINLINE constexpr UCEquipment* GetEquipment() const { return Equipment; }
 	FORCEINLINE constexpr UCAct* GetAct() const { return Act; }
-	FORCEINLINE constexpr UCSkill* GetSkill() const { return Skill; }
+	UCSkill* GetSkill(const int32 SkillIndex) const;
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -47,7 +48,7 @@ protected:
 		TSubclassOf<UCAct> ActClass;
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<UCSkill> SkillClass;
+		TArray<TSubclassOf<UCSkill>> SkillClasses;
 
 
 	UPROPERTY(EditAnywhere)
@@ -70,5 +71,5 @@ protected:
 		UCAct* Act;
 
 	UPROPERTY()
-		UCSkill* Skill;
+		TArray<UCSkill*> Skills;
 };

@@ -190,14 +190,12 @@ public:
 		}
 	}
 
-	static TWeakObjectPtr<UCUserWidget_HUD> GetHud(TWeakObjectPtr<ACCommonCharacter> InOwner)
+	static UCUserWidget_HUD* GetHud(TWeakObjectPtr<ACCommonCharacter> InOwner)
 	{
 		const TWeakObjectPtr<ACGameMode> gameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(InOwner->GetWorld()));
 		CheckNullResult(gameMode.Get(), nullptr);
 
-		const TWeakObjectPtr<UCUserWidget_HUD> hud = gameMode->GetHUD();
-		CheckNullResult(hud.Get(), nullptr);
-
+		UCUserWidget_HUD* hud = gameMode->GetHUD();
 		return hud;
 	}
 

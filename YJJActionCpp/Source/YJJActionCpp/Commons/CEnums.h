@@ -32,9 +32,9 @@ enum class CEStateType : uint8
 	Avoid,
 	Equip,
 	Act,
-	Dead,
 	Rise,
 	Land,
+	Dead,
 	Max	
 };
 

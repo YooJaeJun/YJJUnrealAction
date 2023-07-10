@@ -12,8 +12,8 @@ UCSkill::UCSkill()
 
 void UCSkill::BeginPlay(
     TWeakObjectPtr<ACCommonCharacter> InOwner, 
-    TWeakObjectPtr<ACAttachment> InAttachment,
-    TWeakObjectPtr<UCAct> InAct)
+    ACAttachment* InAttachment,
+    UCAct* InAct)
 {
     Owner = InOwner;
     Attachment = InAttachment;

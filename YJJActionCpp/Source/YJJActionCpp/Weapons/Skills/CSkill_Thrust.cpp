@@ -6,8 +6,6 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "Weapons/AddOns/CMotionTrail.h"
 
 void UCSkill_Thrust::Pressed()
 {
@@ -29,7 +27,7 @@ void UCSkill_Thrust::Begin_Skill_Implementation()
 	CheckNull(Attachment);
 
 	if (Attachment->OnAttachmentBeginOverlap.IsBound())
-		Attachment->OnAttachmentBeginOverlap.Remove(Act.Get(), "OnAttachmentBeginOverlap");
+		Attachment->OnAttachmentBeginOverlap.Remove(Act, "OnAttachmentBeginOverlap");
 
 	Attachment->OnAttachmentBeginOverlap.AddDynamic(this, &UCSkill_Thrust::OnAttachmentBeginOverlap);
 
@@ -119,7 +117,7 @@ void UCSkill_Thrust::End_Skill_Implementation()
 	if (Attachment->OnAttachmentBeginOverlap.IsBound())
 		Attachment->OnAttachmentBeginOverlap.Remove(this, "OnAttachmentBeginOverlap");
 
-	Attachment->OnAttachmentBeginOverlap.AddDynamic(Act.Get(), &UCAct::OnAttachmentBeginOverlap);
+	Attachment->OnAttachmentBeginOverlap.AddDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
 
 	bMoving = false;
 

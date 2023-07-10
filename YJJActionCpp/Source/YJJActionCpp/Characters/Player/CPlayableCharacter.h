@@ -37,12 +37,12 @@ public:
 private:
 	void InputAction_Avoid();
 
-	virtual void Avoid();
+	virtual void Avoid() override;
 	virtual void Hit() override;
 
 	virtual void End_Avoid() override;
-	virtual void End_Hit() override;
 	virtual void End_Rise() override;
+	virtual void End_Hit() override;
 
 private:
 	UFUNCTION()

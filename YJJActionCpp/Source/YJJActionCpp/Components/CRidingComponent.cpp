@@ -299,7 +299,8 @@ void UCRidingComponent::PossessAndInterpToCamera()
 	// Camera Move
 	latentInfo.CallbackTarget = Camera;
 
-	UKismetSystemLibrary::MoveComponentTo(Camera,
+	UKismetSystemLibrary::MoveComponentTo(
+		Camera,
 		FVector::ZeroVector, 
 		FRotator::ZeroRotator,
 		true, true, 0.7f, false,

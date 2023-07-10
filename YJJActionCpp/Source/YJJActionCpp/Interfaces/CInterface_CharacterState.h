@@ -15,8 +15,13 @@ class YJJACTIONCPP_API ICInterface_CharacterState
 	GENERATED_BODY()
 
 public:
-	virtual void End_Rise() {}
+	virtual void Avoid() {}
+	virtual void Rise() {}
+	virtual void Land() {}
+	virtual void Hit() {}
+	virtual void Dead() {}
 	virtual void End_Avoid() {}
+	virtual void End_Rise() {}
 	virtual void End_Hit() {}
 	virtual void End_Dead() {}
 };

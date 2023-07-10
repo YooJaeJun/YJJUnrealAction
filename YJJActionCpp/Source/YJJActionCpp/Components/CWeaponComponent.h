@@ -32,8 +32,10 @@ public:
 
 public:
 	void InputAction_Act();
-	void InputAction_Skill_Pressed();
-	void InputAction_Skill_Released();
+	void InputAction_Skill_1_Pressed();
+	void InputAction_Skill_1_Released();
+	void InputAction_Skill_2_Pressed();
+	void InputAction_Skill_2_Released();
 
 	void SetModeFromZeroIndex();
 	void SetMode(CEWeaponType InType);
@@ -47,7 +49,7 @@ public:
 	ACAttachment* GetAttachment();
 	UCEquipment* GetEquipment();
 	UCAct* GetAct();
-	UCSkill* GetSkill();
+	UCSkill* GetSkill(const int32 SkillIndex);
 
 	FORCEINLINE constexpr CEWeaponType GetType() const { return Type; }
 	FORCEINLINE constexpr CEWeaponType GetPrevType() const { return PrevType; }
