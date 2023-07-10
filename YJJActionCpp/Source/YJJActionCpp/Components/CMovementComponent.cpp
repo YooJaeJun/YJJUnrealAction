@@ -35,7 +35,7 @@ void UCMovementComponent::SetSpeeds(const TArray<float> InSpeeds)
 		Speeds[i] = InSpeeds[i];
 }
 
-void UCMovementComponent::SetSpeed(const ESpeedType Index) const
+void UCMovementComponent::SetSpeed(const CESpeedType Index) const
 {
 	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[static_cast<uint8>(Index)];
 }
@@ -47,17 +47,17 @@ void UCMovementComponent::SetMaxWalkSpeed(const float Speed) const
 
 void UCMovementComponent::SetWalkSpeed() const
 {
-	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[static_cast<uint8>(ESpeedType::Walk)];
+	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[static_cast<uint8>(CESpeedType::Walk)];
 }
 
 void UCMovementComponent::SetRunSpeed() const
 {
-	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[static_cast<uint8>(ESpeedType::Run)];
+	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[static_cast<uint8>(CESpeedType::Run)];
 }
 
 void UCMovementComponent::SetSprintSpeed() const
 {
-	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[static_cast<uint8>(ESpeedType::Sprint)];
+	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[static_cast<uint8>(CESpeedType::Sprint)];
 }
 
 void UCMovementComponent::SetLerpMove() const
@@ -129,14 +129,14 @@ void UCMovementComponent::InputAxis_VerticalLook(const float InAxis)
 
 void UCMovementComponent::InputAction_Walk()
 {
-	SetMaxWalkSpeed(Speeds[static_cast<uint8>(ESpeedType::Walk)]);
+	SetMaxWalkSpeed(Speeds[static_cast<uint8>(CESpeedType::Walk)]);
 
 	SpeedFactor = 1.0f;
 }
 
 void UCMovementComponent::InputAction_Run()
 {
-	SetMaxWalkSpeed(Speeds[static_cast<uint8>(ESpeedType::Sprint)]);
+	SetMaxWalkSpeed(Speeds[static_cast<uint8>(CESpeedType::Sprint)]);
 
 	SpeedFactor = 4.0f;
 }

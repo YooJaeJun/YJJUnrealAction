@@ -35,6 +35,7 @@ private:
 private:
 	virtual void Hit() override;
 	virtual void End_Hit() override;
+	virtual void End_Rise() override;
 
 private:
 	UPROPERTY(VisibleAnywhere)

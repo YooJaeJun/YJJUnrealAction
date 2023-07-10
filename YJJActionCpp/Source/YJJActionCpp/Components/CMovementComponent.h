@@ -7,7 +7,7 @@ class ACCommonCharacter;
 class UCStateComponent;
 
 UENUM()
-enum class ESpeedType : uint8
+enum class CESpeedType : uint8
 {
 	Walk,
 	Run,
@@ -31,7 +31,7 @@ public:
 	void DisableControlRotation() const;
 
 	void SetSpeeds(const TArray<float> InSpeeds);
-	void SetSpeed(const ESpeedType Index) const;
+	void SetSpeed(const CESpeedType Index) const;
 	void SetMaxWalkSpeed(const float InSpeed) const;
 	void SetWalkSpeed() const;
 	void SetRunSpeed() const;
@@ -60,9 +60,9 @@ public:
 	FORCEINLINE void Move() { bCanMove = true; }
 	FORCEINLINE void Stop() { bCanMove = false; }
 
-	FORCEINLINE constexpr float GetWalkSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Walk)]; }
-	FORCEINLINE constexpr float GetRunSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Run)]; }
-	FORCEINLINE constexpr float GetSprintSpeed() const { return Speeds[static_cast<uint8>(ESpeedType::Sprint)]; }
+	FORCEINLINE constexpr float GetWalkSpeed() const { return Speeds[static_cast<uint8>(CESpeedType::Walk)]; }
+	FORCEINLINE constexpr float GetRunSpeed() const { return Speeds[static_cast<uint8>(CESpeedType::Run)]; }
+	FORCEINLINE constexpr float GetSprintSpeed() const { return Speeds[static_cast<uint8>(CESpeedType::Sprint)]; }
 
 	FORCEINLINE constexpr bool GetFixedCamera() const { return bFixedCamera; }
 	FORCEINLINE constexpr void FixCamera() { bFixedCamera = true; }
@@ -73,7 +73,7 @@ public:
 		bool CameraFixed;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Move")
-		float Speeds[static_cast<uint8>(ESpeedType::Max)] = { 200, 500, 800 };
+		float Speeds[static_cast<uint8>(CESpeedType::Max)] = { 200, 500, 800 };
 
 	UPROPERTY(VisibleAnywhere, Category = "Lerp")
 		bool LerpMoving;

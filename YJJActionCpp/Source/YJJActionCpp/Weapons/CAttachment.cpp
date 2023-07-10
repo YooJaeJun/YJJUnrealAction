@@ -80,7 +80,10 @@ void ACAttachment::OnComponentBeginOverlap(
 	CheckTrue(Owner->GetClass() == OtherActor->GetClass());
 
 	if (OnAttachmentBeginOverlap.IsBound())
-		OnAttachmentBeginOverlap.Broadcast(Owner.Get(), this, Cast<ACCommonCharacter>(OtherActor));
+		OnAttachmentBeginOverlap.Broadcast(
+			Owner.Get(), 
+			this, 
+			Cast<ACCommonCharacter>(OtherActor));
 }
 
 void ACAttachment::OnComponentEndOverlap(

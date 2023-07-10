@@ -31,6 +31,7 @@ void UCSkill_Aura::Begin_Skill_Implementation()
 
 	FTransform transform;
 	transform.SetLocation(Owner->GetActorLocation());
+	transform.AddToTranslation(AuraLocation);
 	transform.SetRotation(FQuat(Owner->GetActorRotation()));
 
 	Owner->GetWorld()->SpawnActor<ACSkillCollider_Aura>(AuraClass, transform, params);

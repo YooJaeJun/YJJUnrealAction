@@ -130,9 +130,9 @@ void ACEnemy_AI::Hit()
 	Damage.Causer = nullptr;
 
 
-	// Cancel Hit
-	CheckNull(WeaponComp);
-	WeaponComp->CancelAct();
+	// Cancel Act
+	//CheckNull(WeaponComp);
+	//WeaponComp->CancelAct();
 }
 
 void ACEnemy_AI::End_Hit()
@@ -152,6 +152,11 @@ void ACEnemy_AI::End_Hit()
 		StateComp->SetIdleMode();
 		break;
 	}
+}
+
+void ACEnemy_AI::End_Rise()
+{
+	StateComp->SetIdleMode();
 }
 
 void ACEnemy_AI::OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType)

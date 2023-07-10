@@ -18,5 +18,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-		ESpeedType SpeedType = ESpeedType::Sprint;
+		CESpeedType SpeedType = CESpeedType::Sprint;
 };

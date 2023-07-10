@@ -42,9 +42,11 @@ private:
 	UPROPERTY(VisibleDefaultsOnly)
 		UPoseableMeshComponent* Mesh;
 
+	UPROPERTY(VisibleDefaultsOnly)
+		UMaterialInstanceDynamic* Material;
+
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
-	TWeakObjectPtr<UMaterialInstanceDynamic> Material;
 
 	FTimerHandle TimerHandle;
 };

@@ -33,7 +33,7 @@ void ACMotionTrail::BeginPlay()
 	const int32 size = Owner->GetMesh()->SkeletalMesh->Materials.Num();
 
 	for (int32 i = 0; i < size; i++)
-		Mesh->SetMaterial(i, Material.Get());
+		Mesh->SetMaterial(i, Material);
 
 
 	FTimerDelegate timerDelegate;

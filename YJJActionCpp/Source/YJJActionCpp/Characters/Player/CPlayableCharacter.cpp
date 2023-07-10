@@ -76,7 +76,7 @@ void ACPlayableCharacter::BeginPlay()
 	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));
 
 	if (!!MovementComp)
-		MovementComp->SetSpeed(ESpeedType::Sprint);
+		MovementComp->SetSpeed(CESpeedType::Sprint);
 
 	const TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(MyCurController);
 	if (!!playerController.Get())
@@ -164,7 +164,6 @@ void ACPlayableCharacter::Hit()
 		FVector direction = target - start;
 		direction.Normalize();
 
-		LaunchCharacter(-direction * data.Launch, false, false);
 		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
 	}
 	else // if (CharacterStatComp->IsDead())
@@ -178,11 +177,6 @@ void ACPlayableCharacter::Hit()
 }
 
 void ACPlayableCharacter::End_Avoid()
-{
-	StateComp->SetIdleMode();
-}
-
-void ACPlayableCharacter::End_Rise()
 {
 	StateComp->SetIdleMode();
 }
@@ -206,6 +200,11 @@ void ACPlayableCharacter::End_Hit()
 	}
 
 	StateComp->SetHitNoneMode();
+}
+
+void ACPlayableCharacter::End_Rise()
+{
+	StateComp->SetIdleMode();
 }
 
 void ACPlayableCharacter::OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType)

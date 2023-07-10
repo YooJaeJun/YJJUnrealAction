@@ -25,7 +25,7 @@ class AController;
 class USoundBase;
 
 UENUM()
-enum class ERidingState : uint8
+enum class CERidingState : uint8
 {
 	None,
 	ToMountPoint,
@@ -37,7 +37,7 @@ enum class ERidingState : uint8
 };
 
 UENUM()
-enum class ERidingPoint : uint8
+enum class CERidingPoint : uint8
 {
 	CurMount,
 	CandidateLeft,
@@ -65,7 +65,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 public:
-	void SetRidingState(const ERidingState InState);
+	void SetRidingState(const CERidingState InState);
 
 	UFUNCTION()
 		void BeginOverlap(
@@ -148,7 +148,7 @@ private:
 		UCUserWidget_HUD* Hud;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		ERidingState RidingState;
+		CERidingState RidingState;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		ACCommonCharacter* Rider;
@@ -163,7 +163,7 @@ private:
 		UCWeaponComponent* RiderWeaponComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		USceneComponent* RidingPoints[static_cast<uint8>(ERidingPoint::Max)];
+		USceneComponent* RidingPoints[static_cast<uint8>(CERidingPoint::Max)];
 
 	UPROPERTY(VisibleAnywhere, Category = "Settings")
 		UBoxComponent* InteractionCollision;

@@ -42,7 +42,7 @@ ACAnimal_AI::ACAnimal_AI()
 		MovementComp->SetSpeeds(Speeds);
 		MovementComp->EnableControlRotation();
 		MovementComp->UnFixCamera();
-		MovementComp->SetSpeed(ESpeedType::Sprint);
+		MovementComp->SetSpeed(CESpeedType::Sprint);
 		MovementComp->SetFriction(2.0f, 256.0f);
 		MovementComp->SetJumpZ(700.0f);
 	}
