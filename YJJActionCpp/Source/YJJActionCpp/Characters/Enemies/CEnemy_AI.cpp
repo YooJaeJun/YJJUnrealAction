@@ -156,6 +156,7 @@ void ACEnemy_AI::End_Hit()
 		break;
 	default:
 		StateComp->SetIdleMode();
+		StateComp->SetHitNoneMode();
 		break;
 	}
 }
