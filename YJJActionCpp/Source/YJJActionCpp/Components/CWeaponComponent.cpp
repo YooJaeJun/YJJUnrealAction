@@ -55,6 +55,7 @@ void UCWeaponComponent::TickComponent(
 	while (!!skill.Get())
 	{
 		skill->Tick(DeltaTime);
+
 		index++;
 		skill = GetSkill(index);
 	}
@@ -91,6 +92,20 @@ void UCWeaponComponent::InputAction_Skill_2_Pressed()
 void UCWeaponComponent::InputAction_Skill_2_Released()
 {
 	const TWeakObjectPtr<UCSkill> skill = GetSkill(1);
+	CheckNull(skill);
+	skill->Released();
+}
+
+void UCWeaponComponent::InputAction_Skill_3_Pressed()
+{
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(2);
+	CheckNull(skill);
+	skill->Pressed();
+}
+
+void UCWeaponComponent::InputAction_Skill_3_Released()
+{
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(2);
 	CheckNull(skill);
 	skill->Released();
 }

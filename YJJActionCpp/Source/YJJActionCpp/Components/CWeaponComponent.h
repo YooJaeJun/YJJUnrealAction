@@ -36,6 +36,8 @@ public:
 	void InputAction_Skill_1_Released();
 	void InputAction_Skill_2_Pressed();
 	void InputAction_Skill_2_Released();
+	void InputAction_Skill_3_Pressed();
+	void InputAction_Skill_3_Released();
 
 	void SetModeFromZeroIndex();
 	void SetMode(CEWeaponType InType);

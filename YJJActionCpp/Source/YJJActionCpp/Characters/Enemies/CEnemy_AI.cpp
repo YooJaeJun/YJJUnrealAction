@@ -1,4 +1,7 @@
 #include "Characters/Enemies/CEnemy_AI.h"
+
+#include <string>
+
 #include "Global.h"
 #include "Characters/CAnimInstance_Human.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -126,13 +129,15 @@ void ACEnemy_AI::Hit()
 		return;
 	}
 
+	InfoWidgetComp->SetVisibility(true);
+
 	Damage.Attacker = nullptr;
 	Damage.Causer = nullptr;
 
 
 	// Cancel Act
-	//CheckNull(WeaponComp);
-	//WeaponComp->CancelAct();
+	CheckNull(WeaponComp);
+	WeaponComp->CancelAct();
 }
 
 void ACEnemy_AI::End_Hit()
@@ -142,6 +147,7 @@ void ACEnemy_AI::End_Hit()
 	switch (CurHitType)
 	{
 	case CEHitType::Knockback:
+	case CEHitType::Down:
 		StateComp->SetRiseMode();
 		break;
 	case CEHitType::Air:
@@ -157,9 +163,16 @@ void ACEnemy_AI::End_Hit()
 void ACEnemy_AI::End_Rise()
 {
 	StateComp->SetIdleMode();
+	StateComp->SetHitNoneMode();
 }
 
 void ACEnemy_AI::OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType)
 {
-	Hit();
+	switch (InNewType)
+	{
+	case CEHitType::None:
+		break;
+	default:
+		Hit();
+	}
 }

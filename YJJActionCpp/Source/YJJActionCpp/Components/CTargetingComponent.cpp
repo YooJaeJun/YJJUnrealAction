@@ -105,10 +105,10 @@ void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 
 		if (!!Target.Get())
 		{
-			SetVisibleTargetUI(true);
 			TargetStateComp = YJJHelpers::GetComponent<UCStateComponent>(Target.Get());
 			TargetMovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Target.Get());
 			TargetingWidgetComp = YJJHelpers::GetComponent<UWidgetComponent>(Target.Get());
+			SetVisibleTargetUI(true);
 
 			if (!!TargetMovementComp.Get())
 				TargetMovementComp->FixCamera();

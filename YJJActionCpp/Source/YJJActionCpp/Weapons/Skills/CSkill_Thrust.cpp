@@ -24,12 +24,13 @@ void UCSkill_Thrust::Pressed()
 void UCSkill_Thrust::Begin_Skill_Implementation()
 {
 	Super::Begin_Skill_Implementation();
+
 	CheckNull(Attachment);
 
 	if (Attachment->OnAttachmentBeginOverlap.IsBound())
 		Attachment->OnAttachmentBeginOverlap.Remove(Act, "OnAttachmentBeginOverlap");
 
-	Attachment->OnAttachmentBeginOverlap.AddDynamic(this, &UCSkill_Thrust::OnAttachmentBeginOverlap);
+	Attachment->OnAttachmentBeginOverlap.AddUniqueDynamic(this, &UCSkill_Thrust::OnAttachmentBeginOverlap);
 
 	bMoving = true;
 
@@ -117,7 +118,7 @@ void UCSkill_Thrust::End_Skill_Implementation()
 	if (Attachment->OnAttachmentBeginOverlap.IsBound())
 		Attachment->OnAttachmentBeginOverlap.Remove(this, "OnAttachmentBeginOverlap");
 
-	Attachment->OnAttachmentBeginOverlap.AddDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
+	Attachment->OnAttachmentBeginOverlap.AddUniqueDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
 
 	bMoving = false;
 

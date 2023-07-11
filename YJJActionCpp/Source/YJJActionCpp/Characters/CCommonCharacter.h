@@ -20,6 +20,7 @@ class UFXSystemAsset;
 class UWidgetComponent;
 class UCUserWidget_Custom;
 class USceneComponent;
+class UCUserWidget_EnemyBar;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMount, ACCommonCharacter*, Object);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnmount);
@@ -131,16 +132,6 @@ protected:
 		UCCharacterStatComponent* CharacterStatComp;
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "Info")
-		USceneComponent* InfoPoint;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Info")
-		UWidgetComponent* InfoWidgetComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Info")
-		TSubclassOf<UCUserWidget_Custom> InfoWidget;
-
-
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 		USceneComponent* TargetingPoint;
 
@@ -149,6 +140,16 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 		TSubclassOf<UCUserWidget_Custom> TargetingWidget;
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Info")
+		USceneComponent* InfoPoint;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Info")
+		UWidgetComponent* InfoWidgetComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Info")
+		TSubclassOf<UCUserWidget_EnemyBar> InfoWidget;
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Land")

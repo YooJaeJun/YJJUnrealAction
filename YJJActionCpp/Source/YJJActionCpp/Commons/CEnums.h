@@ -44,10 +44,10 @@ enum class CEHitType : uint8
 	None,
 	Common,
 	Knockback,
+	Down,
 	Air,
 	Fly,
 	FlyingPutDown,
-	Down,
 	Max
 };
 

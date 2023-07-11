@@ -46,6 +46,11 @@ public:
 		void InputAxis_Zoom(const float InAxis);
 
 public:
+	FORCEINLINE constexpr float GetZooming() const { return Zooming; }
+
+	FORCEINLINE void SetZooming(const float InZooming) { Zooming = InZooming; }
+
+public:
 	UPROPERTY(EditAnywhere)
 		FZoomData ZoomData;
 

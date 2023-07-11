@@ -41,10 +41,10 @@ public:
 	FORCEINLINE bool GetInAction() const { return bInAction; }
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Act")
+	UPROPERTY(VisibleAnywhere, Category = "Act")
 		UCAct* Act;
 
-	UPROPERTY(EditAnywhere, Category = "Act")
+	UPROPERTY(VisibleAnywhere, Category = "Act")
 		ACAttachment* Attachment;
 
 protected:

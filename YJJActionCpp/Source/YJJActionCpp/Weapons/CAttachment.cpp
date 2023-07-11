@@ -64,8 +64,10 @@ void ACAttachment::DetachTo(FName InSocketName)
 void ACAttachment::DetachToCollision(FName InCollisionName)
 {
 	for (UShapeComponent* collision : Collisions)
+	{
 		if (collision->GetName() == InCollisionName.ToString())
 			collision->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	}
 }
 
 void ACAttachment::OnComponentBeginOverlap(

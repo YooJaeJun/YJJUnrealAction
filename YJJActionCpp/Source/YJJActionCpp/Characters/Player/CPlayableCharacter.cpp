@@ -126,6 +126,8 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Released, WeaponComp, &UCWeaponComponent::InputAction_Skill_1_Released);
 	PlayerInputComponent->BindAction("Skill_2", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Skill_2_Pressed);
 	PlayerInputComponent->BindAction("Skill_2", EInputEvent::IE_Released, WeaponComp, &UCWeaponComponent::InputAction_Skill_2_Released);
+	PlayerInputComponent->BindAction("Skill_3", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Skill_3_Pressed);
+	PlayerInputComponent->BindAction("Skill_3", EInputEvent::IE_Released, WeaponComp, &UCWeaponComponent::InputAction_Skill_3_Released);
 }
 
 void ACPlayableCharacter::InputAction_Avoid()
