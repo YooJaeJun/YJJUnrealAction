@@ -1,18 +1,16 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include "Characters/AI/CBTTask_Custom.h"
 #include "Components/CWeaponComponent.h"
 #include "CBTTask_Act.generated.h"
 
 UCLASS()
-class YJJACTIONCPP_API UCBTTask_Act : public UBTTaskNode
+class YJJACTIONCPP_API UCBTTask_Act : public UCBTTask_Custom
 {
 	GENERATED_BODY()
 
 public:
 	UCBTTask_Act();
 
-	virtual EBTNodeResult::Type ExecuteTask(
-		UBehaviorTreeComponent& OwnerComp,
-		uint8* NodeMemory) override;
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

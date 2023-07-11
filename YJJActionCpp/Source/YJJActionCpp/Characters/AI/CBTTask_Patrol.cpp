@@ -10,20 +10,18 @@ UCBTTask_Patrol::UCBTTask_Patrol()
 	NodeName = TEXT("CPatrol");
 }
 
-EBTNodeResult::Type UCBTTask_Patrol::ExecuteTask(
-	UBehaviorTreeComponent& OwnerComp, 
-	uint8* NodeMemory)
+EBTNodeResult::Type UCBTTask_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	const TWeakObjectPtr<APawn> owner = 
-		OwnerComp.GetAIOwner()->GetPawn();
-	CheckNullResult(owner, EBTNodeResult::Failed);
+	const EBTNodeResult::Type resultType = 
+		Super::ExecuteTask(OwnerComp, NodeMemory);
+	CheckTrueResult(resultType == EBTNodeResult::Type::Failed, resultType);
 
 	const TWeakObjectPtr<UNavigationSystemV1> navSystem =
-		UNavigationSystemV1::GetNavigationSystem(owner->GetWorld());
+		UNavigationSystemV1::GetNavigationSystem(Owner->GetWorld());
 	CheckNullResult(navSystem, EBTNodeResult::Failed);
 
 
-	const FVector currentLocation = owner->GetActorLocation();
+	const FVector currentLocation = Owner->GetActorLocation();
 
 	FNavLocation nextLocation;
 

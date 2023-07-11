@@ -1,19 +1,17 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include "Characters/AI/CBTTask_Custom.h"
 #include "CBTTask_Patrol.generated.h"
 
 UCLASS()
-class YJJACTIONCPP_API UCBTTask_Patrol : public UBTTaskNode
+class YJJACTIONCPP_API UCBTTask_Patrol : public UCBTTask_Custom
 {
 	GENERATED_BODY()
 
 public:
 	UCBTTask_Patrol();
 
-	virtual EBTNodeResult::Type ExecuteTask(
-		UBehaviorTreeComponent& OwnerComp, 
-		uint8* NodeMemory) override;
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 private:
 	UPROPERTY(EditAnywhere)

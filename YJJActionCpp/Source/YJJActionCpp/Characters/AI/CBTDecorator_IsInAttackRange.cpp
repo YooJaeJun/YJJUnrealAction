@@ -9,9 +9,7 @@ UCBTDecorator_IsInAttackRange::UCBTDecorator_IsInAttackRange()
 	NodeName = TEXT("CanAttack");
 }
 
-bool UCBTDecorator_IsInAttackRange::CalculateRawConditionValue(
-	UBehaviorTreeComponent& OwnerComp,
-	uint8* NodeMemory) const
+bool UCBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	const TWeakObjectPtr<ACCommonCharacter> owner = 
 		Cast<ACCommonCharacter>(OwnerComp.GetAIOwner()->GetPawn());

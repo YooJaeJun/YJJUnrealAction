@@ -9,18 +9,11 @@ UCBTTask_Speed::UCBTTask_Speed()
 
 EBTNodeResult::Type UCBTTask_Speed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	Super::ExecuteTask(OwnerComp, NodeMemory);
+	const EBTNodeResult::Type resultType = 
+		Super::ExecuteTask(OwnerComp, NodeMemory);
+	CheckTrueResult(resultType == EBTNodeResult::Type::Failed, resultType);
 
-	const TWeakObjectPtr<APawn> owner =
-		OwnerComp.GetAIOwner()->GetPawn();
-	CheckNullResult(owner, EBTNodeResult::Failed);
-
-	const TWeakObjectPtr<UCMovementComponent> movement =
-		YJJHelpers::GetComponent<UCMovementComponent>(owner.Get());
-	CheckNullResult(movement, EBTNodeResult::Failed);
-
-
-	movement->SetSpeed(SpeedType);
+	MovementComp->SetSpeed(SpeedType);
 
 	return EBTNodeResult::Succeeded;
 }
