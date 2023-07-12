@@ -4,10 +4,9 @@
 #include "Weapons/CAct.h"
 #include "CAct_Bow.generated.h"
 
-class ACSkill_Arrow;
 class ACCommonCharacter;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPP_API UCAct_Bow : public UCAct
 {
 	GENERATED_BODY()

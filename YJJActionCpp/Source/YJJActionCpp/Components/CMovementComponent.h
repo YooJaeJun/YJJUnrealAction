@@ -23,7 +23,7 @@ public:
 		void OnEnableTopViewCam();
 
 	UFUNCTION()
-		void OffEnableTopViewCam();
+		void OnDisableTopViewCam();
 
 public:
 	void SetSpeeds(const TArray<float> InSpeeds);

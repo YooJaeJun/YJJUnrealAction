@@ -22,7 +22,7 @@ void UCMovementComponent::OnEnableTopViewCam()
 	bTopViewCam = true;
 }
 
-void UCMovementComponent::OffEnableTopViewCam()
+void UCMovementComponent::OnDisableTopViewCam()
 {
 	bTopViewCam = false;
 }

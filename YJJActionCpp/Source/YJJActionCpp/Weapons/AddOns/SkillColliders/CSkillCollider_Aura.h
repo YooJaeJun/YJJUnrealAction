@@ -67,6 +67,5 @@ private:
 		float DamageInterval = 0.1f;
 
 private:
-	TArray<TWeakObjectPtr<ACCommonCharacter>> Hitted;
 	FTimerHandle TimerHandle;
 };

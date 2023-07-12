@@ -73,11 +73,11 @@ ACPlayableCharacter::ACPlayableCharacter()
 
 		if (IsValid(MovementComp))
 		{
-			CamComp->OnEnableTopViewCam.AddDynamic(
-				MovementComp, &UCMovementComponent::OnEnableTopViewCam);
+			if (CamComp->OnEnableTopViewCam.IsBound())
+				CamComp->OnEnableTopViewCam.AddDynamic(MovementComp, &UCMovementComponent::OnEnableTopViewCam);
 
-			CamComp->OnEnableTopViewCam.AddDynamic(
-				MovementComp, &UCMovementComponent::OnEnableTopViewCam);
+			if (CamComp->OnDisableTopViewCam.IsBound())
+				CamComp->OnDisableTopViewCam.AddDynamic(MovementComp, &UCMovementComponent::OnDisableTopViewCam);
 		}
 	}
 }
