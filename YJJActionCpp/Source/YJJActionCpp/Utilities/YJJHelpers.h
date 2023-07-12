@@ -51,7 +51,7 @@ public:
 	{
 		*OutComponent = InActor->CreateDefaultSubobject<T>(InName);
 
-		if (!!InParent)
+		if (IsValid(InParent))
 		{
 			(*OutComponent)->SetupAttachment(InParent, InSocketName);	// 소켓명 언더바 대신 띄어쓰기 써야 함
 
@@ -92,7 +92,7 @@ public:
 	{
 		for (AActor* actor : InWorld->GetCurrentLevel()->Actors)
 		{
-			if (!!actor && actor->IsA<T>())
+			if (IsValid(actor) && actor->IsA<T>())
 				return Cast<T>(actor);
 		}
 
@@ -104,7 +104,7 @@ public:
 	{
 		for (AActor* actor : InWorld->GetCurrentLevel()->Actors)
 		{
-			if (!!actor && actor->IsA<T>())
+			if (IsValid(actor) && actor->IsA<T>())
 				OutActors.Add(Cast<T>(actor));
 		}
 	}
@@ -161,15 +161,15 @@ public:
 		const FRotator rotation = FRotator(InTransform.GetRotation());
 		const FVector scale = InTransform.GetScale3D();
 
-		if (!!InMesh.Get())
+		if (InMesh.IsValid())
 		{
-			if (!!particle.Get())
+			if (particle.IsValid())
 			{
 				UGameplayStatics::SpawnEmitterAttached(particle.Get(), InMesh.Get(), InSocketName, location, rotation, scale);
 				return;
 			}
 
-			if (!!niagara.Get())
+			if (niagara.IsValid())
 			{
 				UNiagaraFunctionLibrary::SpawnSystemAttached(niagara.Get(), InMesh.Get(), InSocketName, location, rotation, scale,
 					EAttachLocation::KeepRelativeOffset,true, ENCPoolMethod::None);
@@ -177,13 +177,13 @@ public:
 			}
 		}
 
-		if (!!particle.Get())
+		if (particle.IsValid())
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(InWorld.Get(), particle.Get(), InTransform);
 			return;
 		}
 
-		if (!!niagara.Get())
+		if (niagara.IsValid())
 		{
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(InWorld.Get(), niagara.Get(), location, rotation, scale);
 			return;
@@ -222,7 +222,7 @@ public:
 
 		for (const auto& otherCharacter : InArray)
 		{
-			if (!!otherCharacter.Get())
+			if (otherCharacter.IsValid())
 			{
 				FVector diff = (otherCharacter->GetActorLocation() - InCenter->GetActorLocation());
 				diff.Normalize();
@@ -260,7 +260,7 @@ public:
 
 		for (auto& otherCharacter : InArray)
 		{
-			if (!!otherCharacter.Get())
+			if (otherCharacter.IsValid())
 			{
 				FVector toTarget = (otherCharacter->GetActorLocation() - InCenter->GetActorLocation());
 				toTarget.Normalize();

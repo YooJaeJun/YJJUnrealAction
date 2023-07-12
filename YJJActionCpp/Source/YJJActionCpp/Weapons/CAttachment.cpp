@@ -20,7 +20,7 @@ void ACAttachment::BeginPlay()
 	{
 		UShapeComponent* shape = Cast<UShapeComponent>(child);
 
-		if (!!shape)
+		if (IsValid(shape))
 		{
 			shape->OnComponentBeginOverlap.AddUniqueDynamic(this, &ACAttachment::OnComponentBeginOverlap);
 			shape->OnComponentEndOverlap.AddUniqueDynamic(this, &ACAttachment::OnComponentEndOverlap);

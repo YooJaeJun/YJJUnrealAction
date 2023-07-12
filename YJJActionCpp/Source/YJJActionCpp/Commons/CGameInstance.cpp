@@ -6,9 +6,9 @@ UCGameInstance::UCGameInstance()
 	YJJHelpers::GetAsset(&CharacterInfoTable, "DataTable'/Game/Character/CDT_CharacterInfo.CDT_CharacterInfo'");
 	YJJHelpers::GetAsset(&CharacterStatTable, "DataTable'/Game/Character/CDT_CharacterStat.CDT_CharacterStat'");
 
-	if (!!CharacterInfoTable && CharacterInfoTable->GetRowMap().Num() <= 0)
+	if (IsValid(CharacterInfoTable) && CharacterInfoTable->GetRowMap().Num() <= 0)
 		CLog::Log("CharacterInfoTable is Empty.");
-	if (!!CharacterStatTable && CharacterStatTable->GetRowMap().Num() <= 0)
+	if (IsValid(CharacterStatTable) && CharacterStatTable->GetRowMap().Num() <= 0)
 		CLog::Log("CharacterStatTable is Empty.");
 }
 

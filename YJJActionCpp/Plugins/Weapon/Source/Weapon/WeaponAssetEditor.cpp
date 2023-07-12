@@ -170,9 +170,10 @@ void FWeaponAssetEditor::Open(FString InAssetName)
 
 bool FWeaponAssetEditor::OnRequestClose()
 {
-	if (!!DetailsView)
+	if (DetailsView.IsValid())
 	{
-		if (!!GEditor && !!GEditor->GetEditorSubsystem<UAssetEditorSubsystem>())
+		if (IsValid(GEditor) && 
+			IsValid(GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()))
 			GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->NotifyAssetClosed(GetEditingObject(), this);
 
 		if (FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
@@ -227,7 +228,7 @@ void FWeaponAssetEditor::OnListViewSelectedItem(FWeaponRowDataPtr InDataPtr)
 	if (InDataPtr == nullptr)
 		return;
 
-	if (!!GetEditingObject())
+	if (IsValid(GetEditingObject()))
 		RemoveEditingObject(GetEditingObject());
 
 	AddEditingObject(InDataPtr->Asset);

@@ -49,5 +49,5 @@ void UCSkill_Aura::End_Skill_Implementation()
 	CheckNull(MovementComp);
 
 	MovementComp->Move();
-	MovementComp->UnFixCamera();
+	CameraComp->UnFixCamera();
 }

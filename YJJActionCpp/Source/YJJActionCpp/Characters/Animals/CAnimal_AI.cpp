@@ -5,7 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CMovementComponent.h"
-#include "Components/CZoomComponent.h"
+#include "Components/CCameraComponent.h"
 #include "Components/CGameUIComponent.h"
 #include "Components/CRidingComponent.h"
 #include "Components/CPatrolComponent.h"
@@ -21,7 +21,7 @@ ACAnimal_AI::ACAnimal_AI()
 {
 	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
 	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
-	YJJHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComp, "ZoomComponent");
+	YJJHelpers::CreateActorComponent<UCCameraComponent>(this, &CameraComp, "ZoomComponent");
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 	YJJHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
 	YJJHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
@@ -34,17 +34,21 @@ ACAnimal_AI::ACAnimal_AI()
 	YJJHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
 	YJJHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 
-	if (!!StateComp)
+	if (IsValid(StateComp))
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACAnimal_AI::OnStateTypeChanged);
 
-	if (!!MovementComp)
+	if (IsValid(MovementComp))
 	{
 		MovementComp->SetSpeeds(Speeds);
-		MovementComp->EnableControlRotation();
-		MovementComp->UnFixCamera();
 		MovementComp->SetSpeed(CESpeedType::Sprint);
 		MovementComp->SetFriction(2.0f, 256.0f);
 		MovementComp->SetJumpZ(700.0f);
+	}
+
+	if (IsValid(CameraComp))
+	{
+		CameraComp->UnFixCamera();
+		CameraComp->EnableControlRotation();
 	}
 
 	YJJHelpers::GetAssetDynamic<USoundBase>(&LandSound,
@@ -55,7 +59,7 @@ ACAnimal_AI::ACAnimal_AI()
 
 	YJJHelpers::GetClass<AActor>(&EyeClass, "Blueprint'/Game/Character/Animals/CBP_Eye.CBP_Eye_C'");
 
-	if (!!SpringArm)
+	if (IsValid(SpringArm))
 		SpringArm->bDoCollisionTest = false;
 
 
@@ -67,22 +71,22 @@ void ACAnimal_AI::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!!InteractionCollision)
+	if (IsValid(InteractionCollision))
 	{
 		InteractionCollision->OnComponentBeginOverlap.AddUniqueDynamic(RidingComp, &UCRidingComponent::BeginOverlap);
 		InteractionCollision->OnComponentEndOverlap.AddUniqueDynamic(RidingComp, &UCRidingComponent::EndOverlap);
 	}
 
-	if (!!RiderPoint)
+	if (IsValid(RiderPoint))
 		RiderPoint->AttachToComponent(GetMesh(), 
 			FAttachmentTransformRules::SnapToTargetIncludingScale, "Rider");
 
-	if (!!EyePoint)
+	if (IsValid(EyePoint))
 	{
 		EyePoint->AttachToComponent(GetMesh(), 
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale, "EyeEffect");
 
-		if (!!EyeClass)
+		if (IsValid(EyeClass))
 		{
 			FActorSpawnParameters params;
 			params.Owner = Cast<AActor>(this);
@@ -96,15 +100,15 @@ void ACAnimal_AI::BeginPlay()
 				EAttachmentRule::KeepRelative,
 				false);
 
-			if (!!Eye)
+			if (IsValid(Eye))
 				Eye->AttachToComponent(GetMesh(), attachRules, "EyeEffect");
 		}
 	}
 
-	if (!!CharacterInfoComp)
+	if (IsValid(CharacterInfoComp))
 		CharacterInfoComp->SetCharacterType(CECharacterType::Companion);
 
-	if (!!CharacterStatComp)
+	if (IsValid(CharacterStatComp))
 		CharacterStatComp->SetAttackRange(250.0f);
 }
 
@@ -114,9 +118,9 @@ void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAxis("MoveForward", MovementComp, &UCMovementComponent::InputAxis_MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", MovementComp, &UCMovementComponent::InputAxis_MoveRight);
-	PlayerInputComponent->BindAxis("HorizontalLook", MovementComp, &UCMovementComponent::InputAxis_HorizontalLook);
-	PlayerInputComponent->BindAxis("VerticalLook", MovementComp, &UCMovementComponent::InputAxis_VerticalLook);
-	PlayerInputComponent->BindAxis("Zoom", ZoomComp, &UCZoomComponent::InputAxis_Zoom);
+	PlayerInputComponent->BindAxis("HorizontalLook", CameraComp, &UCCameraComponent::InputAxis_HorizontalLook);
+	PlayerInputComponent->BindAxis("VerticalLook", CameraComp, &UCCameraComponent::InputAxis_VerticalLook);
+	PlayerInputComponent->BindAxis("Zoom", CameraComp, &UCCameraComponent::InputAxis_Zoom);
 
 	PlayerInputComponent->BindAction("Walk", IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Walk);
 	PlayerInputComponent->BindAction("Walk", IE_Released, MovementComp, &UCMovementComponent::InputAction_Run);
@@ -194,17 +198,27 @@ void ACAnimal_AI::OnStateTypeChanged(const CEStateType InPrevType, const CEState
 
 void ACAnimal_AI::SetZoomMinRange(const float InMinRange) const
 {
-	CheckNull(ZoomComp);
-	ZoomComp->ZoomData.MinRange = InMinRange;
+	CheckNull(CameraComp);
+	CameraComp->ZoomData.MinRange = InMinRange;
 }
 
 void ACAnimal_AI::SetZoomMaxRange(const float InMaxRange) const
 {
-	CheckNull(ZoomComp);
-	ZoomComp->ZoomData.MaxRange = InMaxRange;
+	CheckNull(CameraComp);
+	CameraComp->ZoomData.MaxRange = InMaxRange;
 }
 
 void ACAnimal_AI::OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType)
 {
 	Hit();
+}
+
+USpringArmComponent* ACAnimal_AI::GetSpringArm() const
+{
+	return SpringArm;
+}
+
+UCTargetingComponent* ACAnimal_AI::GetTargetingComp() const
+{
+	return TargetingComp;
 }

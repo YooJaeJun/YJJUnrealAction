@@ -34,19 +34,19 @@ ACEnemy_AI::ACEnemy_AI()
 
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
 	
-	if (!!StateComp)
+	if (IsValid(StateComp))
 	{
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACEnemy_AI::OnStateTypeChanged);
 		StateComp->OnHitStateTypeChanged.AddUniqueDynamic(this, &ACEnemy_AI::OnHitStateTypeChanged);
 	}
 
-	if (!!MovementComp)
+	if (IsValid(MovementComp))
 	{
 		MovementComp->SetSpeeds(Speeds);
 		MovementComp->InputAction_Run();
 	}
 
-	if (!!InfoWidgetComp)
+	if (IsValid(InfoWidgetComp))
 		InfoWidgetComp->SetVisibility(true);
 }
 
@@ -57,11 +57,11 @@ void ACEnemy_AI::BeginPlay()
 	Create_DynamicMaterial(this);
 	ChangeColor(this, OriginColor);
 
-	if (!!CharacterInfoComp)
+	if (IsValid(CharacterInfoComp))
 		if (CharacterInfoComp->GetCharacterType() == 0)
 			CharacterInfoComp->SetCharacterType(CECharacterType::Enemy_1);
 
-	if (!!CharacterStatComp)
+	if (IsValid(CharacterStatComp))
 		CharacterStatComp->SetAttackRange(250.0f);
 }
 

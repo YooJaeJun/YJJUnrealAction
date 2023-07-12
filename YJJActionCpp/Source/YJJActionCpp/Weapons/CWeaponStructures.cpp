@@ -4,6 +4,7 @@
 #include "Components/CMovementComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CCharacterStatComponent.h"
+#include "Components/CCameraComponent.h"
 
 void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
@@ -32,27 +33,30 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 	stat->SetStaminaDamage(Stamina);
 	stat->SetManaDamage(Mana);
 
-	const TWeakObjectPtr<UCMovementComponent> movement = 
+	const TWeakObjectPtr<UCMovementComponent> movementComp =
 		YJJHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
 
-	if (!!movement.Get())
+	if (movementComp.IsValid())
 	{
-		if (bFixedCamera)
-			movement->EnableControlRotation();
-
 		if (false == bCanMove)
-			movement->Stop();
+			movementComp->Stop();
 		else
-			movement->Move();
+			movementComp->Move();
 	}
 
-	if (!!Montage)
+	const TWeakObjectPtr<UCCameraComponent> cameraComp =
+		YJJHelpers::GetComponent<UCCameraComponent>(InOwner.Get());
+
+	if (cameraComp.IsValid() && true == bFixedCamera)
+		cameraComp->EnableControlRotation();
+
+	if (IsValid(Montage))
 		InOwner->PlayAnimMontage(Montage, PlayRate);
 
-	if (!!Sound)
+	if (IsValid(Sound))
 		PlaySoundWave(InOwner);
 
-	if (!!Effect)
+	if (IsValid(Effect))
 		PlayEffect(InOwner->GetWorld(), InOwner->GetActorLocation(), InOwner->GetActorRotation());
 }
 
@@ -105,7 +109,7 @@ void FHitData::SendDamage(
 
 void FHitData::PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
-	if (!!Montage)
+	if (IsValid(Montage))
 		InOwner->PlayAnimMontage(Montage, PlayRate);
 }
 
@@ -119,7 +123,7 @@ void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const
 	{
 		const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(actor);
 
-		if (!!character.Get())
+		if (character.IsValid())
 		{
 			character->CustomTimeDilation = 1e-3f;
 			characters.Add(character);

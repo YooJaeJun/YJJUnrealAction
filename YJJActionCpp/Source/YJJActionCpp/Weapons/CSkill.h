@@ -8,6 +8,7 @@ class ACAttachment;
 class UCAct;
 class UCStateComponent;
 class UCMovementComponent;
+class UCCameraComponent;
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API UCSkill : public UObject
@@ -51,6 +52,7 @@ protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCStateComponent> StateComp;
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
+	TWeakObjectPtr<UCCameraComponent> CameraComp;
 
 	bool bInAction = false;
 };

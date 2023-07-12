@@ -1,8 +1,9 @@
 #include "Components/CTargetingComponent.h"
 #include "Global.h"
-#include "CMovementComponent.h"
-#include "CStateComponent.h"
 #include "Characters/CCommonCharacter.h"
+#include "CStateComponent.h"
+#include "CMovementComponent.h"
+#include "CCameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Controller.h"
 
@@ -12,7 +13,7 @@ UCTargetingComponent::UCTargetingComponent()
 
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
-	if (!!Owner.Get())
+	if (Owner.IsValid())
 		Controller = Cast<AController>(Owner->GetMyCurController());
 
 	MovingFocus_CurrentCoolTime = MovingFocus_ConstantTime;
@@ -82,11 +83,11 @@ void UCTargetingComponent::End_Targeting()
 		YJJHelpers::GetComponent<UCStateComponent>(Target.Get());
 	CheckNull(targetState);
 
-	const TWeakObjectPtr<UCMovementComponent> targetMovement =
-		YJJHelpers::GetComponent<UCMovementComponent>(Target.Get());
-	CheckNull(targetMovement);
+	const TWeakObjectPtr<UCCameraComponent> targetCameraComp =
+		YJJHelpers::GetComponent<UCCameraComponent>(Target.Get());
+	CheckNull(targetCameraComp);
 
-	targetMovement->UnFixCamera();
+	targetCameraComp->UnFixCamera();
 	Target = nullptr;
 	TargetStateComp = nullptr;
 	TargetMovementComp = nullptr;
@@ -96,22 +97,22 @@ void UCTargetingComponent::End_Targeting()
 
 void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 {
-	if (!!InTarget)
+	if (IsValid(InTarget))
 	{
-		if (!!Target.Get())
+		if (Target.IsValid())
 			SetVisibleTargetUI(false);
 
 		Target = InTarget;
 
-		if (!!Target.Get())
+		if (Target.IsValid())
 		{
 			TargetStateComp = YJJHelpers::GetComponent<UCStateComponent>(Target.Get());
 			TargetMovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Target.Get());
 			TargetingWidgetComp = YJJHelpers::GetComponent<UWidgetComponent>(Target.Get());
 			SetVisibleTargetUI(true);
 
-			if (!!TargetMovementComp.Get())
-				TargetMovementComp->FixCamera();
+			if (TargetMovementComp.IsValid())
+				TargetCameraComp->FixCamera();
 		}
 	}
 	else
@@ -146,36 +147,40 @@ void UCTargetingComponent::Tick_Targeting()
 {
 	CheckNull(Target);
 	CheckNull(TargetStateComp);
-	
-	if (false == TargetStateComp->IsDeadMode() &&
-		!!(Owner->GetDistanceTo(Target.Get()) <= TraceDistance))
+
+	bool bIsValid = true;
+	bIsValid &= (false == TargetStateComp->IsDeadMode());
+	bIsValid &= (true == (Owner->GetDistanceTo(Target.Get()) <= TraceDistance));
+
+	if (false == bIsValid)
 	{
-		if (nullptr == Controller.Get())
-			Controller = Owner->GetMyCurController();
-
-		const FRotator controlRotation = Controller->GetControlRotation();
-		const FRotator ownerToTarget = UKismetMathLibrary::FindLookAtRotation(
-			Owner->GetActorLocation(), Target->GetActorLocation());
-
-		if (!!UKismetMathLibrary::EqualEqual_RotatorRotator(controlRotation, ownerToTarget, FinishAngle))
-		{
-			Controller->SetControlRotation(ownerToTarget);
-
-			if (!!bMovingFocus)
-				bMovingFocus = false;
-		}
-		else
-		{
-			const FRotator rotator = UKismetMathLibrary::RInterpTo(controlRotation, 
-				ownerToTarget, 
-				UGameplayStatics::GetWorldDeltaSeconds(GetWorld()), 
-				InterpSpeed);
-			
-			Controller->SetControlRotation(rotator);
-		}
-	}// !IsDeadMode, GetDistanceTo
-	else
 		End_Targeting();
+		return;
+	}
+
+	if (nullptr == Controller.Get())
+		Controller = Owner->GetMyCurController();
+
+	const FRotator controlRotation = Controller->GetControlRotation();
+	const FRotator ownerToTarget = UKismetMathLibrary::FindLookAtRotation(
+		Owner->GetActorLocation(), Target->GetActorLocation());
+
+	if (true == UKismetMathLibrary::EqualEqual_RotatorRotator(controlRotation, ownerToTarget, FinishAngle))
+	{
+		Controller->SetControlRotation(ownerToTarget);
+
+		if (true == bMovingFocus)
+			bMovingFocus = false;
+	}
+	else
+	{
+		const FRotator rotator = UKismetMathLibrary::RInterpTo(controlRotation, 
+			ownerToTarget, 
+			UGameplayStatics::GetWorldDeltaSeconds(GetWorld()), 
+			InterpSpeed);
+		
+		Controller->SetControlRotation(rotator);
+	}
 }
 
 void UCTargetingComponent::ChangeFocus(const bool InbRight)
@@ -204,7 +209,7 @@ void UCTargetingComponent::ChangeFocus(const bool InbRight)
 	for (const auto& elem : hitResults)
 	{
 		bool bCheck = true;
-		bCheck &= !!elem.GetActor();
+		bCheck &= IsValid(elem.GetActor());
 		bCheck &= (elem.GetActor()->GetClass() != Owner->GetClass());
 
 		if (bCheck)
@@ -226,18 +231,19 @@ void UCTargetingComponent::ChangeFocus(const bool InbRight)
 	{
 		const float curAngle = elem.Key;
 
-		if ((!!InbRight && curAngle > 0.0f) ||
-			false == InbRight && curAngle < 0.0f)
+		bool bCheck = false;
+		bCheck |= (InbRight && curAngle > 0.0f);
+		bCheck |= (false == InbRight && curAngle < 0.0f);
+		bCheck &= (minAngle > abs(curAngle));
+
+		if (bCheck)
 		{
-			if (minAngle > abs(curAngle))
-			{
-				minAngle = abs(curAngle);
-				candidate = elem.Value;
-			}
+			minAngle = abs(curAngle);
+			candidate = elem.Value;
 		}
 	}
 
-	if (!!candidate.Get())
+	if (candidate.IsValid())
 	{
 		if (false == bMovingFocus)
 		{

@@ -23,7 +23,7 @@ void UCWeaponComponent::BeginPlay()
 
 	for (int32 i = 0; i < DataAssets.Num(); i++)
 	{
-		if (!!DataAssets[i])
+		if (IsValid(DataAssets[i]))
 		{
 			// 주석처럼 쓰면 객체 공유하게 됨
 			//UCWeaponAsset* asset = NewObject<UCWeaponAsset>(this, DataAssets[i]->GetClass(), static_cast<FName>(DataAssets[i]->GetClass()->GetName()));
@@ -46,13 +46,13 @@ void UCWeaponComponent::TickComponent(
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	const TWeakObjectPtr<UCAct> act = GetAct();
-	if (!!act.Get())
+	if (act.IsValid())
 		act->Tick(DeltaTime);
 
 	int index = 0;
 	TWeakObjectPtr<UCSkill> skill = GetSkill(index);
 
-	while (!!skill.Get())
+	while (skill.IsValid())
 	{
 		skill->Tick(DeltaTime);
 
@@ -159,49 +159,6 @@ void UCWeaponComponent::ChangeType(CEWeaponType InType)
 		OnWeaponTypeChanged.Broadcast(PrevType, InType);
 }
 
-TWeakObjectPtr<UCWeaponAsset> UCWeaponComponent::GetWeaponAsset()
-{
-	CheckTrueResult(IsUnarmedMode(), nullptr);
-
-	UCWeaponAsset** assetForCheckingNull = DataAssetMap.Find(Type);
-	CheckNullResult(*assetForCheckingNull, nullptr);
-
-	const TWeakObjectPtr<UCWeaponAsset> assetForReturn = *assetForCheckingNull;
-	return assetForReturn;
-}
-
-ACAttachment* UCWeaponComponent::GetAttachment()
-{
-	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
-	CheckNullResult(asset, nullptr);
-
-	return asset->GetAttachment();
-}
-
-UCEquipment* UCWeaponComponent::GetEquipment()
-{
-	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
-	CheckNullResult(asset, nullptr);
-
-	return asset->GetEquipment();
-}
-
-UCAct* UCWeaponComponent::GetAct()
-{
-	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
-	CheckNullResult(asset, nullptr);
-
-	return asset->GetAct();
-}
-
-UCSkill* UCWeaponComponent::GetSkill(const int32 SkillIndex)
-{
-	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
-	CheckNullResult(asset, nullptr);
-
-	return asset->GetSkill(SkillIndex);
-}
-
 bool UCWeaponComponent::IsIdleStateMode()
 {
 	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
@@ -274,4 +231,47 @@ void UCWeaponComponent::SetYonduMode()
 {
 	CheckFalse(IsIdleStateMode());
 	SetMode(CEWeaponType::Yondu);
+}
+
+TWeakObjectPtr<UCWeaponAsset> UCWeaponComponent::GetWeaponAsset()
+{
+	CheckTrueResult(IsUnarmedMode(), nullptr);
+
+	UCWeaponAsset** assetForCheckingNull = DataAssetMap.Find(Type);
+	CheckNullResult(*assetForCheckingNull, nullptr);
+
+	const TWeakObjectPtr<UCWeaponAsset> assetForReturn = *assetForCheckingNull;
+	return assetForReturn;
+}
+
+ACAttachment* UCWeaponComponent::GetAttachment()
+{
+	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
+	CheckNullResult(asset, nullptr);
+
+	return asset->GetAttachment();
+}
+
+UCEquipment* UCWeaponComponent::GetEquipment()
+{
+	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
+	CheckNullResult(asset, nullptr);
+
+	return asset->GetEquipment();
+}
+
+UCAct* UCWeaponComponent::GetAct()
+{
+	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
+	CheckNullResult(asset, nullptr);
+
+	return asset->GetAct();
+}
+
+UCSkill* UCWeaponComponent::GetSkill(const int32 SkillIndex)
+{
+	const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
+	CheckNullResult(asset, nullptr);
+
+	return asset->GetSkill(SkillIndex);
 }

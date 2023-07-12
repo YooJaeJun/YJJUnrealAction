@@ -9,8 +9,9 @@ class ACAttachment;
 class UCEquipment;
 class ACCommonCharacter;
 class UWorld;
-class UCMovementComponent;
 class UCStateComponent;
+class UCMovementComponent;
+class UCCameraComponent;
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API UCAct : public UObject
@@ -53,6 +54,7 @@ public:
 	virtual void End_Act();
 
 protected:
+	bool bInAct = false;
 	bool bBeginAct = false;
 
 	TWeakObjectPtr<ACCommonCharacter> Owner;
@@ -60,6 +62,7 @@ protected:
 
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
 	TWeakObjectPtr<UCStateComponent> StateComp;
+	TWeakObjectPtr<UCCameraComponent> CameraComp;
 
 	TArray<FActData> ActDatas;
 	TArray<FHitData> HitDatas;

@@ -21,6 +21,8 @@ class UWidgetComponent;
 class UCUserWidget_Custom;
 class USceneComponent;
 class UCUserWidget_EnemyBar;
+class USpringArmComponent;
+class UCTargetingComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMount, ACCommonCharacter*, Object);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnmount);
@@ -78,6 +80,12 @@ public:
 
 	FORCEINLINE void SetbRiding(const bool InbRiding) { bRiding = InbRiding; }
 	FORCEINLINE constexpr bool GetbRiding() const { return bRiding; }
+
+	virtual USpringArmComponent* GetSpringArm() const
+		PURE_VIRTUAL(ACCommonCharacter::GetSpringArm, return nullptr;);
+
+	virtual UCTargetingComponent* GetTargetingComp() const
+		PURE_VIRTUAL(ACCommonCharacter::GetTargetingComp, return nullptr;);
 
 private:
 	UFUNCTION()
@@ -175,14 +183,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Ride")
 		bool bRiding;
 
-public:
-	TWeakObjectPtr<AController> MyCurController;
-
 protected:
 	FTimerHandle RestoreColor_TimerHandle;
 	FDamageData Damage;
 
 private:
+	TWeakObjectPtr<AController> MyCurController;
 	bool bTickLerpForTarget = false;
 	FRotator TargetRotator = FRotator(0, 0, 0);
 };

@@ -32,10 +32,10 @@ void CLog::Log(const UObject* InValue)
 {
 	FString str;
 
-	if (!!InValue)
+	if (IsValid(InValue))
 		str.Append(InValue->GetName());
 
-	str.Append(!!InValue ? " Not Null" : "Null");
+	str.Append(IsValid(InValue) ? " Is Valid" : "Is Not Valid");
 
 	UE_LOG(YJJ, Warning, TEXT("%s"), *str);
 }
@@ -85,10 +85,10 @@ void CLog::Print(const UObject* InValue, const int32 InKey, const float InDurati
 {
 	FString str;
 
-	if (!!InValue)
+	if (IsValid(InValue))
 		str.Append(InValue->GetName());
 
-	str.Append(!!InValue ? " Not Null" : "Null");
+	str.Append(IsValid(InValue) ? " Is Valid" : "Is Not Valid");
 
 	GEngine->AddOnScreenDebugMessage(InKey, InDuration, InColor, str);
 }

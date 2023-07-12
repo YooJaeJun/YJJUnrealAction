@@ -46,18 +46,9 @@ public:
 private:
 	void ChangeType(CEWeaponType InType);
 
-public:
-	TWeakObjectPtr<UCWeaponAsset> GetWeaponAsset();
-	ACAttachment* GetAttachment();
-	UCEquipment* GetEquipment();
-	UCAct* GetAct();
-	UCSkill* GetSkill(const int32 SkillIndex);
-
-	FORCEINLINE constexpr CEWeaponType GetType() const { return Type; }
-	FORCEINLINE constexpr CEWeaponType GetPrevType() const { return PrevType; }
-
 	bool IsIdleStateMode();
 
+public:
 	void SetUnarmedMode();
 	void SetSwordMode();
 	void SetFistMode();
@@ -69,6 +60,15 @@ public:
 	void SetFireballMode();
 	void SetBombMode();
 	void SetYonduMode();
+
+	TWeakObjectPtr<UCWeaponAsset> GetWeaponAsset();
+	ACAttachment* GetAttachment();
+	UCEquipment* GetEquipment();
+	UCAct* GetAct();
+	UCSkill* GetSkill(const int32 SkillIndex);
+
+	FORCEINLINE constexpr CEWeaponType GetType() const { return Type; }
+	FORCEINLINE constexpr CEWeaponType GetPrevType() const { return PrevType; }
 
 public:
 	FORCEINLINE constexpr bool IsUnarmedMode() const { return Type == CEWeaponType::Unarmed; }

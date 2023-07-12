@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/Animals/CAnimal.h"
-#include "Components/CZoomComponent.h"
+#include "Components/CCameraComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Components/CStateComponent.h"
 #include "CAnimal_AI.generated.h"
@@ -10,7 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UInputComponent;
-class UCZoomComponent;
+class UCCameraComponent;
 class UCTargetingComponent;
 class UCGameUIComponent;
 class UCRidingComponent;
@@ -20,6 +20,7 @@ class CUserWidget_HUD;
 class CUserWidget_Interaction;
 class ACCommonCharacter;
 class UCWeaponComponent;
+class UCameraComponent;
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API ACAnimal_AI :
@@ -60,14 +61,14 @@ public:
 	FORCEINLINE constexpr USceneComponent* GetUnmountPoint() const { return UnmountPoint; }
 	FORCEINLINE constexpr USceneComponent* GetEyePoint() const { return EyePoint; }
 
-	FORCEINLINE constexpr USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	virtual USpringArmComponent* GetSpringArm() const override;
+	virtual UCTargetingComponent* GetTargetingComp() const override;
 	FORCEINLINE constexpr UCameraComponent* GetCamera() const { return Camera; }
-	FORCEINLINE constexpr UCTargetingComponent* GetTargetingComp() const { return TargetingComp; }
-	FORCEINLINE constexpr UCZoomComponent* GetZoomComp() const { return ZoomComp; }
+	FORCEINLINE constexpr UCCameraComponent* GetZoomComp() const { return CameraComp; }
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-		UCZoomComponent* ZoomComp;
+		UCCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere)
 		UCTargetingComponent* TargetingComp;

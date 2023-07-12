@@ -19,6 +19,7 @@ EBTNodeResult::Type UCBTTask_Equip::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 
 	const TWeakObjectPtr<UCWeaponComponent> weaponComp =
 		YJJHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
+
 	CheckNullResult(weaponComp, EBTNodeResult::Failed);
 
 	if (weaponComp->IsUnarmedMode())

@@ -39,7 +39,7 @@ const UCWeaponAsset& UCWeaponAsset::DeepCopy(
 
 void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
 {
-	if (!!AttachmentClass)
+	if (IsValid(AttachmentClass))
 	{
 		FActorSpawnParameters params;
 		params.Owner = Cast<AActor>(InOwner);
@@ -47,24 +47,24 @@ void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
 		Attachment = InOwner->GetWorld()->SpawnActor<ACAttachment>(AttachmentClass, params);
 	}
 
-	if (!!EquipmentClass)
+	if (IsValid(EquipmentClass))
 	{
 		Equipment = NewObject<UCEquipment>(this, EquipmentClass);
 		Equipment->BeginPlay(InOwner, EquipmentData);
 
-		if (!!Attachment)
+		if (IsValid(Attachment))
 		{
 			Equipment->OnEquipmentBeginEquip.AddUniqueDynamic(Attachment, &ACAttachment::OnBeginEquip);
 			Equipment->OnEquipmentUnequip.AddUniqueDynamic(Attachment, &ACAttachment::OnUnequip);
 		}
 	}
 
-	if (!!ActClass)
+	if (IsValid(ActClass))
 	{
 		Act = NewObject<UCAct>(this, ActClass);
 		Act->BeginPlay(InOwner, Attachment, Equipment, ActDatas, HitDatas);
 
-		if (!!Attachment)
+		if (IsValid(Attachment))
 		{
 			Attachment->OnAttachmentBeginCollision.AddUniqueDynamic(Act, &UCAct::OnAttachmentBeginCollision);
 			Attachment->OnAttachmentEndCollision.AddUniqueDynamic(Act, &UCAct::OnAttachmentEndCollision);
@@ -75,7 +75,7 @@ void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
 
 	for (int i=0; i<SkillClasses.Num(); i++)
 	{
-		if (!!SkillClasses[i] && !!Attachment && !!Act)
+		if (IsValid(SkillClasses[i]) && IsValid(Attachment) && IsValid(Act))
 		{
 			Skills.Emplace(NewObject<UCSkill>(this, SkillClasses[i]));
 			Skills[i]->BeginPlay(InOwner, Attachment, Act);

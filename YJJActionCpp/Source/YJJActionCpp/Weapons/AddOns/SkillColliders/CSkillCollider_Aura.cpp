@@ -67,7 +67,7 @@ void ACSkillCollider_Aura::OnComponentBeginOverlap(UPrimitiveComponent* Overlapp
 	CheckTrue(GetOwner() == OtherActor);
 
 	const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(OtherActor);
-	if (!!character.Get())
+	if (character.IsValid())
 		Hitted.AddUnique(character.Get());
 }
 
@@ -76,6 +76,6 @@ void ACSkillCollider_Aura::OnComponentEndOverlap(UPrimitiveComponent* Overlapped
 	CheckTrue(GetOwner() == OtherActor);
 
 	const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(OtherActor);
-	if (!!character.Get())
+	if (character.IsValid())
 		Hitted.Remove(character.Get());
 }

@@ -27,7 +27,7 @@ void UCUserWidget_EquipMenu::Activate(const float TimeDilation)
 {
 	SetVisibility(ESlateVisibility::Visible);
 
-	if (!!GetOwningPlayer())
+	if (IsValid(GetOwningPlayer()))
 	{
 		GetOwningPlayer()->SetShowMouseCursor(true);
 		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(

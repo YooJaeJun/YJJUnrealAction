@@ -16,7 +16,7 @@ void UCAnimInstance_Character::NativeBeginPlay()
 
 	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 
-	if (!!StateComp.Get())
+	if (StateComp.IsValid())
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Character::OnStateTypeChanged);
 
 	MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
@@ -34,7 +34,7 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 		CheckNull(Owner);
 	}
 
-	if (!!StateComp.Get())
+	if (StateComp.IsValid())
 	{
 		StateType = StateComp->GetCurMode();
 
@@ -92,14 +92,14 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 	// Animation
 
-	if (!!MovementComp.Get())
+	if (MovementComp.IsValid())
 	{
 		const FRotator rotator(0, Owner->GetControlRotation().Yaw, 0);
 
 		FVector forward = FVector::ZeroVector;
 		FVector right = FVector::ZeroVector;
 
-		if (!!FlyComp.Get())
+		if (FlyComp.IsValid())
 		{
 			const TWeakObjectPtr<ACDragon_AI> FlyingCharacter = Cast<ACDragon_AI>(Owner);
 
@@ -110,7 +110,7 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 			right = UKismetMathLibrary::GetRightVector(rotator)
 				* FlyingCharacter->FlyComp->Right;
-		}//!!FlyComp
+		}//FlyComp.IsValid()
 		else
 		{
 			forward = UKismetMathLibrary::GetForwardVector(rotator)

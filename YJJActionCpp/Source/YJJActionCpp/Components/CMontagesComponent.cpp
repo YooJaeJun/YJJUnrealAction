@@ -120,7 +120,7 @@ void UCMontagesComponent::PlayAnimMontage(const CEStateType InType, const TWeakO
 		return;
 	}
 
-	Owner->SetActorRotation(Owner->MyCurController->GetControlRotation());
+	Owner->SetActorRotation(Owner->GetMyCurController()->GetControlRotation());
 
 	FName startSectionName;
 

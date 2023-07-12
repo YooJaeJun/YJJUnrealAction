@@ -21,7 +21,7 @@ void ACDragon_AI::BeginPlay()
 
 	LandEffectScaleFactor = 2.0f;
 
-	if (!!CharacterStatComp)
+	if (IsValid(CharacterStatComp))
 		CharacterStatComp->SetAttackRange(1200.0f);
 }
 
@@ -34,7 +34,7 @@ void ACDragon_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("HorizontalLook", FlyComp, &UCFlyComponent::InputAxis_HorizontalLook);
 	PlayerInputComponent->BindAxis("VerticalLook", FlyComp, &UCFlyComponent::InputAxis_VerticalLook);
 	PlayerInputComponent->BindAxis("FlyUp", FlyComp, &UCFlyComponent::InputAxis_FlyUp);
-	PlayerInputComponent->BindAxis("Zoom", ZoomComp, &UCZoomComponent::InputAxis_Zoom);
+	PlayerInputComponent->BindAxis("Zoom", CameraComp, &UCCameraComponent::InputAxis_Zoom);
 
 	PlayerInputComponent->BindAction("Walk", IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Walk);
 	PlayerInputComponent->BindAction("Walk", IE_Released, MovementComp, &UCMovementComponent::InputAction_Run);

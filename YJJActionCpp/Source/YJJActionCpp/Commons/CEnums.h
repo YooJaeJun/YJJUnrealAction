@@ -1,5 +1,4 @@
 #pragma once
-
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType)
@@ -48,6 +47,15 @@ enum class CEHitType : uint8
 	Air,
 	Fly,
 	FlyingPutDown,
+	Max
+};
+
+UENUM(BlueprintType)
+enum class CESpeedType : uint8
+{
+	Walk,
+	Run,
+	Sprint,
 	Max
 };
 

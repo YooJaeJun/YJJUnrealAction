@@ -11,7 +11,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CWeaponComponent.h"
-#include "Components/CZoomComponent.h"
+#include "Components/CCameraComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/CGameUIComponent.h"
 #include "Commons/CGameMode.h"
@@ -28,7 +28,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
 	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
 	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
-	YJJHelpers::CreateActorComponent<UCZoomComponent>(this, &ZoomComp, "ZoomComponent");
+	YJJHelpers::CreateActorComponent<UCCameraComponent>(this, &CameraComp, "ZoomComponent");
 	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 
@@ -43,7 +43,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	YJJHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/CABP_Human.CABP_Human_C'");
 	GetMesh()->SetAnimClass(animInstance);
 
-	if (!!SpringArm)
+	if (IsValid(SpringArm))
 	{
 		SpringArm->SetRelativeLocation(FVector(0, 0, 60));
 		SpringArm->TargetArmLength = 280;
@@ -52,20 +52,24 @@ ACPlayableCharacter::ACPlayableCharacter()
 		SpringArm->bDoCollisionTest = false;
 	}
 
-	if (!!StateComp)
+	if (IsValid(StateComp))
 	{
 		StateComp->SetIdleMode();
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
 		StateComp->OnHitStateTypeChanged.AddUniqueDynamic(this, &ACPlayableCharacter::OnHitStateTypeChanged);
 	}
 
-	if (!!MovementComp)
+	if (IsValid(MovementComp))
 	{
 		MovementComp->SetSpeeds(Speeds);
-		MovementComp->DisableControlRotation();
-		MovementComp->UnFixCamera();
 		MovementComp->SetFriction(2.0f, 2048.0f);
 		MovementComp->SetJumpZ(700.0f);
+	}
+
+	if (IsValid(CameraComp))
+	{
+		CameraComp->DisableControlRotation();
+		CameraComp->UnFixCamera();
 	}
 }
 
@@ -75,11 +79,11 @@ void ACPlayableCharacter::BeginPlay()
 
 	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));
 
-	if (!!MovementComp)
+	if (IsValid(MovementComp))
 		MovementComp->SetSpeed(CESpeedType::Sprint);
 
-	const TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(MyCurController);
-	if (!!playerController.Get())
+	const TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(GetMyCurController());
+	if (playerController.IsValid())
 	{
 		playerController->PlayerCameraManager->ViewPitchMin = PitchRange.X;
 		playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
@@ -91,11 +95,11 @@ void ACPlayableCharacter::BeginPlay()
 		hud->SetChildren();
 
 		const TWeakObjectPtr<UCUserWidget_PlayerInfo> playerInfo = hud->PlayerInfo;
-		if (!!playerInfo.Get())
+		if (playerInfo.IsValid())
 			playerInfo->BindStats(CharacterStatComp);
 	}
 
-	if (!!CharacterInfoComp)
+	if (IsValid(CharacterInfoComp))
 		CharacterInfoComp->SetCharacterType(CECharacterType::Player);
 }
 
@@ -110,9 +114,9 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 	PlayerInputComponent->BindAxis("MoveForward", MovementComp, &UCMovementComponent::InputAxis_MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", MovementComp, &UCMovementComponent::InputAxis_MoveRight);
-	PlayerInputComponent->BindAxis("HorizontalLook", MovementComp, &UCMovementComponent::InputAxis_HorizontalLook);
-	PlayerInputComponent->BindAxis("VerticalLook", MovementComp, &UCMovementComponent::InputAxis_VerticalLook);
-	PlayerInputComponent->BindAxis("Zoom", ZoomComp, &UCZoomComponent::InputAxis_Zoom);
+	PlayerInputComponent->BindAxis("HorizontalLook", CameraComp, &UCCameraComponent::InputAxis_HorizontalLook);
+	PlayerInputComponent->BindAxis("VerticalLook", CameraComp, &UCCameraComponent::InputAxis_VerticalLook);
+	PlayerInputComponent->BindAxis("Zoom", CameraComp, &UCCameraComponent::InputAxis_Zoom);
 
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Walk);
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComp, &UCMovementComponent::InputAction_Run);
@@ -122,6 +126,7 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
 	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Act);
+
 	PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Skill_1_Pressed);
 	PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Released, WeaponComp, &UCWeaponComponent::InputAction_Skill_1_Released);
 	PlayerInputComponent->BindAction("Skill_2", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Skill_2_Pressed);
@@ -241,4 +246,14 @@ void ACPlayableCharacter::OnHitStateTypeChanged(const CEHitType InPrevType, cons
 		Hit();
 		break;
 	}
+}
+
+USpringArmComponent* ACPlayableCharacter::GetSpringArm() const
+{
+	return SpringArm;
+}
+
+UCTargetingComponent* ACPlayableCharacter::GetTargetingComp() const
+{
+	return TargetingComp;
 }

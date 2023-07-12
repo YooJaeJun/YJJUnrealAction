@@ -64,7 +64,7 @@ void UCSkill_Thrust::Begin_Skill_Implementation()
 	{
 		const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(hitResult.GetActor());
 
-		if (!!character.Get())
+		if (character.IsValid())
 		{
 			character->GetCapsuleComponent()->SetCollisionProfileName("Skill");
 
@@ -123,14 +123,14 @@ void UCSkill_Thrust::End_Skill_Implementation()
 	bMoving = false;
 
 	CheckNull(StateComp);
-
 	StateComp->SetIdleMode();
 	StateComp->OffSkillMode();
 
 	CheckNull(MovementComp);
-
 	MovementComp->Move();
-	MovementComp->UnFixCamera();
+
+	CheckNull(CameraComp);
+	CameraComp->UnFixCamera();
 
 	for (const TWeakObjectPtr<ACCommonCharacter> character : Overlapped)
 		character->GetCapsuleComponent()->SetCollisionProfileName("Pawn");

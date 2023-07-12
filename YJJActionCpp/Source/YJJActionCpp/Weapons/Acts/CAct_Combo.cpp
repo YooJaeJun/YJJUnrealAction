@@ -87,7 +87,7 @@ void UCAct_Combo::OnAttachmentEndCollision()
 		}
 	}
 
-	if (!!candidate.Get())
+	if (candidate.IsValid())
 	{
 		const FRotator rotator = UKismetMathLibrary::FindLookAtRotation(
 			Owner->GetActorLocation(),

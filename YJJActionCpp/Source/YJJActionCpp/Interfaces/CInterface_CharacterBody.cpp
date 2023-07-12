@@ -20,7 +20,7 @@ void ICInterface_CharacterBody::ChangeColor(ACCommonCharacter* InCharacter, FLin
 	{
 		TWeakObjectPtr<UMaterialInstanceDynamic> instance = Cast<UMaterialInstanceDynamic>(material);
 
-		if (!!instance.Get())
+		if (instance.IsValid())
 			instance->SetVectorParameterValue("BodyColor", InColor);
 	}
 }

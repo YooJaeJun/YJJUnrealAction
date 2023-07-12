@@ -17,7 +17,7 @@ void UCAnimNotify_CameraShake::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 	const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(MeshComp->GetOwner());
 	CheckNull(character.Get());
 
-	const TWeakObjectPtr<APlayerController> controller = Cast<APlayerController>(character->MyCurController);
+	const TWeakObjectPtr<APlayerController> controller = Cast<APlayerController>(character->GetMyCurController());
 	CheckNull(controller.Get());
 
 	controller->PlayerCameraManager->StartCameraShake(CameraShakeClass);

@@ -1,7 +1,7 @@
 #include "Notifies/CAnimNotifyState_Zoom.h"
 #include "Global.h"
 #include "Characters/Player/CPlayableCharacter.h"
-#include "Components/CZoomComponent.h"
+#include "Components/CCameraComponent.h"
 
 FString UCAnimNotifyState_Zoom::GetNotifyName_Implementation() const
 {
@@ -19,7 +19,7 @@ void UCAnimNotifyState_Zoom::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 	const TWeakObjectPtr<ACPlayableCharacter> player = Cast<ACPlayableCharacter>(MeshComp->GetOwner());
 	CheckNull(player);
 
-	const TWeakObjectPtr<UCZoomComponent> zoomComp = YJJHelpers::GetComponent<UCZoomComponent>(player.Get());
+	const TWeakObjectPtr<UCCameraComponent> zoomComp = YJJHelpers::GetComponent<UCCameraComponent>(player.Get());
 	CheckNull(zoomComp);
 
 	OriginZooming = zoomComp->GetZooming();
@@ -33,7 +33,7 @@ void UCAnimNotifyState_Zoom::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSe
 	const TWeakObjectPtr<ACPlayableCharacter> player = Cast<ACPlayableCharacter>(MeshComp->GetOwner());
 	CheckNull(player);
 
-	const TWeakObjectPtr<UCZoomComponent> zoomComp = YJJHelpers::GetComponent<UCZoomComponent>(player.Get());
+	const TWeakObjectPtr<UCCameraComponent> zoomComp = YJJHelpers::GetComponent<UCCameraComponent>(player.Get());
 	CheckNull(zoomComp);
 
 	zoomComp->SetZooming(OriginZooming);

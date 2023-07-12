@@ -10,7 +10,7 @@ class UCameraComponent;
 class UInputComponent;
 class UCAnimInstance_Character;
 class UCMontagesComponent;
-class UCZoomComponent;
+class UCCameraComponent;
 class UCTargetingComponent;
 class UCWeaponComponent;
 class UCGameUIComponent;
@@ -52,8 +52,8 @@ private:
 		void OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
 
 public:
-	FORCEINLINE constexpr USpringArmComponent* GetSpringArm() const { return SpringArm; }
-	FORCEINLINE constexpr UCTargetingComponent* GetTargetingComp() const { return TargetingComp; }
+	virtual USpringArmComponent* GetSpringArm() const override;
+	virtual UCTargetingComponent* GetTargetingComp() const override;
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -69,7 +69,7 @@ private:
 		UCTargetingComponent* TargetingComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCZoomComponent* ZoomComp;
+		UCCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere)
 		UCGameUIComponent* GameUIComp;

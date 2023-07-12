@@ -13,11 +13,11 @@ void ACGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-    if (!!PlayerHUDClass)
+    if (IsValid(PlayerHUDClass))
     {
         PlayerHUD = CreateWidget<UCUserWidget_HUD>(GetWorld(), PlayerHUDClass);
         
-        if (!!PlayerHUD)
+        if (IsValid(PlayerHUD))
 			PlayerHUD->AddToViewport();
     }
 }

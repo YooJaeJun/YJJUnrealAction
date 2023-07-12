@@ -8,25 +8,13 @@ UCMovementComponent::UCMovementComponent()
 {
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
-	if (!!Owner.Get())
+	if (Owner.IsValid())
 		StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 }
 
 void UCMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-}
-
-void UCMovementComponent::EnableControlRotation() const
-{
-	Owner->bUseControllerRotationYaw = true;
-	Owner->GetCharacterMovement()->bOrientRotationToMovement = false;
-}
-
-void UCMovementComponent::DisableControlRotation() const
-{
-	Owner->bUseControllerRotationYaw = false;
-	Owner->GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void UCMovementComponent::SetSpeeds(const TArray<float> InSpeeds)
@@ -58,14 +46,6 @@ void UCMovementComponent::SetRunSpeed() const
 void UCMovementComponent::SetSprintSpeed() const
 {
 	Owner->GetCharacterMovement()->MaxWalkSpeed = Speeds[static_cast<uint8>(CESpeedType::Sprint)];
-}
-
-void UCMovementComponent::SetLerpMove() const
-{
-}
-
-void UCMovementComponent::IsLerpMove() const
-{
 }
 
 void UCMovementComponent::SetGravity(const float InValue) const
@@ -113,18 +93,6 @@ void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 	const FVector direction = FQuat(rotator).GetRightVector();
 
 	Owner->AddMovementInput(direction, InAxis);
-}
-
-void UCMovementComponent::InputAxis_HorizontalLook(const float InAxis)
-{
-	CheckTrue(bFixedCamera);
-	Owner->AddControllerYawInput(InAxis * HorizontalLook * GetWorld()->GetDeltaSeconds());
-}
-
-void UCMovementComponent::InputAxis_VerticalLook(const float InAxis)
-{
-	CheckTrue(bFixedCamera);
-	Owner->AddControllerPitchInput(InAxis * VerticalLook * GetWorld()->GetDeltaSeconds());
 }
 
 void UCMovementComponent::InputAction_Walk()

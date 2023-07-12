@@ -4,7 +4,6 @@
 #include "Characters/CCommonCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CWeaponComponent.h"
-#include "Player/CPlayableCharacter.h"
 
 void UCAnimInstance_Human::NativeBeginPlay()
 {
@@ -27,9 +26,9 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (bRiding)
 	{
-		const auto animal = Cast<ACAnimal_AI>(Owner->GetMyCurController()->GetCharacter());
+		const TWeakObjectPtr<ACAnimal_AI> animal = Cast<ACAnimal_AI>(Owner->GetMyCurController()->GetCharacter());
 
-		if (!!animal)
+		if (animal.IsValid())
 		{
 			bRidingFalling = StateComp->IsFallMode();
 

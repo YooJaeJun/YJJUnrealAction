@@ -39,7 +39,7 @@ void UCRidingComponent::BeginPlay()
 	const TWeakObjectPtr<ACGameMode> gameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	Hud = Cast<UCUserWidget_HUD>(gameMode->GetHUD());
 
-	if (!!Hud)
+	if (IsValid(Hud))
 	{
 		Hud->SetChildren();
 		Interaction = Hud->Interaction;
@@ -52,7 +52,7 @@ void UCRidingComponent::BeginPlay()
 		Interaction->SetChildren(InteractionKeyTexture, InteractionText);
 	}
 
-	if (!!Owner.Get())
+	if (Owner.IsValid())
 	{
 		Mesh = Owner->GetMesh();
 		SpringArm = Owner->GetSpringArm();
@@ -68,10 +68,10 @@ void UCRidingComponent::BeginPlay()
 
 		InteractionCollision = Owner->GetInteractionCollision();
 
-		if (!!MovementComp)
-			MovementComp->DisableControlRotation();
+		if (IsValid(CameraComp))
+			CameraComp->DisableControlRotation();
 
-		if (!!SpringArm)
+		if (IsValid(SpringArm))
 			Zooming = SpringArm->TargetArmLength;
 
 
@@ -104,7 +104,7 @@ void UCRidingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	switch (RidingState)
 	{
 	case CERidingState::None:
-		if (!!Rider)
+		if (IsValid(Rider))
 			SetRidingState(CERidingState::ToMountPoint);
 		break;
 	case CERidingState::ToMountPoint:
@@ -144,7 +144,7 @@ void UCRidingComponent::BeginOverlap(
 	CheckNull(Interaction);
 
 	const auto animal = Cast<ACAnimal_AI>(OtherActor);
-	CheckTrue(!!animal);
+	CheckNull(animal);
 
 	const auto interactor = Cast<ACPlayableCharacter>(OtherActor);
 	CheckNull(interactor);
@@ -167,7 +167,7 @@ void UCRidingComponent::EndOverlap(
 	CheckNull(Interaction);
 
 	const auto animal = Cast<ACAnimal_AI>(OtherActor);
-	CheckTrue(!!animal);
+	CheckNull(animal);
 
 	const auto interactor = Cast<ACPlayableCharacter>(OtherActor);
 	CheckNull(interactor);
@@ -175,7 +175,7 @@ void UCRidingComponent::EndOverlap(
 	SetInteractor(interactor, nullptr);
 	SetInteractor(Owner, nullptr);
 
-	if (!!interactor->OnMount.IsBound())
+	if (true == interactor->OnMount.IsBound())
 		interactor->OnMount.RemoveDynamic(this, &UCRidingComponent::SetRider);
 
 	Interaction->SetVisibility(ESlateVisibility::Collapsed);
@@ -291,7 +291,7 @@ void UCRidingComponent::PossessAndInterpToCamera()
 
 	GetWorld()->GetFirstPlayerController()->UnPossess();
 
-	if (!!animal.Get())
+	if (animal.IsValid())
 		GetWorld()->GetFirstPlayerController()->Possess(animal.Get());
 
 	Rider->SetMyCurController(GetWorld()->GetFirstPlayerController());
@@ -356,7 +356,7 @@ void UCRidingComponent::InterpToRidingPos(UAnimMontage* Anim, bool bInterrupted)
 		true, true, 0.2f, false,
 		eMoveAction, latentInfo);
 
-	if (!!Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.IsBound())
+	if (true == Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.IsBound())
 		Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.RemoveDynamic(
 			this, &UCRidingComponent::InterpToRidingPos);
 }
@@ -367,7 +367,7 @@ void UCRidingComponent::AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted
 
 	Rider->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Rider");
 
-	if (!!Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.IsBound())
+	if (true == Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.IsBound())
 		Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.RemoveDynamic(
 			this, &UCRidingComponent::AttachToRiderPoint);
 }
@@ -375,42 +375,41 @@ void UCRidingComponent::AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted
 void UCRidingComponent::Tick_MountingEnd()
 {
 	// 애니 끝날 때까지 대기 후 실행
-	if (false == IsValid(Rider->GetCurrentMontage()))
-	{
-		Rider->SetbRiding(true);
-		Owner->SetbRiding(true);
+	CheckFalse(IsValid(Rider->GetCurrentMontage()));
 
-		Rider->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-		Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Rider->SetbRiding(true);
+	Owner->SetbRiding(true);
 
-		MovementComp->Move();
+	Rider->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-		SpringArm->bUsePawnControlRotation = true;
+	MovementComp->Move();
 
-		Rider->SetLegIKAlpha(LegIKAlpha);
+	SpringArm->bUsePawnControlRotation = true;
 
-
-		// TODO Riding Info
-		SetStatusUI();
-		OnStatusUI(true);
+	Rider->SetLegIKAlpha(LegIKAlpha);
 
 
-		SetRidingState(CERidingState::Riding);
-	}
+	// TODO Riding Info
+	SetStatusUI();
+	OnStatusUI(true);
+
+
+	SetRidingState(CERidingState::Riding);
 }
 
 void UCRidingComponent::Tick_Riding()
 {
-	if (!!RiderWeaponComp->GetEquipment() &&
-		!!RiderWeaponComp->GetEquipment()->GetEquipped())
-		MovementComp->EnableControlRotation();
+	if (IsValid(RiderWeaponComp->GetEquipment()) &&
+		true == RiderWeaponComp->GetEquipment()->GetEquipped())
+		CameraComp->EnableControlRotation();
 	else
-		MovementComp->DisableControlRotation();
+		CameraComp->DisableControlRotation();
 
-	if (!!RiderMovementComp->GetFixedCamera())
-		MovementComp->FixCamera();
+	if (true == RiderCameraComp->GetFixedCamera())
+		CameraComp->FixCamera();
 	else
-		MovementComp->UnFixCamera();
+		CameraComp->UnFixCamera();
 
 	// TODO Zoom
 	// TODO Height UI
@@ -420,7 +419,7 @@ void UCRidingComponent::Unmount()
 {
 	RidingState = CERidingState::Unmounting;
 
-	if (!!Owner->OnUnmount.IsBound())
+	if (true == Owner->OnUnmount.IsBound())
 		Owner->OnUnmount.RemoveDynamic(this, &UCRidingComponent::Unmount);
 }
 
@@ -485,7 +484,7 @@ void UCRidingComponent::UnpossessAndInterpToCamera()
 
 	GetWorld()->GetFirstPlayerController()->UnPossess();
 
-	if (!!Rider)
+	if (IsValid(Rider))
 		GetWorld()->GetFirstPlayerController()->Possess(Rider);
 
 	Rider->SetMyCurController(GetWorld()->GetFirstPlayerController());
@@ -519,7 +518,8 @@ void UCRidingComponent::Tick_UnmountingEnd()
 
 void UCRidingComponent::InputAction_Act()
 {
-	if (!!RiderWeaponComp && 
-		!!RiderWeaponComp->GetAct())
-		RiderWeaponComp->GetAct()->Act();
+	CheckNull(RiderWeaponComp);
+	CheckNull(RiderWeaponComp->GetAct());
+
+	RiderWeaponComp->GetAct()->Act();
 }

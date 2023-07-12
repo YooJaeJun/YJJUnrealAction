@@ -29,21 +29,21 @@ ACCommonCharacter::ACCommonCharacter()
 
 	CharacterStatComp->OnHpIsZero.AddUObject(this, &ACCommonCharacter::Dead);
 
-	if (!!TargetingWidgetComp)
+	if (IsValid(TargetingWidgetComp))
 	{
-		if (!!TargetingWidget)
+		if (IsValid(TargetingWidget))
 			TargetingWidgetComp->SetWidgetClass(TargetingWidget);
 
 		TargetingWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 		TargetingWidgetComp->SetVisibility(false);
 	}
 
-	if (!!InfoPoint)
+	if (IsValid(InfoPoint))
 		InfoPoint->SetWorldLocation(FVector(0, 500, 500));
 
-	if (!!InfoWidgetComp)
+	if (IsValid(InfoWidgetComp))
 	{
-		if (!!InfoWidget)
+		if (IsValid(InfoWidget))
 			InfoWidgetComp->SetWidgetClass(InfoWidget);
 
 		InfoWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
@@ -60,7 +60,7 @@ void ACCommonCharacter::BeginPlay()
 	YJJHelpers::GetAssetDynamic<USoundBase>(&LandSound,
 		TEXT("SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
 
-	if (!!TargetingPoint)
+	if (IsValid(TargetingPoint))
 		TargetingPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Targeting");
 }
 
@@ -201,7 +201,7 @@ void ACCommonCharacter::SetInteractor(ACCommonCharacter* InCharacter)
 
 void ACCommonCharacter::InputAction_Interact()
 {
-	if (!!Interactor)
+	if (IsValid(Interactor))
 	{
 		if (OnMount.IsBound())
 			OnMount.Broadcast(this);

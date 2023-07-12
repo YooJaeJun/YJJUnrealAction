@@ -1,8 +1,9 @@
 #include "Weapons/CEquipment.h"
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
-#include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
+#include "Components/CMovementComponent.h"
+#include "Components/CCameraComponent.h"
 
 void UCEquipment::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEquipmentData& InData)
 {
@@ -11,24 +12,28 @@ void UCEquipment::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEq
 
 	MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
 	StateComp = YJJHelpers::GetComponent<UCStateComponent>(InOwner.Get());
+	CameraComp = YJJHelpers::GetComponent<UCCameraComponent>(InOwner.Get());
 }
 
 void UCEquipment::Equip_Implementation()
 {
+	CheckNull(StateComp);
 	StateComp->SetEquipMode();
 
+	CheckNull(MovementComp);
 	if (Data.bCanMove == false)
 		MovementComp->Stop();
 
-	if (Data.bUseControlRotation)
-		MovementComp->EnableControlRotation();
+	if (CameraComp.IsValid() &&
+		true == Data.bUseControlRotation)
+		CameraComp->EnableControlRotation();
 
 	const TWeakObjectPtr<UCMovementComponent> movement = 
 		Cast<UCMovementComponent>(Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
 
 	movement->SetRunSpeed();
 
-	if (!!Data.Montage)
+	if (IsValid(Data.Montage))
 		Owner->PlayAnimMontage(Data.Montage, Data.PlayRate);
 	else
 	{
@@ -36,7 +41,7 @@ void UCEquipment::Equip_Implementation()
 		End_Equip();
 	}
 
-	if (!!Data.Sound)
+	if (IsValid(Data.Sound))
 		Data.PlaySoundWave(Owner.Get());
 }
 
@@ -60,7 +65,7 @@ void UCEquipment::End_Equip_Implementation()
 void UCEquipment::Unequip_Implementation()
 {
 	bEquipped = false;
-	MovementComp->DisableControlRotation();
+	CameraComp->DisableControlRotation();
 
 	const TWeakObjectPtr<UCMovementComponent> movement = 
 		Cast<UCMovementComponent>(Owner->GetComponentByClass(UCMovementComponent::StaticClass()));

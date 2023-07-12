@@ -3,6 +3,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CCameraComponent.h"
 
 UCFlyComponent::UCFlyComponent()
 {
@@ -10,7 +11,7 @@ UCFlyComponent::UCFlyComponent()
 
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
-	if (!!Owner.Get())
+	if (Owner.IsValid())
 	{
 		StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 		MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
@@ -95,7 +96,7 @@ void UCFlyComponent::InputAxis_MoveRight(const float InAxis)
 void UCFlyComponent::InputAxis_HorizontalLook(const float InAxis)
 {
 	CheckNull(MovementComp);
-	CheckTrue(MovementComp->GetFixedCamera());
+	CheckTrue(CameraComp->GetFixedCamera());
 
 	Owner->AddControllerYawInput(InAxis * HorizontalLook * GetWorld()->GetDeltaSeconds());
 }
@@ -103,7 +104,7 @@ void UCFlyComponent::InputAxis_HorizontalLook(const float InAxis)
 void UCFlyComponent::InputAxis_VerticalLook(const float InAxis)
 {
 	CheckNull(MovementComp);
-	CheckTrue(MovementComp->GetFixedCamera());
+	CheckTrue(CameraComp->GetFixedCamera());
 
 	Owner->AddControllerPitchInput(InAxis * VerticalLook * GetWorld()->GetDeltaSeconds());
 }
@@ -113,7 +114,7 @@ void UCFlyComponent::InputAxis_FlyUp(const float InAxis)
 	CheckNull(MovementComp);
 	CheckFalse(MovementComp->CanMove(InAxis));
 
-	if (!!MovementComp->CanMove())
+	if (true == MovementComp->CanMove())
 	{
 		UpFactor = (InAxis > 0.0f) ? 20.0f : -50.0f;
 
@@ -136,8 +137,8 @@ void UCFlyComponent::InputAxis_FlyUp(const float InAxis)
 			FVector::OneVector);
 
 		Owner->SetActorTransform(targetTransform);
-	}//!!Owner->MovementComp->CanMove()
-	else if (!!IsFlying())
+	}//true == Owner->MovementComp->CanMove()
+	else if (true == IsFlying())
 	{
 		const FRotator currentRotation = Owner->GetActorRotation();
 

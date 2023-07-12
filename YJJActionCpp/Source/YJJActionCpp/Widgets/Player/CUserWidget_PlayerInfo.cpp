@@ -13,15 +13,15 @@ void UCUserWidget_PlayerInfo::BindChildren()
 
 void UCUserWidget_PlayerInfo::BindStats(UCCharacterStatComponent* StatComp)
 {
-	if (!!LevelBar)
+	if (IsValid(LevelBar))
 		LevelBar->BindLevelStat(StatComp);
 
-	if (!!HpBar)
+	if (IsValid(HpBar))
 		HpBar->BindHpStat(StatComp);
 
-	if (!!StaminaBar)
+	if (IsValid(StaminaBar))
 		StaminaBar->BindStaminaStat(StatComp);
 
-	if (!!ManaBar)
+	if (IsValid(ManaBar))
 		ManaBar->BindManaStat(StatComp);
 }

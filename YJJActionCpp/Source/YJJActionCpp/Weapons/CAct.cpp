@@ -5,6 +5,7 @@
 #include "Characters/CCommonCharacter.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CCameraComponent.h"
 
 UCAct::UCAct()
 {
@@ -22,6 +23,7 @@ void UCAct::BeginPlay(
 
 	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 	MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+	CameraComp = YJJHelpers::GetComponent<UCCameraComponent>(Owner.Get());
 	
 	for (int i = 0; i < InActDatas.Num(); i++)
 		ActDatas.Emplace(InActDatas[i]);
@@ -45,8 +47,12 @@ void UCAct::End_Act()
 {
 	bBeginAct = false;
 
-	StateComp->SetIdleMode();
+	if (StateComp.IsValid())
+		StateComp->SetIdleMode();
 
-	MovementComp->Move();
-	MovementComp->UnFixCamera();
+	if (MovementComp.IsValid())
+		MovementComp->Move();
+
+	if (CameraComp.IsValid())
+		CameraComp->UnFixCamera();
 }

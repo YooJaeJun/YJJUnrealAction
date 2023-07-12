@@ -12,12 +12,12 @@ void UCAnimInstance_Dragon::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	//if (!!OwnerDragon.Get() && 
-	//	!!OwnerDragon->Skill)
+	//if (OwnerDragon.IsValid() && 
+	//	IsValid(OwnerDragon->Skill))
 	//{
 	//	Skill = OwnerDragon->Skill;
 
-	//	if (!!Skill.Get())
+	//	if (Skill.IsValid())
 	//		bRotating = Skill->bRotating;
 	//}
 }

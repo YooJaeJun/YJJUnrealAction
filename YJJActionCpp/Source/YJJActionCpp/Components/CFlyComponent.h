@@ -6,6 +6,7 @@
 #include "CFlyComponent.generated.h"
 
 class ACCommonCharacter;
+class UCCameraComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class YJJACTIONCPP_API UCFlyComponent : public UActorComponent
@@ -58,4 +59,5 @@ private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCStateComponent> StateComp;
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
+	TWeakObjectPtr<UCCameraComponent> CameraComp;
 };

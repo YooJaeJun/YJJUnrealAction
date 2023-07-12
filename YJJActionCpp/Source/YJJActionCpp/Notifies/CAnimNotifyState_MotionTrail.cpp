@@ -21,6 +21,6 @@ void UCAnimNotifyState_MotionTrail::NotifyEnd(USkeletalMeshComponent* MeshComp, 
 {
 	Super::NotifyEnd(MeshComp, Animation);
 
-	if (!!MotionTrail.Get())
+	if (MotionTrail.IsValid())
 		MotionTrail->Destroy();
 }
