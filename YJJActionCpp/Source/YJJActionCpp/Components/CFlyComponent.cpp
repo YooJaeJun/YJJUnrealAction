@@ -3,7 +3,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
-#include "Components/CCameraComponent.h"
+#include "Components/CCamComponent.h"
 
 UCFlyComponent::UCFlyComponent()
 {
@@ -96,7 +96,7 @@ void UCFlyComponent::InputAxis_MoveRight(const float InAxis)
 void UCFlyComponent::InputAxis_HorizontalLook(const float InAxis)
 {
 	CheckNull(MovementComp);
-	CheckTrue(CameraComp->GetFixedCamera());
+	CheckTrue(CamComp->GetFixedCamera());
 
 	Owner->AddControllerYawInput(InAxis * HorizontalLook * GetWorld()->GetDeltaSeconds());
 }
@@ -104,7 +104,7 @@ void UCFlyComponent::InputAxis_HorizontalLook(const float InAxis)
 void UCFlyComponent::InputAxis_VerticalLook(const float InAxis)
 {
 	CheckNull(MovementComp);
-	CheckTrue(CameraComp->GetFixedCamera());
+	CheckTrue(CamComp->GetFixedCamera());
 
 	Owner->AddControllerPitchInput(InAxis * VerticalLook * GetWorld()->GetDeltaSeconds());
 }

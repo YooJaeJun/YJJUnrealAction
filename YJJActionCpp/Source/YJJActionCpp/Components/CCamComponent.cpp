@@ -1,4 +1,4 @@
-#include "Components/CCameraComponent.h"
+#include "Components/CCamComponent.h"
 #include "Global.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CTargetingComponent.h"
@@ -7,14 +7,14 @@
 #include "Characters/Animals/CAnimal_AI.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-UCCameraComponent::UCCameraComponent()
+UCCamComponent::UCCamComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 }
 
-void UCCameraComponent::BeginPlay()
+void UCCamComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -26,7 +26,7 @@ void UCCameraComponent::BeginPlay()
 	}
 }
 
-void UCCameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCCamComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -48,19 +48,19 @@ void UCCameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		Owner->GetSpringArm()->TargetArmLength = TargetArmLength;
 }
 
-void UCCameraComponent::InputAxis_HorizontalLook(const float InAxis)
+void UCCamComponent::InputAxis_HorizontalLook(const float InAxis)
 {
 	CheckTrue(bFixedCamera);
 	Owner->AddControllerYawInput(InAxis * HorizontalLook * GetWorld()->GetDeltaSeconds());
 }
 
-void UCCameraComponent::InputAxis_VerticalLook(const float InAxis)
+void UCCamComponent::InputAxis_VerticalLook(const float InAxis)
 {
 	CheckTrue(bFixedCamera);
 	Owner->AddControllerPitchInput(InAxis * VerticalLook * GetWorld()->GetDeltaSeconds());
 }
 
-void UCCameraComponent::InputAxis_Zoom(const float InAxis)
+void UCCamComponent::InputAxis_Zoom(const float InAxis)
 {
 	CheckTrue(InAxis == 0.0f);
 
@@ -78,14 +78,26 @@ void UCCameraComponent::InputAxis_Zoom(const float InAxis)
 	}
 }
 
-void UCCameraComponent::EnableControlRotation() const
+void UCCamComponent::EnableControlRotation() const
 {
 	Owner->bUseControllerRotationYaw = true;
 	Owner->GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
-void UCCameraComponent::DisableControlRotation() const
+void UCCamComponent::DisableControlRotation() const
 {
 	Owner->bUseControllerRotationYaw = false;
 	Owner->GetCharacterMovement()->bOrientRotationToMovement = true;
+}
+
+void UCCamComponent::EnableTopViewCamera() const
+{
+	if (OnEnableTopViewCam.IsBound())
+		OnEnableTopViewCam.Broadcast();
+}
+
+void UCCamComponent::DisableTopViewCamera() const
+{
+	if (OnDisableTopViewCam.IsBound())
+		OnDisableTopViewCam.Broadcast();
 }

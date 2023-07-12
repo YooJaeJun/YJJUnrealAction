@@ -3,7 +3,7 @@
 #include "Characters/CCommonCharacter.h"
 #include "CStateComponent.h"
 #include "CMovementComponent.h"
-#include "CCameraComponent.h"
+#include "CCamComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Controller.h"
 
@@ -83,11 +83,11 @@ void UCTargetingComponent::End_Targeting()
 		YJJHelpers::GetComponent<UCStateComponent>(Target.Get());
 	CheckNull(targetState);
 
-	const TWeakObjectPtr<UCCameraComponent> targetCameraComp =
-		YJJHelpers::GetComponent<UCCameraComponent>(Target.Get());
-	CheckNull(targetCameraComp);
+	const TWeakObjectPtr<UCCamComponent> targetCamComp =
+		YJJHelpers::GetComponent<UCCamComponent>(Target.Get());
+	CheckNull(targetCamComp);
 
-	targetCameraComp->UnFixCamera();
+	targetCamComp->DisableFixedCamera();
 	Target = nullptr;
 	TargetStateComp = nullptr;
 	TargetMovementComp = nullptr;
@@ -112,7 +112,7 @@ void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 			SetVisibleTargetUI(true);
 
 			if (TargetMovementComp.IsValid())
-				TargetCameraComp->FixCamera();
+				TargetCamComp->EnableFixedCamera();
 		}
 	}
 	else

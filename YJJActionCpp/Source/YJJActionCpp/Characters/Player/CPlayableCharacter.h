@@ -10,7 +10,7 @@ class UCameraComponent;
 class UInputComponent;
 class UCAnimInstance_Character;
 class UCMontagesComponent;
-class UCCameraComponent;
+class UCCamComponent;
 class UCTargetingComponent;
 class UCWeaponComponent;
 class UCGameUIComponent;
@@ -69,7 +69,7 @@ private:
 		UCTargetingComponent* TargetingComp;
 
 	UPROPERTY(VisibleAnywhere)
-		UCCameraComponent* CameraComp;
+		UCCamComponent* CamComp;
 
 	UPROPERTY(VisibleAnywhere)
 		UCGameUIComponent* GameUIComp;

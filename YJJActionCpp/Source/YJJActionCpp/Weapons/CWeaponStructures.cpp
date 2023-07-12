@@ -4,7 +4,7 @@
 #include "Components/CMovementComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CCharacterStatComponent.h"
-#include "Components/CCameraComponent.h"
+#include "Components/CCamComponent.h"
 
 void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
@@ -44,11 +44,11 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 			movementComp->Move();
 	}
 
-	const TWeakObjectPtr<UCCameraComponent> cameraComp =
-		YJJHelpers::GetComponent<UCCameraComponent>(InOwner.Get());
+	const TWeakObjectPtr<UCCamComponent> camComp =
+		YJJHelpers::GetComponent<UCCamComponent>(InOwner.Get());
 
-	if (cameraComp.IsValid() && true == bFixedCamera)
-		cameraComp->EnableControlRotation();
+	if (camComp.IsValid() && true == bFixedCamera)
+		camComp->EnableControlRotation();
 
 	if (IsValid(Montage))
 		InOwner->PlayAnimMontage(Montage, PlayRate);

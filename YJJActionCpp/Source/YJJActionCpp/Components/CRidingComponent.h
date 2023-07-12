@@ -17,7 +17,7 @@ class UTexture2D;
 class USceneComponent;
 class USpringArmComponent;
 class UCameraComponent;
-class UCCameraComponent;
+class UCCamComponent;
 class UCMovementComponent;
 class UCStateComponent;
 class UAnimMontage;
@@ -146,7 +146,7 @@ private:
 		UCMovementComponent* MovementComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCCameraComponent* CameraComp;
+		UCCamComponent* CamComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		UCUserWidget_HUD* Hud;
@@ -164,7 +164,7 @@ private:
 		UCMovementComponent* RiderMovementComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCCameraComponent* RiderCameraComp;
+		UCCamComponent* RiderCamComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		UCWeaponComponent* RiderWeaponComp;

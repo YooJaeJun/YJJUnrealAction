@@ -3,7 +3,7 @@
 #include "Characters/CCommonCharacter.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
-#include "Components/CCameraComponent.h"
+#include "Components/CCamComponent.h"
 
 void UCEquipment::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEquipmentData& InData)
 {
@@ -12,7 +12,7 @@ void UCEquipment::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEq
 
 	MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(InOwner.Get());
 	StateComp = YJJHelpers::GetComponent<UCStateComponent>(InOwner.Get());
-	CameraComp = YJJHelpers::GetComponent<UCCameraComponent>(InOwner.Get());
+	CamComp = YJJHelpers::GetComponent<UCCamComponent>(InOwner.Get());
 }
 
 void UCEquipment::Equip_Implementation()
@@ -24,9 +24,9 @@ void UCEquipment::Equip_Implementation()
 	if (Data.bCanMove == false)
 		MovementComp->Stop();
 
-	if (CameraComp.IsValid() &&
+	if (CamComp.IsValid() &&
 		true == Data.bUseControlRotation)
-		CameraComp->EnableControlRotation();
+		CamComp->EnableControlRotation();
 
 	const TWeakObjectPtr<UCMovementComponent> movement = 
 		Cast<UCMovementComponent>(Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
@@ -65,7 +65,7 @@ void UCEquipment::End_Equip_Implementation()
 void UCEquipment::Unequip_Implementation()
 {
 	bEquipped = false;
-	CameraComp->DisableControlRotation();
+	CamComp->DisableControlRotation();
 
 	const TWeakObjectPtr<UCMovementComponent> movement = 
 		Cast<UCMovementComponent>(Owner->GetComponentByClass(UCMovementComponent::StaticClass()));

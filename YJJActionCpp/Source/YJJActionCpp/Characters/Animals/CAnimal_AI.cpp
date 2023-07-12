@@ -5,7 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CMovementComponent.h"
-#include "Components/CCameraComponent.h"
+#include "Components/CCamComponent.h"
 #include "Components/CGameUIComponent.h"
 #include "Components/CRidingComponent.h"
 #include "Components/CPatrolComponent.h"
@@ -21,7 +21,7 @@ ACAnimal_AI::ACAnimal_AI()
 {
 	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
 	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
-	YJJHelpers::CreateActorComponent<UCCameraComponent>(this, &CameraComp, "ZoomComponent");
+	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "ZoomComponent");
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 	YJJHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
 	YJJHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
@@ -45,10 +45,10 @@ ACAnimal_AI::ACAnimal_AI()
 		MovementComp->SetJumpZ(700.0f);
 	}
 
-	if (IsValid(CameraComp))
+	if (IsValid(CamComp))
 	{
-		CameraComp->UnFixCamera();
-		CameraComp->EnableControlRotation();
+		CamComp->EnableControlRotation();
+		CamComp->DisableFixedCamera();
 	}
 
 	YJJHelpers::GetAssetDynamic<USoundBase>(&LandSound,
@@ -118,9 +118,9 @@ void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAxis("MoveForward", MovementComp, &UCMovementComponent::InputAxis_MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", MovementComp, &UCMovementComponent::InputAxis_MoveRight);
-	PlayerInputComponent->BindAxis("HorizontalLook", CameraComp, &UCCameraComponent::InputAxis_HorizontalLook);
-	PlayerInputComponent->BindAxis("VerticalLook", CameraComp, &UCCameraComponent::InputAxis_VerticalLook);
-	PlayerInputComponent->BindAxis("Zoom", CameraComp, &UCCameraComponent::InputAxis_Zoom);
+	PlayerInputComponent->BindAxis("HorizontalLook", CamComp, &UCCamComponent::InputAxis_HorizontalLook);
+	PlayerInputComponent->BindAxis("VerticalLook", CamComp, &UCCamComponent::InputAxis_VerticalLook);
+	PlayerInputComponent->BindAxis("Zoom", CamComp, &UCCamComponent::InputAxis_Zoom);
 
 	PlayerInputComponent->BindAction("Walk", IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Walk);
 	PlayerInputComponent->BindAction("Walk", IE_Released, MovementComp, &UCMovementComponent::InputAction_Run);
@@ -198,14 +198,14 @@ void ACAnimal_AI::OnStateTypeChanged(const CEStateType InPrevType, const CEState
 
 void ACAnimal_AI::SetZoomMinRange(const float InMinRange) const
 {
-	CheckNull(CameraComp);
-	CameraComp->ZoomData.MinRange = InMinRange;
+	CheckNull(CamComp);
+	CamComp->ZoomData.MinRange = InMinRange;
 }
 
 void ACAnimal_AI::SetZoomMaxRange(const float InMaxRange) const
 {
-	CheckNull(CameraComp);
-	CameraComp->ZoomData.MaxRange = InMaxRange;
+	CheckNull(CamComp);
+	CamComp->ZoomData.MaxRange = InMaxRange;
 }
 
 void ACAnimal_AI::OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType)

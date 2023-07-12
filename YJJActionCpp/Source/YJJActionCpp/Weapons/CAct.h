@@ -11,7 +11,7 @@ class ACCommonCharacter;
 class UWorld;
 class UCStateComponent;
 class UCMovementComponent;
-class UCCameraComponent;
+class UCCamComponent;
 
 UCLASS(Abstract)
 class YJJACTIONCPP_API UCAct : public UObject
@@ -62,7 +62,7 @@ protected:
 
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
 	TWeakObjectPtr<UCStateComponent> StateComp;
-	TWeakObjectPtr<UCCameraComponent> CameraComp;
+	TWeakObjectPtr<UCCamComponent> CamComp;
 
 	TArray<FActData> ActDatas;
 	TArray<FHitData> HitDatas;

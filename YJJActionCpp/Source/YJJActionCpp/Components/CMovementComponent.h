@@ -19,6 +19,13 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UFUNCTION()
+		void OnEnableTopViewCam();
+
+	UFUNCTION()
+		void OffEnableTopViewCam();
+
+public:
 	void SetSpeeds(const TArray<float> InSpeeds);
 	void SetSpeed(const CESpeedType Index) const;
 	void SetMaxWalkSpeed(const float InSpeed) const;
@@ -66,4 +73,5 @@ private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCStateComponent> StateComp;
 	bool bCanMove = true;
+	bool bTopViewCam = false;
 };

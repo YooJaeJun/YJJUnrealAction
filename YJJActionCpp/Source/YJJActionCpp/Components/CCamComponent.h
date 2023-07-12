@@ -1,11 +1,14 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CCameraComponent.generated.h"
+#include "CCamComponent.generated.h"
 
 class ACCommonCharacter;
 class UCTargetingComponent;
 class UCMovementComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnableTopViewCam);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDisableTopViewCam);
 
 USTRUCT()
 struct FZoomData
@@ -27,12 +30,12 @@ public:
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class YJJACTIONCPP_API UCCameraComponent : public UActorComponent
+class YJJACTIONCPP_API UCCamComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UCCameraComponent();
+	UCCamComponent();
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,12 +53,14 @@ public:
 	void DisableControlRotation() const;
 
 public:
+	FORCEINLINE void EnableFixedCamera() { bFixedCamera = true; }
+	FORCEINLINE void DisableFixedCamera() { bFixedCamera = false; }
+	void EnableTopViewCamera() const;
+	void DisableTopViewCamera() const;
 	FORCEINLINE void SetZooming(const float InZooming) { Zooming = InZooming; }
 
 	FORCEINLINE constexpr float GetZooming() const { return Zooming; }
 	FORCEINLINE constexpr bool GetFixedCamera() const { return bFixedCamera; }
-	FORCEINLINE constexpr void FixCamera() { bFixedCamera = true; }
-	FORCEINLINE constexpr void UnFixCamera() { bFixedCamera = false; }
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Camera")
@@ -73,6 +78,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 		float TargetArmLength;
+
+public:
+	FEnableTopViewCam OnEnableTopViewCam;
+	FDisableTopViewCam OnDisableTopViewCam;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

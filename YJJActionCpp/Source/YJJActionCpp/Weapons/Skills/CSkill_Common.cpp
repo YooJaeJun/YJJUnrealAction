@@ -1,5 +1,6 @@
 #include "Weapons/Skills/CSkill_Common.h"
 #include "Global.h"
+#include "Components/CCamComponent.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CAct.h"
 #include "Components/CStateComponent.h"
@@ -48,7 +49,7 @@ void UCSkill_Common::End_Skill_Implementation()
 	CheckNull(MovementComp);
 
 	MovementComp->Move();
-	CameraComp->UnFixCamera();
+	CamComp->DisableFixedCamera();
 
 	for (const TWeakObjectPtr<ACCommonCharacter> character : Overlapped)
 		character->GetCapsuleComponent()->SetCollisionProfileName("Pawn");

@@ -7,7 +7,7 @@
 class ACCommonCharacter;
 class UCMovementComponent;
 class UCStateComponent;
-class UCCameraComponent;
+class UCCamComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEquipmentBeginEquip);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEquipmentUnequip);
@@ -52,7 +52,7 @@ protected:
 private:
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
 	TWeakObjectPtr<UCStateComponent> StateComp;
-	TWeakObjectPtr<UCCameraComponent> CameraComp;
+	TWeakObjectPtr<UCCamComponent> CamComp;
 
 private:
 	bool bBeginEquip;

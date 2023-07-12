@@ -68,8 +68,8 @@ void UCRidingComponent::BeginPlay()
 
 		InteractionCollision = Owner->GetInteractionCollision();
 
-		if (IsValid(CameraComp))
-			CameraComp->DisableControlRotation();
+		if (IsValid(CamComp))
+			CamComp->DisableControlRotation();
 
 		if (IsValid(SpringArm))
 			Zooming = SpringArm->TargetArmLength;
@@ -402,14 +402,14 @@ void UCRidingComponent::Tick_Riding()
 {
 	if (IsValid(RiderWeaponComp->GetEquipment()) &&
 		true == RiderWeaponComp->GetEquipment()->GetEquipped())
-		CameraComp->EnableControlRotation();
+		CamComp->EnableControlRotation();
 	else
-		CameraComp->DisableControlRotation();
+		CamComp->DisableControlRotation();
 
-	if (true == RiderCameraComp->GetFixedCamera())
-		CameraComp->FixCamera();
+	if (true == RiderCamComp->GetFixedCamera())
+		CamComp->EnableFixedCamera();
 	else
-		CameraComp->UnFixCamera();
+		CamComp->DisableFixedCamera();
 
 	// TODO Zoom
 	// TODO Height UI

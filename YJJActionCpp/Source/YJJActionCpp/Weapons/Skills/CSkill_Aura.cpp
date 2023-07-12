@@ -1,6 +1,7 @@
 #include "Weapons/Skills/CSkill_Aura.h"
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
+#include "Components/CCamComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Weapons/CAttachment.h"
@@ -49,5 +50,5 @@ void UCSkill_Aura::End_Skill_Implementation()
 	CheckNull(MovementComp);
 
 	MovementComp->Move();
-	CameraComp->UnFixCamera();
+	CamComp->DisableFixedCamera();
 }

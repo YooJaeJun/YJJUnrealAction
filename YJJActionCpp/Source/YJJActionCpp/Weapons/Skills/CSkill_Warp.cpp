@@ -6,6 +6,7 @@
 #include "Components/CMovementComponent.h"
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CCamComponent.h"
 
 UCSkill_Warp::UCSkill_Warp()
 {
@@ -31,6 +32,11 @@ void UCSkill_Warp::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, ACAttach
 void UCSkill_Warp::Tick_Implementation(float InDeltaTime)
 {
 	Super::Tick_Implementation(InDeltaTime);
+
+	CheckNull(Controller);
+	CheckNull(CameraActor);
+
+	CameraActor->SetActorLocation(Owner->GetActorLocation() + CameraRelativeLocation);
 }
 
 void UCSkill_Warp::Pressed()
@@ -41,11 +47,18 @@ void UCSkill_Warp::Pressed()
 	Super::Pressed();
 
 	StateComp->OnSkillMode();
-	//MovementComp->EnableTopViewCamera();
-
+	CamComp->EnableTopViewCamera();
+	Controller->SetViewTargetWithBlend(CameraActor.Get(), BlendIn);
 }
 
 void UCSkill_Warp::Released()
 {
+	CheckNull(Controller);
+	CheckFalse(StateComp->IsSkillMode());
+
 	Super::Released();
+
+	StateComp->OffSkillMode();
+	CamComp->DisableTopViewCamera();
+	Controller->SetViewTargetWithBlend(Owner.Get(), BlendIn);
 }

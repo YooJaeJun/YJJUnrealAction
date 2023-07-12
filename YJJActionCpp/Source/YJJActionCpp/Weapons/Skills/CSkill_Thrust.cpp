@@ -4,6 +4,7 @@
 #include "Weapons/CAct.h"
 #include "Characters/CCommonCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/CCamComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 
@@ -129,8 +130,8 @@ void UCSkill_Thrust::End_Skill_Implementation()
 	CheckNull(MovementComp);
 	MovementComp->Move();
 
-	CheckNull(CameraComp);
-	CameraComp->UnFixCamera();
+	CheckNull(CamComp);
+	CamComp->DisableFixedCamera();
 
 	for (const TWeakObjectPtr<ACCommonCharacter> character : Overlapped)
 		character->GetCapsuleComponent()->SetCollisionProfileName("Pawn");

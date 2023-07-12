@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/Animals/CAnimal.h"
-#include "Components/CCameraComponent.h"
+#include "Components/CCamComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Components/CStateComponent.h"
 #include "CAnimal_AI.generated.h"
@@ -10,7 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UInputComponent;
-class UCCameraComponent;
+class UCCamComponent;
 class UCTargetingComponent;
 class UCGameUIComponent;
 class UCRidingComponent;
@@ -64,11 +64,11 @@ public:
 	virtual USpringArmComponent* GetSpringArm() const override;
 	virtual UCTargetingComponent* GetTargetingComp() const override;
 	FORCEINLINE constexpr UCameraComponent* GetCamera() const { return Camera; }
-	FORCEINLINE constexpr UCCameraComponent* GetZoomComp() const { return CameraComp; }
+	FORCEINLINE constexpr UCCamComponent* GetZoomComp() const { return CamComp; }
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-		UCCameraComponent* CameraComp;
+		UCCamComponent* CamComp;
 
 	UPROPERTY(VisibleAnywhere)
 		UCTargetingComponent* TargetingComp;

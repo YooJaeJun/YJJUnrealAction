@@ -5,7 +5,7 @@
 #include "Characters/CCommonCharacter.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
-#include "Components/CCameraComponent.h"
+#include "Components/CCamComponent.h"
 
 UCSkill::UCSkill()
 {
@@ -22,7 +22,7 @@ void UCSkill::BeginPlay(
 
     StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
     MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
-    CameraComp = YJJHelpers::GetComponent<UCCameraComponent>(Owner.Get());
+    CamComp = YJJHelpers::GetComponent<UCCamComponent>(Owner.Get());
 }
 
 void UCSkill::Begin_Skill_Implementation()

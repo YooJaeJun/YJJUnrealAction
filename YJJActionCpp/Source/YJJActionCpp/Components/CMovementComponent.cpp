@@ -17,6 +17,16 @@ void UCMovementComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
+void UCMovementComponent::OnEnableTopViewCam()
+{
+	bTopViewCam = true;
+}
+
+void UCMovementComponent::OffEnableTopViewCam()
+{
+	bTopViewCam = false;
+}
+
 void UCMovementComponent::SetSpeeds(const TArray<float> InSpeeds)
 {
 	for (int32 i = 0; i < InSpeeds.Num(); i++)
@@ -77,7 +87,10 @@ void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 	Forward = InAxis;
 
 	const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
-	const FVector direction = FQuat(rotator).GetForwardVector();
+	FVector direction = FQuat(rotator).GetForwardVector();
+
+	if (true == bTopViewCam)
+		direction = FVector::XAxisVector;
 
 	Owner->AddMovementInput(direction, InAxis);
 }
@@ -90,7 +103,10 @@ void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 	Right = InAxis;
 
 	const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
-	const FVector direction = FQuat(rotator).GetRightVector();
+	FVector direction = FQuat(rotator).GetRightVector();
+
+	if (true == bTopViewCam)
+		direction = FVector::YAxisVector;
 
 	Owner->AddMovementInput(direction, InAxis);
 }

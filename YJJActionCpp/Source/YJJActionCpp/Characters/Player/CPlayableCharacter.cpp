@@ -11,7 +11,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CWeaponComponent.h"
-#include "Components/CCameraComponent.h"
+#include "Components/CCamComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/CGameUIComponent.h"
 #include "Commons/CGameMode.h"
@@ -28,7 +28,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
 	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
 	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
-	YJJHelpers::CreateActorComponent<UCCameraComponent>(this, &CameraComp, "ZoomComponent");
+	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "ZoomComponent");
 	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 
@@ -66,10 +66,19 @@ ACPlayableCharacter::ACPlayableCharacter()
 		MovementComp->SetJumpZ(700.0f);
 	}
 
-	if (IsValid(CameraComp))
+	if (IsValid(CamComp))
 	{
-		CameraComp->DisableControlRotation();
-		CameraComp->UnFixCamera();
+		CamComp->DisableControlRotation();
+		CamComp->DisableFixedCamera();
+
+		if (IsValid(MovementComp))
+		{
+			CamComp->OnEnableTopViewCam.AddDynamic(
+				MovementComp, &UCMovementComponent::OnEnableTopViewCam);
+
+			CamComp->OnEnableTopViewCam.AddDynamic(
+				MovementComp, &UCMovementComponent::OnEnableTopViewCam);
+		}
 	}
 }
 
@@ -114,9 +123,9 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 	PlayerInputComponent->BindAxis("MoveForward", MovementComp, &UCMovementComponent::InputAxis_MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", MovementComp, &UCMovementComponent::InputAxis_MoveRight);
-	PlayerInputComponent->BindAxis("HorizontalLook", CameraComp, &UCCameraComponent::InputAxis_HorizontalLook);
-	PlayerInputComponent->BindAxis("VerticalLook", CameraComp, &UCCameraComponent::InputAxis_VerticalLook);
-	PlayerInputComponent->BindAxis("Zoom", CameraComp, &UCCameraComponent::InputAxis_Zoom);
+	PlayerInputComponent->BindAxis("HorizontalLook", CamComp, &UCCamComponent::InputAxis_HorizontalLook);
+	PlayerInputComponent->BindAxis("VerticalLook", CamComp, &UCCamComponent::InputAxis_VerticalLook);
+	PlayerInputComponent->BindAxis("Zoom", CamComp, &UCCamComponent::InputAxis_Zoom);
 
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComp, &UCMovementComponent::InputAction_Walk);
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComp, &UCMovementComponent::InputAction_Run);

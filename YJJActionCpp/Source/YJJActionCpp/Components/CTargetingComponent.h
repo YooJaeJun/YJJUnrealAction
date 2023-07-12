@@ -8,7 +8,7 @@ class ACCommonCharacter;
 class AController;
 class UCStateComponent;
 class UCMovementComponent;
-class UCCameraComponent;
+class UCCamComponent;
 class UWidgetComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -68,6 +68,6 @@ private:
 	TWeakObjectPtr<AController> Controller;
 	TWeakObjectPtr<UCStateComponent> TargetStateComp;
 	TWeakObjectPtr<UCMovementComponent> TargetMovementComp;
-	TWeakObjectPtr<UCCameraComponent> TargetCameraComp;
+	TWeakObjectPtr<UCCamComponent> TargetCamComp;
 	TWeakObjectPtr<UWidgetComponent> TargetingWidgetComp;
 };
