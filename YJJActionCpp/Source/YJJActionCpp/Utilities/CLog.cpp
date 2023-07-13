@@ -35,7 +35,7 @@ void CLog::Log(const UObject* InValue)
 	if (IsValid(InValue))
 		str.Append(InValue->GetName());
 
-	str.Append(IsValid(InValue) ? " Is Valid" : "Is Not Valid");
+	str.Append(IsValid(InValue) ? " Is Valid" : "Not Valid");
 
 	UE_LOG(YJJ, Warning, TEXT("%s"), *str);
 }

@@ -28,7 +28,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
 	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
 	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
-	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "ZoomComponent");
+	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "CamComponent");
 	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 
@@ -64,6 +64,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 		MovementComp->SetSpeeds(Speeds);
 		MovementComp->SetFriction(2.0f, 2048.0f);
 		MovementComp->SetJumpZ(700.0f);
+		MovementComp->SetGravity(2.5f);
 	}
 
 	if (IsValid(CamComp))

@@ -92,23 +92,25 @@ public:
 	UFUNCTION()
 		void SetRider(ACCommonCharacter* InCharacter);
 
-	FORCEINLINE const ACCommonCharacter* GetRider() const { return Rider; };
+	FORCEINLINE TWeakObjectPtr<ACCommonCharacter> GetRider() const { return Rider; };
 
 private:
 	void Tick_ToMountPoint();
 	void Tick_Mounting();
 	void Tick_MountingEnd();
-	void Tick_Riding();
+	void Tick_Riding() const;
 	void Tick_Unmounting();
 	void Tick_UnmountingEnd();
 
 public:
 	void CheckValidPoint();
-	bool MoveToPoint(ACCommonCharacter* Char, const USceneComponent* To);
+	bool MoveToPoint(
+		TWeakObjectPtr<ACCommonCharacter> Char, 
+		const TWeakObjectPtr<USceneComponent> To);
 	void PossessAndInterpToCamera();
 
 	UFUNCTION()
-		void InterpToRidingPos(UAnimMontage* Anim, bool bInterrupted);
+		void InterpToRiderPos(UAnimMontage* Anim, bool bInterrupted);
 
 	UFUNCTION()
 		void AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted);
@@ -121,63 +123,12 @@ public:
 	void InputAction_Act();
 	void Input_Zoom(const float InAxis) {}
 	void Input_Targeting() {}
-	void ApplyZoom() {}
-
-	void CancelHitAnim() {}
 
 	void SetStatusUI() {}
 	void OnStatusUI(const bool InOn) {}
 
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Settings")
-		USkeletalMeshComponent* Mesh;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		USpringArmComponent* SpringArm;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCameraComponent* Camera;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCStateComponent* StateComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCMovementComponent* MovementComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCCamComponent* CamComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCUserWidget_HUD* Hud;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		CERidingState RidingState;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		ACCommonCharacter* Rider;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCStateComponent* RiderStateComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCMovementComponent* RiderMovementComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCCamComponent* RiderCamComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		UCWeaponComponent* RiderWeaponComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
-		USceneComponent* RidingPoints[static_cast<uint8>(CERidingPoint::Max)];
-
-	UPROPERTY(VisibleAnywhere, Category = "Settings")
-		UBoxComponent* InteractionCollision;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Interact")
-		UCUserWidget_Interaction* Interaction;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Interact")
 		UTexture2D* InteractionKeyTexture;
 
@@ -185,24 +136,12 @@ private:
 		FText InteractionText;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		CEDirection MountDir;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		UAnimMontage* MountAnims[static_cast<uint8>(CEDirection::Max)];
-
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		CEDirection MountDirection;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		float MountRotationZFactor = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		USoundBase* MountSound;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Zoom")
-		float Zooming;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+	UPROPERTY(VisibleAnywhere, Category = "Mount")
 		AController* ControllerSave;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
@@ -211,11 +150,44 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		USoundBase* UnmountSound;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		float OverTime_Camera = 0.7f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		float OverTime_Mount = 0.4f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		float OverTime_RiderPos = 0.2f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+		float OverTime_Unmount = 0.5f;
+
 	UPROPERTY(EditDefaultsOnly, Category = "IK")
-		float LegIKAlpha;
+		float LegIKAlpha = 0.2f;
 
 private:
 	TWeakObjectPtr<ACAnimal_AI> Owner;
+
+	TWeakObjectPtr<USkeletalMeshComponent> Mesh;
+	TWeakObjectPtr<USpringArmComponent> SpringArm;
+	TWeakObjectPtr<UCameraComponent> Camera;
+	TWeakObjectPtr<UCStateComponent> StateComp;
+	TWeakObjectPtr<UCMovementComponent> MovementComp;
+	TWeakObjectPtr<UCCamComponent> CamComp;
+	TWeakObjectPtr<UCUserWidget_HUD> Hud;
+	CERidingState RidingState;
+	TWeakObjectPtr<ACCommonCharacter> Rider;
+	TWeakObjectPtr<UCStateComponent> RiderStateComp;
+	TWeakObjectPtr<UCMovementComponent> RiderMovementComp;
+	TWeakObjectPtr<UCCamComponent> RiderCamComp;
+	TWeakObjectPtr<UCWeaponComponent> RiderWeaponComp;
+	TWeakObjectPtr<USceneComponent> RidingPoints[static_cast<uint8>(CERidingPoint::Max)];
+	TWeakObjectPtr<UBoxComponent> InteractionCollision;
+	TWeakObjectPtr<UCUserWidget_Interaction> Interaction;
+	CEDirection MountDirection;
+	float MountRotationZFactor = 0.0f;
+	float Zooming = 0.0f;
+
 	TEnumAsByte<EMoveComponentAction::Type> eMoveAction;
 	FLatentActionInfo latentInfo;
 };

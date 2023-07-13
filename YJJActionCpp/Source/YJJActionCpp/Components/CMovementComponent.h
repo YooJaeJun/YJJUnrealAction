@@ -57,7 +57,7 @@ public:
 	FORCEINLINE constexpr float GetSprintSpeed() const { return Speeds[static_cast<uint8>(CESpeedType::Sprint)]; }
 
 public:
-	UPROPERTY(VisibleAnywhere, Category = "Move")
+	UPROPERTY(EditAnywhere, Category = "Move")
 		float Speeds[static_cast<uint8>(CESpeedType::Max)] = { 200, 500, 800 };
 
 	UPROPERTY(EditAnywhere, Category = "Animation")

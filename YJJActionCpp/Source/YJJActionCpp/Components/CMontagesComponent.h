@@ -61,10 +61,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "DataTable")
 		UDataTable* DataTable;
 
-	UPROPERTY(EditAnywhere, Category = "DataTable")
+	UPROPERTY(VisibleAnywhere, Category = "DataTable")
 		FMontagesData Datas[static_cast<uint8>(CEStateType::Max)];
 
-	UPROPERTY(EditAnywhere, Category = "DataTable")
+	UPROPERTY(VisibleAnywhere, Category = "DataTable")
 		FMontagesData HitDatas[static_cast<uint8>(CEHitType::Max)];
 
 private:

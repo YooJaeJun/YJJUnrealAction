@@ -92,42 +92,41 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 	// Animation
 
-	if (MovementComp.IsValid())
+	CheckNull(MovementComp);
+
+	const FRotator rotator(0, Owner->GetControlRotation().Yaw, 0);
+
+	FVector forward = FVector::ZeroVector;
+	FVector right = FVector::ZeroVector;
+
+	if (FlyComp.IsValid())
 	{
-		const FRotator rotator(0, Owner->GetControlRotation().Yaw, 0);
+		const TWeakObjectPtr<ACDragon_AI> FlyingCharacter = Cast<ACDragon_AI>(Owner);
 
-		FVector forward = FVector::ZeroVector;
-		FVector right = FVector::ZeroVector;
+		CheckNull(FlyingCharacter);
 
-		if (FlyComp.IsValid())
-		{
-			const TWeakObjectPtr<ACDragon_AI> FlyingCharacter = Cast<ACDragon_AI>(Owner);
+		forward = UKismetMathLibrary::GetForwardVector(rotator)
+			* FlyingCharacter->FlyComp->Forward;
 
-			CheckNull(FlyingCharacter);
+		right = UKismetMathLibrary::GetRightVector(rotator)
+			* FlyingCharacter->FlyComp->Right;
+	}//FlyComp.IsValid()
+	else
+	{
+		forward = UKismetMathLibrary::GetForwardVector(rotator)
+			* MovementComp->Forward;
 
-			forward = UKismetMathLibrary::GetForwardVector(rotator)
-				* FlyingCharacter->FlyComp->Forward;
+		right = UKismetMathLibrary::GetRightVector(rotator)
+			* MovementComp->Right;
+	}
 
-			right = UKismetMathLibrary::GetRightVector(rotator)
-				* FlyingCharacter->FlyComp->Right;
-		}//FlyComp.IsValid()
-		else
-		{
-			forward = UKismetMathLibrary::GetForwardVector(rotator)
-				* MovementComp->Forward;
+	const FVector current = (forward + right) * MovementComp->SpeedFactor;
 
-			right = UKismetMathLibrary::GetRightVector(rotator)
-				* MovementComp->Right;
-		}
+	const float dotForward = UKismetMathLibrary::Dot_VectorVector(current, Owner->GetActorForwardVector());
+	const float dotRight = UKismetMathLibrary::Dot_VectorVector(current, Owner->GetActorRightVector());
 
-		const FVector current = (forward + right) * MovementComp->SpeedFactor;
-
-		const float dotForward = UKismetMathLibrary::Dot_VectorVector(current, Owner->GetActorForwardVector());
-		const float dotRight = UKismetMathLibrary::Dot_VectorVector(current, Owner->GetActorRightVector());
-
-		Forward = UKismetMathLibrary::Lerp(Forward, dotForward, 0.05f);
-		Side = UKismetMathLibrary::Lerp(Side, dotRight, 0.05f);
-	}//MovementComp
+	Forward = UKismetMathLibrary::Lerp(Forward, dotForward, 0.05f);
+	Side = UKismetMathLibrary::Lerp(Side, dotRight, 0.05f);
 }
 
 void UCAnimInstance_Character::OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType)

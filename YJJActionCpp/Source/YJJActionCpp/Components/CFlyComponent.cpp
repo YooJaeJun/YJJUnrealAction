@@ -15,6 +15,7 @@ UCFlyComponent::UCFlyComponent()
 	{
 		StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 		MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Owner.Get());
+		CamComp = YJJHelpers::GetComponent<UCCamComponent>(Owner.Get());
 	}
 }
 
@@ -57,7 +58,7 @@ void UCFlyComponent::InputAxis_MoveRight(const float InAxis)
 
 	Right = InAxis;
 
-	if (MovementComp->CanMove(InAxis))
+	if (true == MovementComp->CanMove(InAxis))
 	{
 		const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 		const FVector direction = FQuat(rotator).GetRightVector();
@@ -96,6 +97,7 @@ void UCFlyComponent::InputAxis_MoveRight(const float InAxis)
 void UCFlyComponent::InputAxis_HorizontalLook(const float InAxis)
 {
 	CheckNull(MovementComp);
+	CheckNull(CamComp);
 	CheckTrue(CamComp->GetFixedCamera());
 
 	Owner->AddControllerYawInput(InAxis * HorizontalLook * GetWorld()->GetDeltaSeconds());
@@ -104,6 +106,7 @@ void UCFlyComponent::InputAxis_HorizontalLook(const float InAxis)
 void UCFlyComponent::InputAxis_VerticalLook(const float InAxis)
 {
 	CheckNull(MovementComp);
+	CheckNull(CamComp);
 	CheckTrue(CamComp->GetFixedCamera());
 
 	Owner->AddControllerPitchInput(InAxis * VerticalLook * GetWorld()->GetDeltaSeconds());
@@ -209,7 +212,8 @@ void UCFlyComponent::LandOn() const
 
 	bHit &= UKismetSystemLibrary::LineTraceSingleByProfile(
 		GetWorld(),
-		start, end,
+		start, 
+		end,
 		"IgnoreOnlyPawn",
 		false,
 		ignores,
@@ -235,8 +239,10 @@ void UCFlyComponent::LandOn() const
 		Owner->GetRootComponent(),
 		targetLocation,
 		targetRotation,
-		true, true,
-		1.0f, false,
+		true, 
+		true,
+		1.0f, 
+		false,
 		EMoveComponentAction::Move,
 		latentInfo);
 }

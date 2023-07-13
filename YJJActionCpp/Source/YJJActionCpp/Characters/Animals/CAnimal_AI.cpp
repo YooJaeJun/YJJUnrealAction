@@ -21,7 +21,7 @@ ACAnimal_AI::ACAnimal_AI()
 {
 	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
 	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
-	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "ZoomComponent");
+	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "CamComponent");
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 	YJJHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
 	YJJHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
@@ -51,17 +51,29 @@ ACAnimal_AI::ACAnimal_AI()
 		CamComp->DisableFixedCamera();
 	}
 
-	YJJHelpers::GetAssetDynamic<USoundBase>(&LandSound,
+	YJJHelpers::GetAsset<USoundBase>(&LandSound,
 		TEXT("SoundCue'/Game/Assets/Sounds/Footsteps/Run/Stone/SC_Footstep_Stone_Run.SC_Footstep_Stone_Run'"));
 
-	YJJHelpers::GetAssetDynamic<UFXSystemAsset>(&LandEffect,
+	YJJHelpers::GetAsset<UFXSystemAsset>(&LandEffect,
 		TEXT("NiagaraSystem'/Game/Assets/Effects/SuperheroFlight/VFX/Niagara/System/SuperheroLanding/NS_Superhero_Landing_Concrete.NS_Superhero_Landing_Concrete'"));
 
 	YJJHelpers::GetClass<AActor>(&EyeClass, "Blueprint'/Game/Character/Animals/CBP_Eye.CBP_Eye_C'");
 
 	if (IsValid(SpringArm))
+	{
 		SpringArm->bDoCollisionTest = false;
+		SpringArm->SetRelativeLocation(FVector(0, 3, 100));
+		SpringArm->SetRelativeRotation(FRotator(-5, 90, 0));
+	}
 
+	if (IsValid(MountLeftPoint))
+		MountLeftPoint->SetRelativeLocation(FVector(40, 0, 80));
+	if (IsValid(MountRightPoint))
+		MountRightPoint->SetRelativeLocation(FVector(-40, 0, 80));
+	if (IsValid(MountBackPoint))
+		MountBackPoint->SetRelativeLocation(FVector(0, -60, 80));
+	if (IsValid(UnmountPoint))
+		UnmountPoint->SetRelativeLocation(FVector(-40, 0, 80));
 
 	AIControllerClass = ACAIController_Melee::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -70,11 +82,12 @@ ACAnimal_AI::ACAnimal_AI()
 void ACAnimal_AI::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (IsValid(InteractionCollision))
+	if (IsValid(RidingComp) && IsValid(InteractionCollision))
 	{
-		InteractionCollision->OnComponentBeginOverlap.AddUniqueDynamic(RidingComp, &UCRidingComponent::BeginOverlap);
-		InteractionCollision->OnComponentEndOverlap.AddUniqueDynamic(RidingComp, &UCRidingComponent::EndOverlap);
+		InteractionCollision->OnComponentBeginOverlap.AddDynamic(
+			RidingComp, &UCRidingComponent::BeginOverlap);
+		InteractionCollision->OnComponentEndOverlap.AddDynamic(
+			RidingComp, &UCRidingComponent::EndOverlap);
 	}
 
 	if (IsValid(RiderPoint))
