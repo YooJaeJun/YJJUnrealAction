@@ -48,6 +48,12 @@ public:
 			ACCommonCharacter* InAttacker,
 			ACCommonCharacter* InOther) {}
 
+	UFUNCTION()
+		virtual void OnBeginEquip() {}
+
+	UFUNCTION()
+		virtual void OnUnequip() {}
+
 public:
 	virtual void Act();
 	virtual void Begin_Act();

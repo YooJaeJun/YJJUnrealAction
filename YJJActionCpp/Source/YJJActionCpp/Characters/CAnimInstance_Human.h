@@ -35,7 +35,7 @@ public:
 		bool bRidingFalling;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
-		bool BowAiming;
+		bool bBowAiming;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
 		float LegIKAlpha;

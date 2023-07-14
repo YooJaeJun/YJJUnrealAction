@@ -17,7 +17,7 @@ void UCUserWidget_EnemyBar::BindHpStat(UCCharacterStatComponent* InNewStat)
 	UpdateHpBarWidget();
 }
 
-void UCUserWidget_EnemyBar::UpdateHpBarWidget()
+void UCUserWidget_EnemyBar::UpdateHpBarWidget() const
 {
 	CheckFalse(CurStat.IsValid());
 	CheckNull(ProgressBar);

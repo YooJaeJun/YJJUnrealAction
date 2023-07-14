@@ -37,7 +37,7 @@ void UCCharacterStatComponent::SetNewLevel(const int32 InNewLevel, const float I
 	CheckNull(gameInst);
 
 	CurStat = *(gameInst->GetStat(InNewLevel));
-	CheckRefNullLog(CurStat, "CurStat doesn't exist.");
+	CheckRefNull(CurStat, "CurStat doesn't exist.");
 
 	CurLevel = InNewLevel;
 	SetExp(InRemainExp);

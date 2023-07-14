@@ -111,7 +111,7 @@ void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 			TargetingWidgetComp = YJJHelpers::GetComponent<UWidgetComponent>(Target.Get());
 			SetVisibleTargetUI(true);
 
-			if (TargetMovementComp.IsValid())
+			if (TargetCamComp.IsValid())
 				TargetCamComp->EnableFixedCamera();
 		}
 	}

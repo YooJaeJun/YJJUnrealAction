@@ -19,11 +19,11 @@ void UCAnimNotifyState_Zoom::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 	const TWeakObjectPtr<ACPlayableCharacter> player = Cast<ACPlayableCharacter>(MeshComp->GetOwner());
 	CheckNull(player);
 
-	const TWeakObjectPtr<UCCamComponent> zoomComp = YJJHelpers::GetComponent<UCCamComponent>(player.Get());
-	CheckNull(zoomComp);
+	const TWeakObjectPtr<UCCamComponent> camComp = YJJHelpers::GetComponent<UCCamComponent>(player.Get());
+	CheckNull(camComp);
 
-	OriginZooming = zoomComp->GetZooming();
-	zoomComp->SetZooming(SkillZooming);
+	OriginZooming = camComp->GetZooming();
+	camComp->SetZooming(SkillZooming);
 }
 
 void UCAnimNotifyState_Zoom::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
@@ -33,9 +33,9 @@ void UCAnimNotifyState_Zoom::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSe
 	const TWeakObjectPtr<ACPlayableCharacter> player = Cast<ACPlayableCharacter>(MeshComp->GetOwner());
 	CheckNull(player);
 
-	const TWeakObjectPtr<UCCamComponent> zoomComp = YJJHelpers::GetComponent<UCCamComponent>(player.Get());
-	CheckNull(zoomComp);
+	const TWeakObjectPtr<UCCamComponent> camComp = YJJHelpers::GetComponent<UCCamComponent>(player.Get());
+	CheckNull(camComp);
 
-	zoomComp->SetZooming(OriginZooming);
+	camComp->SetZooming(OriginZooming);
 	OriginZooming = 0.0f;
 }

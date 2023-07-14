@@ -431,7 +431,7 @@ void UCRidingComponent::Tick_Riding() const
 	CheckNull(RiderWeaponComp);
 	CheckNull(RiderWeaponComp->GetEquipment());
 
-	if (true == RiderWeaponComp->GetEquipment()->GetEquipped())
+	if (true == *RiderWeaponComp->GetEquipment()->GetEquipped())
 		CamComp->EnableControlRotation();
 	else
 		CamComp->DisableControlRotation();

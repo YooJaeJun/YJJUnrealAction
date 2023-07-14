@@ -31,11 +31,13 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintNativeEvent)
 		void OnBeginEquip();
+	virtual void OnBeginEquip_Implementation() { }
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintNativeEvent)
 		void OnUnequip();
+	virtual void OnUnequip_Implementation() {}
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Attach")

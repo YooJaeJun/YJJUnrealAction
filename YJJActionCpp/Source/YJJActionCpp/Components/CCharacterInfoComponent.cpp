@@ -34,7 +34,7 @@ void UCCharacterInfoComponent::SetCharacterType(const CECharacterType InNewType)
 	CheckNull(gameInst);
 
 	CurInfo = *(gameInst->GetInfo(newType));
-	CheckRefNullLog(CurInfo, "CurInfo doesn't exist.");
+	CheckRefNull(CurInfo, "CurInfo doesn't exist.");
 
 	CurType = newType;
 	SetCharacterGroup(CurInfo.Group);

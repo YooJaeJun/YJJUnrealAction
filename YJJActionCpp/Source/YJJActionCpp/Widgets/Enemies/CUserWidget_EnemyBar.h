@@ -15,7 +15,7 @@ public:
 	void BindHpStat(UCCharacterStatComponent* InNewStat);
 
 protected:
-	void UpdateHpBarWidget();
+	void UpdateHpBarWidget() const;
 
 private:
 	UPROPERTY()

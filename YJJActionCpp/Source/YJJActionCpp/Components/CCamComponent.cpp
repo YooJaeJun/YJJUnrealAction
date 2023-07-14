@@ -3,6 +3,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "Characters/CCommonCharacter.h"
 #include "Characters/Animals/CAnimal_AI.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -30,19 +31,23 @@ void UCCamComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	const TWeakObjectPtr<UCWeaponComponent> weaponComp = 
+		YJJHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
+	CheckNull(weaponComp);
+	CheckTrue(weaponComp->IsBowMode());
+
 	if (Owner.IsValid())
 		TargetArmLength = Owner->GetSpringArm()->TargetArmLength;
 
-
-	if (UKismetMathLibrary::NearlyEqual_FloatFloat(
-		Zooming, TargetArmLength, 0.1f))
+	// Zoom
+	if (UKismetMathLibrary::NearlyEqual_FloatFloat(Zooming, TargetArmLength, 0.1f))
 		return;
 
 	TargetArmLength = UKismetMathLibrary::FInterpTo(
-		TargetArmLength, Zooming,
+		TargetArmLength, 
+		Zooming,
 		UGameplayStatics::GetWorldDeltaSeconds(GetWorld()),
 		ZoomData.InterpSpeed);
-
 
 	if (Owner.IsValid())
 		Owner->GetSpringArm()->TargetArmLength = TargetArmLength;

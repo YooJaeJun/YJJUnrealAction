@@ -136,7 +136,8 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp, &UCGameUIComponent::InputAction_ActivateEquipMenu);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp, &UCGameUIComponent::InputAction_DeactivateEquipMenu);
 	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Act);
-
+	PlayerInputComponent->BindAction("SubAction", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_SubAct_Pressed);
+	PlayerInputComponent->BindAction("SubAction", EInputEvent::IE_Released, WeaponComp, &UCWeaponComponent::InputAction_SubAct_Released);
 	PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Skill_1_Pressed);
 	PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Released, WeaponComp, &UCWeaponComponent::InputAction_Skill_1_Released);
 	PlayerInputComponent->BindAction("Skill_2", EInputEvent::IE_Pressed, WeaponComp, &UCWeaponComponent::InputAction_Skill_2_Pressed);
@@ -172,7 +173,7 @@ void ACPlayableCharacter::Hit()
 		data.PlayMontage(this);
 
 	data.PlaySoundWave(this);
-	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
+	data.PlayEffect(GetWorld(), Damage.Event.HitData.EffectLocation, GetActorRotation());
 
 	if (false == CharacterStatComp->IsDead())
 	{

@@ -38,22 +38,51 @@ void ACMotionTrail::BeginPlay()
 
 	FTimerDelegate timerDelegate;
 	timerDelegate.BindLambda([=]()
+	{
+		if (Mesh->IsVisible() == false)
+			Mesh->ToggleVisibility();
+
+		const float height = Owner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+		SetActorLocation(
+			Owner->GetActorLocation() - 
+			FVector(ScaleAmount.X, ScaleAmount.Y, height - ScaleAmount.Z));
+
+		SetActorRotation(
+			Owner->GetActorRotation() + 
+			FRotator(0, -90, 0));
+
+		Mesh->CopyPoseFromSkeletalComponent(Owner->GetMesh());
+
+		OriginalExponent = Exponent;
+
+		if (DisappearFlag)
 		{
-			if (Mesh->IsVisible() == false)
-				Mesh->ToggleVisibility();
+			FTimerDelegate timerDisappearDelegate;
+			timerDisappearDelegate.BindLambda([=]()
+			{
+				Exponent -= DisappearExponent;
 
-			const float height = Owner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+				Material->SetScalarParameterValue("Exponent", Exponent);
 
-			SetActorLocation(
-				Owner->GetActorLocation() - 
-				FVector(ScaleAmount.X, ScaleAmount.Y, height - ScaleAmount.Z));
+				for (int32 i = 0; i < size; i++)
+					Mesh->SetMaterial(i, Material);
 
-			SetActorRotation(
-				Owner->GetActorRotation() + 
-				FRotator(0, -90, 0));
+				if (Exponent <= 0.0f)
+				{
+					Exponent = OriginalExponent;
+					GetWorld()->GetTimerManager().ClearTimer(TimerDisappearHandle);
+				}
+			});
 
-			Mesh->CopyPoseFromSkeletalComponent(Owner->GetMesh());
-		});
+			GetWorld()->GetTimerManager().SetTimer(
+				TimerDisappearHandle,
+				timerDisappearDelegate,
+				DisappearInterval,
+				true,
+				DisappearStartDelay);
+		}
+	});
 
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle, 

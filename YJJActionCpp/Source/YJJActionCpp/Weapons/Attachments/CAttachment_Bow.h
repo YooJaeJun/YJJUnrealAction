@@ -4,20 +4,39 @@
 #include "Weapons/CAttachment.h"
 #include "CAttachment_Bow.generated.h"
 
-class ACAttachment_Arrow;
+class ACArrow;
+class USkeletalMeshComponent;
+class UPoseableMeshComponent;
 
 UCLASS()
 class YJJACTIONCPP_API ACAttachment_Bow : public ACAttachment
 {
 	GENERATED_BODY()
 
-private:
-	void CreateArrow();
+public:
+	ACAttachment_Bow();
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	virtual void OnBeginEquip_Implementation() override;
+	virtual void OnUnequip_Implementation() override;
+
+public:
+	TSharedPtr<float> GetBend() const;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Arrow")
-		TArray<ACAttachment_Arrow*> Arrows;
+	UPROPERTY(EditDefaultsOnly, Category = "View")
+		FVector2D ViewPitchRange = FVector2D(-40, +30);
 
-	UPROPERTY(EditAnywhere, Category = "Arrow")
-		ACAttachment_Arrow* Arrow;
+private:
+	UPROPERTY(VisibleAnywhere)
+		USkeletalMeshComponent* SkeletalMesh;
+
+	UPROPERTY(VisibleAnywhere)
+		UPoseableMeshComponent* PoseableMesh;
+
+private:
+	FVector2D OriginViewPitchRange;
 };

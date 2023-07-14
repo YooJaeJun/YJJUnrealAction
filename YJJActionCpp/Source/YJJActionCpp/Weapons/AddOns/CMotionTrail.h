@@ -38,6 +38,18 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
 		FVector ScaleAmount = FVector::ZeroVector;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Capture")
+		bool DisappearFlag = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Capture")
+		float DisappearStartDelay = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Capture")
+		float DisappearInterval = 0.01f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Capture")
+		float DisappearExponent = 0.1f;
+
 private:
 	UPROPERTY(VisibleDefaultsOnly)
 		UPoseableMeshComponent* Mesh;
@@ -49,4 +61,7 @@ private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 
 	FTimerHandle TimerHandle;
+	FTimerHandle TimerDisappearHandle;
+
+	float OriginalExponent = 0.0f;
 };

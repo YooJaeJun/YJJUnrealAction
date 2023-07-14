@@ -101,13 +101,13 @@ void ACEnemy_AI::Hit()
 
 	// Interaction
 	const FHitData data = Damage.Event.HitData;
-
+	
 	if (StateComp->IsIdleMode())
 		data.PlayMontage(this);
 
 	data.PlayHitStop(GetWorld());
 	data.PlaySoundWave(this);
-	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
+	data.PlayEffect(GetWorld(), Damage.Event.HitData.EffectLocation, GetActorRotation());
 
 	if (false == CharacterStatComp->IsDead())
 	{

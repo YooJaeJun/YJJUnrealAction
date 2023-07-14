@@ -68,44 +68,58 @@ void UCWeaponComponent::InputAction_Act()
 	act->Act();
 }
 
-void UCWeaponComponent::InputAction_Skill_1_Pressed()
+void UCWeaponComponent::InputAction_SubAct_Pressed()
 {
 	const TWeakObjectPtr<UCSkill> skill = GetSkill(0);
+	CheckNull(skill);
+	skill->Pressed();
+}
+
+void UCWeaponComponent::InputAction_SubAct_Released()
+{
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(0);
+	CheckNull(skill);
+	skill->Released();
+}
+
+void UCWeaponComponent::InputAction_Skill_1_Pressed()
+{
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(1);
 	CheckNull(skill);
 	skill->Pressed();
 }
 
 void UCWeaponComponent::InputAction_Skill_1_Released()
 {
-	const TWeakObjectPtr<UCSkill> skill = GetSkill(0);
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(1);
 	CheckNull(skill);
 	skill->Released();
 }
 
 void UCWeaponComponent::InputAction_Skill_2_Pressed()
 {
-	const TWeakObjectPtr<UCSkill> skill = GetSkill(1);
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(2);
 	CheckNull(skill);
 	skill->Pressed();
 }
 
 void UCWeaponComponent::InputAction_Skill_2_Released()
 {
-	const TWeakObjectPtr<UCSkill> skill = GetSkill(1);
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(2);
 	CheckNull(skill);
 	skill->Released();
 }
 
 void UCWeaponComponent::InputAction_Skill_3_Pressed()
 {
-	const TWeakObjectPtr<UCSkill> skill = GetSkill(2);
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(3);
 	CheckNull(skill);
 	skill->Pressed();
 }
 
 void UCWeaponComponent::InputAction_Skill_3_Released()
 {
-	const TWeakObjectPtr<UCSkill> skill = GetSkill(2);
+	const TWeakObjectPtr<UCSkill> skill = GetSkill(3);
 	CheckNull(skill);
 	skill->Released();
 }

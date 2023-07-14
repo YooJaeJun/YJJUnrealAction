@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Utilities/CLog.h"
 #include "Particles/ParticleSystem.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
@@ -10,6 +11,15 @@
 #include "Engine/DataTable.h"
 #include "Weapons/AddOns/CMotionTrail.h"
 
+//#define CheckTrue(x) { if (true == (x)) { CLog::Log("CheckTrue"); return; }}
+//#define CheckTrueResult(x, y) { if (true == (x)) { CLog::Log("CheckTrueResult"); return (y); }}
+//
+//#define CheckFalse(x) { if(false == (x)) { CLog::Log("CheckFalse"); return; }}
+//#define CheckFalseResult(x, y) { if(false == (x)) { CLog::Log("CheckFalseResult"); return (y); }}
+//
+//#define CheckNull(x) { if(nullptr == (x)) { CLog::Log("CheckNull"); return; }}
+//#define CheckNullResult(x, y) { if(nullptr == (x)) { CLog::Log("CheckNullResult"); return (y); }}
+
 #define CheckTrue(x) { if (true == (x)) return; }
 #define CheckTrueResult(x, y) { if (true == (x)) return (y); }
 
@@ -19,11 +29,8 @@
 #define CheckNull(x) { if(nullptr == (x)) return; }
 #define CheckNullResult(x, y) { if(nullptr == (x)) return (y); }
 
-#define CheckNullLog(x) { if(nullptr == (x)) { CLog::Log((x)); return; }}
-#define CheckNullResultLog(x, y) { if(nullptr == (x)) { CLog::Log((x)); return (y); } }
-
-#define CheckRefNullLog(x, y) { if (nullptr == &(x)) { CLog::Log((y)); return; }}
-#define CheckRefNullResultLog(x, y, z) { if (nullptr == &(x)) { CLog::Log((y)); return (z); }}
+#define CheckRefNull(x, y) { if (nullptr == &(x)) { CLog::Log((y)); return; }}
+#define CheckRefNullResult(x, y, z) { if (nullptr == &(x)) { CLog::Log((y)); return (z); }}
 
 #define CreateTextRender()\
 {\

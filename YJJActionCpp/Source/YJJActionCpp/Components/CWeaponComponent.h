@@ -32,6 +32,8 @@ public:
 
 public:
 	void InputAction_Act();
+	void InputAction_SubAct_Pressed();
+	void InputAction_SubAct_Released();
 	void InputAction_Skill_1_Pressed();
 	void InputAction_Skill_1_Released();
 	void InputAction_Skill_2_Pressed();

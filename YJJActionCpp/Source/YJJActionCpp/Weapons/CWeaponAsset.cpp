@@ -54,8 +54,8 @@ void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
 
 		if (IsValid(Attachment))
 		{
-			Equipment->OnEquipmentBeginEquip.AddUniqueDynamic(Attachment, &ACAttachment::OnBeginEquip);
-			Equipment->OnEquipmentUnequip.AddUniqueDynamic(Attachment, &ACAttachment::OnUnequip);
+			Equipment->OnEquipmentBeginEquip.AddDynamic(Attachment, &ACAttachment::OnBeginEquip);
+			Equipment->OnEquipmentUnequip.AddDynamic(Attachment, &ACAttachment::OnUnequip);
 		}
 	}
 
@@ -66,19 +66,28 @@ void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
 
 		if (IsValid(Attachment))
 		{
-			Attachment->OnAttachmentBeginCollision.AddUniqueDynamic(Act, &UCAct::OnAttachmentBeginCollision);
-			Attachment->OnAttachmentEndCollision.AddUniqueDynamic(Act, &UCAct::OnAttachmentEndCollision);
-			Attachment->OnAttachmentBeginOverlap.AddUniqueDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
-			Attachment->OnAttachmentEndOverlap.AddUniqueDynamic(Act, &UCAct::OnAttachmentEndOverlap);
+			Attachment->OnAttachmentBeginCollision.AddDynamic(Act, &UCAct::OnAttachmentBeginCollision);
+			Attachment->OnAttachmentEndCollision.AddDynamic(Act, &UCAct::OnAttachmentEndCollision);
+			Attachment->OnAttachmentBeginOverlap.AddDynamic(Act, &UCAct::OnAttachmentBeginOverlap);
+			Attachment->OnAttachmentEndOverlap.AddDynamic(Act, &UCAct::OnAttachmentEndOverlap);
+		}
+
+		if (IsValid(Equipment))
+		{
+			Equipment->OnEquipmentBeginEquip.AddDynamic(Act, &UCAct::OnBeginEquip);
+			Equipment->OnEquipmentUnequip.AddDynamic(Act, &UCAct::OnUnequip);
 		}
 	}
 
-	for (int i=0; i<SkillClasses.Num(); i++)
+	if (IsValid(Attachment) && IsValid(Act))
 	{
-		if (IsValid(SkillClasses[i]) && IsValid(Attachment) && IsValid(Act))
+		for (int i = 0; i < SkillClasses.Num(); i++)
 		{
-			Skills.Emplace(NewObject<UCSkill>(this, SkillClasses[i]));
-			Skills[i]->BeginPlay(InOwner, Attachment, Act);
+			if (IsValid(SkillClasses[i]))
+			{
+				Skills.Emplace(NewObject<UCSkill>(this, SkillClasses[i]));
+				Skills[i]->BeginPlay(InOwner, Attachment, Act);
+			}
 		}
 	}
 }

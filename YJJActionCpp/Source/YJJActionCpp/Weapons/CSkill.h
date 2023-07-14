@@ -28,16 +28,16 @@ public:
 		void Tick(float InDeltaTime);
 	virtual void Tick_Implementation(float InDeltaTime) {}
 
-	virtual void Pressed() {}
-	virtual void Released() {}
+	virtual void Pressed();
+	virtual void Released();
 
 	UFUNCTION(BlueprintNativeEvent)
 		void Begin_Skill();
-	virtual void Begin_Skill_Implementation();
+	virtual void Begin_Skill_Implementation() {}
 
 	UFUNCTION(BlueprintNativeEvent)
 		void End_Skill();
-	virtual void End_Skill_Implementation();
+	virtual void End_Skill_Implementation() {}
 
 	FORCEINLINE bool GetInAction() const { return bInAction; }
 
@@ -53,6 +53,5 @@ protected:
 	TWeakObjectPtr<UCStateComponent> StateComp;
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
 	TWeakObjectPtr<UCCamComponent> CamComp;
-
 	bool bInAction = false;
 };

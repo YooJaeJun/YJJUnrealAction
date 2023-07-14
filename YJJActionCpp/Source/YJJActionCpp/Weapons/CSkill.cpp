@@ -25,12 +25,12 @@ void UCSkill::BeginPlay(
     CamComp = YJJHelpers::GetComponent<UCCamComponent>(Owner.Get());
 }
 
-void UCSkill::Begin_Skill_Implementation()
+void UCSkill::Pressed()
 {
     bInAction = true;
 }
 
-void UCSkill::End_Skill_Implementation()
+void UCSkill::Released()
 {
     bInAction = false;
 }

@@ -44,37 +44,18 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 	// Move
 
-
-	// Old Version
-
-	//Speed = Owner->GetVelocity().Size2D();
-
-	//const FRotator rotator = UKismetMathLibrary::MakeRotFromX(Owner->GetVelocity());
-	//const FRotator rotator2 = Owner->GetControlRotation();
-	//const FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotator, rotator2);
-
-	//PrevRotation = UKismetMathLibrary::RInterpTo(delta, PrevRotation, DeltaSeconds, 25);
-
-	//Direction = PrevRotation.Yaw;
-
-	//Pitch = UKismetMathLibrary::FInterpTo(
-	//	Pitch, Owner->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
-
-
-	// New Version
-
 	Speed = Owner->GetVelocity().Size();
 
-	const FRotator currentRot = UKismetMathLibrary::MakeRotator(Pitch, Yaw, 0.0f);
+	const FRotator rotator = UKismetMathLibrary::MakeRotFromX(Owner->GetVelocity());
+	const FRotator rotator2 = Owner->GetControlRotation();
+	const FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotator, rotator2);
 
-	const FRotator targetRot = UKismetMathLibrary::NormalizedDeltaRotator(
-		Owner->GetControlRotation(),
-		Owner->GetActorRotation());
+	PrevRotation = UKismetMathLibrary::RInterpTo(delta, PrevRotation, DeltaSeconds, 25);
 
-	PrevRotation = UKismetMathLibrary::RInterpTo(currentRot, targetRot, DeltaSeconds, 25);
+	Direction = PrevRotation.Yaw;
 
-	Pitch = UKismetMathLibrary::Clamp(PrevRotation.Pitch, -90.0f, 90.0f);
-	Yaw = UKismetMathLibrary::Clamp(PrevRotation.Yaw, -90.0f, 90.0f);
+	Pitch = UKismetMathLibrary::FInterpTo(Pitch, Owner->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
+	Yaw = UKismetMathLibrary::FInterpTo(Yaw, Owner->GetBaseAimRotation().Yaw, DeltaSeconds, 25);
 
 	if (Owner->GetVelocity().Size() <= 0.0f)
 		Direction = 0.0f;
@@ -93,8 +74,6 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 	// Animation
 
 	CheckNull(MovementComp);
-
-	const FRotator rotator(0, Owner->GetControlRotation().Yaw, 0);
 
 	FVector forward = FVector::ZeroVector;
 	FVector right = FVector::ZeroVector;

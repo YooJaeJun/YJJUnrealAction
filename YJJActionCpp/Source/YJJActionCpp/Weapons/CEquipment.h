@@ -38,8 +38,8 @@ public:
 	virtual void Unequip_Implementation();
 
 public:
-	constexpr bool GetBeginEquip() const { return bBeginEquip; }
-	constexpr bool GetEquipped() const { return bEquipped; }
+	FORCEINLINE TSharedPtr<bool> GetBeginEquip() const { return  MakeShared<bool>(bBeginEquip); }
+	FORCEINLINE TSharedPtr<bool> GetEquipped() const { return MakeShared<bool>(bEquipped); }
 
 public:
 	FEquipmentBeginEquip OnEquipmentBeginEquip;

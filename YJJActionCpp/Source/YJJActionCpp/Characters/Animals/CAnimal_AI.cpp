@@ -171,7 +171,7 @@ void ACAnimal_AI::Hit()
 
 	data.PlayHitStop(GetWorld());
 	data.PlaySoundWave(this);
-	data.PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
+	data.PlayEffect(GetWorld(), Damage.Event.HitData.EffectLocation, GetActorRotation());
 
 	if (false == CharacterStatComp->IsDead())
 	{

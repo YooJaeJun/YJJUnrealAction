@@ -4,6 +4,7 @@
 #include "Characters/CCommonCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Weapons/CSkill.h"
 
 void UCAnimInstance_Human::NativeBeginPlay()
 {
@@ -54,6 +55,13 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 		Forward = 0.0f;
 		Side = 0.0f;
 	}
+
+	CheckNull(WeaponComp);
+	CheckNull(WeaponComp->GetSkill(0));
+
+	bBowAiming = true;
+	bBowAiming &= (WeaponType == CEWeaponType::Bow);
+	bBowAiming &= (WeaponComp->GetSkill(0)->GetInAction());
 }
 
 void UCAnimInstance_Human::OnWeaponTypeChanged(const CEWeaponType InPrevType, const CEWeaponType InNewType)
