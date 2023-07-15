@@ -46,9 +46,9 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 	Speed = Owner->GetVelocity().Size();
 
-	const FRotator rotator = UKismetMathLibrary::MakeRotFromX(Owner->GetVelocity());
-	const FRotator rotator2 = Owner->GetControlRotation();
-	const FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotator, rotator2);
+	const FRotator rotatorVelocity = UKismetMathLibrary::MakeRotFromX(Owner->GetVelocity());
+	const FRotator rotatorController = Owner->GetControlRotation();
+	const FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotatorVelocity, rotatorController);
 
 	PrevRotation = UKismetMathLibrary::RInterpTo(delta, PrevRotation, DeltaSeconds, 25);
 
@@ -78,25 +78,23 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 	FVector forward = FVector::ZeroVector;
 	FVector right = FVector::ZeroVector;
 
+	const FRotator rotatorControllerForYaw(0, Owner->GetControlRotation().Yaw, 0);
+
 	if (FlyComp.IsValid())
 	{
 		const TWeakObjectPtr<ACDragon_AI> FlyingCharacter = Cast<ACDragon_AI>(Owner);
 
 		CheckNull(FlyingCharacter);
 
-		forward = UKismetMathLibrary::GetForwardVector(rotator)
-			* FlyingCharacter->FlyComp->Forward;
+		forward = UKismetMathLibrary::GetForwardVector(rotatorControllerForYaw) * FlyingCharacter->FlyComp->Forward;
 
-		right = UKismetMathLibrary::GetRightVector(rotator)
-			* FlyingCharacter->FlyComp->Right;
+		right = UKismetMathLibrary::GetRightVector(rotatorControllerForYaw) * FlyingCharacter->FlyComp->Right;
 	}//FlyComp.IsValid()
 	else
 	{
-		forward = UKismetMathLibrary::GetForwardVector(rotator)
-			* MovementComp->Forward;
+		forward = UKismetMathLibrary::GetForwardVector(rotatorControllerForYaw) * MovementComp->Forward;
 
-		right = UKismetMathLibrary::GetRightVector(rotator)
-			* MovementComp->Right;
+		right = UKismetMathLibrary::GetRightVector(rotatorControllerForYaw) * MovementComp->Right;
 	}
 
 	const FVector current = (forward + right) * MovementComp->SpeedFactor;
