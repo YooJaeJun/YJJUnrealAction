@@ -1,0 +1,38 @@
+#pragma once
+#include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "Interfaces/CInterface_CharacterUI.h"
+#include "Widgets/Weapons/CUserWidget_EquipMenu.h"
+#include "Widgets/Weapons/CUserWidget_EquipMenuButton.h"
+#include "CGameUIComponent.generated.h"
+
+class ACCommonCharacter;
+class UUserWidget;
+class ACGameMode;
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class YJJACTIONCPPUE5_API UCGameUIComponent :
+	public UActorComponent,
+	public ICInterface_CharacterUI
+{
+	GENERATED_BODY()
+
+public:
+	UCGameUIComponent();
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	UFUNCTION()
+		void OnWeaponEquipped(const CEWeaponType InNewType);
+
+public:
+	virtual void InputAction_ActivateEquipMenu() override;
+	virtual void InputAction_DeactivateEquipMenu() override;
+
+private:
+	TWeakObjectPtr<ACCommonCharacter> Owner;
+	TWeakObjectPtr<UCUserWidget_EquipMenu> EquipMenu;
+	TWeakObjectPtr<APlayerController> PlayerController;
+};
