@@ -62,7 +62,7 @@ void ACAttachment_Bow::OnUnequip_Implementation()
 	}
 }
 
-TSharedPtr<float> ACAttachment_Bow::GetBend() const
+float* ACAttachment_Bow::GetBend() const
 {
 	return Cast<UCAnimInstance_Bow>(SkeletalMesh->GetAnimInstance())->GetBend();
 }

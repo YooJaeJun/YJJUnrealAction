@@ -52,12 +52,21 @@ void ACArrow::OnComponentHit(
 	for (const TWeakObjectPtr<AActor> actor : Ignores)
 		CheckTrue(actor == OtherActor);
 
-
 	Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	const TWeakObjectPtr<ACCommonCharacter> character = 
-		Cast<ACCommonCharacter>(OtherActor);
 
-	if (character.IsValid() && OnArrowHit.IsBound())
+	const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(OtherActor);
+	CheckNull(character);
+
+	const FName boneName = character->GetMesh()->FindClosestBone(Hit.ImpactPoint);
+	Capsule->AttachToComponent(
+		OtherComp, 
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
+		boneName);
+
+	CLog::Log(boneName.ToString());
+
+
+	if (OnArrowHit.IsBound() && character.IsValid())
 		OnArrowHit.Broadcast(this, character.Get());
 }

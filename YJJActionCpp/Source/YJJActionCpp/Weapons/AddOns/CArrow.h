@@ -49,7 +49,7 @@ private:
 		UProjectileMovementComponent* Projectile;
 
 	UPROPERTY(EditDefaultsOnly, Category = "LifeSpan")
-		float LifeSpanAfterCollision = 2.0f;
+		float LifeSpanAfterCollision = 4.0f;
 
 public:
 	FArrowHit OnArrowHit;

@@ -10,8 +10,7 @@ UCBTTask_Rotate::UCBTTask_Rotate()
 
 EBTNodeResult::Type UCBTTask_Rotate::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	const TWeakObjectPtr<APawn> owner =
-		OwnerComp.GetAIOwner()->GetPawn();
+	const TWeakObjectPtr<APawn> owner = OwnerComp.GetAIOwner()->GetPawn();
 	CheckNullResult(owner, EBTNodeResult::Failed);
 
 	const TWeakObjectPtr<UCStateComponent> stateComp =

@@ -9,8 +9,7 @@ UCBTTask_Speed::UCBTTask_Speed()
 
 EBTNodeResult::Type UCBTTask_Speed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	const EBTNodeResult::Type resultType =
-		Super::ExecuteTask(OwnerComp, NodeMemory);
+	const EBTNodeResult::Type resultType = Super::ExecuteTask(OwnerComp, NodeMemory);
 	CheckTrueResult(resultType == EBTNodeResult::Type::Failed, resultType);
 
 	MovementComp->SetSpeed(SpeedType);

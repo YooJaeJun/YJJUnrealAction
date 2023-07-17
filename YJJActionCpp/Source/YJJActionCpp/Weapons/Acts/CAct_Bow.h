@@ -68,6 +68,6 @@ private:
 private:
 	FVector OriginLocation;
 	bool bAttachedString = true;
-	TSharedPtr<float> Bending;
-	TSharedPtr<bool> bEquipped;
+	float* Bending;
+	const bool* bEquipped;
 };

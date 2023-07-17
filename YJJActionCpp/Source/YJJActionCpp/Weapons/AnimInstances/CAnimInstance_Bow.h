@@ -9,7 +9,7 @@ class YJJACTIONCPP_API UCAnimInstance_Bow : public UAnimInstance
 	GENERATED_BODY()
 
 public:
-	FORCEINLINE TSharedPtr<float> GetBend() { return MakeShared<float>(Bend); }
+	FORCEINLINE float* GetBend() { return &Bend; }
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")

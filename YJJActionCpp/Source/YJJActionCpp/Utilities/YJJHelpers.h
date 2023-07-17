@@ -139,8 +139,10 @@ public:
 
 	static void AttachTo(AActor* InActor, USceneComponent* InParent, const FName InSocketName)
 	{
-		InActor->AttachToComponent(InParent, 
-			FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), InSocketName);
+		InActor->AttachToComponent(
+			InParent, 
+			FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), 
+			InSocketName);
 	}
 
 	template<typename EnumType>

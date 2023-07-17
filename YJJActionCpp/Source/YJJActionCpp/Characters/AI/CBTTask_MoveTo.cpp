@@ -11,8 +11,7 @@ UCBTTask_MoveTo::UCBTTask_MoveTo()
 
 EBTNodeResult::Type UCBTTask_MoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	const TWeakObjectPtr<APawn> owner =
-		OwnerComp.GetAIOwner()->GetPawn();
+	const TWeakObjectPtr<APawn> owner = OwnerComp.GetAIOwner()->GetPawn();
 	CheckNullResult(owner, EBTNodeResult::Failed);
 
 	const TWeakObjectPtr<UCStateComponent> stateComp =

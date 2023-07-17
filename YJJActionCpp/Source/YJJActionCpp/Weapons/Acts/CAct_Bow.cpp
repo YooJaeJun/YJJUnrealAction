@@ -27,11 +27,11 @@ void UCAct_Bow::BeginPlay(
 
 
 	const TWeakObjectPtr<ACAttachment_Bow> bow = Cast<ACAttachment_Bow>(InAttachment);
-	Bending = MakeShared<float>(*bow->GetBend());
+	Bending = bow->GetBend();
 
 	OriginLocation = PoseableMesh->GetBoneLocationByName("bow_string_mid", EBoneSpaces::ComponentSpace);
 
-	bEquipped = MakeShared<bool>(*InEquipment->GetEquipped());
+	bEquipped = InEquipment->GetEquipped();
 }
 
 void UCAct_Bow::OnBeginEquip()
@@ -62,7 +62,6 @@ void UCAct_Bow::OnUnequip()
 void UCAct_Bow::Act()
 {
 	CheckFalse(StateComp->IsIdleMode());
-	CheckFalse(StateComp->IsSkillMode());
 
 	Super::Act();
 

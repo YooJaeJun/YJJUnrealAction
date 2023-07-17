@@ -12,8 +12,7 @@ UCBTTask_Patrol::UCBTTask_Patrol()
 
 EBTNodeResult::Type UCBTTask_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	const EBTNodeResult::Type resultType = 
-		Super::ExecuteTask(OwnerComp, NodeMemory);
+	const EBTNodeResult::Type resultType = Super::ExecuteTask(OwnerComp, NodeMemory);
 	CheckTrueResult(resultType == EBTNodeResult::Type::Failed, resultType);
 
 	const TWeakObjectPtr<UNavigationSystemV1> navSystem =

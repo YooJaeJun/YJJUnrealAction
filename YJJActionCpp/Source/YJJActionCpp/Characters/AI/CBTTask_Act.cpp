@@ -13,8 +13,7 @@ UCBTTask_Act::UCBTTask_Act()
 
 EBTNodeResult::Type UCBTTask_Act::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	const EBTNodeResult::Type resultType =
-		Super::ExecuteTask(OwnerComp, NodeMemory);
+	const EBTNodeResult::Type resultType = Super::ExecuteTask(OwnerComp, NodeMemory);
 	CheckTrueResult(resultType == EBTNodeResult::Type::Failed, resultType);
 
 	const TWeakObjectPtr<UCWeaponComponent> weaponComp = 

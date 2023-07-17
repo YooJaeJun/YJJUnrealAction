@@ -70,5 +70,5 @@ private:
 	TWeakObjectPtr<UCameraComponent> Camera;
 	FTimeline Timeline;
 	FAimData OriginData;
-	TSharedPtr<float> Bend;
+	float* Bend;
 };
