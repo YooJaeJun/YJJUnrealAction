@@ -38,7 +38,7 @@ public:
 	virtual void Unequip_Implementation();
 
 public:
-	FORCEINLINE const bool* GetBeginEquip() const { return  &bBeginEquip; }
+	FORCEINLINE const bool* GetBeginEquip() const { return &bBeginEquip; }
 	FORCEINLINE const bool* GetEquipped() const { return &bEquipped; }
 
 public:

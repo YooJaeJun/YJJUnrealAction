@@ -81,7 +81,7 @@ public:
 	FORCEINLINE constexpr bool IsBowMode() const { return Type == CEWeaponType::Bow; }
 	FORCEINLINE constexpr bool IsWarpMode() const { return Type == CEWeaponType::Warp; }
 	FORCEINLINE constexpr bool IsAroundMode() const { return Type == CEWeaponType::Around; }
-	FORCEINLINE constexpr bool IsFireballMode() const { return Type == CEWeaponType::Fireball; }
+	FORCEINLINE constexpr bool IsFireballMode() const { return Type == CEWeaponType::Throw; }
 	FORCEINLINE constexpr bool IsBombMode() const { return Type == CEWeaponType::Bomb; }
 	FORCEINLINE constexpr bool IsYonduMode() const { return Type == CEWeaponType::Yondu; }
 

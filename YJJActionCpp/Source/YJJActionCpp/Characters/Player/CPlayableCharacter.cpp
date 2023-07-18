@@ -173,7 +173,7 @@ void ACPlayableCharacter::Hit()
 		data.PlayMontage(this);
 
 	data.PlaySoundWave(this);
-	data.PlayEffect(GetWorld(), Damage.Event.HitData.EffectLocation, GetActorRotation());
+	data.PlayEffect(GetWorld(), GetActorLocation() + Damage.Event.HitData.EffectLocation, GetActorRotation());
 
 	if (false == CharacterStatComp->IsDead())
 	{

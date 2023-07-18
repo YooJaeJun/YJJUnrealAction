@@ -59,18 +59,15 @@ void ACArrow::OnComponentHit(
 	CheckNull(character);
 
 	const FName boneName = character->GetMesh()->FindClosestBone(Hit.ImpactPoint);
-	Capsule->AttachToComponent(
+	AttachToComponent(
 		OtherComp,
 		FAttachmentTransformRules(
 			EAttachmentRule::SnapToTarget, 
 			EAttachmentRule::KeepWorld, 
 			EAttachmentRule::KeepWorld, 
-			false),
+			true),
 		//FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
 		boneName);
-
-	CLog::Log(boneName.ToString());
-
 
 	if (OnArrowHit.IsBound() && character.IsValid())
 		OnArrowHit.Broadcast(this, character.Get());

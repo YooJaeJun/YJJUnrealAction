@@ -2,18 +2,19 @@
 #include "CoreMinimal.h"
 #include "Weapons/AddOns/CSkillCollider.h"
 #include "Weapons/CWeaponStructures.h"
-#include "CSkillCollider_Rotate.generated.h"
+#include "CSkillCollider_Throw.generated.h"
 
 class UCapsuleComponent;
 class UParticleSystemComponent;
+class UProjectileMovementComponent;
 
 UCLASS()
-class YJJACTIONCPP_API ACSkillCollider_Rotate : public ACSkillCollider
+class YJJACTIONCPP_API ACSkillCollider_Throw : public ACSkillCollider
 {
 	GENERATED_BODY()
 
 public:
-    ACSkillCollider_Rotate();
+    ACSkillCollider_Throw();
 
 protected:
     virtual void BeginPlay() override;
@@ -49,6 +50,8 @@ private:
     UPROPERTY(VisibleDefaultsOnly)
         UParticleSystemComponent* Particle;
 
+    UPROPERTY(VisibleDefaultsOnly)
+        UProjectileMovementComponent* Projectile;
 
     UPROPERTY(EditDefaultsOnly, Category = "Damage")
         FHitData HitData;
@@ -58,15 +61,12 @@ private:
         float Speed = 300;
 
     UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-        float Distance = 150;
-
-    UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-        bool bNegative;
-
-    UPROPERTY(EditDefaultsOnly, Category = "Spawn")
         float DamageInteval = 0.1f;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Spawn")
+        float SpawnForwardLocationFactor = 10;
+
 private:
-    float Angle;
     FTimerHandle TimerHandle;
+    FVector Forward;
 };

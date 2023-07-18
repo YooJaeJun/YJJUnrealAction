@@ -32,8 +32,11 @@ void ACSkillCollider_Rotate::BeginPlay()
 	if (bNegative && IsValid(Particle))
 		Particle->SetRelativeRotation(FRotator(0, -180, 0));
 
-	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ACSkillCollider_Rotate::OnComponentBeginOverlap);
-	Capsule->OnComponentEndOverlap.AddDynamic(this, &ACSkillCollider_Rotate::OnComponentEndOverlap);
+	if (IsValid(Capsule))
+	{
+		Capsule->OnComponentBeginOverlap.AddDynamic(this, &ACSkillCollider_Rotate::OnComponentBeginOverlap);
+		Capsule->OnComponentEndOverlap.AddDynamic(this, &ACSkillCollider_Rotate::OnComponentEndOverlap);
+	}
 
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle, 
@@ -62,6 +65,7 @@ void ACSkillCollider_Rotate::Tick(float DeltaTime)
 
 	const FVector distance = FVector(Distance, 0, 0);
 	const FVector value = distance.RotateAngleAxis(Angle, FVector::UpVector);
+
 	location += value;
 
 	SetActorLocation(location);

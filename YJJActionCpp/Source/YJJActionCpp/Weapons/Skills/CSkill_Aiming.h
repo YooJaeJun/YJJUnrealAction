@@ -70,5 +70,5 @@ private:
 	TWeakObjectPtr<UCameraComponent> Camera;
 	FTimeline Timeline;
 	FAimData OriginData;
-	float* Bend;
+	float* Bend = nullptr;
 };

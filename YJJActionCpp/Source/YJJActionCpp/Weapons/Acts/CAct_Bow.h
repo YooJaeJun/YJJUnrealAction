@@ -68,6 +68,8 @@ private:
 private:
 	FVector OriginLocation;
 	bool bAttachedString = true;
-	float* Bending;
+
+	// CAnimInstance_Bow.h 의 Bend를 참조하고 있다.
+	float* Bending = nullptr;
 	const bool* bEquipped;
 };

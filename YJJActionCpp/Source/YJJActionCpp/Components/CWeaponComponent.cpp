@@ -232,7 +232,7 @@ void UCWeaponComponent::SetAroundMode()
 void UCWeaponComponent::SetFireballMode()
 {
 	CheckFalse(IsIdleStateMode());
-	SetMode(CEWeaponType::Fireball);
+	SetMode(CEWeaponType::Throw);
 }
 
 void UCWeaponComponent::SetBombMode()

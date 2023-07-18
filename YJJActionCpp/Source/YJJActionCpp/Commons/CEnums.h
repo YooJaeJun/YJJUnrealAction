@@ -71,7 +71,7 @@ enum class CEWeaponType : uint8
 	Bow,
 	Warp,
 	Around,
-	Fireball,
+	Throw,
 	Bomb,
 	Yondu,
 	Animal,
