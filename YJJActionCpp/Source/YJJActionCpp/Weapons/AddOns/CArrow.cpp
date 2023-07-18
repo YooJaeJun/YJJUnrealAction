@@ -9,7 +9,7 @@ ACArrow::ACArrow()
 	YJJHelpers::CreateComponent<UCapsuleComponent>(this, &Capsule, "Capsule");
 	YJJHelpers::CreateActorComponent<UProjectileMovementComponent>(this, &Projectile, "Projectile");
 
-	Projectile->ProjectileGravityScale = 0;
+	Projectile->ProjectileGravityScale = 1;
 	Capsule->BodyInstance.bNotifyRigidBodyCollision = true;
 	Capsule->SetCollisionProfileName("BlockAll");
 }

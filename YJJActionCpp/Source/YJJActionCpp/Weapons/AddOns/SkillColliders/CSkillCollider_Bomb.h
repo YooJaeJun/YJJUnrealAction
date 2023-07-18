@@ -2,23 +2,27 @@
 #include "CoreMinimal.h"
 #include "Weapons/AddOns/CSkillCollider.h"
 #include "Weapons/CWeaponStructures.h"
-#include "CSkillCollider_Throw.generated.h"
+#include "CSkillCollider_Bomb.generated.h"
 
 class UCapsuleComponent;
+class USphereComponent;
 class UParticleSystemComponent;
+class UNiagaraComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
-class YJJACTIONCPP_API ACSkillCollider_Throw : public ACSkillCollider
+class YJJACTIONCPP_API ACSkillCollider_Bomb : public ACSkillCollider
 {
 	GENERATED_BODY()
 
 public:
-    ACSkillCollider_Throw();
+    ACSkillCollider_Bomb();
 
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+    void Bomb();
 
 private:
     UFUNCTION()
@@ -37,15 +41,21 @@ private:
             UPrimitiveComponent* OtherComp,
             int32 OtherBodyIndex);
 
-    UFUNCTION()
-        void SendDamage();
-
 private:
     UPROPERTY(VisibleDefaultsOnly)
         UCapsuleComponent* Capsule;
 
     UPROPERTY(VisibleDefaultsOnly)
         UParticleSystemComponent* Particle;
+
+    UPROPERTY(VisibleDefaultsOnly)
+        UParticleSystemComponent* Trail;
+
+    UPROPERTY(VisibleDefaultsOnly)
+        USphereComponent* BombSphere;
+
+    UPROPERTY(VisibleDefaultsOnly)
+        UNiagaraComponent* BombParticle;
 
     UPROPERTY(VisibleDefaultsOnly)
         UProjectileMovementComponent* Projectile;
@@ -59,7 +69,7 @@ private:
         float Speed = 300;
 
     UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-        float DamageInteval = 0.1f;
+        float BombRate = 2;
 
     UPROPERTY(EditDefaultsOnly, Category = "Spawn")
         float SpawnForwardLocationFactor = 10;

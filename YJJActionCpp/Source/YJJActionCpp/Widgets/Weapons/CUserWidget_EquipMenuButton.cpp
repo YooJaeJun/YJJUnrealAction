@@ -11,7 +11,16 @@ void UCUserWidget_EquipMenuButton::BindEquipMenuButton()
 
 void UCUserWidget_EquipMenuButton::OnHovered()
 {
-	CurWeaponType = YJJHelpers::ConvertTCHARToEnum<CEWeaponType>(GetName()[GetName().Len() - 1]);
+	const TCHAR prevLast = GetName()[GetName().Len() - 2];
+	const TCHAR last = GetName()[GetName().Len() - 1];
+	FString WeaponStr;
+
+	if (prevLast >= '0' && prevLast <= '9')
+		WeaponStr += prevLast;
+
+	WeaponStr += last;
+
+	CurWeaponType = YJJHelpers::ConvertFStringToEnum<CEWeaponType>(WeaponStr);
 
 	OnWeaponTypeHovered.ExecuteIfBound(CurWeaponType);
 }

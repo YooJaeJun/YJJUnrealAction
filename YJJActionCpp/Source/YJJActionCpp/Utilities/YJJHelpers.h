@@ -159,6 +159,14 @@ public:
 		return weaponType;
 	}
 
+	template<typename EnumType>
+	static EnumType ConvertFStringToEnum(const FString& InValue)
+	{
+		const int32 typeIndex = FCString::Atoi(*InValue);
+		EnumType weaponType = static_cast<EnumType>(typeIndex);
+		return weaponType;
+	}
+
 	static void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const TWeakObjectPtr<UFXSystemAsset> InAsset,
 		const FTransform& InTransform, const TWeakObjectPtr<USkeletalMeshComponent> InMesh = nullptr,
 		FName InSocketName = NAME_None)

@@ -8,8 +8,6 @@
 
 ACSkillCollider_Throw::ACSkillCollider_Throw()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
 	YJJHelpers::CreateComponent<UCapsuleComponent>(this, &Capsule, "Capsule");
 	YJJHelpers::CreateComponent<UParticleSystemComponent>(this, &Particle, "Particle", Capsule);
 	YJJHelpers::CreateActorComponent<UProjectileMovementComponent>(this, &Projectile, "Projectile");
@@ -59,11 +57,6 @@ void ACSkillCollider_Throw::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-}
-
-void ACSkillCollider_Throw::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void ACSkillCollider_Throw::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
