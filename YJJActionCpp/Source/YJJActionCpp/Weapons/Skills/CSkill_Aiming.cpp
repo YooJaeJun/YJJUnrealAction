@@ -39,6 +39,26 @@ void UCSkill_Aiming::Tick_Implementation(float InDeltaTime)
 	Super::Tick_Implementation(InDeltaTime);
 
 	Timeline.TickTimeline(InDeltaTime);
+
+	if (bPressed)
+	{
+		FHitResult hitResult;
+		const FVector start = Owner->GetMesh()->GetSocketLocation("Hand_Bow_Right_Arrow");
+		const FVector end = 
+			start + 
+			AimingDistance * UKismetMathLibrary::GetForwardVector(Owner->GetMyCurController()->GetControlRotation());
+
+		const bool bTraced = GetWorld()->LineTraceSingleByObjectType(
+			hitResult,
+			start, end,
+			ECC_Pawn,
+			FCollisionQueryParams::DefaultQueryParam);
+
+		if (bTraced)
+			GameUIComp->SetColor_Red();
+		else
+			GameUIComp->SetColor_White();
+	}
 }
 
 void UCSkill_Aiming::Pressed()
@@ -55,15 +75,19 @@ void UCSkill_Aiming::Pressed()
 	OriginData.SocketOffset = SpringArm->SocketOffset;
 	OriginData.bEnableCameraLag = SpringArm->bEnableCameraLag;
 	OriginData.CameraLocation = Camera->GetRelativeLocation();
+	OriginData.CameraRotation = Camera->GetRelativeRotation();
 
 	SpringArm->TargetArmLength = AimData.TargetArmLength;
 	SpringArm->SocketOffset = AimData.SocketOffset;
 	SpringArm->bEnableCameraLag = AimData.bEnableCameraLag;
 	Camera->SetRelativeLocation(AimData.CameraLocation);
+	Camera->SetRelativeRotation(AimData.CameraRotation);
 
 	Timeline.PlayFromStart();
 
 	GameUIComp->ActivateCrossHair();
+
+	bPressed = true;
 }
 
 void UCSkill_Aiming::Released()
@@ -80,10 +104,13 @@ void UCSkill_Aiming::Released()
 	SpringArm->SocketOffset = OriginData.SocketOffset;
 	SpringArm->bEnableCameraLag = OriginData.bEnableCameraLag;
 	Camera->SetRelativeLocation(OriginData.CameraLocation);
+	Camera->SetRelativeRotation(OriginData.CameraRotation);
 
 	Timeline.ReverseFromEnd();
 
 	GameUIComp->DeactivateCrossHair();
+
+	bPressed = false;
 }
 
 void UCSkill_Aiming::OnAiming(FVector Output)

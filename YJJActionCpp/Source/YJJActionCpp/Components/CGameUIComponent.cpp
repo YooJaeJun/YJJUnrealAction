@@ -5,8 +5,8 @@
 #include "Characters/CCommonCharacter.h"
 #include "Characters/Player/CPlayableCharacter.h"
 #include "Blueprint/UserWidget.h"
-#include "Commons/CGameMode.h"
 #include "Widgets/CUserWidget_HUD.h"
+#include "Widgets/Weapons/CUserWidget_CrossHair.h"
 
 UCGameUIComponent::UCGameUIComponent()
 {
@@ -28,6 +28,9 @@ void UCGameUIComponent::BeginPlay()
 	CheckNull(EquipMenu.Get());
 
 	EquipMenu->OnWeaponEquipped.AddUniqueDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
+
+	CrossHair = hud->CrossHair;
+	CheckNull(CrossHair.Get());
 }
 
 void UCGameUIComponent::OnWeaponEquipped(const CEWeaponType InNewType)
@@ -51,4 +54,26 @@ void UCGameUIComponent::InputAction_DeactivateEquipMenu()
 {
 	CheckNull(EquipMenu);
 	EquipMenu->Deactivate(1.0f);
+}
+
+void UCGameUIComponent::ActivateCrossHair()
+{
+	CheckNull(CrossHair);
+	CrossHair->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UCGameUIComponent::DeactivateCrossHair()
+{
+	CheckNull(CrossHair);
+	CrossHair->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UCGameUIComponent::SetColor_Red() const
+{
+	CrossHair->SetColor_Red();
+}
+
+void UCGameUIComponent::SetColor_White() const
+{
+	CrossHair->SetColor_White();
 }

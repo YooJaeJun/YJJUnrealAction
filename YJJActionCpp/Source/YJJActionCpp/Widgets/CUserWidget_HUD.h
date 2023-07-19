@@ -7,6 +7,7 @@
 class UCUserWidget_PlayerInfo;
 class UCUserWidget_EquipMenu;
 class UCUserWidget_Interaction;
+class UCUserWidget_CrossHair;
 
 UCLASS()
 class YJJACTIONCPP_API UCUserWidget_HUD : public UCUserWidget_Custom
@@ -25,4 +26,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 		UCUserWidget_Interaction* Interaction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
+		UCUserWidget_CrossHair* CrossHair;
 };

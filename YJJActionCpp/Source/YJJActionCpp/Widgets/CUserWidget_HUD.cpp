@@ -3,27 +3,28 @@
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
 #include "Widgets/Weapons/CUserWidget_EquipMenu.h"
 #include "Widgets/Interaction/CUserWidget_Interaction.h"
+#include "Widgets/Weapons/CUserWidget_CrossHair.h"
 
 void UCUserWidget_HUD::SetChildren()
 {
-	if (IsValid(PlayerInfo))
+	if (false == IsValid(PlayerInfo))
 	{
 		PlayerInfo = Cast<UCUserWidget_PlayerInfo>(GetWidgetFromName(TEXT("CPlayerInfo")));
 		PlayerInfo->BindChildren();
 	}
 
-	if (IsValid(EquipMenu))
+	if (false == IsValid(EquipMenu))
 	{
 		EquipMenu = Cast<UCUserWidget_EquipMenu>(GetWidgetFromName(TEXT("CEquipMenu")));
 		EquipMenu->BindChildren();
 	}
 
-	if (IsValid(Interaction))
+	if (false == IsValid(Interaction))
 	{
 		Interaction = Cast<UCUserWidget_Interaction>(GetWidgetFromName(TEXT("CInteraction")));
 		Interaction->BindChildren();
 	}
 
-	if (IsValid(CrossHair))
-		CrossHair = Cast<UCUserWidget_Custom>(GetWidgetFromName(TEXT("CCrossHair")));
+	if (false == IsValid(CrossHair))
+		CrossHair = Cast<UCUserWidget_CrossHair>(GetWidgetFromName(TEXT("CCrossHair")));
 }

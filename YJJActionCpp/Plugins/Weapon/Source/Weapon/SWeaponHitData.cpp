@@ -16,10 +16,10 @@ void SWeaponHitData::CustomizeHeader(
 	IPropertyTypeCustomizationUtils& InCustomizationUtils)
 {
 	InHeaderRow
-		.NameContent()
-		[
-			InPropertyHandle->CreatePropertyNameWidget()
-		]
+	.NameContent()
+	[
+		InPropertyHandle->CreatePropertyNameWidget()
+	]
 	.ValueContent()
 	.MinDesiredWidth(FWeaponStyle::Get()->DesiredWidth.X)
 	.MaxDesiredWidth(FWeaponStyle::Get()->DesiredWidth.Y)
@@ -48,7 +48,6 @@ void SWeaponHitData::CustomizeChildren(
 	IDetailChildrenBuilder& InChildBuilder, 
 	IPropertyTypeCustomizationUtils& InCustomizationUtils)
 {
-
 	uint32 number = 0;
 	InPropertyHandle->GetNumChildren(number);
 

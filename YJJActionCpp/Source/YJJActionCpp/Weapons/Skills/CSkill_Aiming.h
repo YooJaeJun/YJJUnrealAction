@@ -29,6 +29,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		FVector CameraLocation;
+
+	UPROPERTY(EditAnywhere)
+		FRotator CameraRotation;
 };
 
 UCLASS(Blueprintable)
@@ -69,11 +72,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Aiming")
 		float AimingSpeed = 200;
 
+	UPROPERTY(EditAnywhere, Category = "Aiming")
+		float AimingDistance = 10000;
+
 private:
 	TWeakObjectPtr<USpringArmComponent> SpringArm;
 	TWeakObjectPtr<UCameraComponent> Camera;
 	FTimeline Timeline;
 	FAimData OriginData;
 
+	bool bPressed = false;
 	float* Bend = nullptr;
 };

@@ -17,4 +17,7 @@ class YJJACTIONCPP_API ICInterface_CharacterUI
 public:
 	virtual void InputAction_ActivateEquipMenu() {}
 	virtual void InputAction_DeactivateEquipMenu() {}
+
+	virtual void ActivateCrossHair() {}
+	virtual void DeactivateCrossHair() {}
 };
