@@ -43,44 +43,30 @@ ACPlayableCharacter::ACPlayableCharacter()
 	YJJHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/CABP_Human.CABP_Human_C'");
 	GetMesh()->SetAnimClass(animInstance);
 
-	if (IsValid(SpringArm))
-	{
-		SpringArm->SetRelativeLocation(FVector(0, 0, 60));
-		SpringArm->TargetArmLength = 280;
-		SpringArm->bUsePawnControlRotation = true;
-		SpringArm->bEnableCameraLag = true;
-		SpringArm->bDoCollisionTest = false;
-	}
 
-	if (IsValid(StateComp))
-	{
-		StateComp->SetIdleMode();
-		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
-		StateComp->OnHitStateTypeChanged.AddUniqueDynamic(this, &ACPlayableCharacter::OnHitStateTypeChanged);
-	}
+	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
+	SpringArm->TargetArmLength = 280;
+	SpringArm->bUsePawnControlRotation = true;
+	SpringArm->bEnableCameraLag = true;
+	SpringArm->bDoCollisionTest = false;
 
-	if (IsValid(MovementComp))
-	{
-		MovementComp->SetSpeeds(Speeds);
-		MovementComp->SetFriction(2.0f, 2048.0f);
-		MovementComp->SetJumpZ(700.0f);
-		MovementComp->SetGravity(2.5f);
-	}
+	StateComp->SetIdleMode();
+	StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACPlayableCharacter::OnStateTypeChanged);
+	StateComp->OnHitStateTypeChanged.AddUniqueDynamic(this, &ACPlayableCharacter::OnHitStateTypeChanged);
 
-	if (IsValid(CamComp))
-	{
-		CamComp->DisableControlRotation();
-		CamComp->DisableFixedCamera();
+	MovementComp->SetSpeeds(Speeds);
+	MovementComp->SetFriction(2.0f, 2048.0f);
+	MovementComp->SetJumpZ(700.0f);
+	MovementComp->SetGravity(2.5f);
 
-		if (IsValid(MovementComp))
-		{
-			if (CamComp->OnEnableTopViewCam.IsBound())
-				CamComp->OnEnableTopViewCam.AddDynamic(MovementComp, &UCMovementComponent::OnEnableTopViewCam);
+	CamComp->DisableControlRotation();
+	CamComp->DisableFixedCamera();
 
-			if (CamComp->OnDisableTopViewCam.IsBound())
-				CamComp->OnDisableTopViewCam.AddDynamic(MovementComp, &UCMovementComponent::OnDisableTopViewCam);
-		}
-	}
+	if (CamComp->OnEnableTopViewCam.IsBound())
+		CamComp->OnEnableTopViewCam.AddDynamic(MovementComp, &UCMovementComponent::OnEnableTopViewCam);
+
+	if (CamComp->OnDisableTopViewCam.IsBound())
+		CamComp->OnDisableTopViewCam.AddDynamic(MovementComp, &UCMovementComponent::OnDisableTopViewCam);
 }
 
 void ACPlayableCharacter::BeginPlay()

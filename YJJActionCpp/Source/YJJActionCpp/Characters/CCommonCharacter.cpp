@@ -29,26 +29,15 @@ ACCommonCharacter::ACCommonCharacter()
 
 	CharacterStatComp->OnHpIsZero.AddUObject(this, &ACCommonCharacter::Dead);
 
-	if (IsValid(TargetingWidgetComp))
-	{
-		if (IsValid(TargetingWidget))
-			TargetingWidgetComp->SetWidgetClass(TargetingWidget);
+	TargetingWidgetComp->SetWidgetClass(TargetingWidget);
+	TargetingWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+	TargetingWidgetComp->SetVisibility(false);
 
-		TargetingWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
-		TargetingWidgetComp->SetVisibility(false);
-	}
+	InfoPoint->SetWorldLocation(FVector(0, 500, 500));
 
-	if (IsValid(InfoPoint))
-		InfoPoint->SetWorldLocation(FVector(0, 500, 500));
-
-	if (IsValid(InfoWidgetComp))
-	{
-		if (IsValid(InfoWidget))
-			InfoWidgetComp->SetWidgetClass(InfoWidget);
-
-		InfoWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
-		InfoWidgetComp->SetVisibility(true);
-	}
+	InfoWidgetComp->SetWidgetClass(InfoWidget);
+	InfoWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+	InfoWidgetComp->SetVisibility(true);
 }
 
 void ACCommonCharacter::BeginPlay()

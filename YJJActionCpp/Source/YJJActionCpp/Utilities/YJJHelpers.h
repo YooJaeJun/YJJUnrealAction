@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "NiagaraComponent.h"
 #include "Utilities/CLog.h"
 #include "Particles/ParticleSystem.h"
 #include "NiagaraSystem.h"
@@ -28,6 +29,9 @@
 
 #define CheckNull(x) { if(nullptr == (x)) return; }
 #define CheckNullResult(x, y) { if(nullptr == (x)) return (y); }
+
+#define CheckNullLog(x, y) { if(nullptr == (x)) { CLog::Log((y)); return; }}
+#define CheckNullResultLog(x, y, z) { if(nullptr == (x)) { CLog::Log((y)); return (z); }}
 
 #define CheckRefNull(x, y) { if (nullptr == &(x)) { CLog::Log((y)); return; }}
 #define CheckRefNullResult(x, y, z) { if (nullptr == &(x)) { CLog::Log((y)); return (z); }}
@@ -140,8 +144,8 @@ public:
 	static void AttachTo(AActor* InActor, USceneComponent* InParent, const FName InSocketName)
 	{
 		InActor->AttachToComponent(
-			InParent, 
-			FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), 
+			InParent,
+			FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
 			InSocketName);
 	}
 
@@ -167,8 +171,11 @@ public:
 		return weaponType;
 	}
 
-	static void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const TWeakObjectPtr<UFXSystemAsset> InAsset,
-		const FTransform& InTransform, const TWeakObjectPtr<USkeletalMeshComponent> InMesh = nullptr,
+	static UFXSystemAsset* PlayEffect(
+		const TWeakObjectPtr<UWorld> InWorld, 
+		const TWeakObjectPtr<UFXSystemAsset> InAsset,
+		const FTransform& InTransform, 
+		const TWeakObjectPtr<USkeletalMeshComponent> InMesh = nullptr,
 		FName InSocketName = NAME_None)
 	{
 		const TWeakObjectPtr<UParticleSystem> particle = Cast<UParticleSystem>(InAsset);
@@ -182,29 +189,43 @@ public:
 		{
 			if (particle.IsValid())
 			{
-				UGameplayStatics::SpawnEmitterAttached(particle.Get(), InMesh.Get(), InSocketName, location, rotation, scale);
-				return;
+				return Cast<UFXSystemAsset>(UGameplayStatics::SpawnEmitterAttached(
+					particle.Get(), 
+					InMesh.Get(), 
+					InSocketName, 
+					location, rotation, scale));
 			}
 
 			if (niagara.IsValid())
 			{
-				UNiagaraFunctionLibrary::SpawnSystemAttached(niagara.Get(), InMesh.Get(), InSocketName, location, rotation, scale,
-					EAttachLocation::KeepRelativeOffset,true, ENCPoolMethod::None);
-				return;
+				return Cast<UFXSystemAsset>(UNiagaraFunctionLibrary::SpawnSystemAttached(
+					niagara.Get(), 
+					InMesh.Get(), 
+					InSocketName, 
+					location, rotation, scale,
+					EAttachLocation::KeepRelativeOffset, 
+					true, 
+					ENCPoolMethod::None));
 			}
 		}
 
 		if (particle.IsValid())
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(InWorld.Get(), particle.Get(), InTransform);
-			return;
+			return Cast<UFXSystemAsset>(UGameplayStatics::SpawnEmitterAtLocation(
+				InWorld.Get(), 
+				particle.Get(), 
+				InTransform));
 		}
 
 		if (niagara.IsValid())
 		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(InWorld.Get(), niagara.Get(), location, rotation, scale);
-			return;
+			return Cast<UFXSystemAsset>(UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				InWorld.Get(), 
+				niagara.Get(), 
+				location, rotation, scale));
 		}
+
+		return nullptr;
 	}
 
 	static UCUserWidget_HUD* GetHud(TWeakObjectPtr<ACCommonCharacter> InOwner)

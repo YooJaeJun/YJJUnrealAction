@@ -17,4 +17,7 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "SpawnClass")
 		TSubclassOf<ACSkillCollider_Bomb> BombClass;
+
+	UPROPERTY(EditAnywhere, Category = "Bomb")
+		ACSkillCollider_Bomb* Bomb;
 };

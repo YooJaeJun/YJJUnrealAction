@@ -6,21 +6,24 @@
 
 void UCUserWidget_HUD::SetChildren()
 {
-	if (nullptr == PlayerInfo)
+	if (IsValid(PlayerInfo))
 	{
 		PlayerInfo = Cast<UCUserWidget_PlayerInfo>(GetWidgetFromName(TEXT("CPlayerInfo")));
 		PlayerInfo->BindChildren();
 	}
 
-	if (nullptr == EquipMenu)
+	if (IsValid(EquipMenu))
 	{
 		EquipMenu = Cast<UCUserWidget_EquipMenu>(GetWidgetFromName(TEXT("CEquipMenu")));
 		EquipMenu->BindChildren();
 	}
 
-	if (nullptr == Interaction)
+	if (IsValid(Interaction))
 	{
 		Interaction = Cast<UCUserWidget_Interaction>(GetWidgetFromName(TEXT("CInteraction")));
 		Interaction->BindChildren();
 	}
+
+	if (IsValid(CrossHair))
+		CrossHair = Cast<UCUserWidget_Custom>(GetWidgetFromName(TEXT("CCrossHair")));
 }

@@ -6,6 +6,7 @@
 #include "Components/CCamComponent.h"
 #include "Components/CStateComponent.h"
 #include "Weapons/Attachments/CAttachment_Bow.h"
+#include "Components/CGameUIComponent.h"
 
 UCSkill_Aiming::UCSkill_Aiming()
 {
@@ -29,6 +30,8 @@ void UCSkill_Aiming::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, ACAtta
 	CheckNull(bow);
 
 	Bend = bow->GetBend();
+
+	GameUIComp = YJJHelpers::GetComponent<UCGameUIComponent>(InOwner.Get());
 }
 
 void UCSkill_Aiming::Tick_Implementation(float InDeltaTime)
@@ -59,6 +62,8 @@ void UCSkill_Aiming::Pressed()
 	Camera->SetRelativeLocation(AimData.CameraLocation);
 
 	Timeline.PlayFromStart();
+
+	GameUIComp->ActivateCrossHair();
 }
 
 void UCSkill_Aiming::Released()
@@ -77,6 +82,8 @@ void UCSkill_Aiming::Released()
 	Camera->SetRelativeLocation(OriginData.CameraLocation);
 
 	Timeline.ReverseFromEnd();
+
+	GameUIComp->DeactivateCrossHair();
 }
 
 void UCSkill_Aiming::OnAiming(FVector Output)

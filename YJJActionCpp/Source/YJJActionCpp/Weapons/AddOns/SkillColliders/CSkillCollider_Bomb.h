@@ -7,8 +7,10 @@
 class UCapsuleComponent;
 class USphereComponent;
 class UParticleSystemComponent;
-class UNiagaraComponent;
+class UFXSystemAsset;
 class UProjectileMovementComponent;
+class USoundBase;
+class UMatineeCameraShake;
 
 UCLASS()
 class YJJACTIONCPP_API ACSkillCollider_Bomb : public ACSkillCollider
@@ -22,7 +24,11 @@ protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-    void Bomb();
+public:
+    void Throw() const;
+
+private:
+    void Bomb() const;
 
 private:
     UFUNCTION()
@@ -35,7 +41,16 @@ private:
             const FHitResult& SweepResult);
 
     UFUNCTION()
-        void OnComponentEndOverlap(
+        void OnBombComponentBeginOverlap(
+            UPrimitiveComponent* OverlappedComponent,
+            AActor* OtherActor,
+            UPrimitiveComponent* OtherComp,
+            int32 OtherBodyIndex,
+            bool bFromSweep,
+            const FHitResult& SweepResult);
+
+    UFUNCTION()
+        void OnBombComponentEndOverlap(
             UPrimitiveComponent* OverlappedComponent,
             AActor* OtherActor,
             UPrimitiveComponent* OtherComp,
@@ -55,10 +70,16 @@ private:
         USphereComponent* BombSphere;
 
     UPROPERTY(VisibleDefaultsOnly)
-        UNiagaraComponent* BombParticle;
-
-    UPROPERTY(VisibleDefaultsOnly)
         UProjectileMovementComponent* Projectile;
+
+    UPROPERTY(EditAnywhere, Category = "Bomb")
+        UFXSystemAsset* BombEffect;
+
+    UPROPERTY(EditAnywhere, Category = "Bomb")
+        USoundBase* BombSound;
+
+    UPROPERTY(EditAnywhere, Category = "Bomb")
+        TSubclassOf<UMatineeCameraShake> BombCameraShake;
 
 
     UPROPERTY(EditDefaultsOnly, Category = "Damage")
@@ -66,15 +87,19 @@ private:
 
 
     UPROPERTY(EditDefaultsOnly, Category = "Spawn")
+        float SpawnForwardLocationFactor = 10;
+
+
+    UPROPERTY(EditDefaultsOnly, Category = "Bomb")
         float Speed = 300;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-        float BombRate = 2;
+    UPROPERTY(EditDefaultsOnly, Category = "Bomb")
+        float BombRate = 3;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-        float SpawnForwardLocationFactor = 10;
+    UPROPERTY(EditDefaultsOnly, Category = "Bomb")
+        float BombLaunch = 1000;
 
 private:
     FTimerHandle TimerHandle;
-    FVector Forward;
+    FVector Direction;
 };

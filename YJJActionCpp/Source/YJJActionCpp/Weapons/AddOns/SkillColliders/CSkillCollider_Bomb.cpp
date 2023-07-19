@@ -7,6 +7,8 @@
 #include "Animation/AnimMontage.h"
 #include "Components/SphereComponent.h"
 #include "Niagara/Public/NiagaraComponent.h"
+#include "Sound/SoundBase.h"
+#include "Camera/CameraShake.h"
 
 ACSkillCollider_Bomb::ACSkillCollider_Bomb()
 {
@@ -15,37 +17,46 @@ ACSkillCollider_Bomb::ACSkillCollider_Bomb()
 	YJJHelpers::CreateComponent<UParticleSystemComponent>(this, &Trail, "Trail", Particle);
 	YJJHelpers::CreateActorComponent<UProjectileMovementComponent>(this, &Projectile, "Projectile");
 	YJJHelpers::CreateComponent<USphereComponent>(this, &BombSphere, "BombSphere", Capsule);
-	YJJHelpers::CreateComponent<UNiagaraComponent>(this, &BombParticle, "BombParticle", BombSphere);
-
+	YJJHelpers::GetAsset<UFXSystemAsset>(&BombEffect, "NiagaraSystem'/Game/Assets/Effects/BigExplosions/Niagara/NS_Air_1.NS_Air_1'");
+	YJJHelpers::GetAsset<USoundBase>(&BombSound, "SoundCue'/Game/Assets/Sounds/Explosion_Sounds_Pro_HD_Remake/Cues/Explosion_Massive_1_Cue.Explosion_Massive_1_Cue'");
+	YJJHelpers::GetAsset<UAnimMontage>(&HitData.Montage, "AnimMontage'/Game/Character/Player/Montages/Common/CHit_Stop_Montage.CHit_Stop_Montage'");
+	YJJHelpers::GetClass<UMatineeCameraShake>(&BombCameraShake, "Blueprint'/Game/Magics/Bomb/CS_Bomb.CS_Bomb_C'");
 
 	Capsule->SetCapsuleHalfHeight(44);
 	Capsule->SetCapsuleRadius(44);
 
-	InitialLifeSpan = 10;
+	InitialLifeSpan = 4;
 
 	HitData.Launch = 0;
 	HitData.Power = 5;
-	YJJHelpers::GetAsset<UAnimMontage>(&HitData.Montage, "AnimMontage'/Game/Character/Player/Montages/Common/CHit_Stop_Montage.CHit_Stop_Montage'");
 
-	Projectile->ProjectileGravityScale = 1.5f;
-	Projectile->InitialSpeed = 1200;
+	Projectile->ProjectileGravityScale = 0.5f;
+	Projectile->InitialSpeed = 0;
 
-	BombSphere->SetAutoActivate(false);
+	BombSphere->Activate(false);
 	BombSphere->SetSphereRadius(1000);
 	BombSphere->SetCollisionProfileName("OverlapAll");
 	BombSphere->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+
+
+	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ACSkillCollider_Bomb::OnComponentBeginOverlap);
+
+	BombSphere->OnComponentBeginOverlap.AddDynamic(this, &ACSkillCollider_Bomb::OnBombComponentBeginOverlap);
+	BombSphere->OnComponentEndOverlap.AddDynamic(this, &ACSkillCollider_Bomb::OnBombComponentEndOverlap);
 }
 
 void ACSkillCollider_Bomb::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Forward = GetOwner()->GetActorForwardVector();
+	Direction = 
+		GetWorld()->GetFirstPlayerController()->GetControlRotation().Vector() + 
+		FVector(0, 0, 0.4f);
 
-	const FVector spawnLocation = GetOwner()->GetActorLocation() + Forward * SpawnForwardLocationFactor;
+	const FVector spawnLocation = GetOwner()->GetActorLocation() + Direction * SpawnForwardLocationFactor;
 	SetActorLocation(spawnLocation);
 
-	Projectile->Velocity = Forward * Projectile->InitialSpeed;
+	Projectile->Velocity = FVector::ZeroVector;
 
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle,
@@ -62,19 +73,64 @@ void ACSkillCollider_Bomb::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
-void ACSkillCollider_Bomb::Bomb()
+void ACSkillCollider_Bomb::Throw() const
 {
-	BombSphere->Activate(true);
-	BombSphere->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
-	
-	if (IsValid(BombSphere) && BombSphere->IsActive())
+	Projectile->InitialSpeed = 1200;
+	Projectile->Velocity = Direction * Projectile->InitialSpeed;
+}
+
+void ACSkillCollider_Bomb::Bomb() const
+{
+	if (IsValid(BombSphere))
 	{
-		BombSphere->OnComponentBeginOverlap.AddDynamic(this, &ACSkillCollider_Bomb::OnComponentBeginOverlap);
-		BombSphere->OnComponentEndOverlap.AddDynamic(this, &ACSkillCollider_Bomb::OnComponentEndOverlap);
+		BombSphere->Activate(true);
+		BombSphere->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+
+		if (IsValid(BombEffect))
+		{
+			YJJHelpers::PlayEffect(
+				GetWorld(),
+				Cast<UFXSystemAsset>(BombEffect),
+				BombSphere->GetComponentTransform());
+
+			UGameplayStatics::PlaySoundAtLocation(
+				GetWorld(), 
+				BombSound, 
+				GetActorLocation(), 
+				FRotator(0, 0, 0));
+
+			UGameplayStatics::PlayWorldCameraShake(
+				GetWorld(),
+				BombCameraShake,
+				GetActorLocation(),
+				0,
+				10000,
+				1,
+				false);
+		}
 	}
 }
 
-void ACSkillCollider_Bomb::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACSkillCollider_Bomb::OnComponentBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex, 
+	bool bFromSweep, 
+	const FHitResult& SweepResult)
+{
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+
+	Bomb();
+}
+
+void ACSkillCollider_Bomb::OnBombComponentBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex, 
+	bool bFromSweep, 
+	const FHitResult& SweepResult)
 {
 	CheckTrue(GetOwner() == OtherActor);
 
@@ -87,10 +143,21 @@ void ACSkillCollider_Bomb::OnComponentBeginOverlap(UPrimitiveComponent* Overlapp
 			Cast<ACCommonCharacter>(GetOwner()),
 			this,
 			character.Get());
+
+		// Causer가 발생시키는 Launch는 별도
+		FVector launch = (GetActorLocation() - character->GetActorLocation()) * BombLaunch;
+		launch.Z = 0;
+		character->LaunchCharacter(launch, false, false);
+
+		Hitted.Emplace(character.Get());
 	}
 }
 
-void ACSkillCollider_Bomb::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ACSkillCollider_Bomb::OnBombComponentEndOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex)
 {
 	CheckTrue(GetOwner() == OtherActor);
 

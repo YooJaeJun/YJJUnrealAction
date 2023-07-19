@@ -34,22 +34,15 @@ ACAnimal_AI::ACAnimal_AI()
 	YJJHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
 	YJJHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
 
-	if (IsValid(StateComp))
-		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACAnimal_AI::OnStateTypeChanged);
+	StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACAnimal_AI::OnStateTypeChanged);
 
-	if (IsValid(MovementComp))
-	{
-		MovementComp->SetSpeeds(Speeds);
-		MovementComp->SetSpeed(CESpeedType::Sprint);
-		MovementComp->SetFriction(2.0f, 256.0f);
-		MovementComp->SetJumpZ(700.0f);
-	}
+	MovementComp->SetSpeeds(Speeds);
+	MovementComp->SetSpeed(CESpeedType::Sprint);
+	MovementComp->SetFriction(2.0f, 256.0f);
+	MovementComp->SetJumpZ(700.0f);
 
-	if (IsValid(CamComp))
-	{
-		CamComp->EnableControlRotation();
-		CamComp->DisableFixedCamera();
-	}
+	CamComp->EnableControlRotation();
+	CamComp->DisableFixedCamera();
 
 	YJJHelpers::GetAsset<USoundBase>(&LandSound,
 		TEXT("SoundCue'/Game/Assets/Sounds/Footsteps/Run/Stone/SC_Footstep_Stone_Run.SC_Footstep_Stone_Run'"));
@@ -59,21 +52,14 @@ ACAnimal_AI::ACAnimal_AI()
 
 	YJJHelpers::GetClass<AActor>(&EyeClass, "Blueprint'/Game/Character/Animals/CBP_Eye.CBP_Eye_C'");
 
-	if (IsValid(SpringArm))
-	{
-		SpringArm->bDoCollisionTest = false;
-		SpringArm->SetRelativeLocation(FVector(0, 3, 100));
-		SpringArm->SetRelativeRotation(FRotator(-5, 90, 0));
-	}
+	SpringArm->bDoCollisionTest = false;
+	SpringArm->SetRelativeLocation(FVector(0, 3, 100));
+	SpringArm->SetRelativeRotation(FRotator(-5, 90, 0));
 
-	if (IsValid(MountLeftPoint))
-		MountLeftPoint->SetRelativeLocation(FVector(40, 0, 80));
-	if (IsValid(MountRightPoint))
-		MountRightPoint->SetRelativeLocation(FVector(-40, 0, 80));
-	if (IsValid(MountBackPoint))
-		MountBackPoint->SetRelativeLocation(FVector(0, -60, 80));
-	if (IsValid(UnmountPoint))
-		UnmountPoint->SetRelativeLocation(FVector(-40, 0, 80));
+	MountLeftPoint->SetRelativeLocation(FVector(40, 0, 80));
+	MountRightPoint->SetRelativeLocation(FVector(-40, 0, 80));
+	MountBackPoint->SetRelativeLocation(FVector(0, -60, 80));
+	UnmountPoint->SetRelativeLocation(FVector(-40, 0, 80));
 
 	AIControllerClass = ACAIController_Melee::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;

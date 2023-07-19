@@ -12,15 +12,24 @@ void UCAct_Bomb::Act()
 	Super::Act();
 
 	ActDatas[0].Act(Owner);
+
+	FActorSpawnParameters params;
+	params.Owner = Owner.Get();
+	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	Bomb = Owner->GetWorld()->SpawnActor<ACSkillCollider_Bomb>(BombClass, params);
+
+	Bomb->AttachToComponent(
+		Owner->GetMesh(), 
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
+		"hand_r");
 }
 
 void UCAct_Bomb::Begin_Act()
 {
 	Super::Begin_Act();
 
-	FActorSpawnParameters params;
-	params.Owner = Owner.Get();
-	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	Bomb->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
-	Owner->GetWorld()->SpawnActor<ACSkillCollider_Bomb>(BombClass, params);
+	Bomb->Throw();
 }

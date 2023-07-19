@@ -10,6 +10,7 @@ class ACAttachment;
 class UCAct;
 class USpringArmComponent;
 class UCameraComponent;
+class UCGameUIComponent;
 
 USTRUCT()
 struct FAimData
@@ -57,6 +58,9 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Aiming")
+		UCGameUIComponent* GameUIComp;
+
+	UPROPERTY(EditAnywhere, Category = "Aiming")
 		UCurveVector* Curve;
 
 	UPROPERTY(EditAnywhere, Category = "Aiming")
@@ -70,5 +74,6 @@ private:
 	TWeakObjectPtr<UCameraComponent> Camera;
 	FTimeline Timeline;
 	FAimData OriginData;
+
 	float* Bend = nullptr;
 };
