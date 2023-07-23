@@ -1,3 +1,4 @@
+#include "Commons/CGameMode.h"
 #include "Global.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/CUserWidget_HUD.h"
