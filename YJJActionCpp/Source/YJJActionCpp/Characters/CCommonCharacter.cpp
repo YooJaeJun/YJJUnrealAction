@@ -86,6 +86,8 @@ void ACCommonCharacter::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 
 	CheckNull(StateComp);
+	CheckFalse(StateComp->IsFallMode());
+
 	StateComp->SetIdleMode();
 }
 
@@ -112,6 +114,7 @@ float ACCommonCharacter::TakeDamage(
 void ACCommonCharacter::Rise()
 {
 	CheckNull(MontagesComp);
+
 	MontagesComp->PlayRiseAnim();
 }
 
@@ -136,13 +139,11 @@ void ACCommonCharacter::Dead()
 	MontagesComp->PlayDeadAnim();
 
 	FTimerHandle DestroyDelayTimerHandle;
-	GetWorldTimerManager().SetTimer(DestroyDelayTimerHandle, [this]() -> void {
-		Destroy();
+	GetWorldTimerManager().SetTimer(
+		DestroyDelayTimerHandle, 
+		[this]() -> void {
+			Destroy();
 		}, 1.5f, false, 1.5f);
-}
-
-void ACCommonCharacter::End_Hit()
-{
 }
 
 void ACCommonCharacter::End_Dead()
@@ -154,13 +155,6 @@ void ACCommonCharacter::End_Rise()
 {
 	CheckNull(StateComp);
 	StateComp->SetIdleMode();
-}
-
-void ACCommonCharacter::RestoreColor()
-{
-	ChangeColor(this, OriginColor);
-
-	GetWorld()->GetTimerManager().ClearTimer(RestoreColor_TimerHandle);
 }
 
 void ACCommonCharacter::SetMyCurController(const TWeakObjectPtr<AController> InController)

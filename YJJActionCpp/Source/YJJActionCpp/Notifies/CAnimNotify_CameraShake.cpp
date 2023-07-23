@@ -11,6 +11,7 @@ FString UCAnimNotify_CameraShake::GetNotifyName_Implementation() const
 void UCAnimNotify_CameraShake::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	Super::Notify(MeshComp, Animation);
+
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 

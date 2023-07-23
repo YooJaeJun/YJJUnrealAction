@@ -11,6 +11,7 @@ FString UCAnimNotify_Begin_Act::GetNotifyName_Implementation() const
 void UCAnimNotify_Begin_Act::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	Super::Notify(MeshComp, Animation);
+
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 

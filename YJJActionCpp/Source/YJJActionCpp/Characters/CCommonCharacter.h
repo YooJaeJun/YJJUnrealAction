@@ -42,7 +42,6 @@ UCLASS(Abstract)
 class YJJACTIONCPP_API ACCommonCharacter :
 	public ACharacter,
 	public ICInterface_CharacterState,
-	public ICInterface_CharacterBody,
 	public ICInterface_IK
 {
 	GENERATED_BODY()
@@ -74,7 +73,6 @@ protected:
 	virtual void Dead() override;
 
 public:
-	virtual void End_Hit() override;
 	virtual void End_Dead() override;
 	virtual void End_Rise() override;
 
@@ -86,10 +84,6 @@ public:
 
 	virtual UCTargetingComponent* GetTargetingComp() const
 		PURE_VIRTUAL(ACCommonCharacter::GetTargetingComp, return nullptr;);
-
-private:
-	UFUNCTION()
-		void RestoreColor();
 
 public:
 	// 라이딩 시 PlayerController와 AIController 전환 시 사용

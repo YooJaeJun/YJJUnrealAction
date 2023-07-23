@@ -44,6 +44,7 @@ ACAIController::ACAIController()
 void ACAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+
 	RunAI();
 }
 

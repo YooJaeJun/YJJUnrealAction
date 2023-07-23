@@ -164,10 +164,10 @@ void UCRidingComponent::EndOverlap(
 {
 	CheckNull(Interaction);
 
-	const auto animal = Cast<ACAnimal_AI>(Owner);
+	const TWeakObjectPtr<ACAnimal_AI> animal = Cast<ACAnimal_AI>(Owner);
 	CheckNull(animal);
 
-	const auto interactor = Cast<ACPlayableCharacter>(OtherActor);
+	const TWeakObjectPtr<ACPlayableCharacter> interactor = Cast<ACPlayableCharacter>(OtherActor);
 	CheckNull(interactor);
 
 	SetInteractor(interactor, nullptr);
@@ -347,15 +347,13 @@ void UCRidingComponent::Tick_Mounting()
 	CheckNull(Rider->GetMesh()->GetAnimInstance());
 
 	// 탑승중애니 - 탑승후루프애니
-	// 몽타주 블렌드 아웃 되는 시점에 딱
-	if (false == Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.IsBound())
-		Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddUniqueDynamic(
-			this, &UCRidingComponent::InterpToRiderPos);
+	// 몽타주 블렌드 아웃 되는 시점에 정확히
+	Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddUniqueDynamic(
+		this, &UCRidingComponent::InterpToRiderPos);
 
-	// Attach - 몽타주 끝나는 시점에 딱
-	if (false == Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.IsBound())
-		Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.AddUniqueDynamic(
-			this, &UCRidingComponent::AttachToRiderPoint);
+	// Attach - 몽타주 끝나는 시점에 정확히
+	Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.AddUniqueDynamic(
+		this, &UCRidingComponent::AttachToRiderPoint);
 
 
 	UGameplayStatics::PlaySoundAtLocation(this, MountSound, Owner->GetActorLocation());
@@ -443,7 +441,6 @@ void UCRidingComponent::Tick_Riding() const
 	else
 		CamComp->DisableFixedCamera();
 
-	// TODO Zoom
 	// TODO Height UI
 }
 
