@@ -7,7 +7,8 @@
 class UCapsuleComponent;
 class USphereComponent;
 class UParticleSystemComponent;
-class UFXSystemAsset;
+class UParticleSystem;
+class UNiagaraSystem;
 class UProjectileMovementComponent;
 class USoundBase;
 class UMatineeCameraShake;
@@ -61,19 +62,27 @@ private:
         UCapsuleComponent* Capsule;
 
     UPROPERTY(VisibleDefaultsOnly)
-        UParticleSystemComponent* Particle;
+        UParticleSystemComponent* ParticleComp;
 
     UPROPERTY(VisibleDefaultsOnly)
-        UParticleSystemComponent* Trail;
+        UParticleSystem* ParticleAsset;
+
+    UPROPERTY(VisibleDefaultsOnly)
+        UParticleSystemComponent* TrailComp;
+
+    UPROPERTY(VisibleDefaultsOnly)
+        UParticleSystem* TrailAsset;
 
     UPROPERTY(VisibleDefaultsOnly)
         USphereComponent* BombSphere;
 
-    UPROPERTY(VisibleDefaultsOnly)
+
+    UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
         UProjectileMovementComponent* Projectile;
 
+
     UPROPERTY(EditAnywhere, Category = "Bomb")
-        UFXSystemAsset* BombEffect;
+        UNiagaraSystem* BombEffectAsset;
 
     UPROPERTY(EditAnywhere, Category = "Bomb")
         USoundBase* BombSound;

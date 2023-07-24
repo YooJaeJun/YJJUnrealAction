@@ -59,7 +59,7 @@ void AYJJActionCppUE5Character::BeginPlay()
 		}
 	}
 
-	GLog->Log("Player Begin Play");
+	GLog->Log("Begin Play (Player)");
 }
 
 //////////////////////////////////////////////////////////////////////////

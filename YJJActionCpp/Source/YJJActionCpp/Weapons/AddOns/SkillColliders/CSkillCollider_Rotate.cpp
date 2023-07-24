@@ -72,7 +72,13 @@ void ACSkillCollider_Rotate::Tick(float DeltaTime)
 	SetActorRotation(FRotator(0, Angle, 0));
 }
 
-void ACSkillCollider_Rotate::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACSkillCollider_Rotate::OnComponentBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex, 
+	bool bFromSweep, 
+	const FHitResult& SweepResult)
 {
 	CheckTrue(GetOwner() == OtherActor);
 
@@ -81,7 +87,11 @@ void ACSkillCollider_Rotate::OnComponentBeginOverlap(UPrimitiveComponent* Overla
 		Hitted.AddUnique(character.Get());
 }
 
-void ACSkillCollider_Rotate::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ACSkillCollider_Rotate::OnComponentEndOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex)
 {
 	CheckTrue(GetOwner() == OtherActor);
 

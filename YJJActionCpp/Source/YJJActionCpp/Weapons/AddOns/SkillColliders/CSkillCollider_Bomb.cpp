@@ -13,14 +13,19 @@
 ACSkillCollider_Bomb::ACSkillCollider_Bomb()
 {
 	YJJHelpers::CreateComponent<UCapsuleComponent>(this, &Capsule, "Capsule");
-	YJJHelpers::CreateComponent<UParticleSystemComponent>(this, &Particle, "Particle", Capsule);
-	YJJHelpers::CreateComponent<UParticleSystemComponent>(this, &Trail, "Trail", Particle);
+	YJJHelpers::CreateComponent<UParticleSystemComponent>(this, &ParticleComp, "Particle", Capsule);
+	YJJHelpers::CreateComponent<UParticleSystemComponent>(this, &TrailComp, "Trail", Capsule);
 	YJJHelpers::CreateActorComponent<UProjectileMovementComponent>(this, &Projectile, "Projectile");
 	YJJHelpers::CreateComponent<USphereComponent>(this, &BombSphere, "BombSphere", Capsule);
-	YJJHelpers::GetAsset<UFXSystemAsset>(&BombEffect, "NiagaraSystem'/Game/Assets/Effects/BigExplosions/Niagara/NS_Air_1.NS_Air_1'");
 	YJJHelpers::GetAsset<USoundBase>(&BombSound, "SoundCue'/Game/Assets/Sounds/Explosion_Sounds_Pro_HD_Remake/Cues/Explosion_Massive_1_Cue.Explosion_Massive_1_Cue'");
 	YJJHelpers::GetAsset<UAnimMontage>(&HitData.Montage, "AnimMontage'/Game/Character/Player/Montages/Common/CHit_Stop_Montage.CHit_Stop_Montage'");
 	YJJHelpers::GetClass<UMatineeCameraShake>(&BombCameraShake, "Blueprint'/Game/Magics/Bomb/CS_Bomb.CS_Bomb_C'");
+	YJJHelpers::GetAsset<UParticleSystem>(&ParticleAsset, "ParticleAsset'/Game/Assets/Effects/EasySurvivalRPG/Effects/PS_Meteor_Projectile.PS_Meteor_Projectile'");
+	YJJHelpers::GetAsset<UParticleSystem>(&TrailAsset, "ParticleAsset'/Game/Assets/Effects/Trail_Trace/Blueprint_Splines/Effects/P_Trail_Trace_Red.P_Trail_Trace_Red'");
+	YJJHelpers::GetAsset<UNiagaraSystem>(&BombEffectAsset, "NiagaraSystem'/Game/Assets/Effects/BigExplosions/Niagara/NS_Air_1.NS_Air_1'");
+	
+	ParticleComp->Template = ParticleAsset;
+	TrailComp->Template = TrailAsset;
 
 	Capsule->SetCapsuleHalfHeight(44);
 	Capsule->SetCapsuleRadius(44);
@@ -85,29 +90,35 @@ void ACSkillCollider_Bomb::Bomb() const
 	{
 		BombSphere->Activate(true);
 		BombSphere->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+	}
 
-		if (IsValid(BombEffect))
-		{
-			YJJHelpers::PlayEffect(
-				GetWorld(),
-				Cast<UFXSystemAsset>(BombEffect),
-				BombSphere->GetComponentTransform());
+	if (IsValid(BombEffectAsset))
+	{
+		YJJHelpers::PlayEffect(
+			GetWorld(),
+			BombEffectAsset,
+			BombSphere->GetComponentTransform());
+	}
 
-			UGameplayStatics::PlaySoundAtLocation(
-				GetWorld(), 
-				BombSound, 
-				GetActorLocation(), 
-				FRotator(0, 0, 0));
+	if (IsValid(BombSound))
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			BombSound,
+			GetActorLocation(),
+			FRotator(0, 0, 0));
+	}
 
-			UGameplayStatics::PlayWorldCameraShake(
-				GetWorld(),
-				BombCameraShake,
-				GetActorLocation(),
-				0,
-				10000,
-				1,
-				false);
-		}
+	if (IsValid(BombCameraShake))
+	{
+		UGameplayStatics::PlayWorldCameraShake(
+			GetWorld(),
+			BombCameraShake,
+			GetActorLocation(),
+			0,
+			10000,
+			1,
+			false);
 	}
 }
 

@@ -59,7 +59,13 @@ void ACSkillCollider_Throw::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
-void ACSkillCollider_Throw::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACSkillCollider_Throw::OnComponentBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex, 
+	bool bFromSweep, 
+	const FHitResult& SweepResult)
 {
 	CheckTrue(GetOwner() == OtherActor);
 
@@ -68,7 +74,11 @@ void ACSkillCollider_Throw::OnComponentBeginOverlap(UPrimitiveComponent* Overlap
 		Hitted.AddUnique(character.Get());
 }
 
-void ACSkillCollider_Throw::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ACSkillCollider_Throw::OnComponentEndOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex)
 {
 	CheckTrue(GetOwner() == OtherActor);
 
