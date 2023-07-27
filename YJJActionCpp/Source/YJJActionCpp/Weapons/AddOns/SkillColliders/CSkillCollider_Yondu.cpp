@@ -12,11 +12,14 @@
 
 ACSkillCollider_Yondu::ACSkillCollider_Yondu()
 {
-	YJJHelpers::CreateComponent<USceneComponent>(this, &ArrowRoot, "ArrowRoot");
+	PrimaryActorTick.bCanEverTick = true;
+
+	YJJHelpers::CreateComponent<USceneComponent>(this, &Root, "Root");
+	YJJHelpers::CreateComponent<USceneComponent>(this, &ArrowRoot, "ArrowRoot", Root);
 	YJJHelpers::CreateComponent<UCapsuleComponent>(this, &Capsule, "Capsule", ArrowRoot);
 	YJJHelpers::CreateComponent<UParticleSystemComponent>(this, &ParticleComp, "Particle", Capsule);
 	YJJHelpers::CreateComponent<UNiagaraComponent>(this, &TrailComp, "Trail", Capsule);
-	YJJHelpers::CreateComponent<USplineComponent>(this, &SplineComp, "Spline", ArrowRoot);
+	YJJHelpers::CreateComponent<USplineComponent>(this, &SplineComp, "Spline", Root);
 
 	YJJHelpers::GetAsset<UAnimMontage>(&HitData.Montage, "AnimMontage'/Game/Character/Player/Montages/Common/CHit_Stop_Montage.CHit_Stop_Montage'");
 	YJJHelpers::GetAsset<UParticleSystem>(&ParticleAsset, "ParticleSystem'/Game/Assets/Effects/ArcherySystem/Assets/FX/Particles/Core/P_SingleTargetCore_Projectile.P_SingleTargetCore_Projectile'");
@@ -29,8 +32,6 @@ ACSkillCollider_Yondu::ACSkillCollider_Yondu()
 	Capsule->SetCapsuleHalfHeight(44);
 	Capsule->SetCapsuleRadius(44);
 
-	InitialLifeSpan = 4;
-
 	HitData.Launch = 0;
 	HitData.Power = 3;
 
@@ -42,32 +43,46 @@ void ACSkillCollider_Yondu::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerCharacter = Cast<ACCommonCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-
-	SetActorLocation(OwnerCharacter->GetActorLocation() + SpawnLocation);
+	Owner = Cast<ACCommonCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
 	Targets.Empty();
 
-	Shoot();
+	ArrowRoot->SetWorldTransform(DefaultTransform);
+
+	ProjectileState = CEProjectileState::Ready;
 }
 
 void ACSkillCollider_Yondu::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	CheckFalse(bShot);
-
-	if (MovedDistance < SplineComp->GetSplineLength())
+	switch (ProjectileState)
 	{
-		const FTransform splineLoad = 
-			SplineComp->GetTransformAtDistanceAlongSpline(MovedDistance, ESplineCoordinateSpace::World, false);
-
-		ArrowRoot->SetWorldTransform(splineLoad);
-
-		MovedDistance += GetWorld()->DeltaTimeSeconds * Speed;
+	case CEProjectileState::Ready:
+	{
+		ArrowRoot->SetWorldTransform(DefaultTransform);
 	}
-	else
-		SetTarget();
+	break;
+
+	case CEProjectileState::Shooting:
+	{
+		if (MovedDistance < SplineComp->GetSplineLength())
+		{
+			const FTransform splineLoad =
+				SplineComp->GetTransformAtDistanceAlongSpline(
+					MovedDistance,
+					ESplineCoordinateSpace::World,
+					false);
+
+			ArrowRoot->SetWorldTransform(splineLoad);
+
+			MovedDistance += GetWorld()->DeltaTimeSeconds * Speed;
+		}
+		else
+			ComeBack();
+	}
+	break;
+	}//switch(ProjectileState)
 }
 
 void ACSkillCollider_Yondu::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -79,24 +94,41 @@ void ACSkillCollider_Yondu::Shoot()
 {
 	SetTarget();
 
-	bShot = true;
+	ProjectileState = CEProjectileState::Shooting;
+
+	SetActorTransform(DefaultTransform);
 
 	FTimerHandle timerHandle;
 	GetWorld()->GetTimerManager().SetTimer(
 		timerHandle,
 		[this]() {
-			bShot = false;
+			End();
 		},
 		EndTime,
-			false);
+		false);
+}
+
+void ACSkillCollider_Yondu::ComeBack()
+{
+	SplineComp->AddSplinePoint(
+		DefaultTransform.GetLocation(),
+		ESplineCoordinateSpace::World);
+
+	ProjectileState = CEProjectileState::ComeBack;
+}
+
+void ACSkillCollider_Yondu::End()
+{
+	MovedDistance = 0;
+	Targets.Empty();
+	SplineComp->ClearSplinePoints();
+
+	ProjectileState = CEProjectileState::Ready;
 }
 
 void ACSkillCollider_Yondu::SetTarget()
 {
-	const FVector spawnLocation = OwnerCharacter->GetActorLocation() + SpawnLocation;
-	SetActorLocation(spawnLocation);
-
-	const TArray<AActor*> ignores{ OwnerCharacter.Get() };
+	const TArray<AActor*> ignores{ Owner.Get() };
 	TArray<FHitResult> hitResults;
 	const TArray<TEnumAsByte<EObjectTypeQuery>> query{ EObjectTypeQuery::ObjectTypeQuery3 };
 
@@ -126,7 +158,7 @@ void ACSkillCollider_Yondu::SetTarget()
 		const TWeakObjectPtr<UCCharacterInfoComponent> info =
 			YJJHelpers::GetComponent<UCCharacterInfoComponent>(other.Get());
 
-		if (true == info->IsSameGroup(OwnerCharacter.Get()))
+		if (true == info->IsSameGroup(Owner.Get()))
 			continue;
 
 		if (true == Targets.Contains(other))
@@ -134,7 +166,10 @@ void ACSkillCollider_Yondu::SetTarget()
 
 		Targets.Add(other);
 
-		SplineComp->AddSplinePoint(other->GetActorLocation(), ESplineCoordinateSpace::World, true);
+		SplineComp->AddSplinePoint(
+			other->GetActorLocation(), 
+			ESplineCoordinateSpace::World, 
+			true);
 	}
 }
 

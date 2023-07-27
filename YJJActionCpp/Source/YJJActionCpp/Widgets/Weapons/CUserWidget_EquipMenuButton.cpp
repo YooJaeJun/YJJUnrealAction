@@ -22,7 +22,8 @@ void UCUserWidget_EquipMenuButton::OnHovered()
 
 	CurWeaponType = YJJHelpers::ConvertFStringToEnum<CEWeaponType>(WeaponStr);
 
-	OnWeaponTypeHovered.ExecuteIfBound(CurWeaponType);
+	if (false == OnWeaponTypeHovered.ExecuteIfBound(CurWeaponType))
+		CLog::Log("OnWeaponTypeHovered Failed");
 }
 
 void UCUserWidget_EquipMenuButton::OnUnhovered()

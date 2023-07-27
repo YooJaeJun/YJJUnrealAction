@@ -35,6 +35,7 @@ ACAnimal::ACAnimal()
 
 	StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACAnimal::OnStateTypeChanged);
 
+
 	MovementComp->SetSpeeds(Speeds);
 	MovementComp->SetSpeed(CESpeedType::Sprint);
 	MovementComp->SetFriction(2.0f, 256.0f);
@@ -64,6 +65,10 @@ ACAnimal::ACAnimal()
 void ACAnimal::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (IsValid(MovementComp))
+		MovementComp->InputAction_Run();
+
 	if (IsValid(RidingComp) && IsValid(InteractionCollision))
 	{
 		InteractionCollision->OnComponentBeginOverlap.AddDynamic(

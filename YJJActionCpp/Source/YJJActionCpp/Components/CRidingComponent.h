@@ -150,17 +150,32 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 		USoundBase* UnmountSound;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+	UPROPERTY(EditDefaultsOnly, Category = "MoveComponetTo")
 		float OverTime_Camera = 0.7f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		float OverTime_Mount = 0.4f;
+	UPROPERTY(EditDefaultsOnly, Category = "MoveComponetTo")
+		float OverTime_Mount = 0.3f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
+	UPROPERTY(EditDefaultsOnly, Category = "MoveComponetTo")
 		float OverTime_RiderPos = 0.2f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		float OverTime_Unmount = 0.5f;
+	UPROPERTY(EditDefaultsOnly, Category = "MoveComponetTo")
+		float OverTime_Unmount = 1;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Anim")
+		float MountAnimPlayRate = 1.2f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Anim")
+		float MountZFactor = 50;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Anim")
+		float MountRotationZFactor = 100;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Anim")
+		float UnmountAnimPlayRate = 1.5f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Anim")
+		float UnmountZFactor = 50;
 
 	UPROPERTY(EditDefaultsOnly, Category = "IK")
 		float LegIKAlpha = 0.2f;
@@ -185,7 +200,7 @@ private:
 	TWeakObjectPtr<UBoxComponent> InteractionCollision;
 	TWeakObjectPtr<UCUserWidget_Interaction> Interaction;
 	CEDirection MountDirection;
-	float MountRotationZFactor = 0.0f;
+	float CurMountRotationZFactor = 0.0f;
 	float Zooming = 0.0f;
 
 	TEnumAsByte<EMoveComponentAction::Type> eMoveAction;

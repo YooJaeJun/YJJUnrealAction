@@ -165,7 +165,8 @@ void UCTargetingComponent::Tick_Targeting()
 	const FRotator ownerToTarget = UKismetMathLibrary::FindLookAtRotation(
 		Owner->GetActorLocation(), Target->GetActorLocation());
 
-	if (true == UKismetMathLibrary::EqualEqual_RotatorRotator(controlRotation, ownerToTarget, FinishAngle))
+	if (true == UKismetMathLibrary::EqualEqual_RotatorRotator(
+		controlRotation, ownerToTarget, FinishAngle))
 	{
 		Controller->SetControlRotation(ownerToTarget);
 
@@ -174,7 +175,8 @@ void UCTargetingComponent::Tick_Targeting()
 	}
 	else
 	{
-		const FRotator rotator = UKismetMathLibrary::RInterpTo(controlRotation, 
+		const FRotator rotator = UKismetMathLibrary::RInterpTo(
+			controlRotation, 
 			ownerToTarget, 
 			UGameplayStatics::GetWorldDeltaSeconds(GetWorld()), 
 			InterpSpeed);
@@ -221,7 +223,11 @@ void UCTargetingComponent::ChangeFocus(const bool InbRight)
 
 	TMap<float, TWeakObjectPtr<ACCommonCharacter>> nearCharacters;
 
-	YJJHelpers::AddNearSideCharacters(Owner, targets, Owner->GetMyCurController(), nearCharacters);
+	YJJHelpers::AddNearSideCharacters(
+		Owner, 
+		targets, 
+		Owner->GetMyCurController(), 
+		nearCharacters);
 
 	float minAngle = 1e9;
 

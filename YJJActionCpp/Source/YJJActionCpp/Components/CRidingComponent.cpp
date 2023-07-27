@@ -234,32 +234,34 @@ void UCRidingComponent::CheckValidPoint()
 			candidateRight, 
 			candidateBack));
 
-	if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateLeft, 50))
+	constexpr float nearFactor = 50;
+
+	if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateLeft, nearFactor))
 	{
 		RidingPoints[static_cast<uint8>(CERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(CERidingPoint::CandidateLeft)];
 
 		MountDirection = CEDirection::Left;
 
-		MountRotationZFactor = 100.0f;
+		CurMountRotationZFactor = MountRotationZFactor;
 	}
-	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateRight, 50))
+	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateRight, nearFactor))
 	{
 		RidingPoints[static_cast<uint8>(CERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(CERidingPoint::CandidateRight)];
 
 		MountDirection = CEDirection::Right;
 
-		MountRotationZFactor = -100.0f;
+		CurMountRotationZFactor = -MountRotationZFactor;
 	}
-	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateBack, 50))
+	else if (UKismetMathLibrary::NearlyEqual_FloatFloat(minCandidate, candidateBack, nearFactor))
 	{
 		RidingPoints[static_cast<uint8>(CERidingPoint::CurMount)] =
 			RidingPoints[static_cast<uint8>(CERidingPoint::CandidateBack)];
 
 		MountDirection = CEDirection::Back;
 
-		MountRotationZFactor = 0.0f;
+		CurMountRotationZFactor = 0;
 	}
 }
 
@@ -268,9 +270,12 @@ bool UCRidingComponent::MoveToPoint(
 	const TWeakObjectPtr<USceneComponent> To)
 {
 	bool reached = true;
+	constexpr float nearFactor = 15;
+	bool bCheck = true;
+	bCheck &= UKismetMathLibrary::NearlyEqual_FloatFloat(Char->GetActorLocation().X, To->GetComponentLocation().X, nearFactor);
+	bCheck &= UKismetMathLibrary::NearlyEqual_FloatFloat(Char->GetActorLocation().Y, To->GetComponentLocation().Y, nearFactor);
 
-	if (UKismetMathLibrary::NearlyEqual_FloatFloat(Char->GetActorLocation().X, To->GetComponentLocation().X, 15.0f) &&
-		UKismetMathLibrary::NearlyEqual_FloatFloat(Char->GetActorLocation().Y, To->GetComponentLocation().Y, 15.0f))
+	if (bCheck)
 	{
 		Rider->GetCharacterMovement()->StopMovementImmediately();
 		RidingPoints[static_cast<uint8>(CERidingPoint::CurMount)] = nullptr;
@@ -280,7 +285,9 @@ bool UCRidingComponent::MoveToPoint(
 	{
 		const FVector unitDirection = 
 			UKismetMathLibrary::GetDirectionUnitVector(Char->GetActorLocation(), To->GetComponentLocation());
-		Rider->AddMovementInput(unitDirection, 1.0f);
+
+		constexpr float scaleValue = 2;
+		Rider->AddMovementInput(unitDirection, scaleValue);
 		reached = false;
 	}
 
@@ -322,14 +329,14 @@ void UCRidingComponent::PossessAndInterpToCamera()
 void UCRidingComponent::Tick_Mounting()
 {
 	FVector targetPos = RidingPoints[static_cast<uint8>(CERidingPoint::Rider)]->GetComponentLocation();
-	targetPos.Z += 20.0f;
+	targetPos.Z += MountZFactor;
 
 	FRotator targetRot = RidingPoints[static_cast<uint8>(CERidingPoint::Rider)]->GetComponentRotation();
-	targetRot = FRotator(0, targetRot.Yaw + MountRotationZFactor, 0);
+	targetRot = FRotator(0, targetRot.Yaw + CurMountRotationZFactor, 0);
 
 	latentInfo.CallbackTarget = Rider.Get();
 
-	// 탑승 후 위치, 방향으로
+	// 탑승 중간 지점 위치, 방향으로
 	UKismetSystemLibrary::MoveComponentTo(
 		Rider->GetRootComponent(), 
 		targetPos, 
@@ -341,7 +348,7 @@ void UCRidingComponent::Tick_Mounting()
 		eMoveAction, 
 		latentInfo);
 
-	Rider->PlayAnimMontage(MountAnims[static_cast<uint8>(MountDirection)], 1.0f);
+	Rider->PlayAnimMontage(MountAnims[static_cast<uint8>(MountDirection)], MountAnimPlayRate);
 
 	CheckNull(Rider->GetMesh());
 	CheckNull(Rider->GetMesh()->GetAnimInstance());
@@ -366,6 +373,7 @@ void UCRidingComponent::InterpToRiderPos(UAnimMontage* Anim, bool bInterrupted)
 	const FVector riderPos = RidingPoints[static_cast<uint8>(CERidingPoint::Rider)]->GetComponentLocation();
 	const FRotator riderRot = RidingPoints[static_cast<uint8>(CERidingPoint::Rider)]->GetComponentRotation();
 
+	// 실제 탑승 후 위치, 방향으로
 	UKismetSystemLibrary::MoveComponentTo(
 		Rider->GetRootComponent(), 
 		riderPos, 
@@ -408,6 +416,7 @@ void UCRidingComponent::Tick_MountingEnd()
 	Rider->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	MovementComp->Move();
+	MovementComp->InputAction_Run();
 
 	SpringArm->bUsePawnControlRotation = true;
 
@@ -469,20 +478,20 @@ void UCRidingComponent::Tick_Unmounting()
 	Rider->SetActorLocation(FVector(
 		Rider->GetActorLocation().X, 
 		Rider->GetActorLocation().Y, 
-		Rider->GetActorLocation().Z + 30.0f));
+		Rider->GetActorLocation().Z + UnmountZFactor));
 
 	Rider->SetActorRotation(FRotator(0, 0, 0));
 
-	Rider->PlayAnimMontage(UnmountAnim, 1.2f);
+	Rider->PlayAnimMontage(UnmountAnim, UnmountAnimPlayRate);
 
 
 	UnpossessAndInterpToCamera();
 
 	// 탑승 후 위치, 방향으로
-	FVector targetPos = RidingPoints[static_cast<uint8>(CERidingPoint::Unmount)]->GetComponentLocation();
-	targetPos.Z += 20.0f;
+	const FVector targetPos = RidingPoints[static_cast<uint8>(CERidingPoint::Unmount)]->GetComponentLocation();
+	//targetPos.Z += MountZFactor;
 	FRotator targetRot = RidingPoints[static_cast<uint8>(CERidingPoint::Unmount)]->GetComponentRotation();
-	targetRot = FRotator(0, targetRot.Yaw + MountRotationZFactor, 0);
+	targetRot = FRotator(0, targetRot.Yaw + CurMountRotationZFactor, 0);
 
 	latentInfo.CallbackTarget = Rider.Get();
 

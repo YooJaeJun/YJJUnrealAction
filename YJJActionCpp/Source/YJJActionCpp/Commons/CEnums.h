@@ -92,3 +92,13 @@ enum class CEBehaviorType : uint8
 	Ride,
 	Max
 };
+
+UENUM(BlueprintType)
+enum class CEProjectileState : uint8
+{
+	None,
+	Ready,
+	Shooting,
+	ComeBack,
+	End
+};

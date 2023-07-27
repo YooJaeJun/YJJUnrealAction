@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "Weapons/AddOns/CSkillCollider.h"
 #include "Weapons/CWeaponStructures.h"
+#include "Commons/CEnums.h"
 #include "CSkillCollider_Yondu.generated.h"
 
 class UCapsuleComponent;
@@ -27,9 +28,14 @@ protected:
 
 public:
     void Shoot();
+    void ComeBack();
+    void End();
 
 private:
     void SetTarget();
+
+public:
+    FORCEINLINE void SetDefaultTransform(const FTransform& InTransform) { DefaultTransform = InTransform; }
 
 private:
     UFUNCTION()
@@ -49,6 +55,9 @@ private:
             int32 OtherBodyIndex);
 
 private:
+    UPROPERTY(VisibleDefaultsOnly)
+        USceneComponent* Root;
+
     UPROPERTY(VisibleDefaultsOnly)
         USceneComponent* ArrowRoot;
 
@@ -70,16 +79,16 @@ private:
     UPROPERTY(EditAnywhere, Category = "Spline")
         USplineComponent* SplineComp;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Spline")
+        TEnumAsByte<CEProjectileState> ProjectileState = CEProjectileState::None;
+
 
     UPROPERTY(EditDefaultsOnly, Category = "Damage")
         FHitData HitData;
 
 
     UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-        float Speed = 300;
-
-    UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-        FVector SpawnLocation = FVector(0, 50, 50);
+        FTransform DefaultTransform;
 
     UPROPERTY(EditDefaultsOnly, Category = "Spawn")
         float TraceRadius = 1500;
@@ -87,9 +96,11 @@ private:
     UPROPERTY(EditDefaultsOnly, Category = "Spawn")
         float EndTime = 8;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Spawn")
+        float Speed = 6000;
+
 private:
-    TWeakObjectPtr<ACCommonCharacter> OwnerCharacter;
+    TWeakObjectPtr<ACCommonCharacter> Owner;
     TArray<TWeakObjectPtr<ACCommonCharacter>> Targets;
-    bool bShot = false;
     float MovedDistance = 0;
 };

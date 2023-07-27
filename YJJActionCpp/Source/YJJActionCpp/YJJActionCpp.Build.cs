@@ -18,7 +18,8 @@ public class YJJActionCpp : ModuleRules
             "Niagara",
 			"AIModule",
 			"GameplayTasks",
-			"NavigationSystem"
+			"NavigationSystem",
+			"HeadMountedDisplay"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

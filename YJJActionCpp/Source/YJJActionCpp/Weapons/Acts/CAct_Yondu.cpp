@@ -5,21 +5,46 @@
 
 UCAct_Yondu::UCAct_Yondu()
 {
-	CheckFalse(ActDatas.Num() > 0);
-	CheckFalse(StateComp->IsIdleMode());
-
-	Super::Act();
-
-	ActDatas[0].Act(Owner);
 }
 
-void UCAct_Yondu::Act()
+void UCAct_Yondu::Tick(float InDeltaTime)
 {
-	Super::Act();
+	Super::Tick(InDeltaTime);
+
+	CheckNull(Yondu);
+
+	const FVector direction = Owner->GetCapsuleComponent()->GetForwardVector();
+	const FRotator rotation = direction.Rotation();
+	const FVector location = Owner->GetMesh()->GetSocketLocation("Pelvis") + LocationFactor;
+
+	DefaultTransform = FTransform(rotation, location, FVector::OneVector);
+
+	Yondu->SetDefaultTransform(DefaultTransform);
+}
+
+void UCAct_Yondu::OnBeginEquip()
+{
+	Super::OnBeginEquip();
+
+	CheckNull(Owner);
 
 	FActorSpawnParameters params;
 	params.Owner = Owner.Get();
 	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	Yondu = Owner->GetWorld()->SpawnActor<ACSkillCollider_Yondu>(YonduClass, params);
+}
+
+void UCAct_Yondu::OnUnequip()
+{
+	Super::OnUnequip();
+
+	Yondu->Destroy();
+}
+
+void UCAct_Yondu::Act()
+{
+	Super::Act();
+
+	Yondu->Shoot();
 }

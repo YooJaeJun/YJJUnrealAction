@@ -104,7 +104,11 @@ void FHitData::SendDamage(
 	FActDamageEvent damageEvent;
 	damageEvent.HitData = *this;
 
-	InOther->TakeDamage(Power, damageEvent, InAttacker->GetMyCurController().Get(), InAttackCauser.Get());
+	InOther->TakeDamage(
+		Power, 
+		damageEvent, 
+		InAttacker->GetMyCurController().Get(), 
+		InAttackCauser.Get());
 }
 
 void FHitData::PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
