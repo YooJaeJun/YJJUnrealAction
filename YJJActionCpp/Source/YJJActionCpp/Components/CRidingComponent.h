@@ -163,7 +163,7 @@ private:
 		float OverTime_Unmount = 1;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Anim")
-		float MountAnimPlayRate = 1.2f;
+		float MountAnimPlayRate = 1.5f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Anim")
 		float MountZFactor = 50;
@@ -190,6 +190,7 @@ private:
 	TWeakObjectPtr<UCMovementComponent> MovementComp;
 	TWeakObjectPtr<UCCamComponent> CamComp;
 	TWeakObjectPtr<UCUserWidget_HUD> Hud;
+
 	CERidingState RidingState;
 	TWeakObjectPtr<ACCommonCharacter> Rider;
 	TWeakObjectPtr<UCStateComponent> RiderStateComp;

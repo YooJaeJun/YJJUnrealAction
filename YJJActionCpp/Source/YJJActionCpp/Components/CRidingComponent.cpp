@@ -373,11 +373,11 @@ void UCRidingComponent::InterpToRiderPos(UAnimMontage* Anim, bool bInterrupted)
 	const FVector riderPos = RidingPoints[static_cast<uint8>(CERidingPoint::Rider)]->GetComponentLocation();
 	const FRotator riderRot = RidingPoints[static_cast<uint8>(CERidingPoint::Rider)]->GetComponentRotation();
 
-	// 실제 탑승 후 위치, 방향으로
+	// 실제 탑승 후 Attach 될 위치, 방향으로
 	UKismetSystemLibrary::MoveComponentTo(
 		Rider->GetRootComponent(), 
 		riderPos, 
-		riderRot,
+		riderRot, 
 		true, 
 		true, 
 		OverTime_RiderPos,
@@ -394,7 +394,10 @@ void UCRidingComponent::AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted
 {
 	Rider->GetCharacterMovement()->StopMovementImmediately();
 
-	Rider->AttachToComponent(Mesh.Get(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Rider");
+	Rider->AttachToComponent(
+		Mesh.Get(), 
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
+		"Rider");
 
 	CheckNull(Rider->GetMesh());
 	CheckNull(Rider->GetMesh()->GetAnimInstance());
