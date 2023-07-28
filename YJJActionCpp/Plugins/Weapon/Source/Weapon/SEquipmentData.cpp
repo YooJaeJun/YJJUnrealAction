@@ -1,16 +1,16 @@
-#include "SWeaponHitData.h"
+#include "SEquipmentData.h"
 #include "WeaponStyle.h"
 #include "IPropertyUtilities.h"
 #include "IDetailPropertyRow.h"
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
 
-TSharedRef<IPropertyTypeCustomization> SWeaponHitData::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> SEquipmentData::MakeInstance()
 {
-	return MakeShareable(new SWeaponHitData());
+	return MakeShareable(new SEquipmentData());
 }
 
-void SWeaponHitData::CustomizeHeader(
+void SEquipmentData::CustomizeHeader(
 	TSharedRef<IPropertyHandle> InPropertyHandle, 
 	FDetailWidgetRow& InHeaderRow,
 	IPropertyTypeCustomizationUtils& InCustomizationUtils)
@@ -22,28 +22,10 @@ void SWeaponHitData::CustomizeHeader(
 	]
 	.ValueContent()
 	.MinDesiredWidth(FWeaponStyle::Get()->DesiredWidth.X)
-	.MaxDesiredWidth(FWeaponStyle::Get()->DesiredWidth.Y)
-	[
-		InPropertyHandle->CreatePropertyValueWidget()
-	];
-
-	const int32 index = InPropertyHandle->GetIndexInArray();
-
-	FString name = InPropertyHandle->GetPropertyDisplayName().ToString();
-	name = "Hit Data - " + name;
-
-	InHeaderRow
-	.NameContent()
-	[
-		SNew(SBorder)
-		.BorderImage(FWeaponStyle::Get()->Array_Image.Get())
-	[
-		InPropertyHandle->CreatePropertyNameWidget(FText::FromString(name))
-	]
-	];
+	.MaxDesiredWidth(FWeaponStyle::Get()->DesiredWidth.Y);
 }
 
-void SWeaponHitData::CustomizeChildren(
+void SEquipmentData::CustomizeChildren(
 	TSharedRef<IPropertyHandle> InPropertyHandle,
 	IDetailChildrenBuilder& InChildBuilder, 
 	IPropertyTypeCustomizationUtils& InCustomizationUtils)
@@ -56,21 +38,16 @@ void SWeaponHitData::CustomizeChildren(
 		TSharedPtr<IPropertyHandle> handle = InPropertyHandle->GetChildHandle(i);
 		IDetailPropertyRow& row = InChildBuilder.AddProperty(handle.ToSharedRef());
 
-		TSharedPtr<SWidget> name;
-		TSharedPtr<SWidget> value;
-
-		row.GetDefaultWidgets(name, value);
-
 		row.CustomWidget()
 		.NameContent()
 		[
-			name.ToSharedRef()
+			handle->CreatePropertyNameWidget()
 		]
 		.ValueContent()
 		.MinDesiredWidth(FWeaponStyle::Get()->DesiredWidth.X)
 		.MaxDesiredWidth(FWeaponStyle::Get()->DesiredWidth.Y)
 		[
-			value.ToSharedRef()
+			handle->CreatePropertyValueWidget()
 		];
-	}//for(i)
+	}
 }

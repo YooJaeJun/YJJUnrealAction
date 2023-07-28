@@ -3,12 +3,11 @@
 #include "CoreMinimal.h"
 #include "IPropertyTypeCustomization.h"
 
-class WEAPON_API SWeaponEquipmentData
+class WEAPON_API SActData
 	: public IPropertyTypeCustomization
 {
 public:
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();
-	static TSharedPtr<class SWeaponCheckBoxes> CreateCheckBoxes();
 
 	virtual void CustomizeHeader(
 		TSharedRef<IPropertyHandle> InPropertyHandle, 

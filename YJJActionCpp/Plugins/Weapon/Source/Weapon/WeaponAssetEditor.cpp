@@ -1,9 +1,9 @@
 #include "WeaponAssetEditor.h"
-#include "SWeaponLeftArea.h"
+#include "SWeaponListView.h"
 #include "SWeaponDetailsView.h"
-#include "SWeaponEquipmentData.h"
-#include "SWeaponActData.h"
-#include "SWeaponHitData.h"
+#include "SEquipmentData.h"
+#include "SActData.h"
+#include "SHitData.h"
 #include "Weapons/CWeaponAsset.h"
 
 const FName FWeaponAssetEditor::EditorName = "WeaponAssetEditor";
@@ -57,7 +57,7 @@ void FWeaponAssetEditor::Shutdown()
 
 void FWeaponAssetEditor::Open(FString InAssetName)
 {
-	LeftArea = SNew(SWeaponLeftArea)
+	LeftArea = SNew(SWeaponListView)
 		.OnSelectedItem(this, &FWeaponAssetEditor::OnListViewSelectedItem);
 
 	FPropertyEditorModule& prop = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
@@ -80,21 +80,21 @@ void FWeaponAssetEditor::Open(FString InAssetName)
 	// EquipmentData
 	{
 		FOnGetPropertyTypeCustomizationInstance instance;
-		instance.BindStatic(&SWeaponEquipmentData::MakeInstance);
+		instance.BindStatic(&SEquipmentData::MakeInstance);
 		prop.RegisterCustomPropertyTypeLayout("EquipmentData", instance);
 	}
 
 	// ActData
 	{
 		FOnGetPropertyTypeCustomizationInstance instance;
-		instance.BindStatic(&SWeaponActData::MakeInstance);
+		instance.BindStatic(&SActData::MakeInstance);
 		prop.RegisterCustomPropertyTypeLayout("ActData", instance);
 	}
 
 	// HitData
 	{
 		FOnGetPropertyTypeCustomizationInstance instance;
-		instance.BindStatic(&SWeaponHitData::MakeInstance);
+		instance.BindStatic(&SHitData::MakeInstance);
 		prop.RegisterCustomPropertyTypeLayout("HitData", instance);
 	}
 

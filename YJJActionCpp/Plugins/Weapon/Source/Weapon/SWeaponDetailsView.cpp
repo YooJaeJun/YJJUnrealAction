@@ -19,7 +19,8 @@ void SWeaponDetailsView::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 	//Class Settings
 	{
 		IDetailCategoryBuilder& category = 
-			DetailBuilder.EditCategory("ClassSettings", FText::FromString("Class Settings"));
+			DetailBuilder.EditCategory("ClassSettings", 
+				FText::FromString("Class Settings"));
 		category.AddProperty("AttachmentClass", type);
 		category.AddProperty("EquipmentClass", type);
 		category.AddProperty("ActClass", type);
@@ -29,21 +30,24 @@ void SWeaponDetailsView::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 	//EquipmentData
 	{
 		IDetailCategoryBuilder& category = 
-			DetailBuilder.EditCategory("EquipmentData", FText::FromString("Equipment Data"));
-		IDetailPropertyRow& row = category.AddProperty("EquipmentData", type);
+			DetailBuilder.EditCategory("EquipmentData", 
+				FText::FromString("Equipment Data"));
+		category.AddProperty("EquipmentData", type);
 	}
 
 	//ActData
 	{
 		IDetailCategoryBuilder& category = 
-			DetailBuilder.EditCategory("ActData", FText::FromString("Act Data"));
-		IDetailPropertyRow& row = category.AddProperty("ActDatas", type);
+			DetailBuilder.EditCategory("ActData", 
+				FText::FromString("Act Data"));
+		category.AddProperty("ActDatas", type);
 	}
 
 	//HitData
 	{
 		IDetailCategoryBuilder& category = 
-			DetailBuilder.EditCategory("HitData", FText::FromString("Hit Data"));
-		IDetailPropertyRow& row = category.AddProperty("HitDatas", type);
+			DetailBuilder.EditCategory("HitData", 
+				FText::FromString("Hit Data"));
+		category.AddProperty("HitDatas", type);
 	}
 }

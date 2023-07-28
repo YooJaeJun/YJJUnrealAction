@@ -1,16 +1,16 @@
-#include "SWeaponActData.h"
+#include "SActData.h"
 #include "WeaponStyle.h"
 #include "IPropertyUtilities.h"
 #include "IDetailPropertyRow.h"
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
 
-TSharedRef<IPropertyTypeCustomization> SWeaponActData::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> SActData::MakeInstance()
 {
-	return MakeShareable(new SWeaponActData());
+	return MakeShareable(new SActData());
 }
 
-void SWeaponActData::CustomizeHeader(
+void SActData::CustomizeHeader(
 	TSharedRef<IPropertyHandle> InPropertyHandle, 
 	FDetailWidgetRow& InHeaderRow,
 	IPropertyTypeCustomizationUtils& InCustomizationUtils)
@@ -43,7 +43,7 @@ void SWeaponActData::CustomizeHeader(
 	];
 }
 
-void SWeaponActData::CustomizeChildren(
+void SActData::CustomizeChildren(
 	TSharedRef<IPropertyHandle> InPropertyHandle,
 	IDetailChildrenBuilder& InChildBuilder, 
 	IPropertyTypeCustomizationUtils& InCustomizationUtils)

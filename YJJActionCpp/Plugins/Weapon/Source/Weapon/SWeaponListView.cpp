@@ -1,4 +1,4 @@
-﻿#include "SWeaponLeftArea.h"
+﻿#include "SWeaponListView.h"
 #include "Weapons/CWeaponAsset.h"
 #include "EngineUtils.h"
 #include "Widgets/Input/SSearchBox.h"
@@ -26,7 +26,7 @@ TSharedRef<SWidget> SWeaponTableRow::GenerateWidgetForColumn(const FName& InColu
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void SWeaponLeftArea::Construct(const FArguments& InArgs)
+void SWeaponListView::Construct(const FArguments& InArgs)
 {
 	OnListViewSelectedItem = InArgs._OnSelectedItem;
 
@@ -39,8 +39,8 @@ void SWeaponLeftArea::Construct(const FArguments& InArgs)
 		[
 			SAssignNew(SearchBox, SSearchBox)
 			.SelectAllTextWhenFocused(true)
-			.OnTextChanged(this, &SWeaponLeftArea::OnTextChanged)
-			.OnTextCommitted(this, &SWeaponLeftArea::OnTextCommitted)
+			.OnTextChanged(this, &SWeaponListView::OnTextChanged)
+			.OnTextCommitted(this, &SWeaponListView::OnTextCommitted)
 		]
 		+ SVerticalBox::Slot()
 		.FillHeight(1)	// 1 == 100% 한 줄 다 채우겠다.
@@ -56,8 +56,8 @@ void SWeaponLeftArea::Construct(const FArguments& InArgs)
 				.DefaultLabel(FText::FromString("Name"))
 			)
 			.ListItemsSource(&RowDatas)
-			.OnGenerateRow(this, &SWeaponLeftArea::OnGenerateRow)
-			.OnSelectionChanged(this, &SWeaponLeftArea::OnSelectionChanged)
+			.OnGenerateRow(this, &SWeaponListView::OnGenerateRow)
+			.OnSelectionChanged(this, &SWeaponListView::OnSelectionChanged)
 			.SelectionMode(ESelectionMode::Single)
 		]
 		+SVerticalBox::Slot()
@@ -67,7 +67,7 @@ void SWeaponLeftArea::Construct(const FArguments& InArgs)
 		.Padding(FMargin(8, 2))
 		[
 			SNew(STextBlock)
-			.Text(this, &SWeaponLeftArea::OnGetAssetCount)
+			.Text(this, &SWeaponListView::OnGetAssetCount)
 			// 여기 Text 내용 변경 시, 자동 갱신.
 			// Attribute를 함수로 줄 수 있다.
 		]
@@ -76,7 +76,7 @@ void SWeaponLeftArea::Construct(const FArguments& InArgs)
 	ReadDataAssetList();
 }
 
-void SWeaponLeftArea::SelectDataPtr(const UCWeaponAsset* InAsset)
+void SWeaponListView::SelectDataPtr(const UCWeaponAsset* InAsset)
 {
 	if (HasRowDataPtr() == false)
 		return;
@@ -92,7 +92,7 @@ void SWeaponLeftArea::SelectDataPtr(const UCWeaponAsset* InAsset)
 	}
 }
 
-FWeaponRowDataPtr SWeaponLeftArea::GetRowDataPtrByName(FString InAssetName)
+FWeaponRowDataPtr SWeaponListView::GetRowDataPtrByName(FString InAssetName)
 {
 	for (const FWeaponRowDataPtr ptr : RowDatas)
 	{
@@ -103,7 +103,7 @@ FWeaponRowDataPtr SWeaponLeftArea::GetRowDataPtrByName(FString InAssetName)
 	return nullptr;
 }
 
-FString SWeaponLeftArea::SelectedRowDataPtrName() const
+FString SWeaponListView::SelectedRowDataPtrName() const
 {
 	const TArray<FWeaponRowDataPtr> ptrs = ListView->GetSelectedItems();
 
@@ -113,13 +113,13 @@ FString SWeaponLeftArea::SelectedRowDataPtrName() const
 	return "";
 }
 
-TSharedRef<ITableRow> SWeaponLeftArea::OnGenerateRow(FWeaponRowDataPtr InRow, const TSharedRef<STableViewBase>& InTable) const
+TSharedRef<ITableRow> SWeaponListView::OnGenerateRow(FWeaponRowDataPtr InRow, const TSharedRef<STableViewBase>& InTable) const
 {
 	return SNew(SWeaponTableRow, InTable)
 		.RowData(InRow);
 }
 
-void SWeaponLeftArea::ReadDataAssetList()
+void SWeaponListView::ReadDataAssetList()
 {
 	RowDatas.Empty();
 
@@ -150,14 +150,14 @@ void SWeaponLeftArea::ReadDataAssetList()
 	ListView->RequestListRefresh();
 }
 
-FText SWeaponLeftArea::OnGetAssetCount() const
+FText SWeaponListView::OnGetAssetCount() const
 {
 	const FString str = FString::Printf(L"%d 에셋", RowDatas.Num());
 
 	return FText::FromString(str);
 }
 
-void SWeaponLeftArea::OnTextChanged(const FText& InText)
+void SWeaponListView::OnTextChanged(const FText& InText)
 {
 	if (SearchText.CompareToCaseIgnored(InText) == 0)
 		return;
@@ -166,12 +166,12 @@ void SWeaponLeftArea::OnTextChanged(const FText& InText)
 	ReadDataAssetList();
 }
 
-void SWeaponLeftArea::OnTextCommitted(const FText& InText, ETextCommit::Type InType)
+void SWeaponListView::OnTextCommitted(const FText& InText, ETextCommit::Type InType)
 {
 	OnTextChanged(InText);
 }
 
-void SWeaponLeftArea::OnSelectionChanged(FWeaponRowDataPtr InDataPtr, ESelectInfo::Type InType) const
+void SWeaponListView::OnSelectionChanged(FWeaponRowDataPtr InDataPtr, ESelectInfo::Type InType) const
 {
 	if (InDataPtr.IsValid() == false)
 		return;

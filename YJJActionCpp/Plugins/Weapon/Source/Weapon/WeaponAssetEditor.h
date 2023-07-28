@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SWeaponLeftArea.h"
+#include "SWeaponListView.h"
 #include "Toolkits/AssetEditorToolkit.h"
 
 class WEAPON_API FWeaponAssetEditor
@@ -37,7 +37,7 @@ public:
 	virtual FLinearColor GetWorldCentricTabColorScale() const override;
 
 private:
-	TSharedPtr<class SWeaponLeftArea> LeftArea;
+	TSharedPtr<class SWeaponListView> LeftArea;
 	TSharedPtr<class IDetailsView> DetailsView;
 
 private:
