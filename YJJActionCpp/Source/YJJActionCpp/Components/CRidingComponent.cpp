@@ -329,10 +329,10 @@ void UCRidingComponent::PossessAndInterpToCamera()
 void UCRidingComponent::Tick_Mounting()
 {
 	FVector targetPos = RidingPoints[static_cast<uint8>(CERidingPoint::Rider)]->GetComponentLocation();
-	targetPos.Z += MountZFactor;
+	//targetPos.Z += MountZFactor;
 
 	FRotator targetRot = RidingPoints[static_cast<uint8>(CERidingPoint::Rider)]->GetComponentRotation();
-	targetRot = FRotator(0, targetRot.Yaw + CurMountRotationZFactor, 0);
+	//targetRot = FRotator(0, targetRot.Yaw + CurMountRotationZFactor, 0);
 
 	latentInfo.CallbackTarget = Rider.Get();
 
@@ -355,12 +355,12 @@ void UCRidingComponent::Tick_Mounting()
 
 	// 탑승중애니 - 탑승후루프애니
 	// 몽타주 블렌드 아웃 되는 시점에 정확히
-	Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddUniqueDynamic(
-		this, &UCRidingComponent::InterpToRiderPos);
+	//Rider->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddUniqueDynamic(
+	//	this, &UCRidingComponent::InterpToRiderPos);
 
-	// Attach - 몽타주 끝나는 시점에 정확히
-	Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.AddUniqueDynamic(
-		this, &UCRidingComponent::AttachToRiderPoint);
+	//// Attach - 몽타주 끝나는 시점에 정확히
+	//Rider->GetMesh()->GetAnimInstance()->OnMontageEnded.AddUniqueDynamic(
+	//	this, &UCRidingComponent::AttachToRiderPoint);
 
 
 	UGameplayStatics::PlaySoundAtLocation(this, MountSound, Owner->GetActorLocation());
