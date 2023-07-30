@@ -79,6 +79,7 @@ public:
 	FORCEINLINE void SetbRiding(const bool InbRiding) { bRiding = InbRiding; }
 	FORCEINLINE constexpr bool GetbRiding() const { return bRiding; }
 
+	// Anim Instance 에서 캐스팅하지 않고 부르기 위함
 	virtual USpringArmComponent* GetSpringArm() const
 		PURE_VIRTUAL(ACCommonCharacter::GetSpringArm, return nullptr;);
 

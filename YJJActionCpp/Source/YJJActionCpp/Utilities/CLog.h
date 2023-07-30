@@ -19,11 +19,11 @@ public:
 	static void Log(const FString& InFileName, const FString& InFuncName, int32 InLineNumber);
 	static void Log(const FTableRowBase& InValue);
 
-	static void Print(const int32 InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::Blue);
-	static void Print(const float InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::Blue);
-	static void Print(const FString& InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::Blue);
-	static void Print(const FVector& InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::Blue);
-	static void Print(const FRotator& InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::Blue);
-	static void Print(const UObject* InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::Blue);
+	static void Print(const int32 InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::White);
+	static void Print(const float InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::White);
+	static void Print(const FString& InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::White);
+	static void Print(const FVector& InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::White);
+	static void Print(const FRotator& InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::White);
+	static void Print(const UObject* InValue, const int32 InKey = -1, const float InDuration = 10, const FColor InColor = FColor::White);
 	static void Print(const FString& InFileName, const FString& InFuncName, const int32 InLineNumber);
 };

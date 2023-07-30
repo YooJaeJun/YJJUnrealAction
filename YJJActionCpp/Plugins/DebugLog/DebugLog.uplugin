@@ -1,9 +1,9 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.01",
-	"FriendlyName": "YJJWeapon",
-	"Description": "",
+	"VersionName": "1.0",
+	"FriendlyName": "DebugLog",
+	"Description": "DebugLog",
 	"Category": "Other",
 	"CreatedBy": "YooJaeJun",
 	"CreatedByURL": "",
@@ -16,7 +16,7 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "Weapon",
+			"Name": "DebugLog",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
