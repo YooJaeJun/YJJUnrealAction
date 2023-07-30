@@ -42,16 +42,14 @@ void UCAnimInstance_Human::NativeUpdateAnimation(float DeltaSeconds)
 
 			Look *= 180.0f;
 
-			bFootIK = false;
-			bRidingIK = true;
+			bFeetIK = false;
 
 			LegIKAlpha = Owner->GetLegIKAlpha();
 		}
 	}//bRiding
 	else
 	{
-		bFootIK = true;
-		bRidingIK = false;
+		bFeetIK = true;
 		Forward = 0.0f;
 		Side = 0.0f;
 	}

@@ -16,6 +16,7 @@ class UCWeaponComponent;
 class UCGameUIComponent;
 class UWidgetComponent;
 class ACGameMode;
+class UCFeetComponent;
 
 UCLASS()
 class YJJACTIONCPP_API ACPlayableCharacter :
@@ -73,6 +74,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		UCGameUIComponent* GameUIComp;
+
+	UPROPERTY(VisibleAnywhere)
+		UCFeetComponent* FeetComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mode")
 		TWeakObjectPtr<ACGameMode> GameMode;

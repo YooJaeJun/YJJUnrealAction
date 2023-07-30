@@ -6,6 +6,7 @@
 #include "Components/CFlyComponent.h"
 #include "Characters/Animals/Dragon/CDragon_AI.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CFeetComponent.h"
 
 void UCAnimInstance_Character::NativeBeginPlay()
 {
@@ -104,6 +105,17 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 	Forward = UKismetMathLibrary::Lerp(Forward, dotForward, 0.05f);
 	Side = UKismetMathLibrary::Lerp(Side, dotRight, 0.05f);
+
+
+	const TWeakObjectPtr<UCFeetComponent> feet = YJJHelpers::GetComponent<UCFeetComponent>(Owner.Get());
+
+	bFeetIK = false;
+
+	if (feet.IsValid())
+	{
+		bFeetIK = true;
+		FeetData = feet->GetData();
+	}
 }
 
 void UCAnimInstance_Character::OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType)

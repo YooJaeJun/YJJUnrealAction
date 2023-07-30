@@ -20,6 +20,7 @@
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
 #include "Components/CRidingComponent.h"
+#include "Components/CFeetComponent.h"
 
 ACPlayableCharacter::ACPlayableCharacter()
 {
@@ -31,6 +32,7 @@ ACPlayableCharacter::ACPlayableCharacter()
 	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "CamComponent");
 	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
+	YJJHelpers::CreateActorComponent<UCFeetComponent>(this, &FeetComp, "FeetComponent");
 
 	USkeletalMesh* mesh;
 	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");

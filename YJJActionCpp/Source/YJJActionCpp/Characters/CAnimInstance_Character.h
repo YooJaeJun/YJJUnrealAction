@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Components/CFeetComponent.h"
 #include "Components/CStateComponent.h"
 #include "CAnimInstance_Character.generated.h"
 
@@ -55,11 +56,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
 		bool bHitting;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
-		bool bFootIK = true;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InverseKinemetics")
+		bool bFeetIK;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
-		bool bRidingIK;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InverseKinemetics")
+		FFeetData FeetData;
 
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
