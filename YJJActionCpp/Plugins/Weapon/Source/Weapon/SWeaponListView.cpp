@@ -127,7 +127,7 @@ void SWeaponListView::ReadDataAssetList()
 	EngineUtils::FindOrLoadAssetsByPath("/Game/Weapons/", objects, EngineUtils::ATL_Regular);
 
 	int32 index = 0;
-	for (UObject* obj : objects)
+	for (const TWeakObjectPtr<UObject> obj : objects)
 	{
 		const TWeakObjectPtr<UCWeaponAsset> asset = Cast<UCWeaponAsset>(obj);
 		if (asset == nullptr)
@@ -176,5 +176,6 @@ void SWeaponListView::OnSelectionChanged(FWeaponRowDataPtr InDataPtr, ESelectInf
 	if (InDataPtr.IsValid() == false)
 		return;
 
-	OnListViewSelectedItem.ExecuteIfBound(InDataPtr);
+	if (false == OnListViewSelectedItem.ExecuteIfBound(InDataPtr))
+		CLog::Log("Fail: OnListViewSelectedItem ExecuteIfBound");
 }

@@ -39,7 +39,7 @@ FWeaponStyle::FWeaponStyle()
         new FSlateImageBrush(
             path,
             FVector2D(8, 8), 
-            FLinearColor(1, 1, 1, 0.1f)));
+            FLinearColor(1, 1, 0.5f, 0.1f)));
 }
 
 FWeaponStyle::~FWeaponStyle()

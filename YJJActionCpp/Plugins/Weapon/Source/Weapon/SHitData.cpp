@@ -37,9 +37,9 @@ void SHitData::CustomizeHeader(
 	[
 		SNew(SBorder)
 		.BorderImage(FWeaponStyle::Get()->Array_Image.Get())
-	[
-		InPropertyHandle->CreatePropertyNameWidget(FText::FromString(name))
-	]
+		[
+			InPropertyHandle->CreatePropertyNameWidget(FText::FromString(name))
+		]
 	];
 }
 
