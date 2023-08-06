@@ -29,10 +29,12 @@ protected:
 public:
     void Shoot();
     void ComeBack();
-    void End();
+    void Ready();
 
 private:
-    void SetTarget();
+    bool Tick_Move();
+    void SetTargets();
+    void ResetTargets();
 
 public:
     FORCEINLINE void SetDefaultTransform(const FTransform& InTransform) { DefaultTransform = InTransform; }
@@ -97,7 +99,7 @@ private:
         float EndTime = 8;
 
     UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-        float Speed = 6000;
+        float Speed = 2000;
 
 private:
     TWeakObjectPtr<ACCommonCharacter> Owner;

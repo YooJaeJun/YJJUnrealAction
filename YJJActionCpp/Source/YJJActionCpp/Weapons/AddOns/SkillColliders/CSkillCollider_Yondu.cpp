@@ -9,6 +9,7 @@
 #include "Components/SplineComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CCharacterInfoComponent.h"
+#include "Sound/SoundWave.h"
 
 ACSkillCollider_Yondu::ACSkillCollider_Yondu()
 {
@@ -33,7 +34,9 @@ ACSkillCollider_Yondu::ACSkillCollider_Yondu()
 	Capsule->SetCapsuleRadius(44);
 
 	HitData.Launch = 0;
-	HitData.Power = 3;
+	HitData.Power = 10;
+	YJJHelpers::GetAsset<UAnimMontage>(&HitData.Montage, "AnimMontage'/Game/Character/Player/Montages/Common/CHit_Stop_Montage.CHit_Stop_Montage'");
+	YJJHelpers::GetAsset<USoundWave>(&HitData.Sound, "SoundWave'/Game/Assets/Sounds/Weapons/Yondu/Yondu_Hit.Yondu_Hit'");
 
 	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ACSkillCollider_Yondu::OnComponentBeginOverlap);
 	Capsule->OnComponentEndOverlap.AddDynamic(this, &ACSkillCollider_Yondu::OnComponentEndOverlap);
@@ -59,29 +62,21 @@ void ACSkillCollider_Yondu::Tick(float DeltaSeconds)
 	switch (ProjectileState)
 	{
 	case CEProjectileState::Ready:
-	{
 		ArrowRoot->SetWorldTransform(DefaultTransform);
-	}
-	break;
+		break;
 
 	case CEProjectileState::Shooting:
-	{
-		if (MovedDistance < SplineComp->GetSplineLength())
-		{
-			const FTransform splineLoad =
-				SplineComp->GetTransformAtDistanceAlongSpline(
-					MovedDistance,
-					ESplineCoordinateSpace::World,
-					false);
-
-			ArrowRoot->SetWorldTransform(splineLoad);
-
-			MovedDistance += GetWorld()->DeltaTimeSeconds * Speed;
-		}
-		else
+		if (Tick_Move())
 			ComeBack();
-	}
-	break;
+		break;
+
+	case CEProjectileState::ComeBack:
+		if (Tick_Move())
+			Ready();
+		break;
+
+	default:
+		break;
 	}//switch(ProjectileState)
 }
 
@@ -92,24 +87,21 @@ void ACSkillCollider_Yondu::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void ACSkillCollider_Yondu::Shoot()
 {
-	SetTarget();
-
-	ProjectileState = CEProjectileState::Shooting;
-
 	SetActorTransform(DefaultTransform);
 
-	FTimerHandle timerHandle;
-	GetWorld()->GetTimerManager().SetTimer(
-		timerHandle,
-		[this]() {
-			End();
-		},
-		EndTime,
-		false);
+	SetTargets();
+
+	ProjectileState = CEProjectileState::Shooting;
 }
 
 void ACSkillCollider_Yondu::ComeBack()
 {
+	ResetTargets();
+
+	SplineComp->AddSplinePoint(
+		ArrowRoot->GetComponentLocation(),
+		ESplineCoordinateSpace::World);
+
 	SplineComp->AddSplinePoint(
 		DefaultTransform.GetLocation(),
 		ESplineCoordinateSpace::World);
@@ -117,17 +109,39 @@ void ACSkillCollider_Yondu::ComeBack()
 	ProjectileState = CEProjectileState::ComeBack;
 }
 
-void ACSkillCollider_Yondu::End()
+void ACSkillCollider_Yondu::Ready()
 {
-	MovedDistance = 0;
-	Targets.Empty();
-	SplineComp->ClearSplinePoints();
+	ResetTargets();
 
 	ProjectileState = CEProjectileState::Ready;
 }
 
-void ACSkillCollider_Yondu::SetTarget()
+bool ACSkillCollider_Yondu::Tick_Move()
 {
+	const FTransform splineLoad =
+		SplineComp->GetTransformAtDistanceAlongSpline(
+			MovedDistance,
+			ESplineCoordinateSpace::World,
+			false);
+
+	ArrowRoot->SetWorldTransform(splineLoad);
+
+	MovedDistance += GetWorld()->DeltaTimeSeconds * Speed;
+
+	if (MovedDistance < SplineComp->GetSplineLength())
+		return false;
+
+	return true;
+}
+
+void ACSkillCollider_Yondu::SetTargets()
+{
+	ResetTargets();
+
+	SplineComp->AddSplinePoint(
+		GetActorLocation(),
+		ESplineCoordinateSpace::World);
+
 	const TArray<AActor*> ignores{ Owner.Get() };
 	TArray<FHitResult> hitResults;
 	const TArray<TEnumAsByte<EObjectTypeQuery>> query{ EObjectTypeQuery::ObjectTypeQuery3 };
@@ -143,6 +157,7 @@ void ACSkillCollider_Yondu::SetTarget()
 		EDrawDebugTrace::None,
 		hitResults,
 		true);
+
 
 	for (const FHitResult& hitResult : hitResults)
 	{
@@ -171,6 +186,13 @@ void ACSkillCollider_Yondu::SetTarget()
 			ESplineCoordinateSpace::World, 
 			true);
 	}
+}
+
+void ACSkillCollider_Yondu::ResetTargets()
+{
+	MovedDistance = 0;
+	Targets.Empty();
+	SplineComp->ClearSplinePoints();
 }
 
 void ACSkillCollider_Yondu::OnComponentBeginOverlap(
