@@ -34,11 +34,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
 		bool bRidingFalling;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
-		bool bBowAiming;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
+		bool bRidingIK;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
 		float LegIKAlpha;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
+		bool bBowAiming;
 
 private:
 	TWeakObjectPtr<UCWeaponComponent> WeaponComp;

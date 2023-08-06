@@ -154,16 +154,16 @@ private:
 		float OverTime_Camera = 0.7f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MoveComponetTo")
-		float OverTime_Mount = 0.7f;
+		float OverTime_Mount = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MoveComponetTo")
-		float OverTime_RiderPos = 0.5f;
+		float OverTime_RiderPos = 0.3f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MoveComponetTo")
 		float OverTime_Unmount = 1;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Anim")
-		float MountAnimPlayRate = 1;
+		float MountAnimPlayRate = 2;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Anim")
 		float MountZFactor = 50;

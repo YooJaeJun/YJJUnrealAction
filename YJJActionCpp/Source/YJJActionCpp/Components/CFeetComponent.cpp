@@ -4,7 +4,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 
-#define LOG_UCFeetComponent
+//#define LOG_UCFeetComponent
 
 UCFeetComponent::UCFeetComponent()
 {
