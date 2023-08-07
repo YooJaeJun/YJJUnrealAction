@@ -11,11 +11,16 @@
 #include "Components/CWeaponComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Weapons/CWeaponStructures.h"
+#include "Widgets/Enemies/CUserWidget_EnemyInfo.h"
+#include "Widgets/Weapons/CUserWidget_EquipMenu.h"
 
 ACEnemy::ACEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	YJJHelpers::CreateComponent<USceneComponent>(this, &InfoPoint, "InfoPoint", GetMesh());
+	YJJHelpers::CreateComponent<UWidgetComponent>(this, &InfoWidgetComp, "InfoWidgetComp", InfoPoint);
+	YJJHelpers::GetClass<UCUserWidget_EnemyInfo>(&InfoWidget, "WidgetBlueprint'/Game/Widgets/Enemy/CWB_EnemyBar.CWB_EnemyBar_C'");
 	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "Weapon");
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
@@ -31,20 +36,16 @@ ACEnemy::ACEnemy()
 
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
 
-	if (IsValid(StateComp))
-	{
-		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACEnemy::OnStateTypeChanged);
-		StateComp->OnHitStateTypeChanged.AddUniqueDynamic(this, &ACEnemy::OnHitStateTypeChanged);
-	}
+	StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACEnemy::OnStateTypeChanged);
+	StateComp->OnHitStateTypeChanged.AddUniqueDynamic(this, &ACEnemy::OnHitStateTypeChanged);
 
-	if (IsValid(MovementComp))
-	{
-		MovementComp->SetSpeeds(Speeds);
-		MovementComp->InputAction_Run();
-	}
+	MovementComp->SetSpeeds(Speeds);
+	MovementComp->InputAction_Run();
 
-	if (IsValid(InfoWidgetComp))
-		InfoWidgetComp->SetVisibility(true);
+	InfoWidgetComp->SetWidgetClass(InfoWidget);
+	InfoWidgetComp->SetRelativeLocation(FVector(0, 0, 220));
+	InfoWidgetComp->SetDrawSize(FVector2D(120, 0));
+	InfoWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 void ACEnemy::BeginPlay()
@@ -56,15 +57,29 @@ void ACEnemy::BeginPlay()
 
 	if (IsValid(CharacterInfoComp))
 		if (CharacterInfoComp->GetCharacterType() == 0)
-			CharacterInfoComp->SetCharacterType(CECharacterType::Enemy_1);
+			CharacterInfoComp->SetCharacterType(static_cast<CECharacterType>(CharacterInfoComp->CurType));
 
 	if (IsValid(CharacterStatComp))
-		CharacterStatComp->SetAttackRange(250.0f);
+	{
+		CharacterStatComp->SetAttackRange(250);
+		CharacterStatComp->SetMaxHp(100);
+		CharacterStatComp->SetHp(100);
+	}
+
+	if (IsValid(InfoWidgetComp))
+	{
+		InfoBar = Cast<UCUserWidget_EnemyInfo>(InfoWidgetComp->GetUserWidgetObject());
+		InfoBar->BindChildren(CharacterInfoComp, CharacterStatComp);
+		InfoWidgetComp->SetVisibility(false);
+	}
 }
 
 void ACEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (InfoBar.IsValid())
+		InfoBar->UpdateEnemyBarWidget();
 }
 
 void ACEnemy::OnStateTypeChanged(CEStateType InPrevType, CEStateType InNewType)
@@ -95,6 +110,23 @@ void ACEnemy::OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType 
 
 void ACEnemy::Hit()
 {
+	// Info Bar
+	{
+		InfoWidgetComp->SetVisibility(true);
+
+		FTimerHandle infoBarTimerHandle;
+		FTimerDelegate infoBarDelegate;
+		infoBarDelegate.BindLambda([this]()
+		{
+			InfoWidgetComp->SetVisibility(false);
+		});
+		GetWorld()->GetTimerManager().SetTimer(
+			infoBarTimerHandle,
+			infoBarDelegate,
+			3,
+			false);
+	}
+
 	// Change Color
 	{
 		ChangeColor(this, FLinearColor::Red);
@@ -102,9 +134,14 @@ void ACEnemy::Hit()
 		FTimerDelegate timerDelegate;
 		timerDelegate.BindUFunction(this, "RestoreColor");
 
-		GetWorld()->GetTimerManager().SetTimer(RestoreColor_TimerHandle, timerDelegate, 0.2f, false);
+		GetWorld()->GetTimerManager().SetTimer(
+			RestoreColorTimerHandle, 
+			timerDelegate, 
+			0.2f, 
+			false);
 	}
 
+	// AttackType
 	CurHitType = Damage.Event.HitData.AttackType;
 
 	Super::Hit();
@@ -154,7 +191,7 @@ void ACEnemy::RestoreColor()
 {
 	ChangeColor(this, OriginColor);
 
-	GetWorld()->GetTimerManager().ClearTimer(RestoreColor_TimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(RestoreColorTimerHandle);
 }
 
 void ACEnemy::End_Hit()

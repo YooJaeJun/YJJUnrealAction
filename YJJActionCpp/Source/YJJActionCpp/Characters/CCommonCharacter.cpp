@@ -11,7 +11,7 @@
 #include "Components/WidgetComponent.h"
 #include "Widgets/CUserWidget_Custom.h"
 #include "Components/SceneComponent.h"
-#include "Widgets/Enemies/CUserWidget_EnemyBar.h"
+#include "Widgets/Enemies/CUserWidget_EnemyInfo.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -20,9 +20,6 @@ ACCommonCharacter::ACCommonCharacter()
 	YJJHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
 	YJJHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
 	YJJHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
-	YJJHelpers::CreateComponent<USceneComponent>(this, &InfoPoint, "InfoPoint", GetMesh());
-	YJJHelpers::CreateComponent<UWidgetComponent>(this, &InfoWidgetComp, "InfoWidgetComp", InfoPoint);
-	YJJHelpers::GetClass<UCUserWidget_EnemyBar>(&InfoWidget, "WidgetBlueprint'/Game/Widgets/Enemy/CWB_Enemy_HpBar_Guage.CWB_Enemy_HpBar_Guage_C'");
 	YJJHelpers::CreateComponent<USceneComponent>(this, &TargetingPoint, "TargetingPoint", GetMesh());
 	YJJHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", TargetingPoint);
 	YJJHelpers::GetClass<UCUserWidget_Custom>(&TargetingWidget, "WidgetBlueprint'/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C'");
@@ -32,12 +29,6 @@ ACCommonCharacter::ACCommonCharacter()
 	TargetingWidgetComp->SetWidgetClass(TargetingWidget);
 	TargetingWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 	TargetingWidgetComp->SetVisibility(false);
-
-	InfoPoint->SetWorldLocation(FVector(0, 500, 500));
-
-	InfoWidgetComp->SetWidgetClass(InfoWidget);
-	InfoWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
-	InfoWidgetComp->SetVisibility(true);
 }
 
 void ACCommonCharacter::BeginPlay()

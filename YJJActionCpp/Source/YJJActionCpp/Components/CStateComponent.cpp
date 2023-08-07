@@ -2,6 +2,8 @@
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
 
+//#define LOG_UCStateComponent
+
 UCStateComponent::UCStateComponent()
 {
 	Owner = Cast<ACCommonCharacter>(GetOwner());
@@ -59,11 +61,13 @@ void UCStateComponent::ChangeType(const CEStateType InType)
 
 	if (OnStateTypeChanged.IsBound())
 	{
-		CLog::Print(Owner->GetName() + " : " 
-			+ YJJHelpers::ConvertEnumToString(CurType), 
-			-1, 
-			5, 
+#ifdef LOG_UCStateComponent
+		CLog::Print(Owner->GetName() + " : "
+			+ YJJHelpers::ConvertEnumToString(CurType),
+			-1,
+			5,
 			FColor::Emerald);
+#endif LOG_UCStateComponent
 
 		OnStateTypeChanged.Broadcast(PrevType, CurType);
 	}
@@ -116,11 +120,13 @@ void UCStateComponent::ChangeHitType(const CEHitType InType)
 
 	if (OnHitStateTypeChanged.IsBound())
 	{
+#ifdef LOG_UCStateComponent
 		CLog::Print(Owner->GetName() + " : "
 			+ YJJHelpers::ConvertEnumToString(CurHitType),
 			-1,
 			5,
 			FColor::Orange);
+#endif LOG_UCStateComponent
 
 		OnHitStateTypeChanged.Broadcast(PrevHitType, CurHitType);
 	}

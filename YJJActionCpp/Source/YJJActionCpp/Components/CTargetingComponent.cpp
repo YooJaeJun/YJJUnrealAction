@@ -108,7 +108,7 @@ void UCTargetingComponent::ChangeTarget(ACCommonCharacter* InTarget)
 		{
 			TargetStateComp = YJJHelpers::GetComponent<UCStateComponent>(Target.Get());
 			TargetMovementComp = YJJHelpers::GetComponent<UCMovementComponent>(Target.Get());
-			TargetingWidgetComp = YJJHelpers::GetComponent<UWidgetComponent>(Target.Get());
+			TargetingWidgetComp = Target->GetTargetingWidgetComp();
 			SetVisibleTargetUI(true);
 
 			if (TargetCamComp.IsValid())

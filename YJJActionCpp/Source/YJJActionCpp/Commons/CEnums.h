@@ -19,8 +19,9 @@ enum class CECharacterType : uint8
 	None,
 	Player,
 	Companion,
-	Enemy_1,
-	Enemy_2
+	Enemy_Evil_Sword,
+	Enemy_Evil_Hammer,
+	Enemy_Evil_Fist
 };
 
 UENUM(BlueprintType)

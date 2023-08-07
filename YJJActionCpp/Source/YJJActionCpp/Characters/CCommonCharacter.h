@@ -20,7 +20,7 @@ class UFXSystemAsset;
 class UWidgetComponent;
 class UCUserWidget_Custom;
 class USceneComponent;
-class UCUserWidget_EnemyBar;
+class UCUserWidget_EnemyInfo;
 class USpringArmComponent;
 class UCTargetingComponent;
 
@@ -107,6 +107,7 @@ public:
 
 	FORCEINLINE constexpr UFXSystemAsset* GetLandEffect() const { return LandEffect; }
 	FORCEINLINE constexpr float GetLandEffectScaleFactor() const { return LandEffectScaleFactor; }
+	FORCEINLINE constexpr UWidgetComponent* GetTargetingWidgetComp() const { return TargetingWidgetComp; }
 
 public:
 	void InputAction_Interact();
@@ -145,16 +146,6 @@ protected:
 		TSubclassOf<UCUserWidget_Custom> TargetingWidget;
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "Info")
-		USceneComponent* InfoPoint;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Info")
-		UWidgetComponent* InfoWidgetComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Info")
-		TSubclassOf<UCUserWidget_EnemyBar> InfoWidget;
-
-
 	UPROPERTY(EditDefaultsOnly, Category = "Land")
 		USoundBase* LandSound;
 
@@ -179,7 +170,7 @@ private:
 		bool bRiding;
 
 protected:
-	FTimerHandle RestoreColor_TimerHandle;
+	FTimerHandle RestoreColorTimerHandle;
 	FDamageData Damage;
 
 private:

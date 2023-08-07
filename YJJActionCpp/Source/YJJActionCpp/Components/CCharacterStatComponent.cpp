@@ -129,6 +129,21 @@ void UCCharacterStatComponent::SetMana(const float InNewMana)
 		CurMana = GetMaxMana();
 }
 
+void UCCharacterStatComponent::SetMaxHp(const float InNewHp)
+{
+	CurStat.MaxHp = InNewHp;
+}
+
+void UCCharacterStatComponent::SetMaxStamina(const float InNewStamina)
+{
+	CurStat.MaxStamina = InNewStamina;
+}
+
+void UCCharacterStatComponent::SetMaxMana(const float InNewMana)
+{
+	CurStat.MaxMana = InNewMana;
+}
+
 float UCCharacterStatComponent::GetRatio(const float InMaxValue, const float InCurValue) const
 {
 	if (InMaxValue < KINDA_SMALL_NUMBER)

@@ -49,6 +49,16 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 		TArray<float> Speeds{ 200, 400, 600 };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Info")
+		USceneComponent* InfoPoint;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Info")
+		UWidgetComponent* InfoWidgetComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Info")
+		TSubclassOf<UCUserWidget_EnemyInfo> InfoWidget;
+
 private:
 	CEHitType CurHitType = CEHitType::Common;
+	TWeakObjectPtr<UCUserWidget_EnemyInfo> InfoBar;
 };

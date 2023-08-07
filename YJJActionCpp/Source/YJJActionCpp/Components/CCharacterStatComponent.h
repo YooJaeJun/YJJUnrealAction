@@ -50,6 +50,10 @@ public:
 	void SetStamina(const float InNewStamina);
 	void SetMana(const float InNewMana);
 
+	void SetMaxHp(const float InNewHp);
+	void SetMaxStamina(const float InNewStamina);
+	void SetMaxMana(const float InNewMana);
+
 	FORCEINLINE float GetCurLevel() const { return CurLevel; }
 
 	float GetRatio(const float InMaxValue, const float InCurValue) const;

@@ -37,6 +37,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		int32 CurType;
 
+	// Type에 따라 Group, Name 등이 종속되기 때문에 가려놓은 것
 private:
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
 		int32 CurGroup;

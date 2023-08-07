@@ -99,7 +99,7 @@ private:
         float EndTime = 8;
 
     UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-        float Speed = 2000;
+        float Speed = 2500;
 
 private:
     TWeakObjectPtr<ACCommonCharacter> Owner;
