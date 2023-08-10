@@ -8,7 +8,7 @@ class DEBUGLOG_API FDebugLogCategory : public FGameplayDebuggerCategory
 {
 public:
 	FDebugLogCategory();
-	~FDebugLogCategory();
+	virtual ~FDebugLogCategory() override;
 
 public:
 	static TSharedRef<FGameplayDebuggerCategory> MakeInstance();

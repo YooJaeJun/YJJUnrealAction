@@ -27,6 +27,9 @@
 #define CheckFalse(x) { if(false == (x)) return; }
 #define CheckFalseResult(x, y) { if(false == (x)) return (y); }
 
+#define CheckValid(x) { if(IsValid((x))) return; }
+#define CheckValidResult(x, y) { if(IsValid((x))) return (y); }
+
 #define CheckNull(x) { if(nullptr == (x)) return; }
 #define CheckNullResult(x, y) { if(nullptr == (x)) return (y); }
 

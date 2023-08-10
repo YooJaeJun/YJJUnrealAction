@@ -19,7 +19,7 @@ void FDebugLogModule::StartupModule()
 		EGameplayDebuggerCategoryState::EnabledInGameAndSimulate,
 		5);
 
-	// Console Command
+	// Console Command_ViewMessageDialog
 	{
 		// Shareable: 둘다생성가능
 		// Shared: 기존 포인터가 있는 상황에서 shared 포인터 생성 시

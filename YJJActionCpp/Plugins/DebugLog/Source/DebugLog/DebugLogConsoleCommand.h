@@ -9,9 +9,11 @@ public:
 	~FDebugLogConsoleCommand();
 
 private:
-	struct IConsoleCommand* Command;
+	// 꼭 해제할 것 (UnregisterConsoleObject)
+	IConsoleCommand* Command_ViewMessageDialog;
+	IConsoleCommand* Command_Teleport;
 
 private:
-	void ExecuteCommand();
-	void ExecuteCommand3(const TArray<FString>& InArgs, UWorld* InWorld);
+	void ExecuteCommand_ViewMessageDialog() const;
+	void ExecuteCommand_Teleport(const TArray<FString>& InArgs, UWorld* InWorld) const;
 };
