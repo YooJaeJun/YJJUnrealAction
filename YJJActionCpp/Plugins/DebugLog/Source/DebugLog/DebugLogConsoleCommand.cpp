@@ -31,7 +31,7 @@ FDebugLogConsoleCommand::FDebugLogConsoleCommand()
 
 	Command_Teleport = IConsoleManager::Get().RegisterConsoleCommand(
 		TEXT("YJJTeleport"),
-		TEXT("Set player location to location input. If Empty, Set location to PlayerStart"),
+		TEXT("Set player's location to location input. If empty, Set player's location to PlayerStart"),
 		command_Teleport);
 }
 
