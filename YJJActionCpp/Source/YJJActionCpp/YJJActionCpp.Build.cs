@@ -19,7 +19,8 @@ public class YJJActionCpp : ModuleRules
 			"AIModule",
 			"GameplayTasks",
 			"NavigationSystem",
-			"HeadMountedDisplay"
+			"HeadMountedDisplay",
+			"ProceduralMeshComponent"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
