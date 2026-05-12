@@ -73,6 +73,31 @@ ACPlayableCharacter::ACPlayableCharacter()
 
 void ACPlayableCharacter::BeginPlay()
 {
+	AActor* CustomMember;
+
+	const UWorld* world = GetWorld();
+	check(world);
+	FTimerHandle TimerHandle;
+
+	TWeakObjectPtr<UObject> wpThis = this;
+	world->GetTimerManager().SetTimer(
+		TimerHandle,
+		FTimerDelegate::CreateLambda([&CustomMember, wpThis/*추가*/]()
+			{
+				if (wpThis.IsValid())	// 검증
+				{
+					// ~~ 
+				}
+			}), 3.0f, false);
+
+
+	world->GetTimerManager().SetTimer(
+		TimerHandle,
+		FTimerDelegate::CreateLambda([&CustomMember]()
+			{
+				// ~~ 
+			}), 3.0f, false);
+
 	Super::BeginPlay();
 
 	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));

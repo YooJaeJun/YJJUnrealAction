@@ -19,6 +19,16 @@ class ACGameMode;
 class UCFeetComponent;
 
 UCLASS()
+class YJJACTIONCPP_API UObjectChild : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+		int32 a;
+};
+
+UCLASS()
 class YJJACTIONCPP_API ACPlayableCharacter :
 	public ACCommonCharacter
 {

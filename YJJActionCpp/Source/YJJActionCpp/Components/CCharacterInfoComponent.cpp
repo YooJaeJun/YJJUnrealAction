@@ -33,8 +33,8 @@ void UCCharacterInfoComponent::SetCharacterType(const CECharacterType InNewType)
 	const TWeakObjectPtr<UCGameInstance> gameInst = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	CheckNull(gameInst);
 
-	CurInfo = *(gameInst->GetInfo(newType));
-	CheckRefNull(CurInfo, "CurInfo doesn't exist.");
+	//CurInfo = *(gameInst->GetInfo(newType));
+	//CheckRefNull(CurInfo, "CurInfo doesn't exist.");
 
 	CurType = newType;
 	SetCharacterGroup(CurInfo.Group);
