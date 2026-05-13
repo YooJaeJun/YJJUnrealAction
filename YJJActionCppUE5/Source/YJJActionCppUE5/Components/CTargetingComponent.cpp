@@ -6,6 +6,7 @@
 #include "CCamComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Controller.h"
+#include "Engine/HitResult.h"
 
 UCTargetingComponent::UCTargetingComponent()
 {
@@ -58,7 +59,7 @@ void UCTargetingComponent::Begin_Targeting()
 
 	TArray<TWeakObjectPtr<ACCommonCharacter>> targets;
 
-	for (const auto& elem : hitResults)
+	for (const FHitResult& elem : hitResults)
 	{
 		if (elem.GetActor()->GetClass() != Owner->GetClass())
 		{
@@ -206,7 +207,7 @@ void UCTargetingComponent::ChangeFocus(const bool InbRight)
 
 	CheckTrue(hitResults.Num() == 0);
 
-	for (const auto& elem : hitResults)
+	for (const FHitResult& elem : hitResults)
 	{
 		bool bCheck = true;
 		bCheck &= IsValid(elem.GetActor());

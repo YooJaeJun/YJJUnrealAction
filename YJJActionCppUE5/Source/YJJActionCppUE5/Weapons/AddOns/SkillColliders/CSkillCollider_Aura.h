@@ -44,6 +44,8 @@ private:
 			UPrimitiveComponent* OtherComp, 
 			int32 OtherBodyIndex);
 
+	void Timer_ApplyDamage();
+
 //public:
 //	virtual void ReceiveParticleData_Implementation(
 //		const TArray<FBasicParticleData>& ParticleData, 

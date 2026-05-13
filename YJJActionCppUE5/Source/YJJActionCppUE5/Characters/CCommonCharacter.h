@@ -73,6 +73,8 @@ protected:
 	virtual void Hit() override;
 	virtual void Dead() override;
 
+	void OnDestroyDelayTimer();
+
 public:
 	virtual void End_Hit() override;
 	virtual void End_Dead() override;
@@ -92,7 +94,7 @@ private:
 		void RestoreColor();
 
 public:
-	// ¶óÀÌµù ½Ã PlayerController¿Í AIController ÀüÈ¯ ½Ã »ç¿ë
+	// ë¼ì´ë”© ì¤‘ PlayerControllerì™€ AIController ì „í™˜ì„ ìœ„í•´ í˜„ì¬ ì»¨íŠ¸ë¡¤ëŸ¬ë¥¼ ì €ì¥í•œë‹¤.
 	void SetMyCurController(const TWeakObjectPtr<AController> InController);
 	FORCEINLINE TWeakObjectPtr<AController> GetMyCurController() const { return MyCurController; }
 
@@ -185,6 +187,7 @@ private:
 
 protected:
 	FTimerHandle RestoreColor_TimerHandle;
+	FTimerHandle DestroyDelay_TimerHandle;
 	FDamageData Damage;
 
 private:

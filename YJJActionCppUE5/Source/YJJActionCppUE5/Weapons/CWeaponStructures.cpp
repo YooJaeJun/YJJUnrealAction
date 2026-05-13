@@ -6,6 +6,20 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Components/CCamComponent.h"
 
+namespace HitStopDetail
+{
+	static void RestoreTimeDilation(TArray<TWeakObjectPtr<ACCommonCharacter>> Characters)
+	{
+		for (const TWeakObjectPtr<ACCommonCharacter>& character : Characters)
+		{
+			if (character.IsValid())
+			{
+				character->CustomTimeDilation = 1.0f;
+			}
+		}
+	}
+}
+
 void FEquipmentData::PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 {
 	CheckNull(Sound);
@@ -26,7 +40,7 @@ void FActData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 
 	if (stat->GetCurStamina() < Stamina)
 	{
-		// TODO ½ºÅÂ¹Ì³ª ºÎÁ· ½Ã½ºÅÛ¸Þ½ÃÁö, Ä«¸Þ¶ó ¶³¸²
+		// TODO: ìŠ¤íƒœë¯¸ë‚˜ê°€ ë¶€ì¡±í•  ë•Œ UIë‚˜ ì¹´ë©”ë¼ ì—°ì¶œë¡œ í”¼ë“œë°±ì„ ì¶”ê°€í•œë‹¤.
 		return;
 	}
 
@@ -130,12 +144,9 @@ void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const
 		}
 	}
 
-	FTimerDelegate timerDelegate;
-	timerDelegate.BindLambda([characters]()
-	{
-		for (const TWeakObjectPtr<ACCommonCharacter> character : characters)
-			character->CustomTimeDilation = 1;
-	});
+	FTimerDelegate timerDelegate = FTimerDelegate::CreateStatic(
+		&HitStopDetail::RestoreTimeDilation,
+		MoveTemp(characters));
 
 	FTimerHandle timerHandle;
 	InWorld->GetTimerManager().SetTimer(timerHandle, timerDelegate, StopTime, false);

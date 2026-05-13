@@ -30,66 +30,65 @@ void ACMotionTrail::BeginPlay()
 	Mesh->CopyPoseFromSkeletalComponent(Owner->GetMesh());
 	Mesh->SetRelativeScale3D(Scale);
 
-	const int32 size = Owner->GetMesh()->GetSkinnedAsset()->GetMaterials().Num();
+	MaterialSlotCount = Owner->GetMesh()->GetSkinnedAsset()->GetMaterials().Num();
 
-	for (int32 i = 0; i < size; i++)
+	for (int32 i = 0; i < MaterialSlotCount; i++)
 		Mesh->SetMaterial(i, Material);
 
-
-	FTimerDelegate timerDelegate;
-	timerDelegate.BindLambda([this, size]()
-	{
-		if (Mesh->IsVisible() == false)
-			Mesh->ToggleVisibility();
-
-		const float height = Owner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-
-		SetActorLocation(
-			Owner->GetActorLocation() - 
-			FVector(ScaleAmount.X, ScaleAmount.Y, height - ScaleAmount.Z));
-
-		SetActorRotation(
-			Owner->GetActorRotation() + 
-			FRotator(0, -90, 0));
-
-		Mesh->CopyPoseFromSkeletalComponent(Owner->GetMesh());
-
-		OriginalExponent = Exponent;
-
-		if (DisappearFlag)
-		{
-			FTimerDelegate timerDisappearDelegate;
-			timerDisappearDelegate.BindLambda([this, size]()
-			{
-				Exponent -= DisappearExponent;
-
-				Material->SetScalarParameterValue("Exponent", Exponent);
-
-				for (int32 i = 0; i < size; i++)
-					Mesh->SetMaterial(i, Material);
-
-				if (Exponent <= 0.0f)
-				{
-					Exponent = OriginalExponent;
-					GetWorld()->GetTimerManager().ClearTimer(TimerDisappearHandle);
-				}
-			});
-
-			GetWorld()->GetTimerManager().SetTimer(
-				TimerDisappearHandle,
-				timerDisappearDelegate,
-				DisappearInterval,
-				true,
-				DisappearStartDelay);
-		}
-	});
-
 	GetWorld()->GetTimerManager().SetTimer(
-		TimerHandle, 
-		timerDelegate, 
-		Interval, 
-		true, 
+		TimerHandle,
+		this,
+		&ACMotionTrail::OnCaptureInterval,
+		Interval,
+		true,
 		StartDelay);
+}
+
+void ACMotionTrail::OnCaptureInterval()
+{
+	if (!Mesh->IsVisible())
+		Mesh->ToggleVisibility();
+
+	const float height = Owner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+	SetActorLocation(
+		Owner->GetActorLocation() -
+		FVector(ScaleAmount.X, ScaleAmount.Y, height - ScaleAmount.Z));
+
+	SetActorRotation(
+		Owner->GetActorRotation() +
+		FRotator(0, -90, 0));
+
+	Mesh->CopyPoseFromSkeletalComponent(Owner->GetMesh());
+
+	OriginalExponent = Exponent;
+
+	if (DisappearFlag)
+	{
+		GetWorld()->GetTimerManager().SetTimer(
+			TimerDisappearHandle,
+			this,
+			&ACMotionTrail::OnDisappearTick,
+			DisappearInterval,
+			true,
+			DisappearStartDelay);
+	}
+}
+
+void ACMotionTrail::OnDisappearTick()
+{
+	Exponent -= DisappearExponent;
+
+	Material->SetScalarParameterValue("Exponent", Exponent);
+
+	for (int32 i = 0; i < MaterialSlotCount; i++)
+		Mesh->SetMaterial(i, Material);
+
+	if (Exponent <= 0.0f)
+	{
+		Exponent = OriginalExponent;
+		GetWorld()->GetTimerManager().ClearTimer(TimerDisappearHandle);
+	}
 }
 
 void ACMotionTrail::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -97,4 +96,5 @@ void ACMotionTrail::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(TimerDisappearHandle);
 }

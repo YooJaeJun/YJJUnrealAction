@@ -112,7 +112,7 @@ float ACCommonCharacter::TakeDamage(
 	Damage.Attacker = Cast<ACCommonCharacter>(EventInstigator->GetPawn());
 	Damage.Causer = DamageCauser;
 
-	//UObject Casting�� �ƴϱ� ������ ������ �޸� ũ�� ������
+	// FDamageEvent는 UObject가 아니므로 커스텀 데미지 이벤트 구조체로 해석해 히트 데이터를 꺼낸다.
 	Damage.Event = *(FActDamageEvent*)&DamageEvent;
 
 	StateComp->SetHitMode(Damage.Event.HitData.AttackType);
@@ -134,7 +134,7 @@ void ACCommonCharacter::Land()
 
 void ACCommonCharacter::Hit()
 {
-	// Apply Damage
+	// 누적된 피격 정보를 스탯 컴포넌트에 반영한다.
 	CharacterStatComp->Damage(Damage.Power);
 	Damage.Power = 0;
 }
@@ -146,10 +146,18 @@ void ACCommonCharacter::Dead()
 	CheckNull(MontagesComp);
 	MontagesComp->PlayDeadAnim();
 
-	FTimerHandle DestroyDelayTimerHandle;
-	GetWorldTimerManager().SetTimer(DestroyDelayTimerHandle, [this]() -> void {
-		Destroy();
-		}, 1.5f, false, 1.5f);
+	GetWorldTimerManager().SetTimer(
+		DestroyDelay_TimerHandle,
+		this,
+		&ACCommonCharacter::OnDestroyDelayTimer,
+		1.5f,
+		false,
+		1.5f);
+}
+
+void ACCommonCharacter::OnDestroyDelayTimer()
+{
+	Destroy();
 }
 
 void ACCommonCharacter::End_Hit()

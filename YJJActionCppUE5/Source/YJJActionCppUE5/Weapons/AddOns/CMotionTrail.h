@@ -11,8 +11,8 @@ UCLASS()
 class YJJACTIONCPPUE5_API ACMotionTrail : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ACMotionTrail();
 
 protected:
@@ -20,44 +20,47 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		float StartDelay = 0.0f;
+	void OnCaptureInterval();
+	void OnDisappearTick();
+
+	int32 MaterialSlotCount = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		float Interval = 0.25f;
+	float StartDelay = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		FLinearColor Color = FLinearColor(1, 1, 1, 1);
+	float Interval = 0.25f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		float Exponent = 1.0f;
+	FLinearColor Color = FLinearColor(1, 1, 1, 1);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		FVector Scale = FVector::OneVector;
+	float Exponent = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		FVector ScaleAmount = FVector::ZeroVector;
+	FVector Scale = FVector::OneVector;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		bool DisappearFlag = false;
+	FVector ScaleAmount = FVector::ZeroVector;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		float DisappearStartDelay = 0.0f;
+	bool DisappearFlag = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		float DisappearInterval = 0.01f;
+	float DisappearStartDelay = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Capture")
-		float DisappearExponent = 0.1f;
+	float DisappearInterval = 0.01f;
 
-private:
+	UPROPERTY(EditDefaultsOnly, Category = "Capture")
+	float DisappearExponent = 0.1f;
+
 	UPROPERTY(VisibleDefaultsOnly)
-		TObjectPtr<UPoseableMeshComponent> Mesh;
+	TObjectPtr<UPoseableMeshComponent> Mesh;
 
 	UPROPERTY(VisibleDefaultsOnly)
-		TObjectPtr<UMaterialInstanceDynamic> Material;
+	TObjectPtr<UMaterialInstanceDynamic> Material;
 
-private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 
 	FTimerHandle TimerHandle;

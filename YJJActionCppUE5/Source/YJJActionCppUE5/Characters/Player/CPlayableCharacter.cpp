@@ -1,4 +1,4 @@
-﻿#include "CPlayableCharacter.h"
+#include "CPlayableCharacter.h"
 #include "Global.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"

@@ -1,4 +1,4 @@
-﻿#include "Weapons/AddOns/SkillColliders/CSkillCollider_Aura.h"
+#include "Weapons/AddOns/SkillColliders/CSkillCollider_Aura.h"
 #include "Global.h"
 #include "NiagaraComponent.h"
 #include "Characters/CCommonCharacter.h"
@@ -25,21 +25,22 @@ void ACSkillCollider_Aura::BeginPlay()
 	Box->OnComponentBeginOverlap.AddDynamic(this, &ACSkillCollider_Aura::OnComponentBeginOverlap);
 	Box->OnComponentEndOverlap.AddDynamic(this, &ACSkillCollider_Aura::OnComponentEndOverlap);
 
-	const FTimerDelegate timerDelegate = FTimerDelegate::CreateLambda([this]()
-		{
-			for (int32 i = Hitted.Num() - 1; i >= 0; i--)
-				HitData.SendDamage(
-					Cast<ACCommonCharacter>(GetOwner()),
-					this,
-					Hitted[i]);
-		});
-
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle,
-		timerDelegate,
+		this,
+		&ACSkillCollider_Aura::Timer_ApplyDamage,
 		DamageInterval,
 		true,
-		0);
+		0.0f);
+}
+
+void ACSkillCollider_Aura::Timer_ApplyDamage()
+{
+	for (int32 i = Hitted.Num() - 1; i >= 0; i--)
+		HitData.SendDamage(
+			Cast<ACCommonCharacter>(GetOwner()),
+			this,
+			Hitted[i]);
 }
 
 

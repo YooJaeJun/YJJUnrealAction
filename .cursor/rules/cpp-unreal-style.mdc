@@ -1,0 +1,27 @@
+---
+description: C++/Unreal — UTF-8, 명시 타입, 람다 지양
+globs: "**/*.{cpp,h,hpp,c,cc}"
+alwaysApply: true
+---
+
+# C++ / Unreal (YJJActionCppUE5)
+
+## Encoding
+
+- Save **`.cpp` / `.h` / `.hpp`** as **UTF-8 without BOM** (no UTF-8 BOM).
+- Do not leave mojibake or `?????` placeholder comments; use clear **English or Korean** that displays correctly.
+
+## Types: no `auto`
+
+- Do **not** use `auto` for locals, return types, or range-for variables in this project.
+- Use an **explicit type** (e.g. `const FHitResult&`, `TWeakObjectPtr<...>`, `int32`, `float`).
+
+## Lambdas: avoid for gameplay code
+
+- Prefer **`FTimerDelegate::CreateUObject` / `BindUObject`** or **`SetTimer` + non-static member function** over `BindLambda`, `CreateLambda`, and inline `[](...) { ... }` for timers and delegates.
+- If logic is reusable or non-trivial, extract a **named private member function** or **file-local static helper** instead of a lambda.
+
+## Exceptions (keep minimal)
+
+- Generated `*.generated.h` code is out of scope.
+- Third-party / Engine includes are not edited for style.

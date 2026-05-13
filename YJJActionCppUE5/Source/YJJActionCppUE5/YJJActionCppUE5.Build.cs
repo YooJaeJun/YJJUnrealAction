@@ -7,10 +7,10 @@ public class YJJActionCppUE5 : ModuleRules
 		CppStandard = CppStandardVersion.Cpp20;
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		// Lowers per-cl.exe memory (fewer .cpp merged per unity unit). Helps MSVC PCH / internal heap OOM.
+		// Unity 빌드 병합을 줄여 cl.exe 메모리 피크를 낮춘다.
 		bUseUnity = false;
 
-		PublicIncludePaths.Add(ModuleDirectory);    // flatten includes vs ../ chains
+		PublicIncludePaths.Add(ModuleDirectory);    // ../ 상대 경로 사용을 줄인다.
 
 		PublicDependencyModuleNames.AddRange(new string[] {
 			"Core",

@@ -1,4 +1,4 @@
-﻿#include "Components/CWeaponComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "Global.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"

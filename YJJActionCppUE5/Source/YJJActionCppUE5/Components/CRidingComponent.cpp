@@ -1,4 +1,4 @@
-﻿#include "Components/CRidingComponent.h"
+#include "Components/CRidingComponent.h"
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
 #include "Commons/CGameMode.h"
@@ -165,10 +165,10 @@ void UCRidingComponent::EndOverlap(
 {
 	CheckNull(Interaction);
 
-	const auto animal = Cast<ACAnimal_AI>(Owner);
+	const TWeakObjectPtr<ACAnimal_AI> animal = Cast<ACAnimal_AI>(Owner);
 	CheckNull(animal);
 
-	const auto interactor = Cast<ACPlayableCharacter>(OtherActor);
+	const TWeakObjectPtr<ACPlayableCharacter> interactor = Cast<ACPlayableCharacter>(OtherActor);
 	CheckNull(interactor);
 
 	SetInteractor(interactor, nullptr);

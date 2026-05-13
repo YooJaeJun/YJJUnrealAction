@@ -60,7 +60,7 @@ public:
 
 		if (IsValid(InParent))
 		{
-			(*OutComponent)->SetupAttachment(InParent, InSocketName);	// ????? ????? ??? ????? ??? ??
+			(*OutComponent)->SetupAttachment(InParent, InSocketName);	// 에디터 에셋 소켓명은 언더바가 아니라 공백을 쓰는 경우가 있다.
 
 			return;
 		}
@@ -229,7 +229,7 @@ public:
 		constexpr float maxAngle = 0.0f;
 		TWeakObjectPtr<ACCommonCharacter> outTarget;
 
-		for (const auto& otherCharacter : InArray)
+		for (const TWeakObjectPtr<ACCommonCharacter>& otherCharacter : InArray)
 		{
 			if (otherCharacter.IsValid())
 			{
@@ -267,7 +267,7 @@ public:
 	{
 		CheckTrue(InArray.Num() <= 0);
 
-		for (auto& otherCharacter : InArray)
+		for (const TWeakObjectPtr<ACCommonCharacter>& otherCharacter : InArray)
 		{
 			if (otherCharacter.IsValid())
 			{
