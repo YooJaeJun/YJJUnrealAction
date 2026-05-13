@@ -37,13 +37,13 @@ ACPlayableCharacter::ACPlayableCharacter()
 	TObjectPtr<USkeletalMesh> mesh = nullptr;
 	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
 
-	GetMesh()->SetSkeletalMesh(mesh);
+	GetMesh()->SetSkeletalMeshAsset(mesh.Get());
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	TSubclassOf<UCAnimInstance_Human> animInstance;
 	YJJHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/CABP_Human.CABP_Human_C'");
-	GetMesh()->SetAnimClass(animInstance);
+	GetMesh()->SetAnimInstanceClass(animInstance);
 
 	if (IsValid(SpringArm))
 	{
@@ -101,13 +101,13 @@ void ACPlayableCharacter::BeginPlay()
 		playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
 	}
 
-	const TWeakObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
-	if (hud.Get())
+	const TObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
+	if (IsValid(hud))
 	{
 		hud->SetChildren();
 
-		const TWeakObjectPtr<UCUserWidget_PlayerInfo> playerInfo = hud->PlayerInfo;
-		if (playerInfo.IsValid())
+		const TObjectPtr<UCUserWidget_PlayerInfo> playerInfo = hud->PlayerInfo;
+		if (IsValid(playerInfo))
 			playerInfo->BindStats(CharacterStatComp);
 	}
 

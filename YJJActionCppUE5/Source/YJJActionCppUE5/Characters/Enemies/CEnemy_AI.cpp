@@ -26,11 +26,11 @@ ACEnemy_AI::ACEnemy_AI()
 
 	TObjectPtr<USkeletalMesh> mesh;
 	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Enemies/Skeleton_archer/mesh/SK_Skeleton_archer.SK_Skeleton_archer'");
-	GetMesh()->SetSkeletalMesh(mesh);
+	GetMesh()->SetSkeletalMeshAsset(mesh.Get());
 
 	TSubclassOf<UCAnimInstance_Human> animInstance;
 	YJJHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/CABP_Human.CABP_Human_C'");
-	GetMesh()->SetAnimClass(animInstance);
+	GetMesh()->SetAnimInstanceClass(animInstance);
 
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
 	

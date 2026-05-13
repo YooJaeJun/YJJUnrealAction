@@ -15,6 +15,7 @@
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "Weapons/CEquipment.h"
@@ -72,7 +73,7 @@ void UCRidingComponent::BeginPlay()
 	RidingPoints[static_cast<uint8>(CERidingPoint::Rider)] = Owner->GetRiderPoint();
 	RidingPoints[static_cast<uint8>(CERidingPoint::Unmount)] = Owner->GetUnmountPoint();
 
-	InteractionCollision = Owner->GetInteractionCollision();
+	InteractionCollision = TWeakObjectPtr<UBoxComponent>(Owner->GetInteractionCollision());
 
 	if (CamComp.IsValid())
 		CamComp->DisableControlRotation();

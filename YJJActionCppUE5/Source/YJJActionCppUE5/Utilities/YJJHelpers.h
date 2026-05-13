@@ -60,7 +60,7 @@ public:
 
 		if (IsValid(InParent))
 		{
-			(*OutComponent)->SetupAttachment(InParent, InSocketName);	// 소켓명 언더바 대신 띄어쓰기 써야 함
+			(*OutComponent)->SetupAttachment(InParent, InSocketName);	// ????? ????? ??? ????? ??? ??
 
 			return;
 		}
@@ -125,7 +125,7 @@ public:
 	template<typename T>
 	static TObjectPtr<T> GetComponent(TObjectPtr<AActor> InActor, const FString& InName)
 	{
-		const TArray<TObjectPtr<T>> components;
+		TArray<TObjectPtr<T>> components;
 		InActor->GetComponents<T>(components);
 
 		for (T* component : components)
@@ -163,8 +163,8 @@ public:
 		const FTransform& InTransform, const TWeakObjectPtr<USkeletalMeshComponent> InMesh = nullptr,
 		FName InSocketName = NAME_None)
 	{
-		const TWeakObjectPtr<UParticleSystem> particle = Cast<UParticleSystem>(InAsset);
-		const TWeakObjectPtr<UNiagaraSystem> niagara = Cast<UNiagaraSystem>(InAsset);
+		const TWeakObjectPtr<UParticleSystem> particle = Cast<UParticleSystem>(InAsset.Get());
+		const TWeakObjectPtr<UNiagaraSystem> niagara = Cast<UNiagaraSystem>(InAsset.Get());
 
 		const FVector location = InTransform.GetLocation();
 		const FRotator rotation = FRotator(InTransform.GetRotation());

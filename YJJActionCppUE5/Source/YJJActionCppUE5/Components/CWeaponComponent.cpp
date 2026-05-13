@@ -127,7 +127,11 @@ void UCWeaponComponent::InputAction_Skill_3_Released()
 void UCWeaponComponent::SetModeFromZeroIndex()
 {
 	CheckFalse(DataAssetMap.Num() > 0);
-	SetMode(DataAssetMap.begin().Key());
+	for (const TPair<CEWeaponType, TObjectPtr<UCWeaponAsset>>& Pair : DataAssetMap)
+	{
+		SetMode(Pair.Key);
+		return;
+	}
 }
 
 void UCWeaponComponent::SetMode(CEWeaponType InType)

@@ -26,7 +26,7 @@ void ACMotionTrail::BeginPlay()
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
 	Mesh->SetVisibility(false);
-	Mesh->SetSkinnedAsset(Owner->GetMesh()->SkeletalMesh.Get());
+	Mesh->SetSkinnedAsset(Owner->GetMesh()->GetSkeletalMeshAsset());
 	Mesh->CopyPoseFromSkeletalComponent(Owner->GetMesh());
 	Mesh->SetRelativeScale3D(Scale);
 
@@ -37,7 +37,7 @@ void ACMotionTrail::BeginPlay()
 
 
 	FTimerDelegate timerDelegate;
-	timerDelegate.BindLambda([=]()
+	timerDelegate.BindLambda([this, size]()
 	{
 		if (Mesh->IsVisible() == false)
 			Mesh->ToggleVisibility();
@@ -59,7 +59,7 @@ void ACMotionTrail::BeginPlay()
 		if (DisappearFlag)
 		{
 			FTimerDelegate timerDisappearDelegate;
-			timerDisappearDelegate.BindLambda([=]()
+			timerDisappearDelegate.BindLambda([this, size]()
 			{
 				Exponent -= DisappearExponent;
 

@@ -1,5 +1,6 @@
 #include "Weapons/Skills/CSkill_Aiming.h"
 #include "Global.h"
+#include "Curves/CurveVector.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Characters/Player/CPlayableCharacter.h"
@@ -9,7 +10,8 @@
 
 UCSkill_Aiming::UCSkill_Aiming()
 {
-	YJJHelpers::GetAsset<UCurveVector>(&Curve, "/Script/Engine.CurveVector'/Game/Weapons/Bow/CCurve_Aiming.CCurve_Aiming'");
+	// FObjectFinder is only valid in owning UObject constructors; skills are often NewObject — use dynamic load.
+	YJJHelpers::GetAssetDynamic<UCurveVector>(&Curve, "/Script/Engine.CurveVector'/Game/Weapons/Bow/CCurve_Aiming.CCurve_Aiming'");
 }
 
 void UCSkill_Aiming::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, ACAttachment* InAttachment, UCAct* InAct)
@@ -22,7 +24,7 @@ void UCSkill_Aiming::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, ACAtta
 	FOnTimelineVector timeline;
 	timeline.BindUFunction(this, "OnAiming");
 
-	Timeline.AddInterpVector(Curve, timeline);
+	Timeline.AddInterpVector(Curve.Get(), timeline);
 	Timeline.SetPlayRate(AimingSpeed);
 
 	const TWeakObjectPtr<ACAttachment_Bow> bow = Cast<ACAttachment_Bow>(InAttachment);

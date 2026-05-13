@@ -12,7 +12,7 @@ ACAttachment_Bow::ACAttachment_Bow()
 
 	TObjectPtr<USkeletalMesh> mesh;
 	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "/Script/Engine.SkeletalMesh'/Game/Assets/Character/Weapons/ElvenBow/SK_ElvenBow.SK_ElvenBow'");
-	SkeletalMesh->SetSkeletalMesh(mesh.Get());
+	SkeletalMesh->SetSkeletalMeshAsset(mesh.Get());
 	SkeletalMesh->SetCollisionProfileName("NoCollision");
 
 	TSubclassOf<UCAnimInstance_Bow> animInstance;
@@ -28,7 +28,7 @@ void ACAttachment_Bow::BeginPlay()
 
 	SkeletalMesh->SetVisibility(false);
 
-	PoseableMesh->SetSkinnedAsset(SkeletalMesh->SkeletalMesh.Get());
+	PoseableMesh->SetSkinnedAsset(SkeletalMesh->GetSkeletalMeshAsset());
 	PoseableMesh->CopyPoseFromSkeletalComponent(SkeletalMesh);
 }
 

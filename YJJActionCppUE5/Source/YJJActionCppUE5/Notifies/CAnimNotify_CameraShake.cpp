@@ -1,7 +1,7 @@
 #include "Notifies/CAnimNotify_CameraShake.h"
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
-#include "Camera/CameraShake.h"
+#include "Shakes/LegacyCameraShake.h"
 
 FString UCAnimNotify_CameraShake::GetNotifyName_Implementation() const
 {

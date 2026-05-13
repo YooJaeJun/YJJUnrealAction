@@ -13,12 +13,12 @@ void ACAttachment::BeginPlay()
 {
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
-	TArray<TObjectPtr<USceneComponent>> children;
+	TArray<USceneComponent*> children;
 	Root->GetChildrenComponents(true, children);
 
-	for (TObjectPtr<USceneComponent> child : children)
+	for (USceneComponent* child : children)
 	{
-		TObjectPtr<UShapeComponent> shape = Cast<UShapeComponent>(child);
+		UShapeComponent* shape = Cast<UShapeComponent>(child);
 
 		if (IsValid(shape))
 		{

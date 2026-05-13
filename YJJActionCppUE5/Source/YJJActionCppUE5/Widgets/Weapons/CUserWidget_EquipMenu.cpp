@@ -11,7 +11,7 @@ void UCUserWidget_EquipMenu::BindChildren()
 		buttonStr += FString::FromInt(i);
 		FName buttonName = FName(*buttonStr);
 
-		const TWeakObjectPtr<UCUserWidget_EquipMenuButton> button = 
+		UCUserWidget_EquipMenuButton* button =
 			Cast<UCUserWidget_EquipMenuButton>(GetWidgetFromName(buttonName));
 
 		CheckNull(button);
@@ -19,7 +19,7 @@ void UCUserWidget_EquipMenu::BindChildren()
 		button->BindEquipMenuButton();
 		button->OnWeaponTypeHovered.BindUFunction(this, "SetWeaponType");
 
-		EquipMenuButtons.Add(button.Get());
+		EquipMenuButtons.Add(button);
 	}
 }
 

@@ -25,6 +25,10 @@
 		{
 			"Name": "WaterExtras",
 			"Enabled": true
+		},
+		{
+			"Name": "EngineCameras",
+			"Enabled": true
 		}
 	]
 }

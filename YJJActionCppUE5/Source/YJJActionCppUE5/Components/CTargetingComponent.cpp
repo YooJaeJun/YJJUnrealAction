@@ -227,7 +227,7 @@ void UCTargetingComponent::ChangeFocus(const bool InbRight)
 
 	TWeakObjectPtr<ACCommonCharacter> candidate;
 
-	for (const auto& elem : nearCharacters)
+	for (const TPair<float, TWeakObjectPtr<ACCommonCharacter>>& elem : nearCharacters)
 	{
 		const float curAngle = elem.Key;
 

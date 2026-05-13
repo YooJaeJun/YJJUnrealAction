@@ -131,7 +131,7 @@ void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const
 	}
 
 	FTimerDelegate timerDelegate;
-	timerDelegate.BindLambda([=]()
+	timerDelegate.BindLambda([characters]()
 	{
 		for (const TWeakObjectPtr<ACCommonCharacter> character : characters)
 			character->CustomTimeDilation = 1;
