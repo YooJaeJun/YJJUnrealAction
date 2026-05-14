@@ -1,6 +1,5 @@
 #include "Commons/CGameMode.h"
 #include "Global.h"
-#include "Blueprint/UserWidget.h"
 #include "Commons/CGameState.h"
 #include "Commons/CPlayerController.h"
 #include "Widgets/CUserWidget_HUD.h"
@@ -17,15 +16,4 @@ ACGameMode::ACGameMode()
 void ACGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (GetNetMode() == NM_DedicatedServer)
-		return;
-
-    if (IsValid(PlayerHUDClass))
-    {
-        PlayerHUD = CreateWidget<UCUserWidget_HUD>(GetWorld(), PlayerHUDClass);
-        
-        if (IsValid(PlayerHUD))
-			PlayerHUD->AddToViewport();
-    }
 }

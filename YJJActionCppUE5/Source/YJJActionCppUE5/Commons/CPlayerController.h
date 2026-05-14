@@ -6,6 +6,7 @@
 
 class ACPlacedActor;
 class ACWorldItemActor;
+class UCUserWidget_HUD;
 class UCInventoryComponent;
 
 UCLASS()
@@ -16,12 +17,18 @@ class YJJACTIONCPPUE5_API ACPlayerController : public APlayerController
 public:
 	ACPlayerController();
 
+	virtual void BeginPlay() override;
+	virtual void AcknowledgePossession(APawn* P) override;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Dedicated Server")
 	void RequestPickup(ACWorldItemActor* WorldItem);
 
 	UFUNCTION(BlueprintCallable, Category = "Dedicated Server")
 	void RequestPlacement(const FTransform& RequestedTransform, const FName ItemID);
+
+	TObjectPtr<UCUserWidget_HUD> EnsureHUD();
+	void InitializeHUDForPawn(APawn* InPawn);
 
 protected:
 	UFUNCTION(Server, Reliable)
@@ -38,6 +45,12 @@ private:
 	UCInventoryComponent* FindInventoryComponent() const;
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UCUserWidget_HUD> PlayerHUDClass;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UCUserWidget_HUD> PlayerHUD;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Placement")
 	TSubclassOf<ACPlacedActor> DefaultPlacedActorClass;
 

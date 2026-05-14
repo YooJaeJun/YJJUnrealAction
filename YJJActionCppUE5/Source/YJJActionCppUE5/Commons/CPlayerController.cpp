@@ -1,15 +1,65 @@
 #include "Commons/CPlayerController.h"
 #include "Buildings/CPlacedActor.h"
+#include "Blueprint/UserWidget.h"
+#include "Global.h"
+#include "Components/CCharacterStatComponent.h"
 #include "Components/CInventoryComponent.h"
 #include "Commons/CGameState.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerState.h"
 #include "Items/CWorldItemActor.h"
+#include "Widgets/CUserWidget_HUD.h"
+#include "Widgets/Player/CUserWidget_PlayerInfo.h"
 
 ACPlayerController::ACPlayerController()
 {
 	bReplicates = true;
 	DefaultPlacedActorClass = ACPlacedActor::StaticClass();
+	YJJHelpers::GetClass<UCUserWidget_HUD>(&PlayerHUDClass, "/Script/UMGEditor.WidgetBlueprint'/Game/Widgets/CWB_HUD.CWB_HUD_C'");
+}
+
+void ACPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (IsLocalController())
+		InitializeHUDForPawn(GetPawn());
+}
+
+void ACPlayerController::AcknowledgePossession(APawn* P)
+{
+	Super::AcknowledgePossession(P);
+
+	if (IsLocalController())
+		InitializeHUDForPawn(P);
+}
+
+TObjectPtr<UCUserWidget_HUD> ACPlayerController::EnsureHUD()
+{
+	if (false == IsLocalController())
+		return nullptr;
+
+	if (false == IsValid(PlayerHUD) && IsValid(PlayerHUDClass))
+	{
+		PlayerHUD = CreateWidget<UCUserWidget_HUD>(this, PlayerHUDClass);
+		if (IsValid(PlayerHUD))
+			PlayerHUD->AddToViewport();
+	}
+
+	return PlayerHUD;
+}
+
+void ACPlayerController::InitializeHUDForPawn(APawn* InPawn)
+{
+	TObjectPtr<UCUserWidget_HUD> hud = EnsureHUD();
+	if (false == IsValid(hud) || false == IsValid(InPawn))
+		return;
+
+	hud->SetChildren();
+
+	UCCharacterStatComponent* characterStatComp = InPawn->FindComponentByClass<UCCharacterStatComponent>();
+	if (IsValid(characterStatComp) && IsValid(hud->PlayerInfo))
+		hud->PlayerInfo->BindStats(characterStatComp);
 }
 
 void ACPlayerController::RequestPickup(ACWorldItemActor* WorldItem)

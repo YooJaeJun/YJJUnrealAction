@@ -16,6 +16,10 @@
 
 ACCommonCharacter::ACCommonCharacter()
 {
+	bReplicates = true;
+	SetReplicateMovement(true);
+	SetNetCullDistanceSquared(FMath::Square(15000.0f));
+
 	YJJHelpers::CreateActorComponent<UCStateComponent>(this, &StateComp, "StateComponent");
 	YJJHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "MovementComponent");
 	YJJHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");

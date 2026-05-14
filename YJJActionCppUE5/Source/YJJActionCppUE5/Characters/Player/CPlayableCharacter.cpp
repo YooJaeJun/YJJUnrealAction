@@ -17,6 +17,7 @@
 #include "Components/CInventoryComponent.h"
 #include "Components/CPlacementComponent.h"
 #include "Commons/CGameMode.h"
+#include "Commons/CPlayerController.h"
 #include "Components/CCharacterInfoComponent.h"
 #include "Components/CCharacterStatComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
@@ -93,27 +94,19 @@ void ACPlayableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(AActor::GetWorld()));
-
 	if (IsValid(MovementComp))
 		MovementComp->SetSpeed(CESpeedType::Sprint);
 
-	const TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(GetMyCurController());
+	const TWeakObjectPtr<APlayerController> playerController = Cast<APlayerController>(GetController());
 	if (playerController.IsValid())
 	{
 		playerController->PlayerCameraManager->ViewPitchMin = PitchRange.X;
 		playerController->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
 	}
 
-	const TObjectPtr<UCUserWidget_HUD> hud = GameMode->GetHUD();
-	if (IsValid(hud))
-	{
-		hud->SetChildren();
-
-		const TObjectPtr<UCUserWidget_PlayerInfo> playerInfo = hud->PlayerInfo;
-		if (IsValid(playerInfo))
-			playerInfo->BindStats(CharacterStatComp);
-	}
+	TObjectPtr<ACPlayerController> yjjPlayerController = Cast<ACPlayerController>(GetController());
+	if (IsValid(yjjPlayerController) && IsLocallyControlled())
+		yjjPlayerController->InitializeHUDForPawn(this);
 
 	if (IsValid(CharacterInfoComp))
 		CharacterInfoComp->SetCharacterType(CECharacterType::Player);

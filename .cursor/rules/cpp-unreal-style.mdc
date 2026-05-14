@@ -4,24 +4,31 @@ globs: "**/*.{cpp,h,hpp,c,cc}"
 alwaysApply: true
 ---
 
-# C++ / Unreal (YJJActionCppUE5)
+# C++ / Unreal 스타일 (YJJActionCppUE5)
 
-## Encoding
+## 인코딩
 
-- Save **`.cpp` / `.h` / `.hpp`** as **UTF-8 without BOM** (no UTF-8 BOM).
-- Do not leave mojibake or `?????` placeholder comments; use clear **English or Korean** that displays correctly.
+- **`.cpp` / `.h` / `.hpp`** 파일은 **UTF-8 without BOM**으로 저장한다.
+- 깨진 문자나 `?????` 같은 임시 주석을 남기지 않는다. 표시가 정상인 **한국어 주석**을 우선 사용한다.
 
-## Types: no `auto`
+## 타입: `auto` 금지
 
-- Do **not** use `auto` for locals, return types, or range-for variables in this project.
-- Use an **explicit type** (e.g. `const FHitResult&`, `TWeakObjectPtr<...>`, `int32`, `float`).
+- 이 프로젝트에서는 지역 변수, 반환 타입, range-for 변수에 **`auto`를 사용하지 않는다**.
+- `const FHitResult&`, `TWeakObjectPtr<...>`, `int32`, `float`처럼 **명시 타입**을 사용한다.
 
-## Lambdas: avoid for gameplay code
+## 람다: 게임플레이 코드에서는 지양
 
-- Prefer **`FTimerDelegate::CreateUObject` / `BindUObject`** or **`SetTimer` + non-static member function** over `BindLambda`, `CreateLambda`, and inline `[](...) { ... }` for timers and delegates.
-- If logic is reusable or non-trivial, extract a **named private member function** or **file-local static helper** instead of a lambda.
+- 타이머와 델리게이트에서는 `BindLambda`, `CreateLambda`, 인라인 `[](...) { ... }`보다 **`FTimerDelegate::CreateUObject` / `BindUObject`** 또는 **`SetTimer` + non-static 멤버 함수**를 우선한다.
+- 재사용 가능하거나 조금이라도 복잡한 로직은 람다 대신 **이름 있는 private 멤버 함수** 또는 **파일 로컬 static 헬퍼**로 분리한다.
 
-## Exceptions (keep minimal)
+## 주석
 
-- Generated `*.generated.h` code is out of scope.
-- Third-party / Engine includes are not edited for style.
+- 조금이라도 읽기 어려운 함수나 분기에는 **한국어 주석**을 추가한다.
+- 주석은 "무엇을 하는지"보다 **왜 그렇게 처리하는지**를 짧게 설명한다.
+- 네트워크 권위, 롤백, 복제, 소유권, 비동기/타이머, 인덱스 제거처럼 의도를 놓치기 쉬운 코드는 주석을 우선한다.
+- 자명한 대입/호출에는 주석을 달지 않는다.
+
+## 예외
+
+- 생성 코드인 `*.generated.h`는 이 규칙의 대상이 아니다.
+- 서드파티 / 엔진 include 파일은 스타일 정리 목적으로 수정하지 않는다.

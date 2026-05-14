@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
 #include "Commons/CGameMode.h"
+#include "Commons/CPlayerController.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Interaction/CUserWidget_Interaction.h"
 #include "Characters/Animals/CAnimal_AI.h"
@@ -83,8 +84,9 @@ void UCRidingComponent::BeginPlay()
 	// TODO Rider Info
 
 
-	const TWeakObjectPtr<ACGameMode> gameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	Hud = Cast<UCUserWidget_HUD>(gameMode->GetHUD());
+	const TWeakObjectPtr<ACPlayerController> playerController = Cast<ACPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (playerController.IsValid())
+		Hud = playerController->EnsureHUD();
 
 	CheckNull(Hud);
 
