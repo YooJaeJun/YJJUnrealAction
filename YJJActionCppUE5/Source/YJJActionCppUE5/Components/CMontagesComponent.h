@@ -50,10 +50,10 @@ public:
 
 private:
 	UFUNCTION(BlueprintCallable)
-		void PlayAnimMontage(const CEStateType InType);
+	void PlayAnimMontage(const CEStateType InType);
 
 	UFUNCTION(BlueprintCallable)
-		void PlayHitAnimMontage(const CEHitType InType);
+	void PlayHitAnimMontage(const CEHitType InType);
 
 	void PlayAnimMontage(const CEStateType InType, const TWeakObjectPtr<UInputComponent> InInput) const;
 

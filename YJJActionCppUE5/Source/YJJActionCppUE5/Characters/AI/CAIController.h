@@ -22,7 +22,7 @@ public:
 	void StopAI() const;
 
 	UFUNCTION()
-		void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
+	void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
 
 public:
 	static const FName SelfActor;

@@ -31,12 +31,12 @@ public:
 
 private:
 	UFUNCTION()
-		void OnComponentHit(
-			UPrimitiveComponent* HitComponent,
-			AActor* OtherActor,
-			UPrimitiveComponent* OtherComp,
-			FVector NormalImpulse,
-			const FHitResult& Hit);
+	void OnComponentHit(
+		UPrimitiveComponent* HitComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		FVector NormalImpulse,
+		const FHitResult& Hit);
 
 public:
 	FORCEINLINE void AddIgnoreActor(TWeakObjectPtr<AActor> InActor) { Ignores.Add(InActor); }

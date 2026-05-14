@@ -53,7 +53,7 @@ public:
 
 private:
 	UFUNCTION()
-		void OnAiming(FVector Output);
+	void OnAiming(FVector Output);
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Aiming")

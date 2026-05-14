@@ -49,6 +49,7 @@ void UCPlacementComponent::StartPlacement(FName InItemID)
 	PendingItemID = InItemID;
 	bPreviewValid = false;
 
+	// 프리뷰는 로컬 전용이다. 서버에는 확정 시점의 Transform만 보낸다.
 	if (false == IsValid(PreviewActor) && IsValid(PreviewActorClass))
 	{
 		UWorld* world = GetWorld();
@@ -78,6 +79,7 @@ void UCPlacementComponent::ConfirmPlacement()
 	if (PendingItemID == NAME_None || false == bPreviewValid)
 		return;
 
+	// 마지막 유효 프리뷰 위치를 사용해 Tick과 입력 사이의 미세한 불일치를 줄인다.
 	ACPlayerController* playerController = GetOwningPlayerController();
 	if (false == IsValid(playerController))
 		return;
@@ -117,6 +119,7 @@ bool UCPlacementComponent::TracePlacement(FTransform& OutTransform) const
 
 	FHitResult hitResult;
 	FCollisionQueryParams queryParams(SCENE_QUERY_STAT(PlacementTrace), false, GetOwner());
+	// 프리뷰 단계에서는 서버 트래픽 없이 시야 기준 라인트레이스만 수행한다.
 	const bool bHit = GetWorld()->LineTraceSingleByChannel(hitResult, traceStart, traceEnd, ECC_Visibility, queryParams);
 	if (false == bHit)
 		return false;

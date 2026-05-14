@@ -25,18 +25,18 @@ public:
 		UCAct* InAct);
 
 	UFUNCTION(BlueprintNativeEvent)
-		void Tick(float InDeltaTime);
+	void Tick(float InDeltaTime);
 	virtual void Tick_Implementation(float InDeltaTime) {}
 
 	virtual void Pressed();
 	virtual void Released();
 
 	UFUNCTION(BlueprintNativeEvent)
-		void Begin_Skill();
+	void Begin_Skill();
 	virtual void Begin_Skill_Implementation() {}
 
 	UFUNCTION(BlueprintNativeEvent)
-		void End_Skill();
+	void End_Skill();
 	virtual void End_Skill_Implementation() {}
 
 	FORCEINLINE bool GetInAction() const { return bInAction; }

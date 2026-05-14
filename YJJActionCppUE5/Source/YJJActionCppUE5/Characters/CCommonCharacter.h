@@ -91,7 +91,7 @@ public:
 
 private:
 	UFUNCTION()
-		void RestoreColor();
+	void RestoreColor();
 
 public:
 	// 라이딩 중 PlayerController와 AIController 전환을 위해 현재 컨트롤러를 저장한다.
@@ -100,7 +100,7 @@ public:
 
 public:
 	UFUNCTION()
-		void SetTickLerp(FRotator InRotator);
+	void SetTickLerp(FRotator InRotator);
 
 	void TogglebTickLerpForTarget();
 

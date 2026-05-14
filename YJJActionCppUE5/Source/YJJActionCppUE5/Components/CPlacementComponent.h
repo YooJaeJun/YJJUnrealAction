@@ -20,13 +20,13 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Placement")
-		void StartPlacement(FName InItemID);
+	void StartPlacement(FName InItemID);
 
 	UFUNCTION(BlueprintCallable, Category = "Placement")
-		void ConfirmPlacement();
+	void ConfirmPlacement();
 
 	UFUNCTION(BlueprintCallable, Category = "Placement")
-		void CancelPlacement();
+	void CancelPlacement();
 
 	FORCEINLINE bool IsPreviewValid() const { return bPreviewValid; }
 

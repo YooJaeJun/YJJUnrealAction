@@ -25,24 +25,24 @@ protected:
 
 private:
 	UFUNCTION()
-		void OnSystemFinished(UNiagaraComponent* PSystem);
+	void OnSystemFinished(UNiagaraComponent* PSystem);
 
 private:
 	UFUNCTION()
-		void OnComponentBeginOverlap(
-			UPrimitiveComponent* OverlappedComponent, 
-			AActor* OtherActor, 
-			UPrimitiveComponent* OtherComp, 
-			int32 OtherBodyIndex, 
-			bool bFromSweep, 
-			const FHitResult& SweepResult);
+	void OnComponentBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent, 
+		AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex, 
+		bool bFromSweep, 
+		const FHitResult& SweepResult);
 
 	UFUNCTION()
-		void OnComponentEndOverlap(
-			UPrimitiveComponent* OverlappedComponent, 
-			AActor* OtherActor, 
-			UPrimitiveComponent* OtherComp, 
-			int32 OtherBodyIndex);
+	void OnComponentEndOverlap(
+		UPrimitiveComponent* OverlappedComponent, 
+		AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex);
 
 	void Timer_ApplyDamage();
 

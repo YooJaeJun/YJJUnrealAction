@@ -47,10 +47,10 @@ private:
 
 private:
 	UFUNCTION()
-		void OnArrowHit(AActor* InCauser, ACCommonCharacter* InOther);
+	void OnArrowHit(AActor* InCauser, ACCommonCharacter* InOther);
 
 	UFUNCTION()
-		void OnArrowEndPlay(ACArrow* InDestroyer);
+	void OnArrowEndPlay(ACArrow* InDestroyer);
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Arrow")

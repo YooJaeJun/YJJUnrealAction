@@ -19,7 +19,7 @@ public:
 
 protected:
 	UFUNCTION()
-		void OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
+	void OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")

@@ -48,10 +48,10 @@ private:
 
 private:
 	UFUNCTION()
-		void OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
+	void OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
 
 	UFUNCTION()
-		void OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
+	void OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
 
 public:
 	virtual TObjectPtr<USpringArmComponent> GetSpringArm() const override;

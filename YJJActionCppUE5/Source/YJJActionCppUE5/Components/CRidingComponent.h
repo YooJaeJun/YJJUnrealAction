@@ -69,20 +69,20 @@ public:
 	void SetRidingState(const CERidingState InState);
 
 	UFUNCTION()
-		void BeginOverlap(
-			UPrimitiveComponent* OverlappedComponent,
-			AActor* OtherActor,
-			UPrimitiveComponent* OtherComp,
-			int32 OtherBodyIndex, 
-			bool bFromSweep, 
-			const FHitResult& SweepResult);
+	void BeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, 
+		bool bFromSweep, 
+		const FHitResult& SweepResult);
 
 	UFUNCTION()
-		void EndOverlap(
-			UPrimitiveComponent* OverlappedComponent,
-			AActor* OtherActor,
-			UPrimitiveComponent* OtherComp,
-			int32 OtherBodyIndex);
+	void EndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
 
 public:
 	void SetInteractor(
@@ -90,7 +90,7 @@ public:
 		const TWeakObjectPtr<ACCommonCharacter> InOtherCharacter);
 
 	UFUNCTION()
-		void SetRider(ACCommonCharacter* InCharacter);
+	void SetRider(ACCommonCharacter* InCharacter);
 
 	FORCEINLINE TWeakObjectPtr<ACCommonCharacter> GetRider() const { return Rider; };
 
@@ -110,15 +110,15 @@ public:
 	void PossessAndInterpToCamera();
 
 	UFUNCTION()
-		void InterpToRiderPos(UAnimMontage* Anim, bool bInterrupted);
+	void InterpToRiderPos(UAnimMontage* Anim, bool bInterrupted);
 
 	UFUNCTION()
-		void AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted);
+	void AttachToRiderPoint(UAnimMontage* Anim, bool bInterrupted);
 
 	void UnpossessAndInterpToCamera();
 
 	UFUNCTION()
-		void Unmount();
+	void Unmount();
 
 	void InputAction_Act();
 	void Input_Zoom(const float InAxis) {}

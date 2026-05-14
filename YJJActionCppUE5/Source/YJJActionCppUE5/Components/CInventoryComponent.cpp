@@ -71,6 +71,7 @@ bool UCInventoryComponent::RemoveItem(const FName InItemID, const int32 InQuanti
 		return false;
 
 	int32 remainingQuantity = InQuantity;
+	// 빈 스택을 바로 제거하므로 인덱스 밀림을 피하기 위해 뒤에서부터 순회한다.
 	for (int32 index = Items.Num() - 1; index >= 0 && remainingQuantity > 0; --index)
 	{
 		FCInventoryItemStack& item = Items[index];

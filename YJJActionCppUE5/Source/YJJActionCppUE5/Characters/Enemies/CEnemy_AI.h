@@ -27,10 +27,10 @@ public:
 
 private:
 	UFUNCTION()
-		void OnStateTypeChanged(CEStateType InPrevType, CEStateType InNewType);
+	void OnStateTypeChanged(CEStateType InPrevType, CEStateType InNewType);
 
 	UFUNCTION()
-		void OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
+	void OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
 
 private:
 	virtual void Hit() override;

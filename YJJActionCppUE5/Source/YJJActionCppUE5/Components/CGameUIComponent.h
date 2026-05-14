@@ -25,7 +25,7 @@ protected:
 
 private:
 	UFUNCTION()
-		void OnWeaponEquipped(const CEWeaponType InNewType);
+	void OnWeaponEquipped(const CEWeaponType InNewType);
 
 public:
 	virtual void InputAction_ActivateEquipMenu() override;

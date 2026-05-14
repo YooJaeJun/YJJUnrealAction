@@ -87,6 +87,7 @@ bool ACWorldItemActor::TryPickup(AController* RequestController)
 	if (false == inventoryComp->CanAddItem(ItemID, Quantity))
 		return false;
 
+	// 동시 줍기 요청이 들어와도 인벤토리는 한 번만 변경되도록 먼저 선점한다.
 	bClaimed = true;
 
 	if (false == inventoryComp->AddItem(ItemID, Quantity))

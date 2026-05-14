@@ -32,27 +32,27 @@ public:
 
 public:
 	UFUNCTION()
-		virtual void OnAttachmentBeginCollision() {}
+	virtual void OnAttachmentBeginCollision() {}
 
 	UFUNCTION()
-		virtual void OnAttachmentEndCollision() {}
+	virtual void OnAttachmentEndCollision() {}
 
 	UFUNCTION()
-		virtual void OnAttachmentBeginOverlap(
-			ACCommonCharacter* InAttacker,
-			AActor* InAttackCauser,
-			ACCommonCharacter* InOther) {}
+	virtual void OnAttachmentBeginOverlap(
+		ACCommonCharacter* InAttacker,
+		AActor* InAttackCauser,
+		ACCommonCharacter* InOther) {}
 
 	UFUNCTION()
-		virtual void OnAttachmentEndOverlap(
-			ACCommonCharacter* InAttacker,
-			ACCommonCharacter* InOther) {}
+	virtual void OnAttachmentEndOverlap(
+		ACCommonCharacter* InAttacker,
+		ACCommonCharacter* InOther) {}
 
 	UFUNCTION()
-		virtual void OnBeginEquip() {}
+	virtual void OnBeginEquip() {}
 
 	UFUNCTION()
-		virtual void OnUnequip() {}
+	virtual void OnUnequip() {}
 
 public:
 	virtual void Act();

@@ -18,20 +18,20 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Dedicated Server")
-		void RequestPickup(ACWorldItemActor* WorldItem);
+	void RequestPickup(ACWorldItemActor* WorldItem);
 
 	UFUNCTION(BlueprintCallable, Category = "Dedicated Server")
-		void RequestPlacement(const FTransform& RequestedTransform, const FName ItemID);
+	void RequestPlacement(const FTransform& RequestedTransform, const FName ItemID);
 
 protected:
 	UFUNCTION(Server, Reliable)
-		void Server_RequestPickup(ACWorldItemActor* WorldItem);
+	void Server_RequestPickup(ACWorldItemActor* WorldItem);
 
 	UFUNCTION(Server, Reliable)
-		void Server_RequestPlacement(FTransform RequestedTransform, FName ItemID);
+	void Server_RequestPlacement(FTransform RequestedTransform, FName ItemID);
 
 	UFUNCTION(Client, Reliable)
-		void Client_NotifyServerActionResult(bool bSucceeded, FName Reason);
+	void Client_NotifyServerActionResult(bool bSucceeded, FName Reason);
 
 private:
 	bool ValidatePlacementRequest(const FTransform& RequestedTransform, const FName ItemID) const;

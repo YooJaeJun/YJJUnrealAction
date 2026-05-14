@@ -22,19 +22,19 @@ public:
 
 public:
 	UFUNCTION(BlueprintNativeEvent)
-		void Equip();
+	void Equip();
 	virtual void Equip_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent)
-		void Begin_Equip();
+	void Begin_Equip();
 	virtual void Begin_Equip_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent)
-		void End_Equip();
+	void End_Equip();
 	virtual void End_Equip_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent)
-		void Unequip();
+	void Unequip();
 	virtual void Unequip_Implementation();
 
 public:

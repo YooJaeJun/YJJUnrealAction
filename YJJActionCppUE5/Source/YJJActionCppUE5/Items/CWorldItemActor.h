@@ -34,7 +34,7 @@ private:
 	UCInventoryComponent* FindInventoryComponent(const AController* RequestController) const;
 
 	UFUNCTION()
-		void OnRep_ItemState();
+	void OnRep_ItemState();
 
 protected:
 	UPROPERTY(VisibleAnywhere)

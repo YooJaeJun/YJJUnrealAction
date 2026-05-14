@@ -20,10 +20,10 @@ protected:
 
 public:
 	UFUNCTION()
-		void OnEnableTopViewCam();
+	void OnEnableTopViewCam();
 
 	UFUNCTION()
-		void OnDisableTopViewCam();
+	void OnDisableTopViewCam();
 
 public:
 	void SetSpeeds(const TArray<float> InSpeeds);

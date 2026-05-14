@@ -40,7 +40,7 @@ public:
 
 private:
 	UFUNCTION()
-		void OnRep_Items();
+	void OnRep_Items();
 
 	void BroadcastInventoryChanged();
 

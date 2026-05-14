@@ -18,7 +18,7 @@ public:
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
-		void PlayLevelUpAnim();
+	void PlayLevelUpAnim();
 
 	void UpdateLevelWidget();
 

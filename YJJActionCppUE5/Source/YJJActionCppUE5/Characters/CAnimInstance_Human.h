@@ -19,7 +19,7 @@ public:
 
 private:
 	UFUNCTION()
-		void OnWeaponTypeChanged(const CEWeaponType InPrevType, const CEWeaponType InNewType);
+	void OnWeaponTypeChanged(const CEWeaponType InPrevType, const CEWeaponType InNewType);
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")

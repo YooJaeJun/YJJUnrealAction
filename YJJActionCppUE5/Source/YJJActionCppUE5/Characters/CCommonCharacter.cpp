@@ -220,6 +220,7 @@ void ACCommonCharacter::InputAction_Interact()
 		const FVector traceStart = viewLocation;
 		const FVector traceEnd = traceStart + viewRotation.Vector() * 350.0f;
 
+		// 마운트 전용 Overlap 상호작용보다 먼저, 시야에 잡힌 일반 Interactable을 처리한다.
 		FHitResult hitResult;
 		FCollisionQueryParams queryParams(SCENE_QUERY_STAT(InteractTrace), false, this);
 		const bool bHit = GetWorld()->LineTraceSingleByChannel(hitResult, traceStart, traceEnd, ECC_Visibility, queryParams);

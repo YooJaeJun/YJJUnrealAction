@@ -27,7 +27,7 @@ public:
 
 public:
 	UFUNCTION()
-		void InputAction_Targeting();
+	void InputAction_Targeting();
 
 	void Begin_Targeting();
 	void End_Targeting();

@@ -40,5 +40,6 @@ void ACPlacedActor::EnterPlacedDormancy()
 	if (false == HasAuthority())
 		return;
 
+	// 설치 직후 초기 상태를 보낸 뒤에는 정적 액터로 보고 Dormancy 상태로 전환한다.
 	SetNetDormancy(DORM_DormantAll);
 }

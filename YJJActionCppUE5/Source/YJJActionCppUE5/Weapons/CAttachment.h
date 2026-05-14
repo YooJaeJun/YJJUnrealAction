@@ -32,42 +32,42 @@ protected:
 
 public:
 	UFUNCTION(BlueprintNativeEvent)
-		void OnBeginEquip();
+	void OnBeginEquip();
 	virtual void OnBeginEquip_Implementation() { }
 
 	UFUNCTION(BlueprintNativeEvent)
-		void OnUnequip();
+	void OnUnequip();
 	virtual void OnUnequip_Implementation() {}
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Attach")
-		void AttachTo(FName InSocketName);
+	void AttachTo(FName InSocketName);
 
 	UFUNCTION(BlueprintCallable, Category = "Attach")
-		void AttachToCollision(FName InCollisionName);
+	void AttachToCollision(FName InCollisionName);
 
 	UFUNCTION(BlueprintCallable, Category = "Detach")
-		void DetachTo(FName InSocketName);
+	void DetachTo(FName InSocketName);
 
 	UFUNCTION(BlueprintCallable, Category = "Detach")
-		void DetachToCollision(FName InCollisionName);
+	void DetachToCollision(FName InCollisionName);
 
 private:
 	UFUNCTION()
-		void OnComponentBeginOverlap(
-			UPrimitiveComponent* OverlappedComponent,
-			AActor* OtherActor, 
-			UPrimitiveComponent* OtherComp, 
-			int32 OtherBodyIndex,
-			bool bFromSweep, 
-			const FHitResult& SweepResult);
+	void OnComponentBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex,
+		bool bFromSweep, 
+		const FHitResult& SweepResult);
 
 	UFUNCTION()
-		void OnComponentEndOverlap(
-			UPrimitiveComponent* OverlappedComponent,
-			AActor* OtherActor, 
-			UPrimitiveComponent* OtherComp, 
-			int32 OtherBodyIndex);
+	void OnComponentEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex);
 
 public:
 	void OnCollisions();

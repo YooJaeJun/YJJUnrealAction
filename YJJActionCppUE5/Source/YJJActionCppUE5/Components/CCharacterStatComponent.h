@@ -31,16 +31,16 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-		void SetDamage(const float InNewDamage);
+	void SetDamage(const float InNewDamage);
 
 	UFUNCTION(BlueprintCallable)
-		void SetStaminaDamage(const float InNewDamage);
+	void SetStaminaDamage(const float InNewDamage);
 
 	UFUNCTION(BlueprintCallable)
-		void SetManaDamage(const float InNewDamage);
+	void SetManaDamage(const float InNewDamage);
 
 	UFUNCTION(BlueprintCallable)
-		void AddExp(const float InNewExp);
+	void AddExp(const float InNewExp);
 
 public:
 	void SetNewLevel(const int32 InNewLevel, const float InRemainExp);

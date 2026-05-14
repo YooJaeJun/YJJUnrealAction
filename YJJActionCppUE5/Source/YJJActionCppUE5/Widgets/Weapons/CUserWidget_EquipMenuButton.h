@@ -18,10 +18,10 @@ public:
 	void BindEquipMenuButton();
 
 	UFUNCTION()
-		void OnHovered();
+	void OnHovered();
 
 	UFUNCTION()
-		void OnUnhovered();
+	void OnUnhovered();
 
 public:
 	UPROPERTY()

@@ -66,6 +66,7 @@ void ACPlayerController::Server_RequestPlacement_Implementation(FTransform Reque
 		return;
 	}
 
+	// 스폰 실패 시 복구할 수 있도록, 차감 이후의 실패 경로는 아이템을 되돌린다.
 	UWorld* world = GetWorld();
 	if (false == IsValid(world))
 	{
@@ -121,6 +122,7 @@ bool ACPlayerController::ValidatePlacementRequest(const FTransform& RequestedTra
 	if (false == IsValid(world))
 		return false;
 
+	// 클라 프리뷰 결과를 그대로 믿지 않고 서버에서 거리와 충돌을 다시 판정한다.
 	const FCollisionShape collisionShape = FCollisionShape::MakeSphere(PlacementCollisionRadius);
 	const bool bBlocked = world->OverlapBlockingTestByChannel(
 		RequestedTransform.GetLocation(),

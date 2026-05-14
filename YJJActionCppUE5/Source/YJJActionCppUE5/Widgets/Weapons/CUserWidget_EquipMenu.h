@@ -23,7 +23,7 @@ public:
 
 public:
 	UFUNCTION()
-		void SetWeaponType(const CEWeaponType InNewType);
+	void SetWeaponType(const CEWeaponType InNewType);
 
 public:
 	UPROPERTY()

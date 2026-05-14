@@ -44,10 +44,10 @@ protected:
 
 private:
 	UFUNCTION()
-		void OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
+	void OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
 
 	UFUNCTION()
-		void OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
+	void OnHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
 
 public:
 	void SetZoomMinRange(const float InMinRange) const;
