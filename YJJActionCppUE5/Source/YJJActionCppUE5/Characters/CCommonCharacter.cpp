@@ -1,4 +1,5 @@
 #include "CCommonCharacter.h"
+#include "Commons/CPlayerController.h"
 #include "Global.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CStateComponent.h"
@@ -13,6 +14,7 @@
 #include "Components/SceneComponent.h"
 #include "Widgets/Enemies/CUserWidget_EnemyBar.h"
 #include "Interfaces/CInterface_Interactable.h"
+#include "Widgets/CUserWidget_HUD.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -27,30 +29,21 @@ ACCommonCharacter::ACCommonCharacter()
 	YJJHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
 	YJJHelpers::CreateComponent<USceneComponent>(this, &InfoPoint, "InfoPoint", GetMesh());
 	YJJHelpers::CreateComponent<UWidgetComponent>(this, &InfoWidgetComp, "InfoWidgetComp", InfoPoint);
-	YJJHelpers::GetClass<UCUserWidget_EnemyBar>(&InfoWidget, "/Script/UMGEditor.WidgetBlueprint'/Game/Widgets/Enemy/CWB_Enemy_HpBar_Guage.CWB_Enemy_HpBar_Guage_C'");
 	YJJHelpers::CreateComponent<USceneComponent>(this, &TargetingPoint, "TargetingPoint", GetMesh());
 	YJJHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", TargetingPoint);
-	YJJHelpers::GetClass<UCUserWidget_Custom>(&TargetingWidget, "/Script/UMGEditor.WidgetBlueprint'/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C'");
+	// CWB_* 위젯이 예전 모듈명(YJJActionCpp) 부모를 가리키면 CDO 시점의 GetClass 가 전체 캐릭터 로드를 깨뜨린다.
+	// 클래스는 BeginPlay 에서 LoadClass + 폴백으로 적용한다.
 
 	CharacterStatComp->OnHpIsZero.AddUObject(this, &ACCommonCharacter::Dead);
 
 	if (IsValid(TargetingWidgetComp))
 	{
-		if (IsValid(TargetingWidget))
-			TargetingWidgetComp->SetWidgetClass(TargetingWidget);
-
 		TargetingWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 		TargetingWidgetComp->SetVisibility(false);
 	}
 
-	if (IsValid(InfoPoint))
-		InfoPoint->SetWorldLocation(FVector(0, 500, 500));
-
 	if (IsValid(InfoWidgetComp))
 	{
-		if (IsValid(InfoWidget))
-			InfoWidgetComp->SetWidgetClass(InfoWidget);
-
 		InfoWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 		InfoWidgetComp->SetVisibility(true);
 	}
@@ -60,7 +53,9 @@ void ACCommonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyCurController = GetController();
+	ApplyEmbeddedWidgetClassesIfNeeded();
+
+	CurController = GetController();
 
 	YJJHelpers::GetAssetDynamic<USoundBase>(&LandSound,
 		TEXT("/Script/Engine.SoundWave'/Game/Assets/Sounds/Action/Sway_2.Sway_2'"));
@@ -73,12 +68,12 @@ void ACCommonCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (bTickLerpForTarget)
+	if (bTickLerpForTarget && IsValid(CurController))
 	{
-		const FRotator start = MyCurController->GetControlRotation();
+		const FRotator start = CurController->GetControlRotation();
 		const FRotator target = TargetRotator;
 
-		MyCurController->SetControlRotation(
+		CurController->SetControlRotation(
 			FMath::RInterpTo(start, target, GetWorld()->DeltaTimeSeconds, 5.0f));
 
 		if (false == UKismetMathLibrary::EqualEqual_Vector2DVector2D(
@@ -189,7 +184,7 @@ void ACCommonCharacter::RestoreColor()
 
 void ACCommonCharacter::SetMyCurController(const TWeakObjectPtr<AController> InController)
 {
-	MyCurController = InController;
+	CurController = InController.Get();
 }
 
 void ACCommonCharacter::SetTickLerp(FRotator InRotator)
@@ -210,6 +205,43 @@ void ACCommonCharacter::SetMousePos(const FVector2D InPos)
 void ACCommonCharacter::SetInteractor(TObjectPtr<ACCommonCharacter> InCharacter)
 {
 	Interactor = InCharacter;
+}
+
+void ACCommonCharacter::ApplyRestoreStateFromPrevMode()
+{
+	if (false == IsValid(StateComp))
+		return;
+
+	const CEStateType prev = StateComp->GetPrevMode();
+
+	switch (prev)
+	{
+	case CEStateType::Idle:
+	case CEStateType::Rise:
+	case CEStateType::Avoid:
+	case CEStateType::Land:
+		StateComp->SetIdleMode();
+		break;
+
+	case CEStateType::Fall:
+		StateComp->SetFallMode();
+		break;
+
+	case CEStateType::Equip:
+	case CEStateType::Act:
+		if (StateComp->IsRealRiding())
+			StateComp->SetRidingMode();
+		else
+			StateComp->SetIdleMode();
+		break;
+
+	case CEStateType::Riding:
+		StateComp->SetRidingMode();
+		break;
+
+	default:
+		break;
+	}
 }
 
 void ACCommonCharacter::InputAction_Interact()
@@ -250,4 +282,64 @@ void ACCommonCharacter::InputAction_Interact()
 		if (OnUnmount.IsBound())
 			OnUnmount.Broadcast();
 	}
+}
+
+void ACCommonCharacter::ApplyEmbeddedWidgetClassesIfNeeded()
+{
+	if (IsValid(InfoPoint))
+		InfoPoint->SetWorldLocation(FVector(0, 500, 500));
+
+	if (IsValid(InfoWidgetComp))
+	{
+		if (false == IsValid(InfoWidget))
+		{
+			UClass* enemyBarClass = LoadClass<UCUserWidget_EnemyBar>(
+				nullptr, TEXT("/Game/Widgets/Enemy/CWB_Enemy_HpBar_Guage.CWB_Enemy_HpBar_Guage_C"));
+			if (false == IsValid(enemyBarClass))
+				enemyBarClass = LoadClass<UCUserWidget_EnemyBar>(
+					nullptr, TEXT("/Game/Widgets/Enemy/WB_Enemy_HpBar_Guage.WB_Enemy_HpBar_Guage_C"));
+			if (IsValid(enemyBarClass))
+				InfoWidget = enemyBarClass;
+			else
+				CLog::Log(TEXT("[UI] 적 HP 바 위젯 클래스 로드 실패 — CWB_Enemy_HpBar_Guage 또는 WB_Enemy_HpBar_Guage 에셋·부모(UCUserWidget_EnemyBar) 확인"));
+		}
+		if (IsValid(InfoWidget))
+			InfoWidgetComp->SetWidgetClass(InfoWidget);
+	}
+
+	if (IsValid(TargetingWidgetComp))
+	{
+		if (false == IsValid(TargetingWidget))
+		{
+			UClass* targetingClass = LoadClass<UCUserWidget_Custom>(
+				nullptr, TEXT("/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C"));
+			if (false == IsValid(targetingClass))
+				targetingClass = LoadClass<UCUserWidget_Custom>(
+					nullptr, TEXT("/Game/Widgets/Enemy/WB_Targeting.WB_Targeting_C"));
+			if (IsValid(targetingClass))
+				TargetingWidget = targetingClass;
+			else
+				CLog::Log(TEXT("[UI] 타겟팅 위젯 클래스 로드 실패 — CWB_Targeting 부모를 YJJActionCppUE5 UCUserWidget_Custom 으로 Reparent 하거나 WB_Targeting 사용"));
+		}
+		if (IsValid(TargetingWidget))
+			TargetingWidgetComp->SetWidgetClass(TargetingWidget);
+	}
+}
+
+UCUserWidget_HUD* ACCommonCharacter::EnsureHUDWidget()
+{
+	if (false == IsLocallyControlled())
+		return nullptr;
+
+	AController* controller = GetController();
+	ACPlayerController* yjjPc = Cast<ACPlayerController>(controller);
+	if (false == IsValid(yjjPc))
+		return nullptr;
+
+	return yjjPc->EnsureHUD();
+}
+
+UCUserWidget_HUD* ACCommonCharacter::GetPlayerHUDWidget() const
+{
+	return const_cast<ACCommonCharacter*>(this)->EnsureHUDWidget();
 }

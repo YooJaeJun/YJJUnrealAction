@@ -34,6 +34,7 @@ public:
 	void SetActMode();
 	void SetDeadMode();
 	void SetRiseMode();
+	void SetRidingMode();
 
 	void SetHitMode(const CEHitType InHitType);
 	void SetHitNoneMode();
@@ -64,6 +65,11 @@ public:
 	FORCEINLINE constexpr bool IsActMode() const { return CurType == CEStateType::Act; }
 	FORCEINLINE constexpr bool IsDeadMode() const { return CurType == CEStateType::Dead; }
 	FORCEINLINE constexpr bool IsRiseMode() const { return CurType == CEStateType::Rise; }
+	FORCEINLINE constexpr bool IsRidingMode() const { return CurType == CEStateType::Riding; }
+
+	// 블루프린트 StateComponent::IsRealRiding — 실제 탑승 플래그는 캐릭터 쪽이다.
+	UFUNCTION(BlueprintPure, Category = "State")
+	bool IsRealRiding() const;
 
 	FORCEINLINE constexpr bool IsHitNoneMode() const { return CurHitType == CEHitType::None; }
 	FORCEINLINE constexpr bool IsHitCommonMode() const { return CurHitType == CEHitType::Common; }

@@ -18,6 +18,9 @@ class UCInventoryComponent;
 class UCPlacementComponent;
 class UWidgetComponent;
 class ACGameMode;
+class UCUserWidget_EquipMenu;
+class UCUserWidget_MagicMenu;
+class UCUserWidget_Interaction;
 
 UCLASS()
 class YJJACTIONCPPUE5_API ACPlayableCharacter :
@@ -35,6 +38,20 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	// BP_Player::SetStatusUI — 스탯 UI 를 CharacterStatComp 기준으로 동기화하고 HUD 를 표시한다.
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetStatusUI();
+
+	// BP_Player::SetMenuUI — HUD 하위 Equip/Magic/Interaction 을 정리하고 장착 델리게이트를 캐릭터로 연결한다.
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetMenuUI();
+
+	UFUNCTION()
+	void EquipWeaponFromUI(const CEWeaponType InNewType);
+
+	UFUNCTION()
+	void EquipMagicFromUI(const CEWeaponType InNewType);
 
 private:
 	void InputAction_Avoid();
@@ -93,4 +110,13 @@ private:
 
 private:
 	CEHitType CurHitType = CEHitType::Common;
+
+	UPROPERTY(BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCUserWidget_EquipMenu> MenuEquipWidget;
+
+	UPROPERTY(BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCUserWidget_MagicMenu> MenuMagicWidget;
+
+	UPROPERTY(BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCUserWidget_Interaction> MenuInteractionWidget;
 };

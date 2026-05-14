@@ -85,7 +85,7 @@ public:
 };
 
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FHitData
 {
 	GENERATED_BODY()
@@ -101,34 +101,37 @@ public:
 	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation) const;
 
 public:
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UAnimMontage> Montage;
+	// UObject 필드는 raw 포인터로 두면 USTRUCT Break/Make 와 에셋 직렬화가 안정적이다.
+	// Content 에 UserDefinedStruct 로 FHitData 를 만들었다면 이름 충돌로 Break 가 깨지므로 UDS 는 삭제하거나 개명한다.
+	// 그래도 실패하면 UCYJJBlueprintLibrary::BreakHitData(NativeBreak) 를 쓴다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* Montage = nullptr;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PlayRate = 1;
 
-	UPROPERTY(EditAnywhere)
-	float Power;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Power = 0.0f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Launch = 100;
 
-	UPROPERTY(EditAnywhere)
-	float StopTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StopTime = 0.0f;
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<USoundWave> Sound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundWave* Sound = nullptr;
 	
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UFXSystemAsset> Effect;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UFXSystemAsset* Effect = nullptr;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector EffectLocation = FVector::ZeroVector;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector EffectScale = FVector::OneVector;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	CEHitType AttackType = CEHitType::Common;
 };
 

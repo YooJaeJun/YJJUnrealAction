@@ -35,20 +35,15 @@ void UCGameUIComponent::BeginPlay()
 	hud->SetChildren();
 
 	EquipMenu = hud->EquipMenu;
-	CheckNull(EquipMenu.Get());
+	if (false == EquipMenu.IsValid())
+		CLog::Log(FString::Printf(TEXT("[UI] CGameUIComponent::BeginPlay: EquipMenu 없음 — Owner=%s"),
+			Owner.IsValid() ? *Owner->GetName() : TEXT("(무효)")));
 
-	EquipMenu->OnWeaponEquipped.AddUniqueDynamic(this, &UCGameUIComponent::OnWeaponEquipped);
-}
-
-void UCGameUIComponent::OnWeaponEquipped(const CEWeaponType InNewType)
-{
-	const TWeakObjectPtr<ACPlayableCharacter> player = Cast<ACPlayableCharacter>(Owner);
-	CheckNull(player.Get());
-
-	const TWeakObjectPtr<UCWeaponComponent> weaponComp = YJJHelpers::GetComponent<UCWeaponComponent>(player.Get());
-	CheckNull(weaponComp.Get());
-
-	weaponComp->SetMode(InNewType);
+	const TWeakObjectPtr<ACPlayableCharacter> playable = Cast<ACPlayableCharacter>(Owner.Get());
+	if (playable.IsValid())
+		playable->SetMenuUI();
+	else
+		CLog::Log(TEXT("[UI] CGameUIComponent::BeginPlay: ACPlayableCharacter 아님 — SetMenuUI 생략"));
 }
 
 void UCGameUIComponent::InputAction_ActivateEquipMenu()

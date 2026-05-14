@@ -23,10 +23,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
-	UFUNCTION()
-	void OnWeaponEquipped(const CEWeaponType InNewType);
-
 public:
 	virtual void InputAction_ActivateEquipMenu() override;
 	virtual void InputAction_DeactivateEquipMenu() override;

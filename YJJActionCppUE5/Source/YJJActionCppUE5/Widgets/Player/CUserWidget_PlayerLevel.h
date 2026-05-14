@@ -16,6 +16,9 @@ class YJJACTIONCPPUE5_API UCUserWidget_PlayerLevel : public UCUserWidget_Custom
 public:
 	void BindLevelStat(TObjectPtr<UCCharacterStatComponent> InNewStat);
 
+	// PlayLevelUpAnim 없이 레벨/경험치 표시만 동기화한다.
+	void RefreshBoundDisplay();
+
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayLevelUpAnim();

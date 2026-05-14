@@ -81,8 +81,22 @@ public:
 		*OutObject = asset.Object;
 	}
 
+	// USTRUCT 등 TObjectPtr 대신 U* 멤버에 쓸 때(예: FHitData::Montage).
+	template<typename T>
+	static void GetAsset(T** OutObject, const FString InPath)
+	{
+		const ConstructorHelpers::FObjectFinder<T> asset(*InPath);
+		*OutObject = asset.Object;
+	}
+
 	template<typename T>
 	static void GetAssetDynamic(TObjectPtr<T>* OutObject, const FString InPath)
+	{
+		*OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *InPath));
+	}
+
+	template<typename T>
+	static void GetAssetDynamic(T** OutObject, const FString InPath)
 	{
 		*OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *InPath));
 	}

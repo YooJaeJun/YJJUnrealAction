@@ -52,6 +52,16 @@ void UCStateComponent::SetRiseMode()
 	ChangeType(CEStateType::Rise);
 }
 
+void UCStateComponent::SetRidingMode()
+{
+	ChangeType(CEStateType::Riding);
+}
+
+bool UCStateComponent::IsRealRiding() const
+{
+	return Owner.IsValid() && Owner->GetbRiding();
+}
+
 void UCStateComponent::ChangeType(const CEStateType InType)
 {
 	PrevType = CurType;

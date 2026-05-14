@@ -39,3 +39,15 @@ void UCUserWidget_PlayerLevel::UpdateExpWidget()
 
 	ProgressBar->SetPercent(CurStat->GetExpRatio());
 }
+
+void UCUserWidget_PlayerLevel::RefreshBoundDisplay()
+{
+	if (false == CurStat.IsValid())
+		return;
+
+	CheckNull(ProgressBar);
+	CheckNull(CurLevel);
+
+	ProgressBar->SetPercent(CurStat->GetExpRatio());
+	CurLevel->SetText(FText::FromString(FString::FromInt(static_cast<int32>(CurStat->GetCurLevel()))));
+}

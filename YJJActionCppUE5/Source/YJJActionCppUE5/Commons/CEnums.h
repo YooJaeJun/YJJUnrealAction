@@ -34,6 +34,8 @@ enum class CEStateType : uint8
 	Rise,
 	Land,
 	Dead,
+	// 탑승 중 상태(블루프린트 StateComponent::SetRiding 대응). Dead 뒤에 넣어 기존 열거 정수값은 유지한다.
+	Riding,
 	Max	
 };
 

@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
 #include "Widgets/Weapons/CUserWidget_EquipMenu.h"
+#include "Widgets/Weapons/CUserWidget_MagicMenu.h"
 #include "Widgets/Interaction/CUserWidget_Interaction.h"
 
 void UCUserWidget_HUD::SetChildren()
@@ -18,6 +19,13 @@ void UCUserWidget_HUD::SetChildren()
 		EquipMenu = Cast<UCUserWidget_EquipMenu>(GetWidgetFromName(TEXT("CEquipMenu")));
 		if (IsValid(EquipMenu))
 			EquipMenu->BindChildren();
+	}
+
+	if (nullptr == MagicMenu)
+	{
+		MagicMenu = Cast<UCUserWidget_MagicMenu>(GetWidgetFromName(TEXT("CMagicMenu")));
+		if (IsValid(MagicMenu))
+			MagicMenu->BindChildren();
 	}
 
 	if (nullptr == Interaction)

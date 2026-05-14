@@ -22,6 +22,9 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
+#include "Widgets/Weapons/CUserWidget_EquipMenu.h"
+#include "Widgets/Weapons/CUserWidget_MagicMenu.h"
+#include "Widgets/Interaction/CUserWidget_Interaction.h"
 #include "Components/CRidingComponent.h"
 
 ACPlayableCharacter::ACPlayableCharacter()
@@ -115,6 +118,106 @@ void ACPlayableCharacter::BeginPlay()
 
 	if (IsValid(CharacterInfoComp))
 		CharacterInfoComp->SetCharacterType(CECharacterType::Player);
+}
+
+void ACPlayableCharacter::SetStatusUI()
+{
+	if (false == IsLocallyControlled())
+		return;
+
+	UCUserWidget_HUD* hud = GetPlayerHUDWidget();
+	if (false == IsValid(hud))
+	{
+		CLog::Log(TEXT("[UI] SetStatusUI: HUD 없음"));
+		return;
+	}
+
+	UCUserWidget_PlayerInfo* playerInfo = hud->GetPlayerInfoWidget();
+	if (false == IsValid(playerInfo))
+	{
+		CLog::Log(TEXT("[UI] SetStatusUI: PlayerInfo 없음"));
+		return;
+	}
+
+	if (false == IsValid(CharacterStatComp))
+	{
+		CLog::Log(TEXT("[UI] SetStatusUI: CharacterStatComp 없음"));
+		return;
+	}
+
+	playerInfo->BindStats(CharacterStatComp);
+	playerInfo->RefreshPlayerInfoWidgets();
+
+	hud->SetVisibility(ESlateVisibility::Visible);
+}
+
+void ACPlayableCharacter::SetMenuUI()
+{
+	if (false == IsLocallyControlled())
+		return;
+
+	APlayerController* genericPc = Cast<APlayerController>(GetController());
+	if (false == IsValid(genericPc))
+	{
+		CLog::Log(FString::Printf(TEXT("[UI] SetMenuUI: PlayerController 무효 — %s"), *GetName()));
+		return;
+	}
+
+	ACPlayerController* yjjPc = Cast<ACPlayerController>(genericPc);
+	UCUserWidget_HUD* hud = IsValid(yjjPc) ? yjjPc->EnsureHUD() : nullptr;
+	if (false == IsValid(hud))
+	{
+		CLog::Log(FString::Printf(TEXT("[UI] SetMenuUI: HUD 없음 — %s"), *GetName()));
+		return;
+	}
+
+	hud->SetChildren();
+
+	UCUserWidget_EquipMenu* equipMenu = hud->GetEquipMenuWidget();
+	if (IsValid(equipMenu))
+	{
+		MenuEquipWidget = equipMenu;
+		equipMenu->SetVisibility(ESlateVisibility::Hidden);
+		// SetMenuUI 가 여러 번 호출돼도 동일 핸들러가 중복되지 않게 먼저 제거한다.
+		equipMenu->OnWeaponEquipped.RemoveDynamic(this, &ACPlayableCharacter::EquipWeaponFromUI);
+		equipMenu->OnWeaponEquipped.AddDynamic(this, &ACPlayableCharacter::EquipWeaponFromUI);
+	}
+	else
+		CLog::Log(FString::Printf(TEXT("[UI] SetMenuUI: EquipMenu(CEquipMenu) 없음 — %s"), *GetName()));
+
+	UCUserWidget_MagicMenu* magicMenu = hud->GetMagicMenuWidget();
+	if (IsValid(magicMenu))
+	{
+		MenuMagicWidget = magicMenu;
+		magicMenu->SetVisibility(ESlateVisibility::Hidden);
+		magicMenu->OnEquipMagic.RemoveDynamic(this, &ACPlayableCharacter::EquipMagicFromUI);
+		magicMenu->OnEquipMagic.AddDynamic(this, &ACPlayableCharacter::EquipMagicFromUI);
+	}
+	else
+		CLog::Log(FString::Printf(TEXT("[UI] SetMenuUI: MagicMenu(CMagicMenu) 없음 — HUD에 WB_MagicMenu 를 넣고 Parent=UCUserWidget_MagicMenu, 이름 CMagicMenu — %s"), *GetName()));
+
+	UCUserWidget_Interaction* interactionWidget = hud->GetInteractionWidget();
+	if (IsValid(interactionWidget))
+		MenuInteractionWidget = interactionWidget;
+	else
+		CLog::Log(FString::Printf(TEXT("[UI] SetMenuUI: Interaction(CInteraction) 없음 — %s"), *GetName()));
+}
+
+void ACPlayableCharacter::EquipWeaponFromUI(const CEWeaponType InNewType)
+{
+	if (false == IsValid(WeaponComp))
+	{
+		CLog::Log(TEXT("[UI] EquipWeaponFromUI: WeaponComp 없음"));
+		return;
+	}
+
+	WeaponComp->SetMode(InNewType);
+}
+
+void ACPlayableCharacter::EquipMagicFromUI(const CEWeaponType InNewType)
+{
+	// 마법·무기는 동일 UCWeaponComponent 모드 전환으로 처리한다.
+	EquipWeaponFromUI(InNewType);
 }
 
 void ACPlayableCharacter::Tick(float DeltaTime)

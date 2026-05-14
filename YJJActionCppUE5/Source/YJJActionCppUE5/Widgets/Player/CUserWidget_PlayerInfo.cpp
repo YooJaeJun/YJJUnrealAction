@@ -13,6 +13,14 @@ void UCUserWidget_PlayerInfo::BindChildren()
 
 void UCUserWidget_PlayerInfo::BindStats(TObjectPtr<UCCharacterStatComponent> StatComp)
 {
+	if (false == IsValid(StatComp))
+		return;
+
+	if (BoundStatComp.Get() == StatComp)
+		return;
+
+	BoundStatComp = StatComp;
+
 	if (IsValid(LevelBar))
 		LevelBar->BindLevelStat(StatComp);
 
@@ -24,4 +32,19 @@ void UCUserWidget_PlayerInfo::BindStats(TObjectPtr<UCCharacterStatComponent> Sta
 
 	if (IsValid(ManaBar))
 		ManaBar->BindManaStat(StatComp);
+}
+
+void UCUserWidget_PlayerInfo::RefreshPlayerInfoWidgets()
+{
+	if (IsValid(HpBar))
+		HpBar->RefreshBoundDisplay();
+
+	if (IsValid(StaminaBar))
+		StaminaBar->RefreshBoundDisplay();
+
+	if (IsValid(ManaBar))
+		ManaBar->RefreshBoundDisplay();
+
+	if (IsValid(LevelBar))
+		LevelBar->RefreshBoundDisplay();
 }

@@ -6,6 +6,7 @@
 
 class UCUserWidget_PlayerInfo;
 class UCUserWidget_EquipMenu;
+class UCUserWidget_MagicMenu;
 class UCUserWidget_Interaction;
 
 UCLASS()
@@ -24,6 +25,9 @@ public:
 	UCUserWidget_EquipMenu* GetEquipMenuWidget() const { return EquipMenu; }
 
 	UFUNCTION(BlueprintPure, Category = "HUD")
+	UCUserWidget_MagicMenu* GetMagicMenuWidget() const { return MagicMenu; }
+
+	UFUNCTION(BlueprintPure, Category = "HUD")
 	UCUserWidget_Interaction* GetInteractionWidget() const { return Interaction; }
 
 public:
@@ -32,6 +36,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
 	TObjectPtr<UCUserWidget_EquipMenu> EquipMenu;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
+	TObjectPtr<UCUserWidget_MagicMenu> MagicMenu;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	TObjectPtr<UCUserWidget_Interaction> Interaction;

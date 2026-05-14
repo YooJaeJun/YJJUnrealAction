@@ -9,6 +9,7 @@ void UCUserWidget_PlayerBar::BindHpStat(TObjectPtr<UCCharacterStatComponent> InN
 	CheckNull(InNewStat);
 
 	CurStat = InNewStat;
+	BoundResource = EBoundResource::Hp;
 
 	InNewStat->OnHpChanged.AddUObject(this, &UCUserWidget_PlayerBar::UpdateHpBarWidget);
 
@@ -24,6 +25,7 @@ void UCUserWidget_PlayerBar::BindStaminaStat(TObjectPtr<UCCharacterStatComponent
 	CheckNull(InNewStat);
 
 	CurStat = InNewStat;
+	BoundResource = EBoundResource::Stamina;
 
 	InNewStat->OnStaminaChanged.AddUObject(this, &UCUserWidget_PlayerBar::UpdateStaminaBarWidget);
 
@@ -39,6 +41,7 @@ void UCUserWidget_PlayerBar::BindManaStat(TObjectPtr<UCCharacterStatComponent> I
 	CheckNull(InNewStat);
 
 	CurStat = InNewStat;
+	BoundResource = EBoundResource::Mana;
 
 	InNewStat->OnManaChanged.AddUObject(this, &UCUserWidget_PlayerBar::UpdateManaBarWidget);
 
@@ -83,4 +86,26 @@ void UCUserWidget_PlayerBar::UpdateManaBarWidget()
 	ProgressBar->SetPercent(CurStat->GetManaRatio());
 	CurAmount->SetText(FText::FromString(FString::FromInt(static_cast<int32>(CurStat->GetCurMana()))));
 	MaxAmount->SetText(FText::FromString(FString::FromInt(static_cast<int32>(CurStat->GetMaxMana()))));
+}
+
+void UCUserWidget_PlayerBar::RefreshBoundDisplay()
+{
+	if (false == CurStat.IsValid())
+		return;
+
+	switch (BoundResource)
+	{
+	case EBoundResource::Hp:
+		UpdateHpBarWidget();
+		break;
+	case EBoundResource::Stamina:
+		UpdateStaminaBarWidget();
+		break;
+	case EBoundResource::Mana:
+		UpdateManaBarWidget();
+		break;
+	case EBoundResource::None:
+	default:
+		break;
+	}
 }
