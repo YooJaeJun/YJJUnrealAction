@@ -12,6 +12,7 @@
 #include "Widgets/CUserWidget_Custom.h"
 #include "Components/SceneComponent.h"
 #include "Widgets/Enemies/CUserWidget_EnemyBar.h"
+#include "Interfaces/CInterface_Interactable.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -209,6 +210,31 @@ void ACCommonCharacter::SetInteractor(TObjectPtr<ACCommonCharacter> InCharacter)
 
 void ACCommonCharacter::InputAction_Interact()
 {
+	AController* controller = GetController();
+	if (IsValid(controller))
+	{
+		FVector viewLocation;
+		FRotator viewRotation;
+		controller->GetPlayerViewPoint(viewLocation, viewRotation);
+
+		const FVector traceStart = viewLocation;
+		const FVector traceEnd = traceStart + viewRotation.Vector() * 350.0f;
+
+		FHitResult hitResult;
+		FCollisionQueryParams queryParams(SCENE_QUERY_STAT(InteractTrace), false, this);
+		const bool bHit = GetWorld()->LineTraceSingleByChannel(hitResult, traceStart, traceEnd, ECC_Visibility, queryParams);
+		if (bHit && IsValid(hitResult.GetActor()))
+		{
+			ICInterface_Interactable* interactable = Cast<ICInterface_Interactable>(hitResult.GetActor());
+			if (nullptr != interactable)
+			{
+				interactable->Interact(this);
+
+				return;
+			}
+		}
+	}
+
 	if (IsValid(Interactor))
 	{
 		if (OnMount.IsBound())

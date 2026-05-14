@@ -14,6 +14,8 @@ class UCCamComponent;
 class UCTargetingComponent;
 class UCWeaponComponent;
 class UCGameUIComponent;
+class UCInventoryComponent;
+class UCPlacementComponent;
 class UWidgetComponent;
 class ACGameMode;
 
@@ -73,6 +75,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		TObjectPtr<UCGameUIComponent> GameUIComp;
+
+	UPROPERTY(VisibleAnywhere)
+		TObjectPtr<UCInventoryComponent> InventoryComp;
+
+	UPROPERTY(VisibleAnywhere)
+		TObjectPtr<UCPlacementComponent> PlacementComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mode")
 		TWeakObjectPtr<ACGameMode> GameMode;

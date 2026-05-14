@@ -24,6 +24,7 @@ public class YJJActionCppUE5 : ModuleRules
 			"AIModule",
 			"GameplayTasks",
 			"NavigationSystem",
+			"ReplicationGraph",
 			"EngineCameras"
 		});
 	}

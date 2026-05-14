@@ -29,6 +29,10 @@
 		{
 			"Name": "EngineCameras",
 			"Enabled": true
+		},
+		{
+			"Name": "ReplicationGraph",
+			"Enabled": true
 		}
 	]
 }

@@ -53,7 +53,7 @@ void CLog::Log(const FString& InFileName, const FString& InFuncName, const int32
 
 void CLog::Log(const FTableRowBase& InValue)
 {
-	UE_LOG(YJJ, Warning, TEXT("%s"), *InValue.StaticStruct()->GetDisplayNameText().ToString());
+	UE_LOG(YJJ, Warning, TEXT("%s"), *InValue.StaticStruct()->GetName());
 }
 
 void CLog::Print(const int32 InValue, const int32 InKey, const float InDuration, const FColor InColor)

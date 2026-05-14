@@ -14,6 +14,8 @@
 #include "Components/CCamComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/CGameUIComponent.h"
+#include "Components/CInventoryComponent.h"
+#include "Components/CPlacementComponent.h"
 #include "Commons/CGameMode.h"
 #include "Components/CCharacterInfoComponent.h"
 #include "Components/CCharacterStatComponent.h"
@@ -33,6 +35,8 @@ ACPlayableCharacter::ACPlayableCharacter()
 	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "CamComponent");
 	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
+	YJJHelpers::CreateActorComponent<UCInventoryComponent>(this, &InventoryComp, "InventoryComponent");
+	YJJHelpers::CreateActorComponent<UCPlacementComponent>(this, &PlacementComp, "PlacementComponent");
 
 	TObjectPtr<USkeletalMesh> mesh = nullptr;
 	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
