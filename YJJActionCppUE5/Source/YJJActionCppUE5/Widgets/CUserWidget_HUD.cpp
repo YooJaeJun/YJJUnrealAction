@@ -9,18 +9,21 @@ void UCUserWidget_HUD::SetChildren()
 	if (nullptr == PlayerInfo)
 	{
 		PlayerInfo = Cast<UCUserWidget_PlayerInfo>(GetWidgetFromName(TEXT("CPlayerInfo")));
-		PlayerInfo->BindChildren();
+		if (IsValid(PlayerInfo))
+			PlayerInfo->BindChildren();
 	}
 
 	if (nullptr == EquipMenu)
 	{
 		EquipMenu = Cast<UCUserWidget_EquipMenu>(GetWidgetFromName(TEXT("CEquipMenu")));
-		EquipMenu->BindChildren();
+		if (IsValid(EquipMenu))
+			EquipMenu->BindChildren();
 	}
 
 	if (nullptr == Interaction)
 	{
 		Interaction = Cast<UCUserWidget_Interaction>(GetWidgetFromName(TEXT("CInteraction")));
-		Interaction->BindChildren();
+		if (IsValid(Interaction))
+			Interaction->BindChildren();
 	}
 }

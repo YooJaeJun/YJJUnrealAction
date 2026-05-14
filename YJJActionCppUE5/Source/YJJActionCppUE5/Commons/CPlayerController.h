@@ -27,7 +27,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dedicated Server")
 	void RequestPlacement(const FTransform& RequestedTransform, const FName ItemID);
 
-	TObjectPtr<UCUserWidget_HUD> EnsureHUD();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	UCUserWidget_HUD* EnsureHUD();
+
+	UFUNCTION(BlueprintPure, Category = "UI")
+	UCUserWidget_HUD* GetYJJHUD() const;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void InitializeHUDForPawn(APawn* InPawn);
 
 protected:

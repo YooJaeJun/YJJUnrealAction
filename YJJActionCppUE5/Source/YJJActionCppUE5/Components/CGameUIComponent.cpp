@@ -6,6 +6,7 @@
 #include "Characters/Player/CPlayableCharacter.h"
 #include "Blueprint/UserWidget.h"
 #include "Commons/CGameMode.h"
+#include "Commons/CPlayerController.h"
 #include "Widgets/CUserWidget_HUD.h"
 
 UCGameUIComponent::UCGameUIComponent()
@@ -18,8 +19,13 @@ void UCGameUIComponent::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerController = Cast<APlayerController>(Owner->GetController());
+	if (false == PlayerController.IsValid() || false == PlayerController->IsLocalController())
+		return;
 
-	const TWeakObjectPtr<UCUserWidget_HUD> hud = YJJHelpers::GetHud(Owner);
+	const TWeakObjectPtr<ACPlayerController> yjjPlayerController = Cast<ACPlayerController>(PlayerController.Get());
+	CheckNull(yjjPlayerController.Get());
+
+	const TWeakObjectPtr<UCUserWidget_HUD> hud = yjjPlayerController->EnsureHUD();
 	CheckNull(hud.Get());
 
 	hud->SetChildren();

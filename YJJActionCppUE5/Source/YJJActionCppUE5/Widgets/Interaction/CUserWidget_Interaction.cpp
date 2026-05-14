@@ -17,10 +17,12 @@ void UCUserWidget_Interaction::SetChildren(TObjectPtr<UTexture2D> InKeyTexture, 
 
 void UCUserWidget_Interaction::SetKeyIcon(TObjectPtr<UTexture2D> InKeyTexture)
 {
-	KeyIcon->SetBrushFromTexture(InKeyTexture);
+	if (IsValid(KeyIcon))
+		KeyIcon->SetBrushFromTexture(InKeyTexture);
 }
 
 void UCUserWidget_Interaction::SetText(const FText& InText)
 {
-	Text->SetText(InText);
+	if (IsValid(Text))
+		Text->SetText(InText);
 }

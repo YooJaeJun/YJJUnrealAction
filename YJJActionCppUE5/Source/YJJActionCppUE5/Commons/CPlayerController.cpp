@@ -34,7 +34,7 @@ void ACPlayerController::AcknowledgePossession(APawn* P)
 		InitializeHUDForPawn(P);
 }
 
-TObjectPtr<UCUserWidget_HUD> ACPlayerController::EnsureHUD()
+UCUserWidget_HUD* ACPlayerController::EnsureHUD()
 {
 	if (false == IsLocalController())
 		return nullptr;
@@ -43,15 +43,23 @@ TObjectPtr<UCUserWidget_HUD> ACPlayerController::EnsureHUD()
 	{
 		PlayerHUD = CreateWidget<UCUserWidget_HUD>(this, PlayerHUDClass);
 		if (IsValid(PlayerHUD))
+		{
+			// Viewport 등록은 HUD 루트 하나만 담당한다. 하위 UI는 HUD 내부 위젯으로만 관리한다.
 			PlayerHUD->AddToViewport();
+		}
 	}
 
 	return PlayerHUD;
 }
 
+UCUserWidget_HUD* ACPlayerController::GetYJJHUD() const
+{
+	return PlayerHUD;
+}
+
 void ACPlayerController::InitializeHUDForPawn(APawn* InPawn)
 {
-	TObjectPtr<UCUserWidget_HUD> hud = EnsureHUD();
+	UCUserWidget_HUD* hud = EnsureHUD();
 	if (false == IsValid(hud) || false == IsValid(InPawn))
 		return;
 

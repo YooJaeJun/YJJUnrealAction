@@ -14,7 +14,17 @@ class YJJACTIONCPPUE5_API UCUserWidget_HUD : public UCUserWidget_Custom
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void SetChildren();
+
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	UCUserWidget_PlayerInfo* GetPlayerInfoWidget() const { return PlayerInfo; }
+
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	UCUserWidget_EquipMenu* GetEquipMenuWidget() const { return EquipMenu; }
+
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	UCUserWidget_Interaction* GetInteractionWidget() const { return Interaction; }
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
