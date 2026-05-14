@@ -20,7 +20,11 @@ void UCGameUIComponent::BeginPlay()
 
 	PlayerController = Cast<APlayerController>(Owner->GetController());
 	if (false == PlayerController.IsValid() || false == PlayerController->IsLocalController())
+	{
+		const FString ownerName = Owner.IsValid() ? Owner->GetName() : TEXT("(Owner 무효)");
+		CLog::Log(FString::Printf(TEXT("[UI] CGameUIComponent::BeginPlay: PlayerController 무효 또는 비로컬 — Owner=%s"), *ownerName));
 		return;
+	}
 
 	const TWeakObjectPtr<ACPlayerController> yjjPlayerController = Cast<ACPlayerController>(PlayerController.Get());
 	CheckNull(yjjPlayerController.Get());

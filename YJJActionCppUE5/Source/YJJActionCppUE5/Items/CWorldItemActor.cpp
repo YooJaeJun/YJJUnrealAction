@@ -2,6 +2,7 @@
 #include "Characters/CCommonCharacter.h"
 #include "Commons/CGameState.h"
 #include "Commons/CPlayerController.h"
+#include "Utilities/CLog.h"
 #include "Components/CInventoryComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/SphereComponent.h"
@@ -74,7 +75,10 @@ bool ACWorldItemActor::TryPickup(AController* RequestController)
 		return false;
 
 	if (false == IsValid(RequestController))
+	{
+		CLog::Log(FString::Printf(TEXT("[WorldItem] TryPickup: RequestController 무효 — %s"), *GetName()));
 		return false;
+	}
 
 	const APawn* requestPawn = RequestController->GetPawn();
 	if (false == CanPickupBy(requestPawn))
@@ -82,7 +86,11 @@ bool ACWorldItemActor::TryPickup(AController* RequestController)
 
 	UCInventoryComponent* inventoryComp = FindInventoryComponent(RequestController);
 	if (false == IsValid(inventoryComp))
+	{
+		CLog::Log(FString::Printf(TEXT("[WorldItem] TryPickup: 인벤토리 컴포넌트 없음 — %s Controller=%s"),
+			*GetName(), *RequestController->GetName()));
 		return false;
+	}
 
 	if (false == inventoryComp->CanAddItem(ItemID, Quantity))
 		return false;

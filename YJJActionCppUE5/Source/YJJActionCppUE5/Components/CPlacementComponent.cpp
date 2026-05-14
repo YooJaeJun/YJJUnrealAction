@@ -2,6 +2,7 @@
 #include "Commons/CPlayerController.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
+#include "Utilities/CLog.h"
 
 UCPlacementComponent::UCPlacementComponent()
 {
@@ -82,7 +83,10 @@ void UCPlacementComponent::ConfirmPlacement()
 	// 마지막 유효 프리뷰 위치를 사용해 Tick과 입력 사이의 미세한 불일치를 줄인다.
 	ACPlayerController* playerController = GetOwningPlayerController();
 	if (false == IsValid(playerController))
+	{
+		CLog::Log(TEXT("[Placement] ConfirmPlacement: OwningPlayerController(ACPlayerController) 를 찾을 수 없습니다."));
 		return;
+	}
 
 	playerController->RequestPlacement(LastPreviewTransform, PendingItemID);
 

@@ -105,8 +105,13 @@ void ACPlayableCharacter::BeginPlay()
 	}
 
 	TObjectPtr<ACPlayerController> yjjPlayerController = Cast<ACPlayerController>(GetController());
-	if (IsValid(yjjPlayerController) && IsLocallyControlled())
-		yjjPlayerController->InitializeHUDForPawn(this);
+	if (IsLocallyControlled())
+	{
+		if (IsValid(yjjPlayerController))
+			yjjPlayerController->InitializeHUDForPawn(this);
+		else
+			CLog::Log(FString::Printf(TEXT("[UI] CPlayableCharacter::BeginPlay: 로컬 조종인데 ACPlayerController 가 아님 또는 무효 — %s"), *GetName()));
+	}
 
 	if (IsValid(CharacterInfoComp))
 		CharacterInfoComp->SetCharacterType(CECharacterType::Player);

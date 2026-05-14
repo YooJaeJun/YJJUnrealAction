@@ -37,7 +37,10 @@ void ACPlayerController::AcknowledgePossession(APawn* P)
 UCUserWidget_HUD* ACPlayerController::EnsureHUD()
 {
 	if (false == IsLocalController())
+	{
+		CLog::Log(FString::Printf(TEXT("[UI] EnsureHUD: 로컬 PlayerController 가 아님 — %s"), *GetName()));
 		return nullptr;
+	}
 
 	if (false == IsValid(PlayerHUD) && IsValid(PlayerHUDClass))
 	{
@@ -47,7 +50,12 @@ UCUserWidget_HUD* ACPlayerController::EnsureHUD()
 			// Viewport 등록은 HUD 루트 하나만 담당한다. 하위 UI는 HUD 내부 위젯으로만 관리한다.
 			PlayerHUD->AddToViewport();
 		}
+		else
+			CLog::Log(FString::Printf(TEXT("[UI] EnsureHUD: HUD 위젯 생성 실패 — PlayerHUDClass=%s"),
+				IsValid(PlayerHUDClass) ? *PlayerHUDClass->GetPathName() : TEXT("(클래스 미설정)")));
 	}
+	else if (false == IsValid(PlayerHUD) && false == IsValid(PlayerHUDClass))
+		CLog::Log(TEXT("[UI] EnsureHUD: PlayerHUD 없음이고 PlayerHUDClass 도 설정되지 않았습니다."));
 
 	return PlayerHUD;
 }
@@ -61,7 +69,12 @@ void ACPlayerController::InitializeHUDForPawn(APawn* InPawn)
 {
 	UCUserWidget_HUD* hud = EnsureHUD();
 	if (false == IsValid(hud) || false == IsValid(InPawn))
+	{
+		CLog::Log(FString::Printf(TEXT("[UI] InitializeHUDForPawn: HUD 또는 Pawn 무효 — HUD=%s Pawn=%s"),
+			IsValid(hud) ? TEXT("유효") : TEXT("무효"),
+			IsValid(InPawn) ? *InPawn->GetName() : TEXT("(없음)")));
 		return;
+	}
 
 	hud->SetChildren();
 
@@ -98,6 +111,7 @@ void ACPlayerController::Server_RequestPickup_Implementation(ACWorldItemActor* W
 {
 	if (false == IsValid(WorldItem))
 	{
+		CLog::Log(FString::Printf(TEXT("[Dedicated] Server_RequestPickup: WorldItem 무효 — PC=%s"), *GetName()));
 		Client_NotifyServerActionResult(false, FName(TEXT("InvalidItem")));
 
 		return;
@@ -119,6 +133,8 @@ void ACPlayerController::Server_RequestPlacement_Implementation(FTransform Reque
 	UCInventoryComponent* inventoryComp = FindInventoryComponent();
 	if (false == IsValid(inventoryComp) || false == inventoryComp->RemoveItem(ItemID, 1))
 	{
+		CLog::Log(FString::Printf(TEXT("[Dedicated] Server_RequestPlacement: 인벤토리 없음 또는 RemoveItem 실패 — ItemID=%s PC=%s"),
+			*ItemID.ToString(), *GetName()));
 		Client_NotifyServerActionResult(false, FName(TEXT("MissingItem")));
 
 		return;
@@ -128,6 +144,7 @@ void ACPlayerController::Server_RequestPlacement_Implementation(FTransform Reque
 	UWorld* world = GetWorld();
 	if (false == IsValid(world))
 	{
+		CLog::Log(TEXT("[Dedicated] Server_RequestPlacement: World 무효, 인벤토리 롤백"));
 		inventoryComp->AddItem(ItemID, 1);
 		Client_NotifyServerActionResult(false, FName(TEXT("InvalidWorld")));
 
@@ -142,6 +159,7 @@ void ACPlayerController::Server_RequestPlacement_Implementation(FTransform Reque
 	ACPlacedActor* placedActor = world->SpawnActor<ACPlacedActor>(DefaultPlacedActorClass, RequestedTransform, spawnParams);
 	if (false == IsValid(placedActor))
 	{
+		CLog::Log(FString::Printf(TEXT("[Dedicated] Server_RequestPlacement: PlacedActor 스폰 실패 — ItemID=%s"), *ItemID.ToString()));
 		inventoryComp->AddItem(ItemID, 1);
 		Client_NotifyServerActionResult(false, FName(TEXT("SpawnFailed")));
 

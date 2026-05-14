@@ -201,10 +201,26 @@ public:
 
 	static UCUserWidget_HUD* GetHud(TWeakObjectPtr<ACCommonCharacter> InOwner)
 	{
+		if (false == InOwner.IsValid())
+		{
+			CLog::Log(TEXT("[UI] YJJHelpers::GetHud: InOwner 무효"));
+			return nullptr;
+		}
+
 		const TWeakObjectPtr<ACGameMode> gameMode = Cast<ACGameMode>(UGameplayStatics::GetGameMode(InOwner->GetWorld()));
-		CheckNullResult(gameMode.Get(), nullptr);
+		if (false == gameMode.IsValid())
+		{
+			CLog::Log(FString::Printf(TEXT("[UI] YJJHelpers::GetHud: ACGameMode 없음 — Character=%s"), *InOwner->GetName()));
+			return nullptr;
+		}
 
 		UCUserWidget_HUD* hud = gameMode->GetHUD();
+		if (nullptr == hud)
+		{
+			CLog::Log(FString::Printf(TEXT("[UI] YJJHelpers::GetHud: GameMode->GetHUD() 무효 — Character=%s"), *InOwner->GetName()));
+			return nullptr;
+		}
+
 		return hud;
 	}
 

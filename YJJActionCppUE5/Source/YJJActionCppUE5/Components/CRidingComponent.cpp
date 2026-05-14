@@ -87,8 +87,14 @@ void UCRidingComponent::BeginPlay()
 	const TWeakObjectPtr<ACPlayerController> playerController = Cast<ACPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (playerController.IsValid())
 		Hud = playerController->EnsureHUD();
+	else
+		CLog::Log(FString::Printf(TEXT("[UI] UCRidingComponent::BeginPlay: 로컬 PlayerController(AC) 없음 — Owner=%s"), *GetNameSafe(Owner.Get())));
 
-	CheckNull(Hud);
+	if (false == Hud.IsValid())
+	{
+		CLog::Log(FString::Printf(TEXT("[UI] UCRidingComponent::BeginPlay: HUD 없음 — Owner=%s"), *GetNameSafe(Owner.Get())));
+		return;
+	}
 
 	Hud->SetChildren();
 	Interaction = Hud->Interaction;
