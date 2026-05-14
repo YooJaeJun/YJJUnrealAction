@@ -58,16 +58,16 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Move")
-		float Speeds[static_cast<uint8>(CESpeedType::Max)] = { 200, 500, 800 };
+	float Speeds[static_cast<uint8>(CESpeedType::Max)] = { 200, 500, 800 };
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-		float Forward;
+	float Forward;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-		float Right;
+	float Right;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-		float SpeedFactor = 4;
+	float SpeedFactor = 4;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

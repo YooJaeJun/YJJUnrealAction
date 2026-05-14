@@ -75,10 +75,10 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		TObjectPtr<USceneComponent> Root;
+	TObjectPtr<USceneComponent> Root;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game")
-		TArray<TObjectPtr<UShapeComponent>> Collisions;
+	TArray<TObjectPtr<UShapeComponent>> Collisions;
 
 public:
 	FAttachmentBeginCollision OnAttachmentBeginCollision;

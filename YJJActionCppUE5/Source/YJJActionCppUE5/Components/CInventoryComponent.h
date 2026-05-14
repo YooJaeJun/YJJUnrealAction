@@ -12,10 +12,10 @@ struct YJJACTIONCPPUE5_API FCInventoryItemStack
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		FName ItemID = NAME_None;
+	FName ItemID = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int32 Quantity = 0;
+	int32 Quantity = 0;
 
 	bool IsValidStack() const;
 };
@@ -46,15 +46,15 @@ private:
 
 public:
 	UPROPERTY(BlueprintAssignable)
-		FInventoryChanged OnInventoryChanged;
+	FInventoryChanged OnInventoryChanged;
 
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_Items, VisibleAnywhere, Category = "Inventory")
-		TArray<FCInventoryItemStack> Items;
+	TArray<FCInventoryItemStack> Items;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Inventory", meta = (ClampMin = "1"))
-		int32 MaxSlots = 32;
+	int32 MaxSlots = 32;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Inventory", meta = (ClampMin = "1"))
-		int32 DefaultMaxStack = 99;
+	int32 DefaultMaxStack = 99;
 };

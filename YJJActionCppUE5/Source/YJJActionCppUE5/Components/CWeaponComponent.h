@@ -86,18 +86,18 @@ public:
 	FORCEINLINE constexpr bool IsYonduMode() const { return Type == CEWeaponType::Yondu; }
 
 private:
-	// DataAssetÀ» °´Ã¼¸¶´Ù ¸¸µéÁö ¾Ê°Ô ÇÏ±â À§ÇØ Copy¸¦ µû·Î ¸¸µê
+	// DataAssetï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ Copyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
-		TArray<TObjectPtr<UCWeaponAsset>> DataAssets;
+	TArray<TObjectPtr<UCWeaponAsset>> DataAssets;
 
 	UPROPERTY(VisibleAnywhere, Category = "DataAsset")
-		TMap<CEWeaponType, TObjectPtr<UCWeaponAsset>> DataAssetMap;
+	TMap<CEWeaponType, TObjectPtr<UCWeaponAsset>> DataAssetMap;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		CEWeaponType Type = CEWeaponType::Unarmed;
+	CEWeaponType Type = CEWeaponType::Unarmed;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		CEWeaponType PrevType = CEWeaponType::Max;
+	CEWeaponType PrevType = CEWeaponType::Max;
 
 public:
 	FWeaponTypeChanged OnWeaponTypeChanged;

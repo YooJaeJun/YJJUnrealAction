@@ -13,5 +13,5 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
-		float Bend;
+	float Bend;
 };

@@ -130,40 +130,40 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Interact")
-		TObjectPtr<UTexture2D> InteractionKeyTexture;
+	TObjectPtr<UTexture2D> InteractionKeyTexture;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Interact")
-		FText InteractionText;
+	FText InteractionText;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		TObjectPtr<UAnimMontage> MountAnims[static_cast<uint8>(CEDirection::Max)];
+	TObjectPtr<UAnimMontage> MountAnims[static_cast<uint8>(CEDirection::Max)];
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		TObjectPtr<USoundBase> MountSound;
+	TObjectPtr<USoundBase> MountSound;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mount")
-		TObjectPtr<AController> ControllerSave;
+	TObjectPtr<AController> ControllerSave;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		TObjectPtr<UAnimMontage> UnmountAnim;
+	TObjectPtr<UAnimMontage> UnmountAnim;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		TObjectPtr<USoundBase> UnmountSound;
+	TObjectPtr<USoundBase> UnmountSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		float OverTime_Camera = 0.7f;
+	float OverTime_Camera = 0.7f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		float OverTime_Mount = 0.4f;
+	float OverTime_Mount = 0.4f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		float OverTime_RiderPos = 0.2f;
+	float OverTime_RiderPos = 0.2f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		float OverTime_Unmount = 0.5f;
+	float OverTime_Unmount = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "IK")
-		float LegIKAlpha = 0.2f;
+	float LegIKAlpha = 0.2f;
 
 private:
 	TWeakObjectPtr<ACAnimal_AI> Owner;

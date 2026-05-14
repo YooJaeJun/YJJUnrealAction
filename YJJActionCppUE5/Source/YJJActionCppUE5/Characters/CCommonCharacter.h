@@ -120,70 +120,70 @@ public:
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		FMount OnMount;
+	FMount OnMount;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
-		FUnmount OnUnmount;
+	FUnmount OnUnmount;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCStateComponent> StateComp;
+	TObjectPtr<UCStateComponent> StateComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCMovementComponent> MovementComp;
+	TObjectPtr<UCMovementComponent> MovementComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCMontagesComponent> MontagesComp;
+	TObjectPtr<UCMontagesComponent> MontagesComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Status")
-		TObjectPtr<UCCharacterInfoComponent> CharacterInfoComp;
+	TObjectPtr<UCCharacterInfoComponent> CharacterInfoComp;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Status")
-		TObjectPtr<UCCharacterStatComponent> CharacterStatComp;
+	TObjectPtr<UCCharacterStatComponent> CharacterStatComp;
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-		TObjectPtr<USceneComponent> TargetingPoint;
+	TObjectPtr<USceneComponent> TargetingPoint;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-		TObjectPtr<UWidgetComponent> TargetingWidgetComp;
+	TObjectPtr<UWidgetComponent> TargetingWidgetComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
-		TSubclassOf<UCUserWidget_Custom> TargetingWidget;
+	TSubclassOf<UCUserWidget_Custom> TargetingWidget;
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Info")
-		TObjectPtr<USceneComponent> InfoPoint;
+	TObjectPtr<USceneComponent> InfoPoint;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Info")
-		TObjectPtr<UWidgetComponent> InfoWidgetComp;
+	TObjectPtr<UWidgetComponent> InfoWidgetComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Info")
-		TSubclassOf<UCUserWidget_EnemyBar> InfoWidget;
+	TSubclassOf<UCUserWidget_EnemyBar> InfoWidget;
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Land")
-		TObjectPtr<USoundBase> LandSound;
+	TObjectPtr<USoundBase> LandSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Land")
-		TObjectPtr<UFXSystemAsset> LandEffect;
+	TObjectPtr<UFXSystemAsset> LandEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Land")
-		float LandEffectScaleFactor = 1.0f;
+	float LandEffectScaleFactor = 1.0f;
 
 
 	UPROPERTY(EditAnywhere, Category = "Color")
-		FLinearColor OriginColor = FLinearColor::White;
+	FLinearColor OriginColor = FLinearColor::White;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Key")
-		FVector2D MousePos;
+	FVector2D MousePos;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<ACCommonCharacter> Interactor;
+	TObjectPtr<ACCommonCharacter> Interactor;
 
 	UPROPERTY(VisibleAnywhere, Category = "Ride")
-		bool bRiding;
+	bool bRiding;
 
 protected:
 	FTimerHandle RestoreColor_TimerHandle;

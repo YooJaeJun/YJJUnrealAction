@@ -39,10 +39,10 @@ private:
 
 private:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCWeaponComponent> WeaponComp;
+	TObjectPtr<UCWeaponComponent> WeaponComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-		TArray<float> Speeds{ 200, 400, 600 };
+	TArray<float> Speeds{ 200, 400, 600 };
 
 private:
 	CEHitType CurHitType = CEHitType::Common;

@@ -39,11 +39,11 @@ private:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Placement")
-		TSubclassOf<ACPlacedActor> DefaultPlacedActorClass;
+	TSubclassOf<ACPlacedActor> DefaultPlacedActorClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Placement", meta = (ClampMin = "0"))
-		float MaxPlacementDistance = 600.0f;
+	float MaxPlacementDistance = 600.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Placement", meta = (ClampMin = "0"))
-		float PlacementCollisionRadius = 75.0f;
+	float PlacementCollisionRadius = 75.0f;
 };

@@ -19,14 +19,14 @@ public:
 
 public:
 	UPROPERTY()
-		TObjectPtr<UCUserWidget_PlayerLevel> LevelBar;
+	TObjectPtr<UCUserWidget_PlayerLevel> LevelBar;
 
 	UPROPERTY()
-		TObjectPtr<UCUserWidget_PlayerBar> HpBar;
+	TObjectPtr<UCUserWidget_PlayerBar> HpBar;
 
 	UPROPERTY()
-		TObjectPtr<UCUserWidget_PlayerBar> StaminaBar;
+	TObjectPtr<UCUserWidget_PlayerBar> StaminaBar;
 
 	UPROPERTY()
-		TObjectPtr<UCUserWidget_PlayerBar> ManaBar;
+	TObjectPtr<UCUserWidget_PlayerBar> ManaBar;
 };

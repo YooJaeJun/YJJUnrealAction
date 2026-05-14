@@ -54,16 +54,16 @@ private:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Arrow")
-		TSubclassOf<ACArrow> ArrowClass;
+	TSubclassOf<ACArrow> ArrowClass;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		TObjectPtr<USkeletalMeshComponent> SkeletalMesh;
+	TObjectPtr<USkeletalMeshComponent> SkeletalMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		TObjectPtr<UPoseableMeshComponent> PoseableMesh;
+	TObjectPtr<UPoseableMeshComponent> PoseableMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		TArray<TObjectPtr<ACArrow>> Arrows;
+	TArray<TObjectPtr<ACArrow>> Arrows;
 
 private:
 	FVector OriginLocation;

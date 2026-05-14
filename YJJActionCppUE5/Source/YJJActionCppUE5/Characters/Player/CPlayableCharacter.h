@@ -59,37 +59,37 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<USpringArmComponent> SpringArm;
+	TObjectPtr<USpringArmComponent> SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCameraComponent> Camera;
+	TObjectPtr<UCameraComponent> Camera;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCWeaponComponent> WeaponComp;
+	TObjectPtr<UCWeaponComponent> WeaponComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCTargetingComponent> TargetingComp;
+	TObjectPtr<UCTargetingComponent> TargetingComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCCamComponent> CamComp;
+	TObjectPtr<UCCamComponent> CamComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCGameUIComponent> GameUIComp;
+	TObjectPtr<UCGameUIComponent> GameUIComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCInventoryComponent> InventoryComp;
+	TObjectPtr<UCInventoryComponent> InventoryComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCPlacementComponent> PlacementComp;
+	TObjectPtr<UCPlacementComponent> PlacementComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mode")
-		TWeakObjectPtr<ACGameMode> GameMode;
+	TWeakObjectPtr<ACGameMode> GameMode;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-		FVector2D PitchRange = FVector2D(-40, +40);
+	FVector2D PitchRange = FVector2D(-40, +40);
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-		TArray<float> Speeds{ 200, 500, 800 };
+	TArray<float> Speeds{ 200, 500, 800 };
 
 private:
 	CEHitType CurHitType = CEHitType::Common;

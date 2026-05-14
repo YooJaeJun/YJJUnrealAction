@@ -22,19 +22,19 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<UAnimMontage> Montage;
+	TObjectPtr<UAnimMontage> Montage;
 
 	UPROPERTY(EditAnywhere)
-		float PlayRate = 1;
+	float PlayRate = 1;
 
 	UPROPERTY(EditAnywhere)
-		bool bCanMove = true;
+	bool bCanMove = true;
 
 	UPROPERTY(EditAnywhere)
-		bool bUseControlRotation = true;
+	bool bUseControlRotation = true;
 
 	UPROPERTY(EditAnywhere)
-		USoundWave* Sound;
+	USoundWave* Sound;
 };
 
 
@@ -51,37 +51,37 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<UAnimMontage> Montage;
+	TObjectPtr<UAnimMontage> Montage;
 
 	UPROPERTY(EditAnywhere)
-		float PlayRate = 1;
+	float PlayRate = 1;
 
 	UPROPERTY(EditAnywhere)
-		bool bCanMove = true;
+	bool bCanMove = true;
 
 	UPROPERTY(EditAnywhere)
-		bool bUseControlRotation = true;
+	bool bUseControlRotation = true;
 
 	UPROPERTY(EditAnywhere)
-		bool bFixedCamera;
+	bool bFixedCamera;
 
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<USoundWave> Sound;
+	TObjectPtr<USoundWave> Sound;
 
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<UFXSystemAsset> Effect;
+	TObjectPtr<UFXSystemAsset> Effect;
 
 	UPROPERTY(EditAnywhere)
-		FVector EffectLocation = FVector::ZeroVector;
+	FVector EffectLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere)
-		FVector EffectScale = FVector::OneVector;
+	FVector EffectScale = FVector::OneVector;
 
 	UPROPERTY(EditAnywhere)
-		float Stamina;
+	float Stamina;
 
 	UPROPERTY(EditAnywhere)
-		float Mana;
+	float Mana;
 };
 
 
@@ -102,34 +102,34 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<UAnimMontage> Montage;
+	TObjectPtr<UAnimMontage> Montage;
 
 	UPROPERTY(EditAnywhere)
-		float PlayRate = 1;
+	float PlayRate = 1;
 
 	UPROPERTY(EditAnywhere)
-		float Power;
+	float Power;
 
 	UPROPERTY(EditAnywhere)
-		float Launch = 100;
+	float Launch = 100;
 
 	UPROPERTY(EditAnywhere)
-		float StopTime;
+	float StopTime;
 
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<USoundWave> Sound;
+	TObjectPtr<USoundWave> Sound;
 	
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<UFXSystemAsset> Effect;
+	TObjectPtr<UFXSystemAsset> Effect;
 
 	UPROPERTY(EditAnywhere)
-		FVector EffectLocation = FVector::ZeroVector;
+	FVector EffectLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere)
-		FVector EffectScale = FVector::OneVector;
+	FVector EffectScale = FVector::OneVector;
 
 	UPROPERTY(EditAnywhere)
-		CEHitType AttackType = CEHitType::Common;
+	CEHitType AttackType = CEHitType::Common;
 };
 
 USTRUCT()

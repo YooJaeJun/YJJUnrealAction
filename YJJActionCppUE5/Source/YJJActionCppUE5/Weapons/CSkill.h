@@ -43,10 +43,10 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Act")
-		UCAct* Act;
+	UCAct* Act;
 
 	UPROPERTY(VisibleAnywhere, Category = "Act")
-		ACAttachment* Attachment;
+	ACAttachment* Attachment;
 
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

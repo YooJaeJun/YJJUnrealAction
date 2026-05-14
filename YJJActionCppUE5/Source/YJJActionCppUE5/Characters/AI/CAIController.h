@@ -32,26 +32,26 @@ public:
 
 private:
 	UPROPERTY()
-		TObjectPtr<UBehaviorTree> BTAsset;
+	TObjectPtr<UBehaviorTree> BTAsset;
 
 	UPROPERTY()
-		TObjectPtr<UBlackboardData> BBAsset;
+	TObjectPtr<UBlackboardData> BBAsset;
 
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<UAISenseConfig_Sight> SightConfig;
+	TObjectPtr<UAISenseConfig_Sight> SightConfig;
 
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<UAISenseConfig_Hearing> HearingConfig;
+	TObjectPtr<UAISenseConfig_Hearing> HearingConfig;
 
 	UPROPERTY(EditAnywhere)
-		float SightRadius = 1500.0f;
+	float SightRadius = 1500.0f;
 
 	UPROPERTY(EditAnywhere)
-		float LoseSightRadius = 1800.0f;
+	float LoseSightRadius = 1800.0f;
 
 	UPROPERTY(EditAnywhere)
-		float Angle = 120.0f;
+	float Angle = 120.0f;
 
 	UPROPERTY(EditAnywhere)
-		float MaxAge = 5.0f;
+	float MaxAge = 5.0f;
 };

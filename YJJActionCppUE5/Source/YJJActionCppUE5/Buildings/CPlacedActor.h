@@ -24,12 +24,12 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<USceneComponent> SceneRoot;
+	TObjectPtr<USceneComponent> SceneRoot;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UStaticMeshComponent> MeshComp;
+	TObjectPtr<UStaticMeshComponent> MeshComp;
 
 private:
 	UPROPERTY(Replicated, VisibleAnywhere, Category = "Placement")
-		FName ItemID = NAME_None;
+	FName ItemID = NAME_None;
 };

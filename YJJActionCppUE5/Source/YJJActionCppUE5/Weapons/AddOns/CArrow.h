@@ -43,13 +43,13 @@ public:
 
 private:
 	UPROPERTY(VisibleDefaultsOnly)
-		TObjectPtr<UCapsuleComponent> Capsule;
+	TObjectPtr<UCapsuleComponent> Capsule;
 
 	UPROPERTY(VisibleDefaultsOnly)
-		TObjectPtr<UProjectileMovementComponent> Projectile;
+	TObjectPtr<UProjectileMovementComponent> Projectile;
 
 	UPROPERTY(EditDefaultsOnly, Category = "LifeSpan")
-		float LifeSpanAfterCollision = 2.0f;
+	float LifeSpanAfterCollision = 2.0f;
 
 public:
 	FArrowHit OnArrowHit;

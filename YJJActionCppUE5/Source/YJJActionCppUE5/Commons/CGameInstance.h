@@ -12,16 +12,16 @@ struct FCCharacterInfo : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere)
-		int32 Type;
+	int32 Type;
 
 	UPROPERTY(EditAnywhere)
-		int32 Group;
+	int32 Group;
 
 	UPROPERTY(EditAnywhere)
-		FName Name;
+	FName Name;
 
 	UPROPERTY(EditAnywhere)
-		FLinearColor BodyColor;
+	FLinearColor BodyColor;
 };
 
 USTRUCT(BlueprintType)
@@ -31,37 +31,37 @@ struct FCCharacterStat : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere)
-		int32 Level = 1;
+	int32 Level = 1;
 
 	UPROPERTY(EditAnywhere)
-		float MaxExp = 100;
+	float MaxExp = 100;
 
 	UPROPERTY(EditAnywhere)
-		float MaxHp = 100;
+	float MaxHp = 100;
 
 	UPROPERTY(EditAnywhere)
-		float MaxStamina = 100;
+	float MaxStamina = 100;
 
 	UPROPERTY(EditAnywhere)
-		float MaxMana = 100;
+	float MaxMana = 100;
 
 	UPROPERTY(EditAnywhere)
-		float StaminaAccelRestore;
+	float StaminaAccelRestore;
 
 	UPROPERTY(EditAnywhere)
-		float StaminaDefaultRestore;
+	float StaminaDefaultRestore;
 
 	UPROPERTY(EditAnywhere)
-		float ManaAccelRestore;
+	float ManaAccelRestore;
 
 	UPROPERTY(EditAnywhere)
-		float ManaDefaultRestore;
+	float ManaDefaultRestore;
 
 	UPROPERTY(EditAnywhere)
-		float Attack;
+	float Attack;
 
 	UPROPERTY(EditAnywhere)
-		float DropExp;
+	float DropExp;
 };
 
 UCLASS()
@@ -79,8 +79,8 @@ public:
 
 private:
 	UPROPERTY()
-		TObjectPtr<UDataTable> CharacterInfoTable;
+	TObjectPtr<UDataTable> CharacterInfoTable;
 
 	UPROPERTY()
-		TObjectPtr<UDataTable> CharacterStatTable;
+	TObjectPtr<UDataTable> CharacterStatTable;
 };

@@ -25,7 +25,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Add-On")
-		TSubclassOf<ACMotionTrail> MotionTrailClass;
+	TSubclassOf<ACMotionTrail> MotionTrailClass;
 
 private:
 	TWeakObjectPtr<ACMotionTrail> MotionTrail;

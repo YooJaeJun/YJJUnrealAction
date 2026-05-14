@@ -14,17 +14,17 @@ class YJJACTIONCPPUE5_API UCItemDefinition : public UPrimaryDataAsset
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		FName ItemID = NAME_None;
+	FName ItemID = NAME_None;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		FText DisplayName;
+	FText DisplayName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (ClampMin = "1"))
-		int32 MaxStack = 99;
+	int32 MaxStack = 99;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "World")
-		TSubclassOf<ACWorldItemActor> WorldItemClass;
+	TSubclassOf<ACWorldItemActor> WorldItemClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Placement")
-		TSubclassOf<ACPlacedActor> PlacementActorClass;
+	TSubclassOf<ACPlacedActor> PlacementActorClass;
 };

@@ -68,57 +68,57 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCCamComponent> CamComp;
+	TObjectPtr<UCCamComponent> CamComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCTargetingComponent> TargetingComp;
+	TObjectPtr<UCTargetingComponent> TargetingComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCGameUIComponent> GameUIComp;
+	TObjectPtr<UCGameUIComponent> GameUIComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCRidingComponent> RidingComp;
+	TObjectPtr<UCRidingComponent> RidingComp;
 
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<UCWeaponComponent> WeaponComp;
+	TObjectPtr<UCWeaponComponent> WeaponComp;
 
 private:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<USpringArmComponent> SpringArm;
+	TObjectPtr<USpringArmComponent> SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCameraComponent> Camera;
+	TObjectPtr<UCameraComponent> Camera;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-		TArray<float> Speeds{ 400, 1000, 1600 };
+	TArray<float> Speeds{ 400, 1000, 1600 };
 
 	UPROPERTY(VisibleAnywhere, Category = "AI")
-		TObjectPtr<UCPatrolComponent> PatrolComp;
+	TObjectPtr<UCPatrolComponent> PatrolComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
-		TObjectPtr<USceneComponent> MountLeftPoint;
+	TObjectPtr<USceneComponent> MountLeftPoint;
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
-		TObjectPtr<USceneComponent> MountRightPoint;
+	TObjectPtr<USceneComponent> MountRightPoint;
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
-		TObjectPtr<USceneComponent> MountBackPoint;
+	TObjectPtr<USceneComponent> MountBackPoint;
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
-		TObjectPtr<USceneComponent> RiderPoint;
+	TObjectPtr<USceneComponent> RiderPoint;
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
-		TObjectPtr<USceneComponent> UnmountPoint;
+	TObjectPtr<USceneComponent> UnmountPoint;
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
-		TObjectPtr<USceneComponent> EyePoint;
+	TObjectPtr<USceneComponent> EyePoint;
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
-		TSubclassOf<AActor> EyeClass;
+	TSubclassOf<AActor> EyeClass;
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
-		TObjectPtr<AActor> Eye;
+	TObjectPtr<AActor> Eye;
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
-		TObjectPtr<UBoxComponent> InteractionCollision;
+	TObjectPtr<UBoxComponent> InteractionCollision;
 };

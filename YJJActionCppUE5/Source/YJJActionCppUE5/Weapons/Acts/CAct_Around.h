@@ -16,5 +16,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "SpawnClass")
-		TArray<TSubclassOf<ACSkillCollider_Rotate>> RotateClasses;
+	TArray<TSubclassOf<ACSkillCollider_Rotate>> RotateClasses;
 };

@@ -25,10 +25,10 @@ public:
 
 public:
 	UPROPERTY()
-		TObjectPtr<UButton> Button;
+	TObjectPtr<UButton> Button;
 
 	UPROPERTY()
-		FWeaponTypeHovered OnWeaponTypeHovered;
+	FWeaponTypeHovered OnWeaponTypeHovered;
 
 public:
 	CEWeaponType CurWeaponType;

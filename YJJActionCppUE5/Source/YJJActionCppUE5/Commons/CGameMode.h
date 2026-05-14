@@ -21,8 +21,8 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "UI")
-		TSubclassOf<UCUserWidget_HUD> PlayerHUDClass;
+	TSubclassOf<UCUserWidget_HUD> PlayerHUDClass;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
-		TObjectPtr<UCUserWidget_HUD> PlayerHUD;
+	TObjectPtr<UCUserWidget_HUD> PlayerHUD;
 };

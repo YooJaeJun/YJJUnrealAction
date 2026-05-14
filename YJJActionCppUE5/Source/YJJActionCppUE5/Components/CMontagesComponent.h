@@ -16,16 +16,16 @@ struct FMontagesData
 
 public:
 	UPROPERTY(EditAnywhere)
-		CEStateType StateType;
+	CEStateType StateType;
 
 	UPROPERTY(EditAnywhere)
-		CEHitType HitType;
+	CEHitType HitType;
 
 	UPROPERTY(EditAnywhere)
-		TObjectPtr<UAnimMontage> Montage;
+	TObjectPtr<UAnimMontage> Montage;
 
 	UPROPERTY(EditAnywhere)
-		float PlayRate = 1;
+	float PlayRate = 1;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -59,13 +59,13 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "DataTable")
-		TObjectPtr<UDataTable> DataTable;
+	TObjectPtr<UDataTable> DataTable;
 
 	UPROPERTY(VisibleAnywhere, Category = "DataTable")
-		FMontagesData Datas[static_cast<uint8>(CEStateType::Max)];
+	FMontagesData Datas[static_cast<uint8>(CEStateType::Max)];
 
 	UPROPERTY(VisibleAnywhere, Category = "DataTable")
-		FMontagesData HitDatas[static_cast<uint8>(CEHitType::Max)];
+	FMontagesData HitDatas[static_cast<uint8>(CEHitType::Max)];
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

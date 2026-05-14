@@ -13,8 +13,8 @@ public:
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		bool bRotating;
+	bool bRotating;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		bool bRiding;
+	bool bRiding;
 };

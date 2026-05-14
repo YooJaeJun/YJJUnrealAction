@@ -25,13 +25,13 @@ protected:
 
 private:
 	UPROPERTY()
-		TObjectPtr<UProgressBar> ProgressBar;
+	TObjectPtr<UProgressBar> ProgressBar;
 
 	UPROPERTY()
-		TObjectPtr<UTextBlock> CurAmount;
+	TObjectPtr<UTextBlock> CurAmount;
 
 	UPROPERTY()
-		TObjectPtr<UTextBlock> MaxAmount;
+	TObjectPtr<UTextBlock> MaxAmount;
 
 private:
 	TWeakObjectPtr<UCCharacterStatComponent> CurStat;

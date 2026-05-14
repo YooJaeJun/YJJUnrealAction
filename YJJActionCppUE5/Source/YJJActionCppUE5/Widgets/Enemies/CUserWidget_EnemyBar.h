@@ -19,7 +19,7 @@ protected:
 
 private:
 	UPROPERTY()
-		TObjectPtr<UProgressBar> ProgressBar;
+	TObjectPtr<UProgressBar> ProgressBar;
 
 private:
 	TWeakObjectPtr<UCCharacterStatComponent> CurStat;

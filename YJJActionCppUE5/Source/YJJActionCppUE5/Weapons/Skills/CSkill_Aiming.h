@@ -18,16 +18,16 @@ struct FAimData
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Zoom")
-		float TargetArmLength = 100;
+	float TargetArmLength = 100;
 
 	UPROPERTY(EditAnywhere)
-		FVector SocketOffset = FVector(0, 30, 10);
+	FVector SocketOffset = FVector(0, 30, 10);
 
 	UPROPERTY(EditAnywhere)
-		bool bEnableCameraLag;
+	bool bEnableCameraLag;
 
 	UPROPERTY(EditAnywhere)
-		FVector CameraLocation;
+	FVector CameraLocation;
 };
 
 UCLASS(Blueprintable)
@@ -57,13 +57,13 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Aiming")
-		TObjectPtr<UCurveVector> Curve;
+	TObjectPtr<UCurveVector> Curve;
 
 	UPROPERTY(EditAnywhere, Category = "Aiming")
-		FAimData AimData;
+	FAimData AimData;
 
 	UPROPERTY(EditAnywhere, Category = "Aiming")
-		float AimingSpeed = 200;
+	float AimingSpeed = 200;
 
 private:
 	TWeakObjectPtr<USpringArmComponent> SpringArm;

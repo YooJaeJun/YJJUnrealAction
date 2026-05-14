@@ -23,5 +23,5 @@ protected:
 
 public:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UCFlyComponent> FlyComp;
+	TObjectPtr<UCFlyComponent> FlyComp;
 };

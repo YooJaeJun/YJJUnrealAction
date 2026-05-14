@@ -77,29 +77,29 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere)
-		int32 CurLevel;
+	int32 CurLevel;
 
 	UPROPERTY(EditAnywhere)
-		float AttackRange = 100.0f;
+	float AttackRange = 100.0f;
 
 private:
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
-		float CurExp;
+	float CurExp;
 
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
-		float CurHp;
+	float CurHp;
 
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
-		float CurStamina;
+	float CurStamina;
 
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
-		float CurMana;
+	float CurMana;
 
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
-		bool EnoughStamina;
+	bool EnoughStamina;
 
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
-		bool EnoughMana;
+	bool EnoughMana;
 
 public:
 	FLevelChanged OnLevelChanged;

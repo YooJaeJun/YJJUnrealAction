@@ -23,22 +23,22 @@ private:
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
-		CEWeaponType WeaponType = CEWeaponType::Unarmed;
+	CEWeaponType WeaponType = CEWeaponType::Unarmed;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
-		CEWeaponType WeaponPrevType = CEWeaponType::Unarmed;
+	CEWeaponType WeaponPrevType = CEWeaponType::Unarmed;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		bool bRiding;
+	bool bRiding;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		bool bRidingFalling;
+	bool bRidingFalling;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
-		bool bBowAiming;
+	bool bBowAiming;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
-		float LegIKAlpha;
+	float LegIKAlpha;
 
 private:
 	TWeakObjectPtr<UCWeaponComponent> WeaponComp;

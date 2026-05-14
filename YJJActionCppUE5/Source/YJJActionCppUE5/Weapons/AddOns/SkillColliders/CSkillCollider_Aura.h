@@ -53,20 +53,20 @@ private:
 
 private:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<USceneComponent> Root;
+	TObjectPtr<USceneComponent> Root;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UNiagaraComponent> Niagara;
+	TObjectPtr<UNiagaraComponent> Niagara;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UBoxComponent> Box;
+	TObjectPtr<UBoxComponent> Box;
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damaged")
-		FHitData HitData;
+	FHitData HitData;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damaged")
-		float DamageInterval = 0.1f;
+	float DamageInterval = 0.1f;
 
 private:
 	FTimerHandle TimerHandle;

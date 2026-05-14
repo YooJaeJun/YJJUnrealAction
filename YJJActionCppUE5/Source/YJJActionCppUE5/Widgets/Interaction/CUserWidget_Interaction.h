@@ -21,8 +21,8 @@ private:
 
 public:
 	UPROPERTY()
-		TObjectPtr<UImage> KeyIcon;
+	TObjectPtr<UImage> KeyIcon;
 
 	UPROPERTY()
-		TObjectPtr<UTextBlock> Text;
+	TObjectPtr<UTextBlock> Text;
 };

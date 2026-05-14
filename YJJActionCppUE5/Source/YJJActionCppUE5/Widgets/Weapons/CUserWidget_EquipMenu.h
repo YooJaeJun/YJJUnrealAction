@@ -27,13 +27,13 @@ public:
 
 public:
 	UPROPERTY()
-		TArray<TObjectPtr<UCUserWidget_EquipMenuButton>> EquipMenuButtons;
+	TArray<TObjectPtr<UCUserWidget_EquipMenuButton>> EquipMenuButtons;
 
 	UPROPERTY()
-		FString ButtonHovered;
+	FString ButtonHovered;
 
 	UPROPERTY()
-		FWeaponEquipped OnWeaponEquipped;
+	FWeaponEquipped OnWeaponEquipped;
 
 public:
 	CEWeaponType CurWeaponType;

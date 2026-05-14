@@ -24,5 +24,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Skill")
-		int32 SkillIndex;
+	int32 SkillIndex;
 };

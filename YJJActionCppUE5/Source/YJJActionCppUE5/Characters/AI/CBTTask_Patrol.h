@@ -15,5 +15,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-		float PatrolDistance = 1200.0f;
+	float PatrolDistance = 1200.0f;
 };

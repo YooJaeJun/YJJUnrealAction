@@ -24,8 +24,8 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Zoom")
-		float OriginZooming;
+	float OriginZooming;
 
 	UPROPERTY(EditAnywhere, Category = "Zoom")
-		float SkillZooming = 250.0f;
+	float SkillZooming = 250.0f;
 };

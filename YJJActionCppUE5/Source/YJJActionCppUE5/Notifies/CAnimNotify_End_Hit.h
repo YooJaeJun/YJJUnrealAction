@@ -20,5 +20,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Type")
-		CEHitType HitType = CEHitType::Common;
+	CEHitType HitType = CEHitType::Common;
 };

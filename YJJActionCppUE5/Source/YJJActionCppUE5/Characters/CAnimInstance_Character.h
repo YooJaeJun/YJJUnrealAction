@@ -23,43 +23,43 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
-		float Speed;
+	float Speed;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
-		float Pitch;
+	float Pitch;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
-		float Yaw;
+	float Yaw;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
-		float Direction;
+	float Direction;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
-		float Look;
+	float Look;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
-		float Forward;
+	float Forward;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
-		float Side;
+	float Side;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		CEStateType StateType = CEStateType::Idle;
+	CEStateType StateType = CEStateType::Idle;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		CEStateType StatePrevType = CEStateType::Idle;
+	CEStateType StatePrevType = CEStateType::Idle;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		bool bFalling;
+	bool bFalling;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States")
-		bool bHitting;
+	bool bHitting;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
-		bool bFootIK = true;
+	bool bFootIK = true;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "IK")
-		bool bRidingIK;
+	bool bRidingIK;
 
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

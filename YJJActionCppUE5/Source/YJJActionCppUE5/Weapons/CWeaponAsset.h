@@ -36,40 +36,40 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere)
-		CEWeaponType Type;
+	CEWeaponType Type;
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<ACAttachment> AttachmentClass;
+	TSubclassOf<ACAttachment> AttachmentClass;
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<UCEquipment> EquipmentClass;
+	TSubclassOf<UCEquipment> EquipmentClass;
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<UCAct> ActClass;
+	TSubclassOf<UCAct> ActClass;
 
 	UPROPERTY(EditAnywhere)
-		TArray<TSubclassOf<UCSkill>> SkillClasses;
+	TArray<TSubclassOf<UCSkill>> SkillClasses;
 
 
 	UPROPERTY(EditAnywhere)
-		FEquipmentData EquipmentData;
+	FEquipmentData EquipmentData;
 
 	UPROPERTY(EditAnywhere)
-		TArray<FActData> ActDatas;
+	TArray<FActData> ActDatas;
 
 	UPROPERTY(EditAnywhere)
-		TArray<FHitData> HitDatas;
+	TArray<FHitData> HitDatas;
 
 
 	UPROPERTY()
-		ACAttachment* Attachment;
+	ACAttachment* Attachment;
 
 	UPROPERTY()
-		UCEquipment* Equipment;
+	UCEquipment* Equipment;
 
 	UPROPERTY()
-		UCAct* Act;
+	UCAct* Act;
 
 	UPROPERTY()
-		TArray<UCSkill*> Skills;
+	TArray<UCSkill*> Skills;
 };

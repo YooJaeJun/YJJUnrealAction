@@ -28,14 +28,14 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "View")
-		FVector2D ViewPitchRange = FVector2D(-40, +30);
+	FVector2D ViewPitchRange = FVector2D(-40, +30);
 
 private:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<USkeletalMeshComponent> SkeletalMesh;
+	TObjectPtr<USkeletalMeshComponent> SkeletalMesh;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UPoseableMeshComponent> PoseableMesh;
+	TObjectPtr<UPoseableMeshComponent> PoseableMesh;
 
 private:
 	FVector2D OriginViewPitchRange;

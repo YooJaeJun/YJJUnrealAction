@@ -37,13 +37,13 @@ private:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Placement")
-		TSubclassOf<AActor> PreviewActorClass;
+	TSubclassOf<AActor> PreviewActorClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Placement", meta = (ClampMin = "0"))
-		float TraceDistance = 1200.0f;
+	float TraceDistance = 1200.0f;
 
 	UPROPERTY(Transient)
-		TObjectPtr<AActor> PreviewActor;
+	TObjectPtr<AActor> PreviewActor;
 
 	FTransform LastPreviewTransform = FTransform::Identity;
 	FName PendingItemID = NAME_None;

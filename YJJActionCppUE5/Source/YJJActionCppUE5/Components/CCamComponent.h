@@ -17,16 +17,16 @@ struct FZoomData
 
 public:
 	UPROPERTY(EditAnywhere)
-		float ZoomSpeed = 40;
+	float ZoomSpeed = 40;
 
 	UPROPERTY(EditAnywhere)
-		float MinRange = 100;
+	float MinRange = 100;
 
 	UPROPERTY(EditAnywhere)
-		float MaxRange = 600;
+	float MaxRange = 600;
 
 	UPROPERTY(EditAnywhere)
-		float InterpSpeed = 5;
+	float InterpSpeed = 5;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -64,20 +64,20 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Camera")
-		float HorizontalLook = 45;
+	float HorizontalLook = 45;
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-		float VerticalLook = 45;
+	float VerticalLook = 45;
 
 public:
 	UPROPERTY(EditAnywhere)
-		FZoomData ZoomData;
+	FZoomData ZoomData;
 
 	UPROPERTY(VisibleAnywhere)
-		float Zooming;
+	float Zooming;
 
 	UPROPERTY(VisibleAnywhere)
-		float TargetArmLength;
+	float TargetArmLength;
 
 public:
 	FEnableTopViewCam OnEnableTopViewCam;

@@ -15,25 +15,25 @@ class YJJACTIONCPPUE5_API UCSkill_Warp : public UCSkill
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-		TSubclassOf<ACameraActor> CameraActorClass;
+	TSubclassOf<ACameraActor> CameraActorClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-		FVector CameraRelativeLocation = FVector(0, 0, 1000);
+	FVector CameraRelativeLocation = FVector(0, 0, 1000);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-		TEnumAsByte<ECameraProjectionMode::Type> ProjectionMode;
+	TEnumAsByte<ECameraProjectionMode::Type> ProjectionMode;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-		float OrthoWidth = 2000;
+	float OrthoWidth = 2000;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-		float FieldOfView = 90;
+	float FieldOfView = 90;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-		float BlendIn = 0;
+	float BlendIn = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-		float BlendOut = 0;
+	float BlendOut = 0;
 
 public:
 	UCSkill_Warp();

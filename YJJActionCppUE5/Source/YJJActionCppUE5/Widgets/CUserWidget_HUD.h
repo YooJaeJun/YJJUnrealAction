@@ -18,11 +18,11 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
-		TObjectPtr<UCUserWidget_PlayerInfo> PlayerInfo;
+	TObjectPtr<UCUserWidget_PlayerInfo> PlayerInfo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
-		TObjectPtr<UCUserWidget_EquipMenu> EquipMenu;
+	TObjectPtr<UCUserWidget_EquipMenu> EquipMenu;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
-		TObjectPtr<UCUserWidget_Interaction> Interaction;
+	TObjectPtr<UCUserWidget_Interaction> Interaction;
 };

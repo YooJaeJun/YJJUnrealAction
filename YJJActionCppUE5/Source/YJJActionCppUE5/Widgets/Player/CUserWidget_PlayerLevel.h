@@ -26,10 +26,10 @@ protected:
 
 public:
 	UPROPERTY()
-		TObjectPtr<UProgressBar> ProgressBar;
+	TObjectPtr<UProgressBar> ProgressBar;
 
 	UPROPERTY()
-		TObjectPtr<UTextBlock> CurLevel;
+	TObjectPtr<UTextBlock> CurLevel;
 
 private:
 	TWeakObjectPtr<UCCharacterStatComponent> CurStat;

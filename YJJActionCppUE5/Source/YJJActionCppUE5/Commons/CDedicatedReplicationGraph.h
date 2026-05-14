@@ -16,8 +16,8 @@ public:
 
 private:
 	UPROPERTY()
-		TObjectPtr<UReplicationGraphNode_GridSpatialization2D> GridNode;
+	TObjectPtr<UReplicationGraphNode_GridSpatialization2D> GridNode;
 
 	UPROPERTY()
-		TObjectPtr<UReplicationGraphNode_ActorList> AlwaysRelevantNode;
+	TObjectPtr<UReplicationGraphNode_ActorList> AlwaysRelevantNode;
 };

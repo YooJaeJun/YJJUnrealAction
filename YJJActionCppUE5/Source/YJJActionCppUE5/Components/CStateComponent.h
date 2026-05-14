@@ -75,16 +75,16 @@ public:
 
 private:
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		CEStateType CurType = CEStateType::Idle;
+	CEStateType CurType = CEStateType::Idle;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		CEStateType PrevType = CEStateType::Max;
+	CEStateType PrevType = CEStateType::Max;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		CEHitType CurHitType = CEHitType::None;
+	CEHitType CurHitType = CEHitType::None;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-		CEHitType PrevHitType = CEHitType::Max;
+	CEHitType PrevHitType = CEHitType::Max;
 
 public:
 	FStateTypeChanged OnStateTypeChanged;

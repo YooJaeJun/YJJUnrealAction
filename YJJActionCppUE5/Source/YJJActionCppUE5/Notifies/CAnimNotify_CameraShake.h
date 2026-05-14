@@ -20,5 +20,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "CameraShakeClass")
-		TSubclassOf<ULegacyCameraShake> CameraShakeClass;
+	TSubclassOf<ULegacyCameraShake> CameraShakeClass;
 };

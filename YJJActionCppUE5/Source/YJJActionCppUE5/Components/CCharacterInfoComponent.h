@@ -35,17 +35,17 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere)
-		int32 CurType;
+	int32 CurType;
 
 private:
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
-		int32 CurGroup;
+	int32 CurGroup;
 
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
-		FName CurName;
+	FName CurName;
 
 	UPROPERTY(EditInstanceOnly, Meta = (AllowPrivateAccess = true))
-		FLinearColor CurBodyColor;
+	FLinearColor CurBodyColor;
 
 private:
 	FCCharacterInfo CurInfo;

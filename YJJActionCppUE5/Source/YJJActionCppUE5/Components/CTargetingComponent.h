@@ -39,28 +39,28 @@ public:
 
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Focus")
-		bool bTargeting;
+	bool bTargeting;
 
 	UPROPERTY(EditAnywhere, Category = "Focus")
-		float MovingFocus_CurrentCoolTime;
+	float MovingFocus_CurrentCoolTime;
 
 	UPROPERTY(VisibleAnywhere, Category = "Focus")
-		float MovingFocus_ConstantTime = 0.3f;
+	float MovingFocus_ConstantTime = 0.3f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Focus")
-		bool bMovingFocus;
+	bool bMovingFocus;
 
 	UPROPERTY(VisibleAnywhere, Category = "Focus")
-		bool bCanMoveFocus;
+	bool bCanMoveFocus;
 
 	UPROPERTY(VisibleAnywhere, Category = "Trace")
-		float TraceDistance = 1500.0f;
+	float TraceDistance = 1500.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Trace")
-		float FinishAngle = 0.1f;
+	float FinishAngle = 0.1f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Trace")
-		float InterpSpeed = 20.0f;
+	float InterpSpeed = 20.0f;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

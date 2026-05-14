@@ -34,26 +34,26 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
-		float Forward;
+	float Forward;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-		float Right;
+	float Right;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Camera")
-		float HorizontalLook = 45;
+	float HorizontalLook = 45;
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-		float VerticalLook = 45;
+	float VerticalLook = 45;
 
 	UPROPERTY(EditAnywhere, Category = "Move")
-		float MovingFactor = 40;
+	float MovingFactor = 40;
 
 	UPROPERTY(EditAnywhere, Category = "Move")
-		float InterpSpeed = 2;
+	float InterpSpeed = 2;
 
 	UPROPERTY(EditAnywhere, Category = "Move")
-		float UpFactor;
+	float UpFactor;
 
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;

@@ -20,5 +20,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Type")
-		CEStateType StateType;
+	CEStateType StateType;
 };

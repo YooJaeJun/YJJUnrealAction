@@ -38,24 +38,24 @@ private:
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<USceneComponent> SceneRoot;
+	TObjectPtr<USceneComponent> SceneRoot;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<UStaticMeshComponent> MeshComp;
+	TObjectPtr<UStaticMeshComponent> MeshComp;
 
 	UPROPERTY(VisibleAnywhere)
-		TObjectPtr<USphereComponent> InteractionSphere;
+	TObjectPtr<USphereComponent> InteractionSphere;
 
 private:
 	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_ItemState, Category = "Item")
-		FName ItemID = NAME_None;
+	FName ItemID = NAME_None;
 
 	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_ItemState, Category = "Item", meta = (ClampMin = "1"))
-		int32 Quantity = 1;
+	int32 Quantity = 1;
 
 	UPROPERTY(ReplicatedUsing = OnRep_ItemState, VisibleAnywhere, Category = "Item")
-		bool bClaimed = false;
+	bool bClaimed = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Interaction", meta = (ClampMin = "0"))
-		float PickupDistance = 250.0f;
+	float PickupDistance = 250.0f;
 };

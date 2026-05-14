@@ -23,8 +23,8 @@ public:
 
 private:
 	UPROPERTY(Replicated, VisibleAnywhere, Category = "Dedicated Server")
-		int32 WorldItemCount = 0;
+	int32 WorldItemCount = 0;
 
 	UPROPERTY(Replicated, VisibleAnywhere, Category = "Dedicated Server")
-		int32 PlacedActorCount = 0;
+	int32 PlacedActorCount = 0;
 };

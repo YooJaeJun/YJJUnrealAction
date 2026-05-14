@@ -14,14 +14,14 @@ class YJJACTIONCPPUE5_API UCSkill_Aura : public UCSkill
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Aura")
-		TSubclassOf<ACSkillCollider_Aura> AuraClass;
+	TSubclassOf<ACSkillCollider_Aura> AuraClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Aura")
-		FVector AuraLocation;
+	FVector AuraLocation;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Act")
-		FActData ActData;
+	FActData ActData;
 
 public:
 	void Pressed() override;
