@@ -202,8 +202,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Utilities", meta = (DisplayName = "Get Control Direction"))
 	void GetControlDirection(FVector& OutForward, FVector& OutRight) const;
 
+	// 레거시 ABP 출력 핀 이름 "Out Movement" 와 UObject 반환 시그니처가 겹치면 BP 에서 이름 중복·오버라이드 실패한다 — 단일 참조 출력으로 통일한다.
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animal|Locomotion")
-	FVector GetDesiredMovement();
+	void GetDesiredMovement(UPARAM(DisplayName = "Out Movement") FVector& OutMovement);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animal|IK")
 	void SetFootLocation(bool bLeftFoot, FVector WorldLocation);
@@ -227,7 +228,10 @@ private:
 	FTimerHandle AnimalDeathTimer_SoulFx;
 
 protected:
-	virtual void Footstep_Implementation() override;
+	virtual void Footstep_Implementation(
+		bool bLeftFoot,
+		EPhysicalSurface SurfaceType,
+		FVector HitLocation) override;
 
 	// HpBar_NPC 와(있으면) 자식의 HpBarWidget 위젯에 SetHPUI 브로드캐스트.
 	virtual void RefreshAnimalHpBarWidgets();

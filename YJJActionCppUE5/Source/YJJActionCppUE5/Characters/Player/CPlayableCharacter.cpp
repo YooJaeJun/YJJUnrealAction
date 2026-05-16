@@ -169,42 +169,54 @@ ACPlayableCharacter::ACPlayableCharacter()
 	const TObjectPtr<UCapsuleComponent> capsuleComp = GetCapsuleComponent();
 
 	// BP_Player: CollisionCylinder — ArrowGroup — (Ceil, Center, Floor, Land_0, Left, Right).
-	YJJHelpers::CreateComponent<USceneComponent>(this, &ArrowGroup, TEXT("ArrowGroup"), capsuleComp);
-	if (IsValid(ArrowGroup))
-		ArrowGroup->ComponentTags.Add(FName(TEXT("Arrows")));
+	YJJHelpers::CreateComponent<USceneComponent>(this, &NativeBpArrowGroup, TEXT("YJJ_PlayerArrowGroup"), capsuleComp);
+	if (IsValid(NativeBpArrowGroup))
+		NativeBpArrowGroup->ComponentTags.Add(FName(TEXT("Arrows")));
 
-	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowCeil, TEXT("Ceil"), ArrowGroup);
-	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowCenter, TEXT("Center"), ArrowGroup);
-	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowFloor, TEXT("Floor"), ArrowGroup);
-	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowLand0, TEXT("Land_0"), ArrowGroup);
-	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowLeft, TEXT("Left"), ArrowGroup);
-	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowRight, TEXT("Right"), ArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowCeil, TEXT("Ceil"), NativeBpArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowCenter, TEXT("Center"), NativeBpArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowFloor, TEXT("Floor"), NativeBpArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowLand0, TEXT("Land_0"), NativeBpArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowLeft, TEXT("Left"), NativeBpArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowRight, TEXT("Right"), NativeBpArrowGroup);
 
-	// BP_Player: CharacterMesh0 — SpringArm — Camera — MainCamChild; SequenceCamera — SequenceCamChild; Scene — PointLights.
-	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, TEXT("SpringArm"), meshComp);
-	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, TEXT("Camera"), SpringArm);
-	YJJHelpers::CreateComponent<UChildActorComponent>(this, &MainCamChild, TEXT("MainCamChild"), Camera);
+	// BP_Player: CharacterMesh0 — SpringArm — Camera — MainCamChild; SequenceCamera — SequenceCamChild.
+	YJJHelpers::CreateComponent<USpringArmComponent>(this, &NativeSpringArm, TEXT("YJJ_PlayerSpringArm"), meshComp);
+	YJJHelpers::CreateComponent<UCameraComponent>(this, &NativeCamera, TEXT("YJJ_PlayerCamera"), NativeSpringArm);
+	YJJHelpers::CreateComponent<UChildActorComponent>(this, &NativeBpMainCamChild, TEXT("YJJ_PlayerMainCamChild"), NativeCamera);
 
-	YJJHelpers::CreateComponent<USceneComponent>(this, &SequenceCamera, TEXT("SequenceCamera"), meshComp);
-	YJJHelpers::CreateComponent<UChildActorComponent>(this, &SequenceCamChild, TEXT("SequenceCamChild"), SequenceCamera);
+	YJJHelpers::CreateComponent<USceneComponent>(
+		this, &NativeBpSequenceCamAnchor, TEXT("YJJ_PlayerSequenceCamAnchor"), meshComp);
+	YJJHelpers::CreateComponent<UChildActorComponent>(
+		this, &NativeBpSequenceCamChild, TEXT("YJJ_PlayerSequenceCamChild"), NativeBpSequenceCamAnchor);
 
-	YJJHelpers::CreateComponent<USceneComponent>(this, &CinematicLightScene, TEXT("Scene"), meshComp);
-	YJJHelpers::CreateComponent<UPointLightComponent>(this, &PointLight, TEXT("PointLight"), CinematicLightScene);
-	YJJHelpers::CreateComponent<UPointLightComponent>(this, &PointLight1, TEXT("PointLight1"), CinematicLightScene);
+	// 이름이 너무 짧으면 레거시 BP_Player SCS 의 Scene / PointLight 슬롯과 충돌해 인터페이스 제거 등으로 재구성 트리거 시 Fatal 할 수 있다.
+	YJJHelpers::CreateComponent<USceneComponent>(this, &CinematicLightScene, TEXT("YJJ_CinematicLightRoot"), meshComp);
+	YJJHelpers::CreateComponent<UPointLightComponent>(
+		this,
+		&NativeBpCinematicPointLightA,
+		TEXT("YJJ_CinematicPointLightA"),
+		CinematicLightScene);
+	YJJHelpers::CreateComponent<UPointLightComponent>(
+		this,
+		&NativeBpCinematicPointLightB,
+		TEXT("YJJ_CinematicPointLightB"),
+		CinematicLightScene);
 
-	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, TEXT("WeaponComponent"));
-	WeaponComponent = WeaponComp;
-	YJJHelpers::CreateActorComponent<UCMagicComponent>(this, &MagicComp, TEXT("MagicComponent"));
-	MagicComponent = MagicComp;
-	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, TEXT("CamComponent"));
-	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, TEXT("TargetingComponent"));
-	TargetComponent = TargetingComp;
-	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, TEXT("GameUIComponent"));
-	YJJHelpers::CreateActorComponent<UCInventoryComponent>(this, &InventoryComp, TEXT("InventoryComponent"));
-	YJJHelpers::CreateActorComponent<UCPlacementComponent>(this, &PlacementComp, TEXT("PlacementComponent"));
-	YJJHelpers::CreateActorComponent<UCParkourComponent>(this, &ParkourComp, TEXT("ParkourComponent"));
+	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, TEXT("YJJ_PlayerWeaponComp"));
+	NativeBpWeaponAlias = WeaponComp;
+	YJJHelpers::CreateActorComponent<UCMagicComponent>(this, &MagicComp, TEXT("YJJ_PlayerMagicComp"));
+	NativeBpMagicAlias = MagicComp;
+	// 레거시 BP_Player SCS 가 CamComponent/ParkourComponent 등 과 동일 이름의 BPGC 슬롯을 남기면, 네이티브 서브오브젝트와 이름·클래스가 겹쳐 RemoveInterface 후 재구성 시 Fatal 될 수 있어 접두를 둔다.
+	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, TEXT("YJJ_PlayerCamComp"));
+	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, TEXT("YJJ_PlayerTargetingComp"));
+	NativeBpTargetingAlias = TargetingComp;
+	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, TEXT("YJJ_PlayerGameUIComp"));
+	YJJHelpers::CreateActorComponent<UCInventoryComponent>(this, &InventoryComp, TEXT("YJJ_PlayerInventoryComp"));
+	YJJHelpers::CreateActorComponent<UCPlacementComponent>(this, &PlacementComp, TEXT("YJJ_PlayerPlacementComp"));
+	YJJHelpers::CreateActorComponent<UCParkourComponent>(this, &ParkourComp, TEXT("YJJ_PlayerParkourComp"));
 	YJJHelpers::CreateActorComponent<UCSystemMessageComponent>(
-		this, &SystemMessageComponent, TEXT("SystemMessageComponent"));
+		this, &NativeBpSystemMessageComp, TEXT("YJJ_PlayerSystemMessage"));
 
 	TObjectPtr<USkeletalMesh> mesh = nullptr;
 	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
@@ -217,13 +229,13 @@ ACPlayableCharacter::ACPlayableCharacter()
 	YJJHelpers::GetClass<UCAnimInstance_Human>(&animInstance, "AnimBlueprint'/Game/Character/CABP_Human.CABP_Human_C'");
 	GetMesh()->SetAnimInstanceClass(animInstance);
 
-	if (IsValid(SpringArm))
+	if (IsValid(NativeSpringArm))
 	{
-		SpringArm->SetRelativeLocation(FVector(0, 0, 60));
-		SpringArm->TargetArmLength = 280;
-		SpringArm->bUsePawnControlRotation = true;
-		SpringArm->bEnableCameraLag = true;
-		SpringArm->bDoCollisionTest = false;
+		NativeSpringArm->SetRelativeLocation(FVector(0, 0, 60));
+		NativeSpringArm->TargetArmLength = 280;
+		NativeSpringArm->bUsePawnControlRotation = true;
+		NativeSpringArm->bEnableCameraLag = true;
+		NativeSpringArm->bDoCollisionTest = false;
 	}
 
 	if (IsValid(StateComp))
@@ -591,7 +603,7 @@ void ACPlayableCharacter::OnHitStateTypeChanged(const CEHitType InPrevType, cons
 
 TObjectPtr<USpringArmComponent> ACPlayableCharacter::GetSpringArm() const
 {
-	return SpringArm;
+	return NativeSpringArm;
 }
 
 TObjectPtr<UCTargetingComponent> ACPlayableCharacter::GetTargetingComp() const
@@ -725,7 +737,7 @@ void ACPlayableCharacter::CancelHitAnim()
 void ACPlayableCharacter::SpawnMessage()
 {
 	TryPlaySystemMessage(
-		SystemMessageComponent.Get(),
+		NativeBpSystemMessageComp.Get(),
 		YJJLocalization::LocalizedText_PlayerSpawnedNotice(),
 		5.0);
 }
@@ -969,14 +981,14 @@ void ACPlayableCharacter::ShakeCam_Implementation()
 void ACPlayableCharacter::NotEnoughStamina()
 {
 	ShakeCam();
-	TryPlaySystemMessage(SystemMessageComponent.Get(), YJJLocalization::LocalizedText_NotEnough_Stamina(), 3.0);
+	TryPlaySystemMessage(NativeBpSystemMessageComp.Get(), YJJLocalization::LocalizedText_NotEnough_Stamina(), 3.0);
 	SetIdle();
 }
 
 void ACPlayableCharacter::NotEnoughMana()
 {
 	ShakeCam();
-	TryPlaySystemMessage(SystemMessageComponent.Get(), YJJLocalization::LocalizedText_NotEnough_Mana(), 3.0);
+	TryPlaySystemMessage(NativeBpSystemMessageComp.Get(), YJJLocalization::LocalizedText_NotEnough_Mana(), 3.0);
 	SetIdle();
 }
 
@@ -1008,10 +1020,10 @@ void ACPlayableCharacter::SetSkillZooming()
 void ACPlayableCharacter::ApplyZoom(double InZoom)
 {
 	// BP: TargetArmLength 가 InZoom 과 거의 같지 않을 때만 FInterpTo 로 갱신.
-	if (false == IsValid(SpringArm))
+	if (false == IsValid(NativeSpringArm))
 		return;
 
-	const float current = SpringArm->TargetArmLength;
+	const float current = NativeSpringArm->TargetArmLength;
 	if (UKismetMathLibrary::NearlyEqual_FloatFloat(static_cast<double>(current), InZoom, 0.1))
 		return;
 
@@ -1022,7 +1034,7 @@ void ACPlayableCharacter::ApplyZoom(double InZoom)
 		deltaSeconds,
 		ZoomData.InterpSpeed);
 
-	SpringArm->TargetArmLength = nextLength;
+	NativeSpringArm->TargetArmLength = nextLength;
 }
 
 void ACPlayableCharacter::StartFall(double InGravity)
@@ -1161,20 +1173,20 @@ void ACPlayableCharacter::Tick_AccelGravity()
 
 void ACPlayableCharacter::SetInvisibleMotionTrail()
 {
-	if (false == IsValid(MotionTrailEffect))
+	if (false == IsValid(NativeBpMotionTrailNiagara))
 		return;
 
-	if (MotionTrailEffect->IsVisible())
-		MotionTrailEffect->SetVisibility(false, false);
+	if (NativeBpMotionTrailNiagara->IsVisible())
+		NativeBpMotionTrailNiagara->SetVisibility(false, false);
 }
 
 void ACPlayableCharacter::SetVisibleMotionTrail()
 {
-	if (false == IsValid(MotionTrailEffect))
+	if (false == IsValid(NativeBpMotionTrailNiagara))
 		return;
 
-	if (false == MotionTrailEffect->IsVisible())
-		MotionTrailEffect->SetVisibility(true, false);
+	if (false == NativeBpMotionTrailNiagara->IsVisible())
+		NativeBpMotionTrailNiagara->SetVisibility(true, false);
 }
 
 void ACPlayableCharacter::Begin_SkillCam()
@@ -1189,9 +1201,9 @@ void ACPlayableCharacter::Begin_SkillCam()
 	if (false == IsValid(pc))
 		pc = UGameplayStatics::GetPlayerController(this, 0);
 
-	if (IsValid(SequenceCamChild))
+	if (IsValid(NativeBpSequenceCamChild))
 	{
-		AActor* camActor = SequenceCamChild->GetChildActor();
+		AActor* camActor = NativeBpSequenceCamChild->GetChildActor();
 		if (IsValid(camActor) && IsValid(pc))
 		{
 			pc->SetViewTargetWithBlend(
@@ -1203,7 +1215,7 @@ void ACPlayableCharacter::Begin_SkillCam()
 		}
 	}
 
-	TryPlayActorSequencePlayer(SkillSequence.Get());
+	TryPlayActorSequencePlayer(NativeBpSkillSequence.Get());
 }
 
 void ACPlayableCharacter::End_SkillCam()
@@ -1215,9 +1227,9 @@ void ACPlayableCharacter::End_SkillCam()
 	if (false == IsValid(pc))
 		pc = UGameplayStatics::GetPlayerController(this, 0);
 
-	if (IsValid(MainCamChild))
+	if (IsValid(NativeBpMainCamChild))
 	{
-		AActor* camActor = MainCamChild->GetChildActor();
+		AActor* camActor = NativeBpMainCamChild->GetChildActor();
 		if (IsValid(camActor) && IsValid(pc))
 		{
 			pc->SetViewTargetWithBlend(

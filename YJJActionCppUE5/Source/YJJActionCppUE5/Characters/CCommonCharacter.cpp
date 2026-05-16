@@ -32,7 +32,7 @@ ACCommonCharacter::ACCommonCharacter()
 	YJJHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "YJJMovementComponent");
 
 	StateComponent = StateComp;
-	MovingComponent = MovementComp;
+	NativeMovingMovementBp = MovementComp;
 	YJJHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "YJJMontagesComponent");
 	YJJHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "YJJCharacterInfoComponent");
 	YJJHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "YJJCharacterStatComponent");
@@ -476,15 +476,24 @@ void ACCommonCharacter::ClickedMagicMenu_Implementation(const FString& InName)
 {
 }
 
-void ACCommonCharacter::Footstep_Implementation()
+void ACCommonCharacter::Footstep_Implementation(
+	bool bLeftFoot,
+	EPhysicalSurface SurfaceType,
+	FVector HitLocation)
 {
+	(void)bLeftFoot;
+	(void)SurfaceType;
+	(void)HitLocation;
 }
 
-void ACCommonCharacter::Rewarded_Implementation()
+void ACCommonCharacter::Rewarded_Implementation(AActor* RewardInvoker, double Exp, int32 BuffIndex)
 {
+	(void)RewardInvoker;
+	(void)Exp;
+	(void)BuffIndex;
 }
 
-void ACCommonCharacter::Damaged_Implementation(float DamageAmount)
+void ACCommonCharacter::GameplayDamaged_Implementation(float DamageAmount)
 {
 	// TakeDamage 경로와 별개로 애님·이펙트만 쏘는 레거시 이벤트일 수 있다.
 	(void)DamageAmount;

@@ -309,9 +309,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UCMovementComponent> MovementComp;
 
-	// 예전 BP 변수명 "MovingComponent" — 항상 MovementComp 와 동일 인스턴스다.
-	UPROPERTY(BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UCMovementComponent> MovingComponent;
+	// BP_Character 가 Variables 또는 SCS 슬롯에 "MovingComponent" 를 두면 부모 MovingComponent UObjectProperty 와 이름이 겹쳐 SKEL 재컴파일 ICE 가 난다 — 네이티브 속성 이름을 분리한다. MovementComp 와 같은 인스턴스.
+	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (DisplayName = "Moving Component"))
+	TObjectPtr<UCMovementComponent> NativeMovingMovementBp;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCMontagesComponent> MontagesComp;
@@ -391,9 +391,12 @@ private:
 	virtual void ClickedMagicMenu_Implementation(const FString& InName) override;
 
 	// ICInterface_CharacterGameplay (구 I_Character 세팅 이벤트)
-	virtual void Footstep_Implementation() override;
-	virtual void Rewarded_Implementation() override;
-	virtual void Damaged_Implementation(float DamageAmount) override;
+	virtual void Footstep_Implementation(
+		bool bLeftFoot,
+		EPhysicalSurface SurfaceType,
+		FVector HitLocation) override;
+	virtual void Rewarded_Implementation(AActor* RewardInvoker, double Exp, int32 BuffIndex) override;
+	virtual void GameplayDamaged_Implementation(float DamageAmount) override;
 	virtual void StartInteraction_Implementation(AActor* InteractionTarget) override;
 	virtual void EndInteraction_Implementation() override;
 	virtual int32 GetCharacterGameplayAction_Implementation() override;

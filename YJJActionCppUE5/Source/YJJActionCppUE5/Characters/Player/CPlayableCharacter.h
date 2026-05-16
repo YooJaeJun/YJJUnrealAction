@@ -68,15 +68,23 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cinematic", meta = (DisplayName = "Scene"))
 	TObjectPtr<USceneComponent> CinematicLightScene;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cinematic")
-	TObjectPtr<UPointLightComponent> PointLight;
+	UPROPERTY(
+		VisibleAnywhere,
+		BlueprintReadOnly,
+		Category = "Cinematic",
+		meta = (DisplayName = "PointLight"))
+	TObjectPtr<UPointLightComponent> NativeBpCinematicPointLightA;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cinematic")
-	TObjectPtr<UPointLightComponent> PointLight1;
+	UPROPERTY(
+		VisibleAnywhere,
+		BlueprintReadOnly,
+		Category = "Cinematic",
+		meta = (DisplayName = "PointLight1"))
+	TObjectPtr<UPointLightComponent> NativeBpCinematicPointLightB;
 
-	// BP_Player — 캡슐 하위 방향 마커(파쿠르·에어 기준점 등).
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers")
-	TObjectPtr<USceneComponent> ArrowGroup;
+	// BP_Player — 캡슐 하위 방향 마커(파쿠르·에어 기준점 등). 변수명 ArrowGroup 과 BP_Player SCS 가 겹치면 SKEL 속성 ICE — NativeBp 접두 분리.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers", meta = (DisplayName = "ArrowGroup"))
+	TObjectPtr<USceneComponent> NativeBpArrowGroup;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers")
 	TObjectPtr<UArrowComponent> ArrowCeil;
@@ -226,25 +234,39 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Water", meta = (MultiLine = "true"))
 	TSubclassOf<AActor> FluidSimClass;
 
-	// BP_Player::MotionTrailEffect (Niagara). 에디터에서 컴포넌트로 붙이고 같은 인스턴스를 할당한다.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trail", meta = (MultiLine = "true"))
-	TObjectPtr<UNiagaraComponent> MotionTrailEffect;
+	// BP_Player::MotionTrailEffect — 네이티브 속성 이름이 BP_Player SCS 과 겹치면 SKEL ICE.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trail",
+		meta = (MultiLine = "true", DisplayName = "MotionTrailEffect"))
+	TObjectPtr<UNiagaraComponent> NativeBpMotionTrailNiagara;
 
-	// BP_Player — Mesh 하위 SequenceCamera 앵커 아래 시네용 ChildActor.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam")
-	TObjectPtr<USceneComponent> SequenceCamera;
+	// BP_Player — Mesh 하위 SkillCam 앵커 및 ChildActor 등. 이름이 BP SCS 과 겹치면 ICE / 인터페이스 제거 시 재구성 Fatal 이 날 수 있다.
+	UPROPERTY(
+		VisibleAnywhere,
+		BlueprintReadOnly,
+		Category = "Camera|SkillCam",
+		meta = (DisplayName = "SequenceCamera"))
+	TObjectPtr<USceneComponent> NativeBpSequenceCamAnchor;
 
 	// BP_Player 스킬 시네 카메라 — ChildActor 의 카메라 액터로 블렌드.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
-	TObjectPtr<UChildActorComponent> SequenceCamChild;
+	UPROPERTY(
+		VisibleAnywhere,
+		BlueprintReadOnly,
+		Category = "Camera|SkillCam",
+		meta = (MultiLine = "true", DisplayName = "SequenceCamChild"))
+	TObjectPtr<UChildActorComponent> NativeBpSequenceCamChild;
 
 	// 메인 카메라 컴포넌트 하위 — BP 의 MainCamChild 와 동일 계층.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
-	TObjectPtr<UChildActorComponent> MainCamChild;
+	UPROPERTY(
+		VisibleAnywhere,
+		BlueprintReadOnly,
+		Category = "Camera|SkillCam",
+		meta = (MultiLine = "true", DisplayName = "MainCamChild"))
+	TObjectPtr<UChildActorComponent> NativeBpMainCamChild;
 
 	// BP_Player SkillSequence — UActorSequenceComponent 등, SequencePlayer 프로퍼티가 있으면 Begin_SkillCam 에서 Play 호출.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
-	TObjectPtr<UActorComponent> SkillSequence;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true",
+													   DisplayName = "SkillSequence"))
+	TObjectPtr<UActorComponent> NativeBpSkillSequence;
 
 	TArray<TObjectPtr<UNiagaraSystem>> LandEffects;
 
@@ -310,9 +332,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Camera", meta = (DisplayName = "Shake Cam"))
 	void ShakeCam();
 
-	// 레거시 SystemMessageComponent(BP): Play → HUD WB_Message 에 메시지, InTime 후 Hide.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (DisplayName = "System Message"))
-	TObjectPtr<UCSystemMessageComponent> SystemMessageComponent;
+	// 레거시 SystemMessageComponent(BP): Play → HUD WB_Message 에 메시지, InTime 후 Hide. BP 변수명 과 겹침 회피.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components",
+		meta = (DisplayName = "System Message Component"))
+	TObjectPtr<UCSystemMessageComponent> NativeBpSystemMessageComp;
 
 	// BP_Player::SetZooming — 블루프린트 줌 그래프가 캐릭터를 타깃으로 호출. CamComponent 와 동기화.
 	UFUNCTION(BlueprintCallable, Category = "Camera")
@@ -429,32 +452,39 @@ public:
 
 	// UHT: BlueprintReadOnly/Write 는 private 에 둘 수 없음.
 protected:
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USpringArmComponent> SpringArm;
+	// 레거시 BP_Player 컴포넌트 변수명 과 SKEL 속성 이름 충돌 방지: 네이티브 속성 접두 NativeBp-/Native.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (DisplayName = "SpringArm"))
+	TObjectPtr<USpringArmComponent> NativeSpringArm;
 
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UCameraComponent> Camera;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (DisplayName = "Camera"))
+	TObjectPtr<UCameraComponent> NativeCamera;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCWeaponComponent> WeaponComp;
 
-	// BP_Player 의 WeaponComponent 변수명 — WeaponComp 와 동일.
-	UPROPERTY(BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UCWeaponComponent> WeaponComponent;
+	UPROPERTY(
+		BlueprintReadOnly,
+		Category = "Components",
+		meta = (DisplayName = "Weapon Component"))
+	TObjectPtr<UCWeaponComponent> NativeBpWeaponAlias;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCMagicComponent> MagicComp;
 
-	// BP_Player 의 MagicComponent 변수명 — MagicComp 와 동일.
-	UPROPERTY(BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UCMagicComponent> MagicComponent;
+	UPROPERTY(
+		BlueprintReadOnly,
+		Category = "Components",
+		meta = (DisplayName = "Magic Component"))
+	TObjectPtr<UCMagicComponent> NativeBpMagicAlias;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCTargetingComponent> TargetingComp;
 
-	// 예전 BP_Player 의 TargetComponent 변수 — TargetingComp 와 동일 인스턴스.
-	UPROPERTY(BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UCTargetingComponent> TargetComponent;
+	UPROPERTY(
+		BlueprintReadOnly,
+		Category = "Components",
+		meta = (DisplayName = "Targeting Component"))
+	TObjectPtr<UCTargetingComponent> NativeBpTargetingAlias;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCCamComponent> CamComp;

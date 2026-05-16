@@ -414,9 +414,9 @@ void ACAnimal::LandAt(const EPhysicalSurface SurfaceType, const FVector StepLoca
 	}
 }
 
-void ACAnimal::Footstep_Implementation()
+void ACAnimal::Footstep_Implementation(bool bLeftFoot, EPhysicalSurface SurfaceType, FVector HitLocation)
 {
-	// 레거시 I_Character Footstep 는 파라미터가 있어 AnimNotify 에서 FootstepAt 을 직접 호출한다.
+	FootstepAt(bLeftFoot, SurfaceType, HitLocation);
 }
 
 void ACAnimal::ToggleIK_Implementation()
@@ -437,7 +437,7 @@ void ACAnimal::GetControlDirection(FVector& OutForward, FVector& OutRight) const
 	OutRight = FRotationMatrix(yawOnly).GetUnitAxis(EAxis::Y);
 }
 
-FVector ACAnimal::GetDesiredMovement_Implementation()
+void ACAnimal::GetDesiredMovement_Implementation(FVector& OutMovement)
 {
 	float axisForward = 0.0f;
 	float axisRight = 0.0f;
@@ -472,7 +472,7 @@ FVector ACAnimal::GetDesiredMovement_Implementation()
 		break;
 	}
 
-	return combined * speedMul;
+	OutMovement = combined * speedMul;
 }
 
 void ACAnimal::SetFootLocation_Implementation(bool bLeftFoot, FVector WorldLocation)

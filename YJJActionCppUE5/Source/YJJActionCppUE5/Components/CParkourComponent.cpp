@@ -164,7 +164,10 @@ void UCParkourComponent::ResolveArrowGroupResolved()
 
 	for (UActorComponent* Elem : Components)
 	{
-		if (Elem != nullptr && Elem->GetFName() == FName(TEXT("ArrowGroup")))
+		// 플레이어 네이티브 블루프린트 SCS 이름 충돌 회피로 YJJ_PlayerArrowGroup 으로도 스폰할 수 있다.
+		if (Elem != nullptr
+			&& (Elem->GetFName() == FName(TEXT("ArrowGroup"))
+				|| Elem->GetFName() == FName(TEXT("YJJ_PlayerArrowGroup"))))
 		{
 			ArrowGroup = Cast<USceneComponent>(Elem);
 			if (IsValid(ArrowGroup.Get()))
