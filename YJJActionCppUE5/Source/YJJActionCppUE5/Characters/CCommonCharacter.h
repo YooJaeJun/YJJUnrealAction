@@ -5,6 +5,9 @@
 #include "Interfaces/CInterface_CharacterState.h"
 #include "Interfaces/CInterface_CharacterBody.h"
 #include "Interfaces/CInterface_IK.h"
+#include "Interfaces/CInterface_PlayerPossess.h"
+#include "Interfaces/CInterface_CharacterMenu.h"
+#include "Interfaces/CInterface_CharacterGameplay.h"
 #include "Commons/CGameInstance.h"
 #include "Weapons/CWeaponStructures.h"
 #include "Animation/AnimInstance.h"
@@ -26,9 +29,11 @@ class UCUserWidget_EnemyBar;
 class USpringArmComponent;
 class UCTargetingComponent;
 class UCUserWidget_HUD;
+class UTextRenderComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMount, ACCommonCharacter*, Object);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteract);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIsDeadCharacter);
 
 USTRUCT()
 struct FDamageData
@@ -46,7 +51,10 @@ class YJJACTIONCPPUE5_API ACCommonCharacter :
 	public ACharacter,
 	public ICInterface_CharacterState,
 	public ICInterface_CharacterBody,
-	public ICInterface_IK
+	public ICInterface_IK,
+	public ICInterface_PlayerPossess,
+	public ICInterface_CharacterMenu,
+	public ICInterface_CharacterGameplay
 {
 	GENERATED_BODY()
 
@@ -127,6 +135,60 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "세팅", meta = (DisplayName = "Restore State"))
 	void ApplyRestoreStateFromPrevMode();
 
+	// AnimNotify·커스텀 이벤트가 BP_End_Hitted 대신 호출. 피격 중일 때만 이전 이동/탑승 모드를 복구한다.
+	UFUNCTION(BlueprintCallable, Category = "Combat", meta = (DisplayName = "End Hitted (AI Restore)"))
+	void EndHitted_ApplyRestoreIfStillInHit();
+
+	// BP 커스텀 이벤트 End_Hitted 와 동일 — 애님 노티파이에서 호출.
+	UFUNCTION(BlueprintCallable, Category = "Combat", meta = (DisplayName = "End Hitted"))
+	void End_Hitted();
+
+	// BP I_PlayerPossess::TogglePossess — 로컬 PlayerIndex 0. 전용 서버에서는 조종할 PC 가 없으면 무시한다.
+	UFUNCTION(BlueprintCallable, Category = "탑승")
+	void TogglePlayerPossessLocal(const bool bEnable);
+
+	// BP_Character::GetCurrentSpeedType — CharacterMovement.MaxWalkSpeed 와 Movement 의 Speeds[] 를 비교한다.
+	// 기존 User Defined Enum ESpeedType 대신 네이티브 CESpeedType 을 쓰도록 블루프린트 핀을 교체한다.
+	UFUNCTION(BlueprintPure, Category = "세팅")
+	CESpeedType GetCurrentSpeedType(float Tolerance = 1.0f) const;
+
+	// BP_Player 이동 축 — MovingComponent::CanMove(InAxis) 와 동일 판정.
+	UFUNCTION(BlueprintPure, Category = "Movement")
+	void CanMove(double InAxis, bool& OutCanMove) const;
+
+	// BP_Character::LaunchBack — 뒤로 밀기 + Z 보정은 BP 와 동일하게 기본 1000.
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void LaunchBack();
+
+	// BP_Character::LaunchHit — HitData.Launch 만큼 전방 반대 방향으로 LaunchCharacter.
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void LaunchHit();
+
+	// BP_Character::SetRotation — 타깃 액터만 바라보는 요(Yaw)만 적용.
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void SetRotation(AActor* TargetActor, bool bTeleportPhysics = false);
+
+	// BP_Character::PlayParticle / PlaySound — 기본은 멤버 HitData 사용(브레이크 노드 없이 C++ 호출만으로 동작).
+	UFUNCTION(BlueprintCallable, Category = "Hit", meta = (DisplayName = "Play Particle"))
+	void PlayParticle();
+
+	UFUNCTION(BlueprintCallable, Category = "Hit", meta = (DisplayName = "Play Sound"))
+	void PlayHitSound();
+
+	// 레거시 BP_Character 노드명 "Play Sound" — 멤버 이름만 BP 가 기대할 때 대비.
+	UFUNCTION(BlueprintCallable, Category = "Hit")
+	void PlaySound();
+
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void RenderStateText();
+
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void DontRenderStateText();
+
+	// BP 스펠링 유지(Bilboard). 카메라(로컬 0)를 향하도록 디버그 텍스트 컴포넌트 회전.
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void BilboardStateText();
+
 public:
 	void InputAction_Interact();
 
@@ -138,12 +200,49 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UI")
 	UCUserWidget_HUD* GetPlayerHUDWidget() const;
 
+	// 구 I_Character / BP_Character — 입력·래핑 그래프가 self 에서 직접 호출. BP 에서 오버라이드해 UI 토글을 유지한다.
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "UI|Menu")
+	void OnEquipMenu();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "UI|Menu")
+	void OffEquipMenu();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "UI|Menu")
+	void OnMagicMenu();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "UI|Menu")
+	void OffMagicMenu();
+
+	// 블루프린트가 캐릭터 self 에서 IsRiding 을 호출하는 레거시 노드 호환.
+	UFUNCTION(BlueprintPure, Category = "State")
+	bool IsRiding() const { return GetbRiding(); }
+
+	// 레거시 BP_Player::SetIdle — 타깃이 캐릭터로 남은 노드가 StateComp 로 위임한다.
+	UFUNCTION(BlueprintCallable, Category = "State", meta = (DisplayName = "Set Idle"))
+	void SetIdle();
+
+public:
+	// 모든 ActorComponent DefaultSubobject FName 은 /Game 의 BP 컴포넌트(같은 슬롯 이름)와 겹치면 Fatal 이 난다. YJJ 접두사로 통일.
+	// 블루프린트 Variable Get "StateComponent" 가 자식 BP_Player 에서도 해석되도록 public 에 둔다.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (DisplayName = "State Component"))
+	TObjectPtr<UCStateComponent> StateComp;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UCStateComponent> StateComponent;
+
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 	FMount OnMount;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 	FUnmount OnUnmount;
+
+	// BP Event Dispatchers: OnInteract(Interact 눌림), IsDead(사망 처리 진입 시).
+	UPROPERTY(BlueprintAssignable, Category = "Character|Events")
+	FOnInteract OnInteract;
+
+	UPROPERTY(BlueprintAssignable, Category = "Character|Events", meta = (DisplayName = "IsDead"))
+	FOnIsDeadCharacter IsDead;
 
 	// BP_Character 변수를 네이티브로 옮김 — 애님·상호작용·피격·AI가 동일 프로퍼티를 참조하도록 통일한다.
 
@@ -177,6 +276,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Hit", meta = (MultiLine = "true", AllowPrivateAccess = "true"))
 	float ConstLaunchingBack = 1200.0f;
 
+	// BP LaunchBack 의 LaunchVelocity Z 스플릿 핀 기본값.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit")
+	float LaunchBackVerticalImpulse = 1000.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (MultiLine = "true"))
 	TObjectPtr<AController> ControllerSave;
 
@@ -187,11 +290,12 @@ public:
 	FCCharacterInfo CharacterInfo;
 
 protected:
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UCStateComponent> StateComp;
-
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UCMovementComponent> MovementComp;
+
+	// 예전 BP 변수명 "MovingComponent" — 항상 MovementComp 와 동일 인스턴스다.
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UCMovementComponent> MovingComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCMontagesComponent> MontagesComp;
@@ -202,6 +306,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Status")
 	TObjectPtr<UCCharacterStatComponent> CharacterStatComp;
 
+	// BP_Character 가 Variables 에 StateTextRender 를 가지고 있으면 부모에 동일 UPROPERTY 이름을 두면 SKEL 양쪽에서
+	// 프로퍼티가 중복되어 컴파일 ICE 가 난다. 네이티브 전용 이름으로 분리한다.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Debug", meta = (DisplayName = "State Text (Native)"))
+	TObjectPtr<UTextRenderComponent> StateTextComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
 	TObjectPtr<USceneComponent> TargetingPoint;
@@ -254,4 +362,23 @@ protected:
 private:
 	bool bTickLerpForTarget = false;
 	FRotator TargetRotator = FRotator(0, 0, 0);
+
+	// ICInterface_PlayerPossess
+	virtual void TogglePossess_Implementation(bool InEnable) override;
+
+	// ICInterface_CharacterMenu (I_Character 메뉴 이벤트 포팅)
+	virtual void HoveredEquipMenu_Implementation(const FString& InName) override;
+	virtual void UnHoveredEquipMenu_Implementation(const FString& InName) override;
+	virtual void ClickedEquipMenu_Implementation(const FString& InName) override;
+	virtual void HoveredMagicMenu_Implementation(const FString& InName) override;
+	virtual void UnHoveredMagicMenu_Implementation(const FString& InName) override;
+	virtual void ClickedMagicMenu_Implementation(const FString& InName) override;
+
+	// ICInterface_CharacterGameplay (구 I_Character 세팅 이벤트)
+	virtual void Footstep_Implementation() override;
+	virtual void Rewarded_Implementation() override;
+	virtual void Damaged_Implementation(float DamageAmount) override;
+	virtual void StartInteraction_Implementation(AActor* InteractionTarget) override;
+	virtual void EndInteraction_Implementation() override;
+	virtual int32 GetAction_Implementation() override;
 };

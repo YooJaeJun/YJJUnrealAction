@@ -2,6 +2,12 @@
 #include "CoreMinimal.h"
 #include "Characters/CCommonCharacter.h"
 #include "Components/CStateComponent.h"
+#include "Components/CCamComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "NiagaraSystem.h"
+#include "Sound/SoundBase.h"
+#include "Blueprint/UserWidget.h"
+#include "Camera/CameraShakeBase.h"
 #include "CPlayableCharacter.generated.h"
 
 class USkeletalMeshComponent;
@@ -10,7 +16,6 @@ class UCameraComponent;
 class UInputComponent;
 class UCAnimInstance_Character;
 class UCMontagesComponent;
-class UCCamComponent;
 class UCTargetingComponent;
 class UCWeaponComponent;
 class UCGameUIComponent;
@@ -21,6 +26,9 @@ class ACGameMode;
 class UCUserWidget_EquipMenu;
 class UCUserWidget_MagicMenu;
 class UCUserWidget_Interaction;
+class UPointLightComponent;
+class UNiagaraComponent;
+class UChildActorComponent;
 
 UCLASS()
 class YJJACTIONCPPUE5_API ACPlayableCharacter :
@@ -47,11 +55,325 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetMenuUI();
 
+	// 구 I_Cinematic::SetupCinematic — 시네 HUD/조명 토글 그래프가 타깃으로 호출.
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Cinematic")
+	void SetupCinematic(bool OnOff);
+
+	// BP_Player 시네 마커용 조명 — 그래프가 PointLight / PointLight1 을 참조한다.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cinematic")
+	TObjectPtr<UPointLightComponent> PointLight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cinematic")
+	TObjectPtr<UPointLightComponent> PointLight1;
+
+	// 레거시 BP_Player — 활 장착(양궁) 모드 여부. (과거 IsNotBowMode 의 부정을 제거한 긍정형)
+	UFUNCTION(BlueprintPure, Category = "Weapon")
+	bool IsBowMode() const;
+
+	// BP_Player::SetDamage — Hp 차감·UI 갱신. InDamage <= 0 이면 Hit.Power(레거시 Damage 핀) 사용.
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void SetDamage(float InDamage, bool& OutHittedOrDead);
+
+	// 레거시 BP CanHitAnim(Exec) — PrevType·피격 정리 후 OutCanHitAnim 설정.
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void CanHitAnim(bool& OutCanHitAnim);
+
+	// 레거시 BP 스펠링 유지(Gruad). SubWeapon 이 가드 블루프린트일 때 Guarding||Parrying.
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void CheckGruadOrParrying(bool& OutResult);
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void PlayHitAnim();
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void CancelHitAnim();
+
+	// BP_Player::SpawnMessage — SystemMessageComponent.Play 기본 메시지.
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SpawnMessage();
+
+	// BP_Player::SetMinimap — Minimap 클래스를 현재 트랜스폼에 스폰.
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetMinimap();
+
+	// BP_Player::GetHUD — EnsureHUD 와 동일(레거시 이름 호환).
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	UCUserWidget_HUD* GetHUD();
+
+	// BP_Player::SetColor — 피격 빨간색 플래시 후 짧은 딜레이로 SetOriginColor.
+	UFUNCTION(BlueprintCallable, Category = "Hit")
+	void SetColor();
+
+	// BP_Player::SetOriginColor — Materials 에 CharacterInfo.BodyColor 복구.
+	UFUNCTION(BlueprintCallable, Category = "Hit")
+	void SetOriginColor();
+
+	// 레거시 BP — 이전 이동/상태 복구. 현재는 공통 복구 함수에 위임.
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void LoadPrevState();
+
+	// -------------------------------------------------------------------------
+	// BP_Player 변수 미러 — 에셋 Guid/이름 호환용 (값은 CharacterStatComp·HUD와 BeginPlay 에서 동기화 가능).
+	// FluidForceDynamic 등 Water 플러그인 전용 UDS 는 C++ 타입이 없어 BP 서브클래스에서만 유지하거나 추후 InstancedStruct 로 이전.
+	// -------------------------------------------------------------------------
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Basic Info", meta = (MultiLine = "true"))
+	TArray<TObjectPtr<UMaterialInstanceDynamic>> Materials;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	int32 Level = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double Exp = 0.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double MaxExp = 100.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double Hp = 0.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double MaxHp = 1000.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double Stamina = 0.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double MaxStamina = 400.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double AccelStaminaRestore = 1.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double DefaultStaminaRestore = 0.5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double Mana = 0.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double MaxMana = 400.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double AccelManaRestore = 1.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	double DefaultManaRestore = 0.2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	bool EnoughStamina = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (MultiLine = "true"))
+	bool EnoughMana = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (MultiLine = "true"))
+	TObjectPtr<UUserWidget> HpBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (MultiLine = "true"))
+	TObjectPtr<UUserWidget> StaminaBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (MultiLine = "true"))
+	TObjectPtr<UUserWidget> ManaBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (MultiLine = "true"))
+	TObjectPtr<UUserWidget> LevelBar;
+
+	// 레거시 WB_* 참조 — Menu* 위젯과 별도로 BP 그래프가 직접 캐시할 때 사용.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (MultiLine = "true"))
+	TObjectPtr<UUserWidget> EquipMenu;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (MultiLine = "true"))
+	TObjectPtr<UUserWidget> Interaction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (MultiLine = "true"))
+	TObjectPtr<UUserWidget> MagicMenu;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Minimap", meta = (MultiLine = "true"))
+	TSubclassOf<AActor> Minimap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Water", meta = (MultiLine = "true"))
+	TObjectPtr<AActor> FluidSimFolowing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Water", meta = (MultiLine = "true"))
+	TSubclassOf<AActor> FluidSimClass;
+
+	// BP_Player::MotionTrailEffect (Niagara). 에디터에서 컴포넌트로 붙이고 같은 인스턴스를 할당한다.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trail", meta = (MultiLine = "true"))
+	TObjectPtr<UNiagaraComponent> MotionTrailEffect;
+
+	// BP_Player 스킬 시네 카메라 — ChildActor 의 카메라 액터로 블렌드.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
+	TObjectPtr<UChildActorComponent> SequenceCamChild;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
+	TObjectPtr<UChildActorComponent> MainCamChild;
+
+	// BP_Player SkillSequence — UActorSequenceComponent 등, SequencePlayer 프로퍼티가 있으면 Begin_SkillCam 에서 Play 호출.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
+	TObjectPtr<UActorComponent> SkillSequence;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Lerp", meta = (MultiLine = "true"))
+	float LerpArrivalXYTolerance = 100.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "피직스", meta = (MultiLine = "true"))
+	TArray<TObjectPtr<UNiagaraSystem>> LandEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "피직스", meta = (MultiLine = "true"))
+	TArray<TObjectPtr<UNiagaraSystem>> FootstepEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "피직스", meta = (MultiLine = "true"))
+	TArray<TObjectPtr<USoundBase>> FootstepSounds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IK", meta = (MultiLine = "true"))
+	double LegIKAlpha = 0.0;
+
+	// Reward 그래프에서 호출 — 이후 레벨/스탯 갱신 로직 포팅 예정.
+	UFUNCTION(BlueprintCallable, Category = "Reward")
+	void UpdateLevel();
+
+	UFUNCTION(BlueprintCallable, Category = "Reward")
+	void UpdateHp();
+
+	UFUNCTION(BlueprintCallable, Category = "Reward")
+	void UpdateStamina();
+
+	UFUNCTION(BlueprintCallable, Category = "Reward")
+	void UpdateMana();
+
+	UFUNCTION(BlueprintCallable, Category = "Reward")
+	void LevelUp();
+
+	UFUNCTION(BlueprintCallable, Category = "Reward")
+	void UpdateExp();
+
+	// BP_Player 세팅 카테고리 — 그래프를 C++ 로 이전해 컴파일 오류(끊긴 노드)를 줄인다.
+	UFUNCTION(BlueprintCallable, Category = "세팅", meta = (DisplayName = "Set Material"))
+	void SetMaterial();
+
+	UFUNCTION(BlueprintCallable, Category = "세팅", meta = (DisplayName = "Set Status"))
+	void SetStatus();
+
+	UFUNCTION(BlueprintCallable, Category = "Camera", meta = (DisplayName = "Set View Pitch"))
+	void SetViewPitch();
+
+	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Restore Stamina"))
+	void RestoreStamina();
+
+	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Restore Mana"))
+	void RestoreMana();
+
+	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Is Enough Stamina"))
+	bool IsEnoughStamina(double InConsume);
+
+	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Is Enough Mana"))
+	bool IsEnoughMana(double InConsume);
+
+	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Not Enough Stamina"))
+	void NotEnoughStamina();
+
+	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Not Enough Mana"))
+	void NotEnoughMana();
+
+	UFUNCTION(BlueprintCallable, Category = "Controller", meta = (DisplayName = "Set Default Controller"))
+	void SetDefaultController();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Camera", meta = (DisplayName = "Shake Cam"))
+	void ShakeCam();
+
+	// 레거시 SystemMessageComponent(BP) — 에셋에서 컴포넌트를 붙이면 NotEnough* 가 Play 를 호출한다.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (DisplayName = "System Message"))
+	TObjectPtr<UActorComponent> SystemMessageComponent;
+
+	// BP_Player::SetZooming — 블루프린트 줌 그래프가 캐릭터를 타깃으로 호출. CamComponent 와 동기화.
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetZooming(double InZooming);
+
+	// BP_Player::SaveZooming — OriginZooming 에 현재 Zooming 저장.
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SaveZooming();
+
+	// BP_Player::SetSkillZooming — Zooming 을 SkillZooming 값으로 설정.
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetSkillZooming();
+
+	// BP_Player::ApplyZoom — TargetArmLength 를 InZoom 쪽으로 Interp(ZoomData.InterpSpeed). 거의 같으면 생략.
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void ApplyZoom(double InZoom);
+
+	// BP_Player 점프 전 위치 저장(에어 무브·파쿠르).
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void SetCoordBeforeAir();
+
+	// BP_Player::StartFall — 중력 스케일·낙하 모드·상태 Fall·FlyToFall (레거시 MovingComponent.SetGravity 그래프).
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void StartFall(double InGravity);
+
+	// BP_Player::IsChangedLandCoord — 위치와 CoordBeforeAir 를 축별 허용 50 으로 비교 후 OR (출력 핀 ALittleMoved).
+	UFUNCTION(BlueprintCallable, Category = "Movement", meta = (ReturnDisplayName = "ALittleMoved"))
+	bool IsChangedLandCoord() const;
+
+	// BP_Player::Tick_AirBone — 비행이 아니고 낙하 중일 때 FlyToFall 1회만 StartFall 유도.
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void Tick_AirBone();
+
+	// BP_Player::Tick_LerpMove — MovingComponent Lerp 플래그일 때 Dest 까지 보간, XY 도착 시 Lerp 종료.
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void Tick_LerpMove(float DeltaTime);
+
+	// BP_Player::Tick_CheckGround — 액터 발밑 TraceTypeQuery1 라인트레이스 300u, 히트 시 true.
+	UFUNCTION(BlueprintCallable, Category = "Movement|Ground")
+	bool Tick_CheckGround() const;
+
+	// BP_Player::Tick_AccelGravity — 바닥 트레이스 실패 시 중력 스케일 3 (MovingComponent).
+	UFUNCTION(BlueprintCallable, Category = "Movement|Ground")
+	void Tick_AccelGravity();
+
+	// BP_Player::SetInvisibleMotionTrail / SetVisibleMotionTrail — 현재 Visible 과 반대일 때만 토글 (중복 Set 방지).
+	UFUNCTION(BlueprintCallable, Category = "Trail")
+	void SetInvisibleMotionTrail();
+
+	UFUNCTION(BlueprintCallable, Category = "Trail")
+	void SetVisibleMotionTrail();
+
+	// BP_Player::Begin_SkillCam / End_SkillCam — 줌·뷰 타깃 블렌드, SkillSequence 재생(ActorSequence 플러그인 컴포넌트면 SequencePlayer::Play).
+	UFUNCTION(BlueprintCallable, Category = "Camera|SkillCam")
+	void Begin_SkillCam();
+
+	UFUNCTION(BlueprintCallable, Category = "Camera|SkillCam")
+	void End_SkillCam();
+
+	// BP_Player::ReportNoise — 이동 속도(맥스 워크)가 MovingComponent 워크보다 클 때만 청각 이벤트.
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	void ReportNoise();
+
+	// BP_Player::SetFluidSim — 월드에서 FluidSimClass 검색 후 첫 액터를 FluidSimFolowing 에 넣고, Water/BP 전용 등록은 네이티브 이벤트로 확장.
+	UFUNCTION(BlueprintCallable, Category = "Water")
+	void SetFluidSim();
+
+	// BP_Player::Tick_Fluid — FluidSimFolowing 이 유효하면 플레이어 위치로 이동.
+	UFUNCTION(BlueprintCallable, Category = "Water")
+	void Tick_Fluid();
+
+	// FluidForceDynamic/Register Dynamic Force 는 Water UDS·BP 전용이라 기본 구현은 비우고 BP 에서 오버라이드한다.
+	UFUNCTION(BlueprintNativeEvent, Category = "Water")
+	void OnFluidSimActorRegistered(AActor* InFluidSimActor);
+
 	UFUNCTION()
 	void EquipWeaponFromUI(const CEWeaponType InNewType);
 
 	UFUNCTION()
 	void EquipMagicFromUI(const CEWeaponType InNewType);
+
+	UFUNCTION()
+	void OnEquipMenuWeaponHoveredBridge(const CEWeaponType InType);
+
+	UFUNCTION()
+	void OnEquipMenuWeaponUnhoveredBridge(const CEWeaponType InType);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI|Menu", meta = (DisplayName = "Hovered Equip Menu (Weapon)"))
+	void OnEquipMenuWeaponHovered(CEWeaponType InType);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI|Menu", meta = (DisplayName = "Unhovered Equip Menu (Weapon)"))
+	void OnEquipMenuWeaponUnhovered(CEWeaponType InType);
 
 private:
 	void InputAction_Avoid();
@@ -84,11 +406,43 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCWeaponComponent> WeaponComp;
 
+	// BP_Player 의 WeaponComponent 변수명 — WeaponComp 와 동일.
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UCWeaponComponent> WeaponComponent;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCTargetingComponent> TargetingComp;
 
+	// 예전 BP_Player 의 TargetComponent 변수 — TargetingComp 와 동일 인스턴스.
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UCTargetingComponent> TargetComponent;
+
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCCamComponent> CamComp;
+
+	// BP_Player 줌 — native FZoomData(CCamComponent) 사용. UserDefinedStruct FZoomData 대신 동일 필드로 블루프린트 핀을 맞춘다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom", meta = (MultiLine = "true"))
+	FZoomData ZoomData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom", meta = (MultiLine = "true"))
+	double Zooming = 0.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom", meta = (MultiLine = "true"))
+	double OriginZooming = 0.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom", meta = (MultiLine = "true"))
+	double SkillZooming = 250.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CC", meta = (MultiLine = "true"))
+	bool Jumping = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CC", meta = (MultiLine = "true"))
+	FVector CoordBeforeAir = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CC", meta = (MultiLine = "true"))
+	double AirDistance = 500.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CC", meta = (MultiLine = "true"))
+	bool FlyToFall = false;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCGameUIComponent> GameUIComp;
@@ -107,6 +461,13 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	TArray<float> Speeds{ 200, 500, 800 };
+
+	// BP_Player::ShakeCam — CS_NotEnoughState (블루프린트 기본값과 동일 경로로 생성자에서 채움).
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+	TSubclassOf<UCameraShakeBase> NotEnoughStateCameraShakeClass;
+
+	// BP SetColor 가 K2_SetTimer 로 연기하는 원색 복구.
+	FTimerHandle BodyColorRestoreTimerHandle;
 
 private:
 	CEHitType CurHitType = CEHitType::Common;

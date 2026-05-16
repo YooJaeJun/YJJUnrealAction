@@ -2,8 +2,12 @@
 #include "Global.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/PointLightComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Characters/CAnimInstance_Human.h"
@@ -22,25 +26,161 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
+#include "Blueprint/UserWidget.h"
 #include "Widgets/Weapons/CUserWidget_EquipMenu.h"
 #include "Widgets/Weapons/CUserWidget_MagicMenu.h"
 #include "Widgets/Interaction/CUserWidget_Interaction.h"
-#include "Components/CRidingComponent.h"
+#include "Widgets/Weapons/CUserWidget_EquipMenuButton.h"
+#include "Animation/AnimMontage.h"
+#include "Engine/TimerManager.h"
+#include "UObject/UnrealType.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
+#include "Camera/PlayerCameraManager.h"
+#include "Components/ChildActorComponent.h"
+#include "NiagaraComponent.h"
+#include "Perception/AISense_Hearing.h"
+#include "Engine/EngineTypes.h"
+
+namespace
+{
+	// ActorSequence 컴포넌트는 모듈 의존 없이 SequencePlayer UObject 의 Play 를 반사 호출한다.
+	void TryPlayActorSequencePlayer(UActorComponent* SkillSequenceComp)
+	{
+		if (false == IsValid(SkillSequenceComp))
+			return;
+
+		const FProperty* prop = SkillSequenceComp->GetClass()->FindPropertyByName(FName(TEXT("SequencePlayer")));
+		const FObjectProperty* objProp = CastField<FObjectProperty>(prop);
+		if (objProp == nullptr)
+			return;
+
+		UObject* playerObj = objProp->GetObjectPropertyValue_InContainer(SkillSequenceComp);
+		if (false == IsValid(playerObj))
+			return;
+
+		UFunction* playFn = playerObj->FindFunction(FName(TEXT("Play")));
+		if (playFn == nullptr)
+			return;
+
+		playerObj->ProcessEvent(playFn, nullptr);
+	}
+	// WB_Player_* 위젯은 블루프린트 전용 Set*UI 노드라 UFunction 이름만 맞춰 ProcessEvent 로 호출한다.
+	void CallWidgetSetHpUi(UUserWidget* Widget, const double InCur, const double InMax)
+	{
+		if (false == IsValid(Widget))
+			return;
+		UFunction* fn = Widget->FindFunction(FName(TEXT("SetHPUI")));
+		if (fn == nullptr)
+			return;
+		struct FPay
+		{
+			double InCur;
+			double InMax;
+		} p{ InCur, InMax };
+		Widget->ProcessEvent(fn, &p);
+	}
+
+	void CallWidgetSetStaminaUi(UUserWidget* Widget, const double InCur, const double InMax)
+	{
+		if (false == IsValid(Widget))
+			return;
+		UFunction* fn = Widget->FindFunction(FName(TEXT("SetStaminaUI")));
+		if (fn == nullptr)
+			return;
+		struct FPay
+		{
+			double InCur;
+			double InMax;
+		} p{ InCur, InMax };
+		Widget->ProcessEvent(fn, &p);
+	}
+
+	void CallWidgetSetManaUi(UUserWidget* Widget, const double InCur, const double InMax)
+	{
+		if (false == IsValid(Widget))
+			return;
+		UFunction* fn = Widget->FindFunction(FName(TEXT("SetManaUI")));
+		if (fn == nullptr)
+			return;
+		struct FPay
+		{
+			double InCur;
+			double InMax;
+		} p{ InCur, InMax };
+		Widget->ProcessEvent(fn, &p);
+	}
+
+	void CallWidgetSetLevelUi(UUserWidget* Widget, const int32 InLevel, const double InCurExp, const double InMaxExp)
+	{
+		if (false == IsValid(Widget))
+			return;
+		UFunction* fn = Widget->FindFunction(FName(TEXT("SetLevelUI")));
+		if (fn == nullptr)
+			return;
+		struct FPay
+		{
+			int32 InLevel;
+			double InCurExp;
+			double InMaxExp;
+		} p{ InLevel, InCurExp, InMaxExp };
+		Widget->ProcessEvent(fn, &p);
+	}
+
+	void CallWidgetLevelUpAnim(UUserWidget* Widget)
+	{
+		if (false == IsValid(Widget))
+			return;
+		UFunction* fn = Widget->FindFunction(FName(TEXT("LevelUp")));
+		if (fn == nullptr)
+			return;
+		Widget->ProcessEvent(fn, nullptr);
+	}
+
+	void TryPlaySystemMessage(UActorComponent* Comp, const FText& InText, const double InSeconds)
+	{
+		if (false == IsValid(Comp))
+			return;
+		UFunction* fn = Comp->FindFunction(FName(TEXT("Play")));
+		if (fn == nullptr)
+			return;
+		struct FPay
+		{
+			FText InText;
+			double InTime;
+		} p{ InText, InSeconds };
+		Comp->ProcessEvent(fn, &p);
+	}
+}
 
 ACPlayableCharacter::ACPlayableCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	{
+		static ConstructorHelpers::FClassFinder<UCameraShakeBase> shakeFinder(
+			TEXT("/Game/Character/Player/CS_NotEnoughState.CS_NotEnoughState_C"));
+		if (shakeFinder.Succeeded())
+			NotEnoughStateCameraShakeClass = shakeFinder.Class;
+	}
 
 	const TObjectPtr<USkeletalMeshComponent> meshComp = GetMesh();
 
 	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", meshComp);
 	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
 	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
-	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "CamComponent");
-	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
+	WeaponComponent = WeaponComp;
+	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "CamComponent");	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
+	TargetComponent = TargetingComp;
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 	YJJHelpers::CreateActorComponent<UCInventoryComponent>(this, &InventoryComp, "InventoryComponent");
 	YJJHelpers::CreateActorComponent<UCPlacementComponent>(this, &PlacementComp, "PlacementComponent");
+
+	const TObjectPtr<UCapsuleComponent> capsuleComp = GetCapsuleComponent();
+	YJJHelpers::CreateComponent<UPointLightComponent>(this, &PointLight, TEXT("PointLight"), capsuleComp);
+	YJJHelpers::CreateComponent<UPointLightComponent>(this, &PointLight1, TEXT("PointLight1"), capsuleComp);
 
 	TObjectPtr<USkeletalMesh> mesh = nullptr;
 	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
@@ -118,6 +258,29 @@ void ACPlayableCharacter::BeginPlay()
 
 	if (IsValid(CharacterInfoComp))
 		CharacterInfoComp->SetCharacterType(CECharacterType::Player);
+
+	// 블루프린트 줌 변수(ZoomData/Zooming)를 CamComponent 초깃값과 맞춘다.
+	if (IsValid(CamComp))
+	{
+		ZoomData = CamComp->ZoomData;
+		Zooming = static_cast<double>(CamComp->Zooming);
+	}
+
+	// 레거시 BP Reward/Status 변수와 CharacterStatComp 초기값을 맞춘다.
+	if (IsValid(CharacterStatComp))
+	{
+		Level = CharacterStatComp->CurLevel;
+		Exp = static_cast<double>(CharacterStatComp->GetCurExp());
+		MaxExp = static_cast<double>(CharacterStatComp->GetMaxExp());
+		Hp = static_cast<double>(CharacterStatComp->GetCurHp());
+		MaxHp = static_cast<double>(CharacterStatComp->GetMaxHp());
+		Stamina = static_cast<double>(CharacterStatComp->GetCurStamina());
+		MaxStamina = static_cast<double>(CharacterStatComp->GetMaxStamina());
+		Mana = static_cast<double>(CharacterStatComp->GetCurMana());
+		MaxMana = static_cast<double>(CharacterStatComp->GetMaxMana());
+	}
+
+	OriginZooming = Zooming;
 }
 
 void ACPlayableCharacter::SetStatusUI()
@@ -148,6 +311,11 @@ void ACPlayableCharacter::SetStatusUI()
 	playerInfo->BindStats(CharacterStatComp);
 	playerInfo->RefreshPlayerInfoWidgets();
 
+	HpBar = Cast<UUserWidget>(playerInfo->HpBar.Get());
+	StaminaBar = Cast<UUserWidget>(playerInfo->StaminaBar.Get());
+	ManaBar = Cast<UUserWidget>(playerInfo->ManaBar.Get());
+	LevelBar = Cast<UUserWidget>(playerInfo->LevelBar.Get());
+
 	hud->SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -177,10 +345,23 @@ void ACPlayableCharacter::SetMenuUI()
 	if (IsValid(equipMenu))
 	{
 		MenuEquipWidget = equipMenu;
+		EquipMenu = equipMenu;
 		equipMenu->SetVisibility(ESlateVisibility::Hidden);
 		// SetMenuUI 가 여러 번 호출돼도 동일 핸들러가 중복되지 않게 먼저 제거한다.
 		equipMenu->OnWeaponEquipped.RemoveDynamic(this, &ACPlayableCharacter::EquipWeaponFromUI);
 		equipMenu->OnWeaponEquipped.AddDynamic(this, &ACPlayableCharacter::EquipWeaponFromUI);
+
+		for (int32 buttonIndex = 0; buttonIndex < equipMenu->EquipMenuButtons.Num(); buttonIndex++)
+		{
+			UCUserWidget_EquipMenuButton* equipButton = equipMenu->EquipMenuButtons[buttonIndex].Get();
+			if (IsValid(equipButton))
+			{
+				equipButton->OnWeaponTypeHovered.RemoveDynamic(this, &ACPlayableCharacter::OnEquipMenuWeaponHoveredBridge);
+				equipButton->OnWeaponTypeHovered.AddUniqueDynamic(this, &ACPlayableCharacter::OnEquipMenuWeaponHoveredBridge);
+				equipButton->OnWeaponTypeUnhovered.RemoveDynamic(this, &ACPlayableCharacter::OnEquipMenuWeaponUnhoveredBridge);
+				equipButton->OnWeaponTypeUnhovered.AddUniqueDynamic(this, &ACPlayableCharacter::OnEquipMenuWeaponUnhoveredBridge);
+			}
+		}
 	}
 	else
 		CLog::Log(FString::Printf(TEXT("[UI] SetMenuUI: EquipMenu(CEquipMenu) 없음 — %s"), *GetName()));
@@ -189,6 +370,7 @@ void ACPlayableCharacter::SetMenuUI()
 	if (IsValid(magicMenu))
 	{
 		MenuMagicWidget = magicMenu;
+		MagicMenu = magicMenu;
 		magicMenu->SetVisibility(ESlateVisibility::Hidden);
 		magicMenu->OnEquipMagic.RemoveDynamic(this, &ACPlayableCharacter::EquipMagicFromUI);
 		magicMenu->OnEquipMagic.AddDynamic(this, &ACPlayableCharacter::EquipMagicFromUI);
@@ -198,9 +380,17 @@ void ACPlayableCharacter::SetMenuUI()
 
 	UCUserWidget_Interaction* interactionWidget = hud->GetInteractionWidget();
 	if (IsValid(interactionWidget))
+	{
 		MenuInteractionWidget = interactionWidget;
+		Interaction = interactionWidget;
+	}
 	else
 		CLog::Log(FString::Printf(TEXT("[UI] SetMenuUI: Interaction(CInteraction) 없음 — %s"), *GetName()));
+}
+
+void ACPlayableCharacter::SetupCinematic_Implementation(bool OnOff)
+{
+	// I_Cinematic 포팅 기본 구현: BP_Player 가 오버라이드해 실제 연출을 채운다.
 }
 
 void ACPlayableCharacter::EquipWeaponFromUI(const CEWeaponType InNewType)
@@ -223,6 +413,10 @@ void ACPlayableCharacter::EquipMagicFromUI(const CEWeaponType InNewType)
 void ACPlayableCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	Tick_AirBone();
+	Tick_AccelGravity();
+	Tick_LerpMove(DeltaTime);
+	Tick_Fluid();
 }
 
 void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -374,4 +568,681 @@ TObjectPtr<USpringArmComponent> ACPlayableCharacter::GetSpringArm() const
 TObjectPtr<UCTargetingComponent> ACPlayableCharacter::GetTargetingComp() const
 {
 	return TargetingComp;
+}
+
+bool ACPlayableCharacter::IsBowMode() const
+{
+	return IsValid(WeaponComp) && WeaponComp->IsBowMode();
+}
+
+void ACPlayableCharacter::SetDamage(const float InDamage, bool& OutHittedOrDead)
+{
+	OutHittedOrDead = false;
+
+	float dmg = InDamage;
+	if (dmg <= KINDA_SMALL_NUMBER)
+		dmg = HitData.Power;
+
+	if (dmg <= KINDA_SMALL_NUMBER)
+		return;
+
+	Hp = FMath::Clamp(static_cast<double>(Hp) - static_cast<double>(dmg), 0.0, MaxHp);
+
+	if (IsValid(CharacterStatComp))
+		CharacterStatComp->SetHp(static_cast<float>(Hp));
+
+	UpdateHp();
+	OutHittedOrDead = Hp > 0.0;
+}
+
+void ACPlayableCharacter::CanHitAnim(bool& OutCanHitAnim)
+{
+	OutCanHitAnim = false;
+	if (false == IsValid(StateComp))
+		return;
+
+	if (StateComp->IsDeadMode())
+		return;
+
+	// BP: Hitted/HitAir/DownFlying/DownLand 분기에서 End_Hitted 후 true — C++ 는 피격 타입 활성으로 근사.
+	if (StateComp->IsHitted())
+	{
+		End_Hitted();
+		OutCanHitAnim = true;
+		return;
+	}
+
+	const CEStateType prev = StateComp->GetPrevMode();
+	switch (prev)
+	{
+	case CEStateType::Idle:
+	case CEStateType::Rise:
+	case CEStateType::Riding:
+		OutCanHitAnim = true;
+		return;
+	case CEStateType::Equip:
+	case CEStateType::Act:
+	case CEStateType::Fall:
+	case CEStateType::Avoid:
+	case CEStateType::Land:
+	case CEStateType::Dead:
+	case CEStateType::Max:
+	default:
+		OutCanHitAnim = false;
+		return;
+	}
+}
+
+void ACPlayableCharacter::CheckGruadOrParrying(bool& OutResult)
+{
+	OutResult = false;
+	if (false == IsValid(WeaponComp))
+		return;
+
+	FObjectProperty* subProp = CastField<FObjectProperty>(
+		WeaponComp->GetClass()->FindPropertyByName(FName(TEXT("SubWeapon"))));
+	if (subProp == nullptr)
+		return;
+
+	void* subSlot = subProp->ContainerPtrToValuePtr<void>(WeaponComp);
+	UObject* subObj = subProp->GetObjectPropertyValue(subSlot);
+	AActor* subActor = Cast<AActor>(subObj);
+	if (false == IsValid(subActor))
+		return;
+
+	bool bGuarding = false;
+	bool bParrying = false;
+
+	FBoolProperty* guardProp = CastField<FBoolProperty>(
+		subActor->GetClass()->FindPropertyByName(FName(TEXT("Guarding"))));
+	if (guardProp != nullptr)
+	{
+		bGuarding = guardProp->GetPropertyValue(guardProp->ContainerPtrToValuePtr<void>(subActor));
+	}
+
+	FBoolProperty* parryProp = CastField<FBoolProperty>(
+		subActor->GetClass()->FindPropertyByName(FName(TEXT("Parrying"))));
+	if (parryProp != nullptr)
+	{
+		bParrying = parryProp->GetPropertyValue(parryProp->ContainerPtrToValuePtr<void>(subActor));
+	}
+
+	OutResult = bGuarding || bParrying;
+}
+
+void ACPlayableCharacter::PlayHitAnim()
+{
+	if (HitData.Montage == nullptr)
+		return;
+
+	PlayAnimMontage(HitData.Montage, HitData.PlayRate);
+}
+
+void ACPlayableCharacter::CancelHitAnim()
+{
+	if (false == IsValid(StateComp))
+		return;
+	if (false == StateComp->IsHitted())
+		return;
+
+	End_Hitted();
+
+	// BP 기본 무명 핀: HitReaction_Stop_Montage
+	UAnimMontage* stopMontage = LoadObject<UAnimMontage>(
+		nullptr,
+		TEXT("/Game/Character/Player/Montages/Common/HitReaction_Stop_Montage.HitReaction_Stop_Montage"));
+	StopAnimMontage(stopMontage);
+}
+
+void ACPlayableCharacter::SpawnMessage()
+{
+	TryPlaySystemMessage(
+		SystemMessageComponent.Get(),
+		FText::FromString(TEXT("플레이어가 스폰되었습니다.")),
+		5.0);
+}
+
+void ACPlayableCharacter::SetMinimap()
+{
+	if (false == Minimap)
+		return;
+
+	UWorld* world = GetWorld();
+	if (false == IsValid(world))
+		return;
+
+	// UI/표시용 액터는 데디 전용에서 생성하지 않는다.
+	if (world->GetNetMode() == NM_DedicatedServer)
+		return;
+
+	FActorSpawnParameters params;
+	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
+	world->SpawnActor<AActor>(Minimap, GetActorTransform(), params);
+}
+
+UCUserWidget_HUD* ACPlayableCharacter::GetHUD()
+{
+	return EnsureHUDWidget();
+}
+
+void ACPlayableCharacter::SetColor()
+{
+	const FLinearColor flashColor(1.0f, 0.0f, 0.0f, 1.0f);
+	const int32 count = Materials.Num();
+	for (int32 index = 0; index < count; index++)
+	{
+		UMaterialInstanceDynamic* mid = Materials[index].Get();
+		if (IsValid(mid))
+			mid->SetVectorParameterValue(FName(TEXT("BodyColor")), flashColor);
+	}
+
+	UWorld* world = GetWorld();
+	if (false == IsValid(world))
+		return;
+
+	world->GetTimerManager().ClearTimer(BodyColorRestoreTimerHandle);
+	world->GetTimerManager().SetTimer(
+		BodyColorRestoreTimerHandle,
+		FTimerDelegate::CreateUObject(this, &ACPlayableCharacter::SetOriginColor),
+		0.15f,
+		false);
+}
+
+void ACPlayableCharacter::SetOriginColor()
+{
+	const int32 count = Materials.Num();
+	for (int32 index = 0; index < count; index++)
+	{
+		UMaterialInstanceDynamic* mid = Materials[index].Get();
+		if (IsValid(mid))
+			mid->SetVectorParameterValue(FName(TEXT("BodyColor")), CharacterInfo.BodyColor);
+	}
+}
+
+void ACPlayableCharacter::LoadPrevState()
+{
+	if (IsValid(StateComp) && StateComp->IsDead())
+		return;
+
+	ApplyRestoreStateFromPrevMode();
+}
+
+void ACPlayableCharacter::UpdateLevel()
+{
+	CallWidgetLevelUpAnim(Cast<UUserWidget>(LevelBar.Get()));
+}
+
+void ACPlayableCharacter::UpdateHp()
+{
+	CallWidgetSetHpUi(Cast<UUserWidget>(HpBar.Get()), Hp, MaxHp);
+}
+
+void ACPlayableCharacter::UpdateStamina()
+{
+	CallWidgetSetStaminaUi(Cast<UUserWidget>(StaminaBar.Get()), Stamina, MaxStamina);
+}
+
+void ACPlayableCharacter::UpdateMana()
+{
+	CallWidgetSetManaUi(Cast<UUserWidget>(ManaBar.Get()), Mana, MaxMana);
+}
+
+void ACPlayableCharacter::LevelUp()
+{
+	Level = Level + 1;
+	Exp = FMath::Max(0.0, Exp - MaxExp);
+}
+
+void ACPlayableCharacter::UpdateExp()
+{
+	CallWidgetSetLevelUi(Cast<UUserWidget>(LevelBar.Get()), Level, Exp, MaxExp);
+}
+
+void ACPlayableCharacter::SetMaterial()
+{
+	Materials.Empty();
+	USkeletalMeshComponent* mesh = GetMesh();
+	if (false == IsValid(mesh))
+		return;
+
+	const int32 slotCount = mesh->GetNumMaterials();
+	for (int32 slotIndex = 0; slotIndex < slotCount; slotIndex++)
+	{
+		UMaterialInterface* parent = mesh->GetMaterial(slotIndex);
+		if (false == IsValid(parent))
+			continue;
+
+		UMaterialInstanceDynamic* mid = UMaterialInstanceDynamic::Create(parent, this);
+		if (false == IsValid(mid))
+			continue;
+
+		mid->SetVectorParameterValue(FName(TEXT("BodyColor")), CharacterInfo.BodyColor);
+		mesh->SetMaterial(slotIndex, mid);
+		Materials.Add(mid);
+	}
+}
+
+void ACPlayableCharacter::SetStatus()
+{
+	Hp = MaxHp;
+	Stamina = MaxStamina;
+	Mana = MaxMana;
+
+	if (IsValid(CharacterStatComp))
+	{
+		CharacterStatComp->SetHp(static_cast<float>(Hp));
+		CharacterStatComp->SetStamina(static_cast<float>(Stamina));
+		CharacterStatComp->SetMana(static_cast<float>(Mana));
+	}
+}
+
+void ACPlayableCharacter::SetViewPitch()
+{
+	const TWeakObjectPtr<APlayerController> pc = Cast<APlayerController>(GetController());
+	if (false == pc.IsValid())
+		return;
+	if (false == IsValid(pc->PlayerCameraManager))
+		return;
+
+	pc->PlayerCameraManager->ViewPitchMin = PitchRange.X;
+	pc->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
+}
+
+void ACPlayableCharacter::RestoreStamina()
+{
+	if (false == IsValid(StateComp))
+		return;
+
+	const bool bAllowRestore = StateComp->IsIdle() || StateComp->IsRiding();
+	if (false == bAllowRestore)
+	{
+		AccelStaminaRestore = 1.0;
+		return;
+	}
+
+	if (false == (Stamina < MaxStamina))
+		return;
+
+	const double delta = DefaultStaminaRestore * AccelStaminaRestore;
+	Stamina = FMath::Clamp(Stamina + delta, 0.0, MaxStamina);
+	AccelStaminaRestore *= 1.1;
+
+	if (IsValid(CharacterStatComp))
+		CharacterStatComp->SetStamina(static_cast<float>(Stamina));
+
+	UpdateStamina();
+
+	if (FMath::IsNearlyEqual(Stamina, MaxStamina, 0.01))
+		UKismetSystemLibrary::K2_PauseTimer(this, FString(TEXT("RestoreStamina")));
+}
+
+void ACPlayableCharacter::RestoreMana()
+{
+	if (false == IsValid(StateComp))
+		return;
+
+	const bool bAllowRestore = StateComp->IsIdle() || StateComp->IsRiding();
+	if (false == bAllowRestore)
+	{
+		AccelManaRestore = 1.0;
+		return;
+	}
+
+	if (false == (Mana < MaxMana))
+		return;
+
+	const double delta = DefaultManaRestore * AccelManaRestore;
+	Mana = FMath::Clamp(Mana + delta, 0.0, MaxMana);
+	AccelManaRestore *= 1.05;
+
+	if (IsValid(CharacterStatComp))
+		CharacterStatComp->SetMana(static_cast<float>(Mana));
+
+	UpdateMana();
+
+	if (FMath::IsNearlyEqual(Mana, MaxMana, 0.01))
+		UKismetSystemLibrary::K2_PauseTimer(this, FString(TEXT("RestoreMana")));
+}
+
+bool ACPlayableCharacter::IsEnoughStamina(const double InConsume)
+{
+	const bool bEnough = Stamina >= InConsume;
+	EnoughStamina = bEnough;
+	return bEnough;
+}
+
+bool ACPlayableCharacter::IsEnoughMana(const double InConsume)
+{
+	const bool bEnough = Mana >= InConsume;
+	EnoughMana = bEnough;
+	return bEnough;
+}
+
+void ACPlayableCharacter::ShakeCam_Implementation()
+{
+	// BP_Player::ShakeCam — 로컬 PlayerCameraManager 에 CS_NotEnoughState (기본 클래스 프로퍼티).
+	if (false == IsLocallyControlled())
+		return;
+
+	APlayerController* playerController = Cast<APlayerController>(GetController());
+	if (false == IsValid(playerController) || false == IsValid(playerController->PlayerCameraManager))
+		return;
+
+	if (NotEnoughStateCameraShakeClass == nullptr)
+		return;
+
+	playerController->PlayerCameraManager->StartCameraShake(
+		NotEnoughStateCameraShakeClass,
+		1.0f,
+		ECameraShakePlaySpace::CameraLocal,
+		FRotator::ZeroRotator);
+}
+
+void ACPlayableCharacter::NotEnoughStamina()
+{
+	ShakeCam();
+	TryPlaySystemMessage(SystemMessageComponent.Get(), FText::FromString(TEXT("스태미나가 부족합니다.")), 3.0);
+	SetIdle();
+}
+
+void ACPlayableCharacter::NotEnoughMana()
+{
+	ShakeCam();
+	TryPlaySystemMessage(SystemMessageComponent.Get(), FText::FromString(TEXT("마나가 부족합니다.")), 3.0);
+	SetIdle();
+}
+
+void ACPlayableCharacter::SetDefaultController()
+{
+	CurController = GetController();
+}
+
+void ACPlayableCharacter::SetZooming(double InZooming)
+{
+	Zooming = InZooming;
+	if (IsValid(CamComp))
+	{
+		CamComp->ZoomData = ZoomData;
+		CamComp->SetZooming(static_cast<float>(InZooming));
+	}
+}
+
+void ACPlayableCharacter::SaveZooming()
+{
+	OriginZooming = Zooming;
+}
+
+void ACPlayableCharacter::SetSkillZooming()
+{
+	Zooming = SkillZooming;
+}
+
+void ACPlayableCharacter::ApplyZoom(double InZoom)
+{
+	// BP: TargetArmLength 가 InZoom 과 거의 같지 않을 때만 FInterpTo 로 갱신.
+	if (false == IsValid(SpringArm))
+		return;
+
+	const float current = SpringArm->TargetArmLength;
+	if (UKismetMathLibrary::NearlyEqual_FloatFloat(static_cast<double>(current), InZoom, 0.1))
+		return;
+
+	const float deltaSeconds = UGameplayStatics::GetWorldDeltaSeconds(this);
+	const float nextLength = UKismetMathLibrary::FInterpTo(
+		current,
+		static_cast<float>(InZoom),
+		deltaSeconds,
+		ZoomData.InterpSpeed);
+
+	SpringArm->TargetArmLength = nextLength;
+}
+
+void ACPlayableCharacter::StartFall(double InGravity)
+{
+	if (IsValid(MovementComp))
+		MovementComp->SetGravity(static_cast<float>(InGravity));
+
+	UCharacterMovementComponent* characterMovement = GetCharacterMovement();
+	if (IsValid(characterMovement))
+		characterMovement->SetMovementMode(MOVE_Falling);
+
+	if (IsValid(StateComp))
+		StateComp->SetFalling();
+
+	FlyToFall = true;
+}
+
+bool ACPlayableCharacter::IsChangedLandCoord() const
+{
+	const FVector location = GetActorLocation();
+	constexpr double tolerance = 50.0;
+	const bool nearX = UKismetMathLibrary::NearlyEqual_FloatFloat(location.X, CoordBeforeAir.X, tolerance);
+	const bool nearY = UKismetMathLibrary::NearlyEqual_FloatFloat(location.Y, CoordBeforeAir.Y, tolerance);
+	const bool nearZ = UKismetMathLibrary::NearlyEqual_FloatFloat(location.Z, CoordBeforeAir.Z, tolerance);
+	return nearX || nearY || nearZ;
+}
+
+void ACPlayableCharacter::Tick_AirBone()
+{
+	UCharacterMovementComponent* characterMovement = GetCharacterMovement();
+	if (false == IsValid(characterMovement))
+		return;
+
+	// BP Tick_AirBone: IsFlying 은 CharacterMovement 기준(블루프린트는 StateComponent 에 묶여 있었으나 컴파일 실패).
+	if (characterMovement->IsFlying())
+		return;
+
+	if (false == characterMovement->IsFalling())
+		return;
+
+	// FlyToFall 이면 높이 검사 분기로 가지 않음(연출 1회).
+	if (FlyToFall)
+		return;
+
+	const FVector location = GetActorLocation();
+	const double targetZ = CoordBeforeAir.Z + AirDistance;
+	if (UKismetMathLibrary::NearlyEqual_FloatFloat(location.Z, targetZ, 50.0))
+		StartFall(2.0);
+}
+
+void ACPlayableCharacter::SetCoordBeforeAir()
+{
+	CoordBeforeAir = GetActorLocation();
+}
+
+void ACPlayableCharacter::OnEquipMenuWeaponHoveredBridge(const CEWeaponType InType)
+{
+	OnEquipMenuWeaponHovered(InType);
+}
+
+void ACPlayableCharacter::OnEquipMenuWeaponUnhoveredBridge(const CEWeaponType InType)
+{
+	OnEquipMenuWeaponUnhovered(InType);
+}
+
+void ACPlayableCharacter::OnEquipMenuWeaponHovered_Implementation(const CEWeaponType InType)
+{
+	// BP I_Character 의 HoveredEquipMenu 를 BP_Player 에서 오버라이드해 채운다.
+	(void)InType;
+}
+
+void ACPlayableCharacter::OnEquipMenuWeaponUnhovered_Implementation(const CEWeaponType InType)
+{
+	(void)InType;
+}
+
+void ACPlayableCharacter::Tick_LerpMove(float DeltaTime)
+{
+	// 위치 보간은 캐릭터 권위와 동일하게만 적용한다.
+	if (false == HasAuthority())
+		return;
+
+	if (false == IsValid(MovementComp) || false == MovementComp->IsLerpMove())
+		return;
+
+	const FVector current = GetActorLocation();
+	const FVector dest = MovementComp->Dest;
+	const FVector newLoc = FMath::VInterpTo(current, dest, DeltaTime, MovementComp->InterpSpeed);
+
+	SetActorLocation(newLoc, false, nullptr, ETeleportType::None);
+
+	const bool bNearX = FMath::IsNearlyEqual(newLoc.X, dest.X, LerpArrivalXYTolerance);
+	const bool bNearY = FMath::IsNearlyEqual(newLoc.Y, dest.Y, LerpArrivalXYTolerance);
+	if (bNearX && bNearY)
+		MovementComp->SetLerpMove(false);
+}
+
+bool ACPlayableCharacter::Tick_CheckGround() const
+{
+	UWorld* world = GetWorld();
+	if (false == IsValid(world))
+		return false;
+
+	const FVector start = GetActorLocation();
+	FVector end = start;
+	end.Z -= 300.f;
+
+	FHitResult hit;
+	const bool bHit = UKismetSystemLibrary::LineTraceSingle(
+		const_cast<ACPlayableCharacter*>(this),
+		start,
+		end,
+		UEngineTypes::ConvertToTraceType(ETraceTypeQuery::TraceTypeQuery1),
+		false,
+		TArray<AActor*>(),
+		EDrawDebugTrace::None,
+		hit,
+		true);
+
+	return bHit;
+}
+
+void ACPlayableCharacter::Tick_AccelGravity()
+{
+	if (false == HasAuthority())
+		return;
+
+	// BP: 지면 트레이스에 맞으면 분기 없음, 아니면 중력 3.
+	if (Tick_CheckGround())
+		return;
+
+	if (IsValid(MovementComp))
+		MovementComp->SetGravity(3.f);
+}
+
+void ACPlayableCharacter::SetInvisibleMotionTrail()
+{
+	if (false == IsValid(MotionTrailEffect))
+		return;
+
+	if (MotionTrailEffect->IsVisible())
+		MotionTrailEffect->SetVisibility(false, false);
+}
+
+void ACPlayableCharacter::SetVisibleMotionTrail()
+{
+	if (false == IsValid(MotionTrailEffect))
+		return;
+
+	if (false == MotionTrailEffect->IsVisible())
+		MotionTrailEffect->SetVisibility(true, false);
+}
+
+void ACPlayableCharacter::Begin_SkillCam()
+{
+	if (false == IsLocallyControlled())
+		return;
+
+	OriginZooming = Zooming;
+	SetZooming(200.0);
+
+	APlayerController* pc = Cast<APlayerController>(GetController());
+	if (false == IsValid(pc))
+		pc = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (IsValid(SequenceCamChild))
+	{
+		AActor* camActor = SequenceCamChild->GetChildActor();
+		if (IsValid(camActor) && IsValid(pc))
+		{
+			pc->SetViewTargetWithBlend(
+				camActor,
+				0.2f,
+				EViewTargetBlendFunction::VTBlend_EaseInOut,
+				1.f,
+				false);
+		}
+	}
+
+	TryPlayActorSequencePlayer(SkillSequence.Get());
+}
+
+void ACPlayableCharacter::End_SkillCam()
+{
+	if (false == IsLocallyControlled())
+		return;
+
+	APlayerController* pc = Cast<APlayerController>(GetController());
+	if (false == IsValid(pc))
+		pc = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (IsValid(MainCamChild))
+	{
+		AActor* camActor = MainCamChild->GetChildActor();
+		if (IsValid(camActor) && IsValid(pc))
+		{
+			pc->SetViewTargetWithBlend(
+				camActor,
+				0.2f,
+				EViewTargetBlendFunction::VTBlend_EaseInOut,
+				1.f,
+				false);
+		}
+	}
+
+	SetZooming(OriginZooming);
+}
+
+void ACPlayableCharacter::ReportNoise()
+{
+	UCharacterMovementComponent* cm = GetCharacterMovement();
+	if (false == IsValid(cm) || false == IsValid(MovementComp))
+		return;
+
+	if (cm->MaxWalkSpeed <= MovementComp->GetWalkSpeed())
+		return;
+
+	UAISense_Hearing::ReportNoiseEvent(this, GetActorLocation(), 1.f, this, 0.f, NAME_None);
+}
+
+void ACPlayableCharacter::SetFluidSim()
+{
+	UWorld* world = GetWorld();
+	if (false == IsValid(world) || false == FluidSimClass)
+		return;
+
+	TArray<AActor*> actors;
+	UGameplayStatics::GetAllActorsOfClass(world, FluidSimClass, actors);
+	if (actors.Num() <= 0)
+		return;
+
+	FluidSimFolowing = actors[0];
+	OnFluidSimActorRegistered(FluidSimFolowing.Get());
+}
+
+void ACPlayableCharacter::OnFluidSimActorRegistered_Implementation(AActor* InFluidSimActor)
+{
+	(void)InFluidSimActor;
+}
+
+void ACPlayableCharacter::Tick_Fluid()
+{
+	// 유체 액터 위치는 서버 권위로 맞춘다.
+	if (false == HasAuthority())
+		return;
+
+	if (false == IsValid(FluidSimFolowing))
+		return;
+
+	FluidSimFolowing->SetActorLocation(GetActorLocation(), false, nullptr, ETeleportType::None);
 }

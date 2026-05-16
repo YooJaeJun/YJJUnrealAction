@@ -17,7 +17,7 @@ void UCUserWidget_EquipMenu::BindChildren()
 		CheckNull(button);
 
 		button->BindEquipMenuButton();
-		button->OnWeaponTypeHovered.BindUFunction(this, "SetWeaponType");
+		button->OnWeaponTypeHovered.AddUniqueDynamic(this, &UCUserWidget_EquipMenu::SetWeaponType);
 
 		EquipMenuButtons.Add(button);
 	}

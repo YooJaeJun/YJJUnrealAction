@@ -35,7 +35,17 @@ public:
 	void SetVisibleTargetUI(bool bVisible) const;
 	void Tick_MoveFocusCoolTIme(const float InDelta);
 	void Tick_Targeting();
-	void ChangeFocus(const bool InbRight);
+
+	// 레거시 BP TargetComponent — 블루프린트 줌/포커스 그래프에서 호출.
+	UFUNCTION(BlueprintCallable, Category = "Targeting")
+	void ChangeFocus(bool InRight);
+
+	// 레거시 BP TargetComponent::Toggle_Target
+	UFUNCTION(BlueprintCallable, Category = "Targeting", meta = (DisplayName = "Toggle Target"))
+	void Toggle_Target() { InputAction_Targeting(); }
+
+	UFUNCTION(BlueprintPure, Category = "Targeting")
+	bool IsTargeting() const { return bTargeting; }
 
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Focus")

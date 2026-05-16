@@ -184,7 +184,7 @@ void UCTargetingComponent::Tick_Targeting()
 	}
 }
 
-void UCTargetingComponent::ChangeFocus(const bool InbRight)
+void UCTargetingComponent::ChangeFocus(const bool InRight)
 {
 	CheckFalse(bCanMoveFocus);
 	CheckNull(Target);
@@ -233,8 +233,8 @@ void UCTargetingComponent::ChangeFocus(const bool InbRight)
 		const float curAngle = elem.Key;
 
 		bool bCheck = false;
-		bCheck |= (InbRight && curAngle > 0.0f);
-		bCheck |= (false == InbRight && curAngle < 0.0f);
+		bCheck |= (InRight && curAngle > 0.0f);
+		bCheck |= (false == InRight && curAngle < 0.0f);
 		bCheck &= (minAngle > abs(curAngle));
 
 		if (bCheck)

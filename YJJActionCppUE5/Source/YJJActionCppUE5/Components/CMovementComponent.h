@@ -56,6 +56,28 @@ public:
 	FORCEINLINE constexpr float GetRunSpeed() const { return Speeds[static_cast<uint8>(CESpeedType::Run)]; }
 	FORCEINLINE constexpr float GetSprintSpeed() const { return Speeds[static_cast<uint8>(CESpeedType::Sprint)]; }
 
+	// 레거시 BP MovingComponent::Is Can Move — 점프 등에서 이동 가능 여부만 조회할 때 사용.
+	UFUNCTION(BlueprintPure, Category = "Move", meta = (DisplayName = "Is Can Move"))
+	bool IsCanMove() const;
+
+	// 레거시 BP MovingComponent::Get Fixed Camera — 실제 값은 소유자의 CamComponent 에 있다.
+	UFUNCTION(BlueprintPure, Category = "Move")
+	bool GetFixedCamera() const;
+
+	// BP MovingComponent — 월드 위치 Lerp 이동 중인지 (Tick_LerpMove 게이트).
+	UFUNCTION(BlueprintPure, Category = "Move", meta = (DisplayName = "Is Lerp Move"))
+	bool IsLerpMove() const { return bLerpMove; }
+
+	UFUNCTION(BlueprintCallable, Category = "Move", meta = (DisplayName = "Set Lerp Move"))
+	void SetLerpMove(const bool bIn) { bLerpMove = bIn; }
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move|Lerp", meta = (DisplayName = "Dest"))
+	FVector Dest = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move|Lerp", meta = (DisplayName = "Interp Speed"))
+	float InterpSpeed = 8.f;
+
 public:
 	UPROPERTY(EditAnywhere, Category = "Move")
 	float Speeds[static_cast<uint8>(CESpeedType::Max)] = { 200, 500, 800 };
@@ -74,4 +96,7 @@ private:
 	TWeakObjectPtr<UCStateComponent> StateComp;
 	bool bCanMove = true;
 	bool bTopViewCam = false;
+
+	// BP MovingComponent::LerpMoving
+	bool bLerpMove = false;
 };

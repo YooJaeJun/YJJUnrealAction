@@ -33,6 +33,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UI")
 	UCUserWidget_HUD* GetYJJHUD() const;
 
+	// 구 BP_PlayerController 의 GetHUD 커스텀 출력 핀(WBHUDUI) 대체 — EnsureHUD 로 생성까지 맞춘다.
+	UFUNCTION(BlueprintCallable, Category = "UI", meta = (DisplayName = "Get WB HUDUI"))
+	UCUserWidget_HUD* GetWBHUDUI();
+
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void InitializeHUDForPawn(APawn* InPawn);
 

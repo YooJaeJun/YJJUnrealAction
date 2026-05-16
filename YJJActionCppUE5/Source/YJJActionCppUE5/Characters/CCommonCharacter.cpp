@@ -15,6 +15,11 @@
 #include "Widgets/Enemies/CUserWidget_EnemyBar.h"
 #include "Interfaces/CInterface_Interactable.h"
 #include "Widgets/CUserWidget_HUD.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Components/TextRenderComponent.h"
+#include "Camera/PlayerCameraManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -22,15 +27,19 @@ ACCommonCharacter::ACCommonCharacter()
 	SetReplicateMovement(true);
 	SetNetCullDistanceSquared(FMath::Square(15000.0f));
 
-	YJJHelpers::CreateActorComponent<UCStateComponent>(this, &StateComp, "StateComponent");
-	YJJHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "MovementComponent");
-	YJJHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "MontagesComponent");
-	YJJHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "CharacterInfoComponent");
-	YJJHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "CharacterStatComponent");
+	YJJHelpers::CreateActorComponent<UCStateComponent>(this, &StateComp, "YJJStateComponent");
+	YJJHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "YJJMovementComponent");
+
+	StateComponent = StateComp;
+	MovingComponent = MovementComp;
+	YJJHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "YJJMontagesComponent");
+	YJJHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "YJJCharacterInfoComponent");
+	YJJHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "YJJCharacterStatComponent");
 	YJJHelpers::CreateComponent<USceneComponent>(this, &InfoPoint, "InfoPoint", GetMesh());
 	YJJHelpers::CreateComponent<UWidgetComponent>(this, &InfoWidgetComp, "InfoWidgetComp", InfoPoint);
 	YJJHelpers::CreateComponent<USceneComponent>(this, &TargetingPoint, "TargetingPoint", GetMesh());
 	YJJHelpers::CreateComponent<UWidgetComponent>(this, &TargetingWidgetComp, "TargetingWidgetComp", TargetingPoint);
+	YJJHelpers::CreateComponent<UTextRenderComponent>(this, &StateTextComponent, "StateTextComponent", GetCapsuleComponent());
 	// CWB_* 위젯이 예전 모듈명(YJJActionCpp) 부모를 가리키면 CDO 시점의 GetClass 가 전체 캐릭터 로드를 깨뜨린다.
 	// 클래스는 BeginPlay 에서 LoadClass + 폴백으로 적용한다.
 
@@ -62,6 +71,10 @@ void ACCommonCharacter::BeginPlay()
 
 	if (IsValid(TargetingPoint))
 		TargetingPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Targeting");
+
+	// BP BeginPlay: MovingComponent GetSprintSpeed 를 CharacterMovement.MaxWalkSpeed 에 반영.
+	if (IsValid(MovementComp))
+		MovementComp->SetSprintSpeed();
 }
 
 void ACCommonCharacter::Tick(float DeltaSeconds)
@@ -141,6 +154,8 @@ void ACCommonCharacter::Hit()
 
 void ACCommonCharacter::Dead()
 {
+	IsDead.Broadcast();
+
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	CheckNull(MontagesComp);
@@ -244,8 +259,242 @@ void ACCommonCharacter::ApplyRestoreStateFromPrevMode()
 	}
 }
 
+void ACCommonCharacter::EndHitted_ApplyRestoreIfStillInHit()
+{
+	if (false == IsValid(StateComp))
+		return;
+
+	if (StateComp->IsHitNoneMode())
+		return;
+
+	ApplyRestoreStateFromPrevMode();
+	StateComp->SetHitNoneMode();
+}
+
+void ACCommonCharacter::End_Hitted()
+{
+	EndHitted_ApplyRestoreIfStillInHit();
+}
+
+void ACCommonCharacter::TogglePlayerPossessLocal(const bool bEnable)
+{
+	UWorld* world = GetWorld();
+	if (false == IsValid(world))
+		return;
+
+	APlayerController* playerController = UGameplayStatics::GetPlayerController(world, 0);
+	if (false == IsValid(playerController))
+		return;
+
+	if (bEnable)
+		playerController->Possess(this);
+	else
+		playerController->UnPossess();
+}
+
+CESpeedType ACCommonCharacter::GetCurrentSpeedType(const float Tolerance) const
+{
+	if (false == IsValid(MovementComp))
+		return CESpeedType::Walk;
+
+	const UCharacterMovementComponent* charMove = GetCharacterMovement();
+	if (false == IsValid(charMove))
+		return CESpeedType::Walk;
+
+	const float currentSpeed = charMove->MaxWalkSpeed;
+
+	for (uint8 index = 0; index < static_cast<uint8>(CESpeedType::Max); index++)
+	{
+		if (FMath::IsNearlyEqual(currentSpeed, MovementComp->Speeds[index], Tolerance))
+			return static_cast<CESpeedType>(index);
+	}
+
+	return CESpeedType::Walk;
+}
+
+void ACCommonCharacter::LaunchBack()
+{
+	FVector velocity = -GetActorForwardVector() * ConstLaunchingBack;
+	velocity.Z = LaunchBackVerticalImpulse;
+	LaunchCharacter(velocity, false, false);
+}
+
+void ACCommonCharacter::LaunchHit()
+{
+	const FVector velocity = GetActorForwardVector() * (-HitData.Launch);
+	LaunchCharacter(velocity, false, false);
+}
+
+void ACCommonCharacter::SetRotation(AActor* TargetActor, const bool bTeleportPhysics)
+{
+	if (false == IsValid(TargetActor))
+		return;
+
+	const FVector selfLocation = GetActorLocation();
+	const FVector targetLocation = TargetActor->GetActorLocation();
+	const FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(selfLocation, targetLocation);
+	const FRotator yawOnly(0.0f, lookAtRotation.Yaw, 0.0f);
+
+	const ETeleportType teleport = bTeleportPhysics ? ETeleportType::TeleportPhysics : ETeleportType::None;
+	SetActorRotation(yawOnly, teleport);
+}
+
+void ACCommonCharacter::PlayParticle()
+{
+	UWorld* world = GetWorld();
+	if (false == IsValid(world))
+		return;
+
+	HitData.PlayEffect(world, GetActorLocation(), GetActorRotation());
+}
+
+void ACCommonCharacter::PlayHitSound()
+{
+	HitData.PlaySoundWave(this);
+}
+
+void ACCommonCharacter::PlaySound()
+{
+	PlayHitSound();
+}
+
+void ACCommonCharacter::RenderStateText()
+{
+	if (false == IsValid(StateTextComponent))
+		return;
+
+	if (false == StateTextComponent->IsVisible())
+		StateTextComponent->SetVisibility(true, false);
+}
+
+void ACCommonCharacter::DontRenderStateText()
+{
+	if (false == IsValid(StateTextComponent))
+		return;
+
+	if (StateTextComponent->IsVisible())
+		StateTextComponent->SetVisibility(false, false);
+}
+
+void ACCommonCharacter::BilboardStateText()
+{
+	if (false == IsValid(StateTextComponent))
+		return;
+
+	UWorld* world = GetWorld();
+	if (false == IsValid(world))
+		return;
+
+	APlayerCameraManager* cameraManager = UGameplayStatics::GetPlayerCameraManager(world, 0);
+	if (false == IsValid(cameraManager))
+		return;
+
+	const FVector toCamera = cameraManager->GetCameraLocation() - StateTextComponent->GetComponentLocation();
+	if (toCamera.IsNearlyZero())
+		return;
+
+	const FRotator billboardRotation = UKismetMathLibrary::MakeRotFromX(toCamera);
+	StateTextComponent->SetWorldRotation(billboardRotation);
+}
+
+void ACCommonCharacter::TogglePossess_Implementation(const bool InEnable)
+{
+	TogglePlayerPossessLocal(InEnable);
+}
+
+void ACCommonCharacter::HoveredEquipMenu_Implementation(const FString& InName)
+{
+}
+
+void ACCommonCharacter::UnHoveredEquipMenu_Implementation(const FString& InName)
+{
+}
+
+void ACCommonCharacter::ClickedEquipMenu_Implementation(const FString& InName)
+{
+}
+
+void ACCommonCharacter::HoveredMagicMenu_Implementation(const FString& InName)
+{
+}
+
+void ACCommonCharacter::UnHoveredMagicMenu_Implementation(const FString& InName)
+{
+}
+
+void ACCommonCharacter::ClickedMagicMenu_Implementation(const FString& InName)
+{
+}
+
+void ACCommonCharacter::Footstep_Implementation()
+{
+}
+
+void ACCommonCharacter::Rewarded_Implementation()
+{
+}
+
+void ACCommonCharacter::Damaged_Implementation(float DamageAmount)
+{
+	// TakeDamage 경로와 별개로 애님·이펙트만 쏘는 레거시 이벤트일 수 있다.
+	(void)DamageAmount;
+}
+
+void ACCommonCharacter::StartInteraction_Implementation(AActor* InteractionTarget)
+{
+	CurInteractingActor = InteractionTarget;
+}
+
+void ACCommonCharacter::EndInteraction_Implementation()
+{
+	CurInteractingActor = nullptr;
+}
+
+int32 ACCommonCharacter::GetAction_Implementation()
+{
+	return 0;
+}
+
+void ACCommonCharacter::SetIdle()
+{
+	if (IsValid(StateComp))
+		StateComp->SetIdleMode();
+}
+
+void ACCommonCharacter::OnEquipMenu_Implementation()
+{
+}
+
+void ACCommonCharacter::OffEquipMenu_Implementation()
+{
+}
+
+void ACCommonCharacter::OnMagicMenu_Implementation()
+{
+}
+
+void ACCommonCharacter::OffMagicMenu_Implementation()
+{
+}
+
+void ACCommonCharacter::CanMove(const double InAxis, bool& OutCanMove) const
+{
+	OutCanMove = false;
+	if (false == IsValid(MovementComp))
+		return;
+
+	// BP_Player::CanMove — |InAxis|>0.5 일 때만 MovingComponent::Is Can Move.
+	const float axis = static_cast<float>(InAxis);
+	if (FMath::Abs(axis) <= 0.5f)
+		return;
+
+	OutCanMove = MovementComp->IsCanMove();
+}
+
 void ACCommonCharacter::InputAction_Interact()
 {
+	OnInteract.Broadcast();
+
 	AController* controller = GetController();
 	if (IsValid(controller))
 	{

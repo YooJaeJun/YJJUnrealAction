@@ -62,10 +62,17 @@ bool UCStateComponent::IsRealRiding() const
 	return Owner.IsValid() && Owner->GetbRiding();
 }
 
+bool UCStateComponent::IsRiding() const
+{
+	// RestoreStamina/Mana: 탑승 전용 상태이거나 소유 캐릭터 탑승 플래그일 때 회복 허용.
+	return IsRidingMode() || IsRealRiding();
+}
+
 void UCStateComponent::ChangeType(const CEStateType InType)
 {
 	PrevType = CurType;
 	CurType = InType;
+	Type = CurType;
 
 	if (OnStateTypeChanged.IsBound())
 	{

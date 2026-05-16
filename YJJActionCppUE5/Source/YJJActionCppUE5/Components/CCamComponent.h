@@ -10,22 +10,22 @@ class UCMovementComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnableTopViewCam);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDisableTopViewCam);
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FZoomData
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom")
 	float ZoomSpeed = 40;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom")
 	float MinRange = 100;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom")
 	float MaxRange = 600;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom")
 	float InterpSpeed = 5;
 };
 
@@ -70,10 +70,10 @@ private:
 	float VerticalLook = 45;
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	FZoomData ZoomData;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
 	float Zooming;
 
 	UPROPERTY(VisibleAnywhere)

@@ -1,5 +1,6 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
+#include "Components/CCamComponent.h"
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -135,8 +136,25 @@ void UCMovementComponent::InputAction_Jump()
 
 bool UCMovementComponent::CanMove(const float InAxis) const
 {
-	if (abs(InAxis) > 0.5f)
+	if (FMath::Abs(InAxis) > 0.5f)
 		return CanMove();
 
 	return false;
+}
+
+bool UCMovementComponent::IsCanMove() const
+{
+	return CanMove();
+}
+
+bool UCMovementComponent::GetFixedCamera() const
+{
+	if (false == Owner.IsValid())
+		return false;
+
+	const TObjectPtr<UCCamComponent> camComp = YJJHelpers::GetComponent<UCCamComponent>(Owner.Get());
+	if (false == IsValid(camComp))
+		return false;
+
+	return camComp->GetFixedCamera();
 }

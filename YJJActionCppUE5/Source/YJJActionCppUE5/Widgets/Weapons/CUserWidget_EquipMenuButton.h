@@ -5,7 +5,7 @@
 #include "Widgets/CUserWidget_Custom.h"
 #include "CUserWidget_EquipMenuButton.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FWeaponTypeHovered, const CEWeaponType, InNewType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponTypeHoveredMulticast, const CEWeaponType, InNewType);
 
 class UButton;
 
@@ -27,8 +27,11 @@ public:
 	UPROPERTY()
 	TObjectPtr<UButton> Button;
 
-	UPROPERTY()
-	FWeaponTypeHovered OnWeaponTypeHovered;
+	UPROPERTY(BlueprintAssignable, Category = "EquipMenu")
+	FWeaponTypeHoveredMulticast OnWeaponTypeHovered;
+
+	UPROPERTY(BlueprintAssignable, Category = "EquipMenu")
+	FWeaponTypeHoveredMulticast OnWeaponTypeUnhovered;
 
 public:
 	CEWeaponType CurWeaponType;

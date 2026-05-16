@@ -65,6 +65,11 @@ UCUserWidget_HUD* ACPlayerController::GetYJJHUD() const
 	return PlayerHUD;
 }
 
+UCUserWidget_HUD* ACPlayerController::GetWBHUDUI()
+{
+	return EnsureHUD();
+}
+
 void ACPlayerController::InitializeHUDForPawn(APawn* InPawn)
 {
 	UCUserWidget_HUD* hud = EnsureHUD();
