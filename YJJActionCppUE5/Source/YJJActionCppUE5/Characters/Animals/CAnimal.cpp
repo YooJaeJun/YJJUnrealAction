@@ -437,7 +437,7 @@ void ACAnimal::GetControlDirection(FVector& OutForward, FVector& OutRight) const
 	OutRight = FRotationMatrix(yawOnly).GetUnitAxis(EAxis::Y);
 }
 
-void ACAnimal::GetDesiredMovement_Implementation(FVector& OutMovement)
+void ACAnimal::GetAnimalDesiredMovement_Implementation(FVector& OutMovement)
 {
 	float axisForward = 0.0f;
 	float axisRight = 0.0f;

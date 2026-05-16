@@ -4,7 +4,7 @@
 #include "Components/CMovementComponent.h"
 #include "CBTTask_Speed.generated.h"
 
-UCLASS()
+UCLASS(DisplayName="Speed")
 class YJJACTIONCPPUE5_API UCBTTask_Speed : public UCBTTask_Custom
 {
 	GENERATED_BODY()
@@ -14,7 +14,7 @@ public:
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
-private:
-	UPROPERTY(EditAnywhere)
+protected:
+	UPROPERTY(EditAnywhere, Category = "Task")
 	CESpeedType SpeedType = CESpeedType::Sprint;
 };

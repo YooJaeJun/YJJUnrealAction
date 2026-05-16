@@ -513,6 +513,34 @@ void UCWeaponComponent::CancelAct()
 	GetAct()->End_Act();
 }
 
+void UCWeaponComponent::End_DoAction(CEAttackType InAttackType)
+{
+	// 레거시 BP 인자 이름만 맞춘다 — UCAct 분기에서는 CEAttackType 을 참조하지 않는다.
+	(void)InAttackType;
+
+	const TObjectPtr<UCAct> act = GetAct();
+	if (false == IsValid(act))
+	{
+		// 데이터 에셋 Act 미부착 구간 등 — 애니 공용 종료 노티 경로라 로그는 남기지 않는다.
+		return;
+	}
+	act->End_Act();
+}
+
+bool UCWeaponComponent::TryDispatchLegacyMainWeaponCollisionToggle(const bool bCollisionOn)
+{
+	if (false == IsValid(MainWeapon))
+		return false;
+
+	const FName functionNameLocal = bCollisionOn ? FName(TEXT("OnCollisions")) : FName(TEXT("OffCollisions"));
+	UFunction* functionPtrLocal = MainWeapon->FindFunction(functionNameLocal);
+	if (nullptr == functionPtrLocal)
+		return false;
+
+	MainWeapon->ProcessEvent(functionPtrLocal, nullptr);
+	return true;
+}
+
 bool UCWeaponComponent::IsIdleStateMode()
 {
 	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());

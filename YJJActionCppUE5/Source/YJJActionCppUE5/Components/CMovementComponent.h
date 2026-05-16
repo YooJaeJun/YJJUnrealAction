@@ -32,6 +32,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Move|Moving")
 	void SetSpeed(CESpeedType InType);
 
+	// 레거시 /Game/Components/ESpeedType 등 UserDefinedEnum 의 underlying byte 값이 CESpeedType(Walk=0,Run=1,Sprint=2…) 과 같을 때만 의미 있다. 순서가 다르면 BT 변수를 CESpeedType 으로 바꾼 뒤 SetSpeed 를 쓸 것.
+	UFUNCTION(
+		BlueprintCallable,
+		Category = "Move|Moving",
+		meta = (DisplayName = "Set Speed (Legacy enum byte)"))
+	void SetSpeedFromLegacyUnderlyingByte(uint8 InUnderlyingValue);
+
 	void SetMaxWalkSpeed(const float InSpeed) const;
 	void SetWalkSpeed() const;
 	void SetRunSpeed() const;

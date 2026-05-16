@@ -1,11 +1,12 @@
 #include "Notifies/CAnimNotifyState_Collision.h"
-#include "Global.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Actor.h"
 #include "Weapons/CAttachment.h"
 
 FString UCAnimNotifyState_Collision::GetNotifyName_Implementation() const
 {
-	return "Collision";
+	return TEXT("Collision");
 }
 
 void UCAnimNotifyState_Collision::NotifyBegin(
@@ -16,14 +17,28 @@ void UCAnimNotifyState_Collision::NotifyBegin(
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	CheckNull(MeshComp);
-	CheckNull(MeshComp->GetOwner());
+	if (false == IsValid(MeshComp))
+		return;
 
-	const TWeakObjectPtr<UCWeaponComponent> weapon = YJJHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
-	CheckNull(weapon.Get());
-	CheckNull(weapon->GetAttachment());
+	AActor* meshOwnerActor = MeshComp->GetOwner();
+	if (false == IsValid(meshOwnerActor))
+		return;
 
-	weapon->GetAttachment()->OnCollisions();
+	UCWeaponComponent* weaponComp = meshOwnerActor->FindComponentByClass<UCWeaponComponent>();
+	if (false == IsValid(weaponComp))
+	{
+		// 비전투 액터 등 — Collision 노티 공용이라 로그는 남기지 않는다.
+		return;
+	}
+
+	if (weaponComp->TryDispatchLegacyMainWeaponCollisionToggle(true))
+		return;
+
+	const TObjectPtr<ACAttachment> attachment = weaponComp->GetAttachment();
+	if (false == IsValid(attachment))
+		return;
+
+	attachment->OnCollisions();
 }
 
 void UCAnimNotifyState_Collision::NotifyEnd(
@@ -33,12 +48,23 @@ void UCAnimNotifyState_Collision::NotifyEnd(
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	CheckNull(MeshComp);
-	CheckNull(MeshComp->GetOwner());
+	if (false == IsValid(MeshComp))
+		return;
 
-	const TWeakObjectPtr<UCWeaponComponent> weapon = YJJHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
-	CheckNull(weapon.Get());
-	CheckNull(weapon->GetAttachment());
+	AActor* meshOwnerActor = MeshComp->GetOwner();
+	if (false == IsValid(meshOwnerActor))
+		return;
 
-	weapon->GetAttachment()->OffCollisions();
+	UCWeaponComponent* weaponComp = meshOwnerActor->FindComponentByClass<UCWeaponComponent>();
+	if (false == IsValid(weaponComp))
+		return;
+
+	if (weaponComp->TryDispatchLegacyMainWeaponCollisionToggle(false))
+		return;
+
+	const TObjectPtr<ACAttachment> attachment = weaponComp->GetAttachment();
+	if (false == IsValid(attachment))
+		return;
+
+	attachment->OffCollisions();
 }

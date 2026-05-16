@@ -75,3 +75,18 @@ void UCEquipment::Unequip_Implementation()
 	if (OnEquipmentUnequip.IsBound())
 		OnEquipmentUnequip.Broadcast();
 }
+
+void UCEquipment::Begin_Unequip_Implementation()
+{
+	// 장비 해제 애니 구간 — Equip 몽타주 시작과 같이 상태·이동을 잠금. 본격 해제·브로드캐스트는 End_Unequip 에서 처리.
+	StateComp->SetEquipMode();
+	MovementComp->Stop();
+}
+
+void UCEquipment::End_Unequip_Implementation()
+{
+	Unequip();
+
+	StateComp->SetIdleMode();
+	MovementComp->Move();
+}

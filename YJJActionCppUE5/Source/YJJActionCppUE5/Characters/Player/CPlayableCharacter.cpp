@@ -951,6 +951,57 @@ bool ACPlayableCharacter::IsEnoughStamina(const double InConsume)
 	return bEnough;
 }
 
+bool ACPlayableCharacter::ConsumeStamina(const double InConsume)
+{
+	if (InConsume <= 0.0)
+	{
+		EnoughStamina = true;
+		return true;
+	}
+
+	const bool bEnough = Stamina >= InConsume;
+	EnoughStamina = bEnough;
+	if (false == bEnough)
+	{
+		NotEnoughStamina();
+		return false;
+	}
+
+	Stamina = FMath::Max(0.0, Stamina - InConsume);
+
+	if (IsValid(CharacterStatComp))
+		CharacterStatComp->SetStamina(static_cast<float>(Stamina));
+
+	UpdateStamina();
+
+	return true;
+}
+
+bool ACPlayableCharacter::ConsumeMana(double InConsume)
+{
+	if (InConsume <= 0.0)
+	{
+		EnoughMana = true;
+		return true;
+	}
+
+	const bool bEnough = IsEnoughMana(InConsume);
+	if (false == bEnough)
+	{
+		NotEnoughMana();
+		return false;
+	}
+
+	Mana = FMath::Clamp(Mana - InConsume, 0.0, MaxMana);
+
+	if (IsValid(CharacterStatComp))
+		CharacterStatComp->SetMana(static_cast<float>(Mana));
+
+	UpdateMana();
+
+	return true;
+}
+
 bool ACPlayableCharacter::IsEnoughMana(const double InConsume)
 {
 	const bool bEnough = Mana >= InConsume;

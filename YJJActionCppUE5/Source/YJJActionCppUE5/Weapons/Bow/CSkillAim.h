@@ -38,4 +38,13 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Aim")
 	TSubclassOf<UUserWidget> CrossHairWidgetClass;
+
+public:
+	/** 레거시 BP Skill_Aim::Pressed — 블루프린트에서 조준 시작 로직 오버라이드. */
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Aim")
+	void Pressed();
+
+	/** 레거시 BP Skill_Aim::Released — 블루프린트에서 조준 해제 로직 오버라이드. */
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Aim")
+	void Released();
 };

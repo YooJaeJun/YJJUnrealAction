@@ -4,7 +4,7 @@
 
 UCBTTask_Speed::UCBTTask_Speed()
 {
-	NodeName = TEXT("CSpeed");
+	NodeName = TEXT("Speed");
 }
 
 EBTNodeResult::Type UCBTTask_Speed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

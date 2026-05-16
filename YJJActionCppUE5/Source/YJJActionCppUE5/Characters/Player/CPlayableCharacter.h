@@ -317,6 +317,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Is Enough Stamina"))
 	bool IsEnoughStamina(double InConsume);
 
+	// 레거시 Weapon_PlayAction ConsumeStamina — 스태미나가 충분할 때만 차감하고 EnoughStamina/내부 스탯·UI 동기화.
+	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Consume Stamina"))
+	bool ConsumeStamina(double InConsume);
+
+	/** 레거시 Magic ConsumeMana 그래프 — IsEnough 검사 후 Clamp 차감·스탯·UI 동기화(Consume Stamina 와 동일 형태). */
+	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Consume Mana"))
+	bool ConsumeMana(double InConsume);
+
 	UFUNCTION(BlueprintCallable, Category = "Status", meta = (DisplayName = "Is Enough Mana"))
 	bool IsEnoughMana(double InConsume);
 
@@ -356,6 +364,10 @@ public:
 	// BP_Player 점프 전 위치 저장(에어 무브·파쿠르).
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void SetCoordBeforeAir();
+
+	/** `FlyToFall` 은 UHT/protected 레이아웃을 위해 보호 멤버 — 무기 에어 분기 등은 이 세터만 사용한다. */
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void SetFlyToFall(bool bFlyToFall) { FlyToFall = bFlyToFall; }
 
 	// BP_Player::StartFall — 중력 스케일·낙하 모드·상태 Fall·FlyToFall (레거시 MovingComponent.SetGravity 그래프).
 	UFUNCTION(BlueprintCallable, Category = "Movement")

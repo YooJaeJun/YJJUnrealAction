@@ -57,6 +57,10 @@ public:
 	void SetMagicMode(CEMagicType InMagicType);
 	void CancelAct();
 
+	/** 레거시 BP WeaponComponent::End Do Action 애니 규약 — 활성 물리 Act 의 End_Act (마법은 UCMagicComponent::End_DoAction 사용). */
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill", DisplayName = "End Do Action")
+	void End_DoAction(CEAttackType InAttackType);
+
 	FORCEINLINE constexpr bool IsMagicEquipped() const { return bMagicEquipped; }
 
 	/** 현재 선택된 마법 EMagicType (비장착 시 Unarmed). AnimBP 의 Magic Type 핀과 맞춘다. */
@@ -93,6 +97,9 @@ public:
 	TObjectPtr<UCEquipment> GetEquipment();
 	TObjectPtr<UCAct> GetAct();
 	TObjectPtr<UCSkill> GetSkill(const int32 SkillIndex);
+
+	/** ANS_Collision 레거시 경로 — 스폰된 MainWeapon(BP Combo/RandomPattern 등)에 OnCollisions·OffCollisions 가 있으면 호출 후 true 를 돌린다. */
+	bool TryDispatchLegacyMainWeaponCollisionToggle(bool bCollisionOn);
 
 	FORCEINLINE constexpr CEWeaponType GetType() const
 	{

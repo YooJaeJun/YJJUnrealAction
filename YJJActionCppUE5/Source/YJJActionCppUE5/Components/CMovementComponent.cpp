@@ -85,6 +85,17 @@ void UCMovementComponent::SetSpeed(CESpeedType InType)
 	movementComponentLocal->MaxWalkSpeed = Speeds[speedIndexLocal];
 }
 
+void UCMovementComponent::SetSpeedFromLegacyUnderlyingByte(uint8 InUnderlyingValue)
+{
+	const uint8 maxExcludedLocal = static_cast<uint8>(CESpeedType::Max);
+	uint8 clampedLocal = InUnderlyingValue;
+	if (clampedLocal >= maxExcludedLocal)
+	{
+		clampedLocal = static_cast<uint8>(CESpeedType::Walk);
+	}
+	SetSpeed(static_cast<CESpeedType>(clampedLocal));
+}
+
 void UCMovementComponent::Move()
 {
 	bCanMove = true;

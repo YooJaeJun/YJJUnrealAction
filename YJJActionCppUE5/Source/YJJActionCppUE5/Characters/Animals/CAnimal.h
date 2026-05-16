@@ -202,9 +202,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Utilities", meta = (DisplayName = "Get Control Direction"))
 	void GetControlDirection(FVector& OutForward, FVector& OutRight) const;
 
-	// 레거시 ABP 출력 핀 이름 "Out Movement" 와 UObject 반환 시그니처가 겹치면 BP 에서 이름 중복·오버라이드 실패한다 — 단일 참조 출력으로 통일한다.
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animal|Locomotion")
-	void GetDesiredMovement(UPARAM(DisplayName = "Out Movement") FVector& OutMovement);
+	// 레거시 ABP 출력 핀 이름 "Out Movement" 는 UPARAM(DisplayName) 으로 맞춘다.
+	// C++ 함수 심볼은 GetAnimalDesiredMovement 로 둠 — BP_Animal 에 구 BPI 의 GetDesiredMovement 등과 동일 이름 UFunction 이 겹치면 "function name ... already used" 컴파일 Fatal 이 난다.
+	UFUNCTION(
+		BlueprintNativeEvent,
+		BlueprintCallable,
+		Category = "Animal|Locomotion",
+		meta = (DisplayName = "Get Desired Movement"))
+	void GetAnimalDesiredMovement(UPARAM(DisplayName = "Out Movement") FVector& OutMovement);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animal|IK")
 	void SetFootLocation(bool bLeftFoot, FVector WorldLocation);

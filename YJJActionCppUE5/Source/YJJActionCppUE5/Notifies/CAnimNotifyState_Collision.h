@@ -4,7 +4,8 @@
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "CAnimNotifyState_Collision.generated.h"
 
-UCLASS()
+// 레거시 /Game/Notifies/ANS_Collision — 스폰 MainWeapon BP 의 OnCollisions/OffCollisions 우선, 없으면 ACAttachment 경로(FDataAsset 무기).
+UCLASS(meta = (DisplayName = "Collision"))
 class YJJACTIONCPPUE5_API UCAnimNotifyState_Collision : public UAnimNotifyState
 {
 	GENERATED_BODY()

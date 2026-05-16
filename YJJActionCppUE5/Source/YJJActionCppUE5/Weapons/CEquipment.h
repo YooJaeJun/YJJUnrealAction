@@ -37,6 +37,15 @@ public:
 	void Unequip();
 	virtual void Unequip_Implementation();
 
+	// 레거시 애니 ANS_Unequip 노티 상태 — 해제 몽타주 시작/종료를 Equip 의 Begin_/End_Equip 과 같은 축으로 둔다.
+	UFUNCTION(BlueprintNativeEvent)
+	void Begin_Unequip();
+	virtual void Begin_Unequip_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void End_Unequip();
+	virtual void End_Unequip_Implementation();
+
 public:
 	FORCEINLINE TSharedPtr<bool> GetBeginEquip() const { return  MakeShared<bool>(bBeginEquip); }
 	FORCEINLINE TSharedPtr<bool> GetEquipped() const { return MakeShared<bool>(bEquipped); }
