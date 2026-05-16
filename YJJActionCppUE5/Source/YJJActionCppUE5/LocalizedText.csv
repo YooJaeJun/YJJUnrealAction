@@ -1,0 +1,17 @@
+---,ST_YJJ_UI
+Key,SourceString
+MountInteract,탑승
+PlayerSpawnedNotice,플레이어가 스폰되었습니다.
+NotEnoughStamina,스태미나가 부족합니다.
+NotEnoughMana,마나가 부족합니다.
+CRidingComponent_BeginPlay_NoPC,[UI] 로컬 PlayerController(AC) 없음
+CRidingComponent_BeginPlay_NoHUD,[UI] HUD 없음
+CPlayableCharacter_SetStatusUI_NoHUD,[UI] SetStatusUI: HUD 없음
+CPlayableCharacter_SetStatusUI_NoPlayerInfo,[UI] SetStatusUI: PlayerInfo 없음
+CPlayerController_EnsureHUD_NotLocal,[UI] EnsureHUD: 로컬 PlayerController 가 아님
+CPlayerController_EnsureHUD_NoClass,[UI] PlayerHUD 없음이고 PlayerHUDClass 도 설정
+CUIBlueprintLibrary_EnsureLocalHUD_InvalidWorld,[UI] EnsureLocalHUD: WorldContextObject 무효
+CPortal_NextLevelUnset,[Portal] NextLevelName 미설정
+CWorldItem_NoInventory,[WorldItem] 인벤토리 컴포넌트 없음
+CPlacement_NoOwningPC,[Placement] OwningPlayerController 를 찾을 수 없음
+Dedicated_PickupInvalidWorldItem,[Dedicated] Server_RequestPickup: WorldItem 무효
