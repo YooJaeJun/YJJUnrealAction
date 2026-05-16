@@ -20,6 +20,7 @@
 #include "Components/TextRenderComponent.h"
 #include "Camera/PlayerCameraManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerController.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -356,6 +357,47 @@ void ACCommonCharacter::PlayHitSound()
 void ACCommonCharacter::PlaySound()
 {
 	PlayHitSound();
+}
+
+void ACCommonCharacter::SetDamagedInfo(
+	ACCommonCharacter* InAttacker,
+	AActor* InCauser,
+	FHitData InHitData,
+	const FVector InHitPoint)
+{
+	Attacker = InAttacker;
+	Causer = InCauser;
+	HitData = InHitData;
+	HitPoint = InHitPoint;
+}
+
+void ACCommonCharacter::PlayCameraShake()
+{
+	if (HitReactionCameraShakeClass == nullptr)
+		return;
+
+	UWorld* world = GetWorld();
+	if (false == IsValid(world))
+		return;
+
+	if (world->GetNetMode() == NM_DedicatedServer)
+		return;
+
+	if (false == IsLocallyControlled())
+		return;
+
+	APlayerController* playerController = Cast<APlayerController>(GetController());
+	if (false == IsValid(playerController))
+		return;
+
+	APlayerCameraManager* cameraManager = playerController->PlayerCameraManager;
+	if (false == IsValid(cameraManager))
+		return;
+
+	cameraManager->StartCameraShake(
+		HitReactionCameraShakeClass,
+		HitReactionCameraShakeScale,
+		ECameraShakePlaySpace::CameraLocal);
 }
 
 void ACCommonCharacter::RenderStateText()

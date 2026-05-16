@@ -14,27 +14,37 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Characters/AI/CAIController_Melee.h"
 #include "Components/CMontagesComponent.h"
+#include "Blueprint/UserWidget.h"
 
 ACAnimal_AI::ACAnimal_AI()
 {
 	const TObjectPtr<USkeletalMeshComponent> mesh = GetMesh();
 
-	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", mesh);
-	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
+	// mesh ?? ??ï¿½???? ???(BP_Animal ? ?? ??).
+	YJJHelpers::CreateComponent<USceneComponent>(this, &MountLeftPoint, TEXT("MountLeft"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &MountRightPoint, TEXT("MountRight"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &MountBackPoint, TEXT("MountBack"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &RiderPoint, TEXT("RiderPoint"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &UnmountPoint, TEXT("Unmount"), mesh);
+	YJJHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, TEXT("InterationCollision"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &EyePoint, TEXT("EyePoint"), mesh);
+
+	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, TEXT("SpringArm"), RiderPoint);
+	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, TEXT("Camera"), SpringArm);
+
+	YJJHelpers::CreateComponent<USceneComponent>(this, &HpBarSceneRoot, TEXT("Scene"), GetCapsuleComponent());
+	YJJHelpers::CreateComponent<UWidgetComponent>(this, &HpBarWidgetComp, TEXT("HpBarWidget"), HpBarSceneRoot);
+
 	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "CamComponent");
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
 	YJJHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "PatrolComponent");
 	YJJHelpers::CreateActorComponent<UCRidingComponent>(this, &RidingComp, "RidingComponent");
+	RidingComponent = RidingComp;
 	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
-	YJJHelpers::CreateComponent<USceneComponent>(this, &MountLeftPoint, "MountLeftPoint", GetMesh());
-	YJJHelpers::CreateComponent<USceneComponent>(this, &MountRightPoint, "MountRightPoint", GetMesh());
-	YJJHelpers::CreateComponent<USceneComponent>(this, &MountBackPoint, "MountBackPoint", GetMesh());
-	YJJHelpers::CreateComponent<USceneComponent>(this, &RiderPoint, "RiderPoint", GetMesh());
-	YJJHelpers::CreateComponent<USceneComponent>(this, &UnmountPoint, "UnmountPoint", GetMesh());
-	YJJHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, "InteractionCollision", GetMesh());
-	YJJHelpers::CreateComponent<USceneComponent>(this, &EyePoint, "EyePoint", GetMesh());
+	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
 
 	if (IsValid(StateComp))
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACAnimal_AI::OnStateTypeChanged);
@@ -68,6 +78,13 @@ ACAnimal_AI::ACAnimal_AI()
 		SpringArm->SetRelativeRotation(FRotator(-5, 90, 0));
 	}
 
+	if (IsValid(HpBarWidgetComp))
+	{
+		HpBarWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+		HpBarWidgetComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		HpBarWidgetComp->SetDrawAtDesiredSize(true);
+	}
+
 	if (IsValid(MountLeftPoint))
 		MountLeftPoint->SetRelativeLocation(FVector(40, 0, 80));
 	if (IsValid(MountRightPoint))
@@ -85,12 +102,15 @@ void ACAnimal_AI::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (IsValid(HpBarWidgetComp) && AnimalHpBarWidgetClass != nullptr)
+		HpBarWidgetComp->SetWidgetClass(AnimalHpBarWidgetClass);
+
 	if (IsValid(RidingComp) && IsValid(InteractionCollision))
 	{
 		InteractionCollision->OnComponentBeginOverlap.AddDynamic(
-			RidingComp.Get(), &UCRidingComponent::BeginOverlap);
+			RidingComp.Get(), &UCRidingComponent::MountInteraction_OnBeginOverlap);
 		InteractionCollision->OnComponentEndOverlap.AddDynamic(
-			RidingComp.Get(), &UCRidingComponent::EndOverlap);
+			RidingComp.Get(), &UCRidingComponent::MountInteraction_OnEndOverlap);
 	}
 
 	if (IsValid(RiderPoint))
@@ -126,6 +146,14 @@ void ACAnimal_AI::BeginPlay()
 
 	if (IsValid(CharacterStatComp))
 		CharacterStatComp->SetAttackRange(250.0f);
+
+	// HpBarWidgetComp ? ?? ???? ?? ? SetHpUI ? HpBar_NPC ?? ? ??? ???.
+	SetHpUI();
+}
+
+UWidgetComponent* ACAnimal_AI::GetAnimalHpBarWidgetComponent() const
+{
+	return HpBarWidgetComp.Get();
 }
 
 void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -136,21 +164,44 @@ void ACAnimal_AI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("MoveRight", MovementComp.Get(), &UCMovementComponent::InputAxis_MoveRight);
 	PlayerInputComponent->BindAxis("HorizontalLook", CamComp.Get(), &UCCamComponent::InputAxis_HorizontalLook);
 	PlayerInputComponent->BindAxis("VerticalLook", CamComp.Get(), &UCCamComponent::InputAxis_VerticalLook);
-	PlayerInputComponent->BindAxis("Zoom", CamComp.Get(), &UCCamComponent::InputAxis_Zoom);
+	PlayerInputComponent->BindAxis("Zoom", RidingComp.Get(), &UCRidingComponent::Input_Zoom);
 
 	PlayerInputComponent->BindAction("Walk", IE_Pressed, MovementComp.Get(), &UCMovementComponent::InputAction_Walk);
 	PlayerInputComponent->BindAction("Walk", IE_Released, MovementComp.Get(), &UCMovementComponent::InputAction_Run);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, MovementComp.Get(), &UCMovementComponent::InputAction_Jump);
-	PlayerInputComponent->BindAction("Targeting", IE_Pressed, TargetingComp.Get(), &UCTargetingComponent::InputAction_Targeting);
-	PlayerInputComponent->BindAction("Menu", IE_Pressed, GameUIComp.Get(), &UCGameUIComponent::InputAction_ActivateEquipMenu);
-	PlayerInputComponent->BindAction("Menu", IE_Released, GameUIComp.Get(), &UCGameUIComponent::InputAction_DeactivateEquipMenu);
-	PlayerInputComponent->BindAction("Action", IE_Pressed, WeaponComp.Get(), &UCWeaponComponent::InputAction_Act);
-	PlayerInputComponent->BindAction("Action", IE_Pressed, RidingComp.Get(), &UCRidingComponent::InputAction_Act);
+	PlayerInputComponent->BindAction("Targeting", IE_Pressed, RidingComp.Get(), &UCRidingComponent::TargetingInput);
+	PlayerInputComponent->BindAction("Menu", IE_Pressed, RidingComp.Get(), &UCRidingComponent::Ride_Input_Menu);
+	PlayerInputComponent->BindAction("Menu", IE_Released, RidingComp.Get(), &UCRidingComponent::Ride_Input_MenuHide);
+	PlayerInputComponent->BindAction("MagicMenu", IE_Pressed, RidingComp.Get(), &UCRidingComponent::Ride_Input_MagicMenu);
+	PlayerInputComponent->BindAction("MagicMenu", IE_Released, RidingComp.Get(), &UCRidingComponent::Ride_Input_MagicMenuHide);
+	PlayerInputComponent->BindAction("Action", IE_Pressed, RidingComp.Get(), &UCRidingComponent::Ride_Input_Action);
+	PlayerInputComponent->BindAction("SubWeapon_Action", IE_Pressed, RidingComp.Get(), &UCRidingComponent::Ride_Input_SubWeaponPressed);
+	PlayerInputComponent->BindAction("SubWeapon_Action", IE_Released, RidingComp.Get(), &UCRidingComponent::Ride_Input_SubWeaponReleased);
+	PlayerInputComponent->BindAction("Skill_1", IE_Pressed, RidingComp.Get(), &UCRidingComponent::Ride_Input_Skill1Pressed);
+	PlayerInputComponent->BindAction("Skill_2", IE_Pressed, RidingComp.Get(), &UCRidingComponent::Ride_Input_Skill2Pressed);
+	PlayerInputComponent->BindAction("Magic", IE_Pressed, RidingComp.Get(), &UCRidingComponent::Ride_Input_Magic);
+}
+
+void ACAnimal_AI::InputAction_Interact()
+{
+	if (GetbRiding() && IsValid(RidingComp.Get()) && RidingComp->GetRider().IsValid())
+	{
+		RidingComp->EndInteraction();
+		return;
+	}
+
+	ACCommonCharacter::InputAction_Interact();
 }
 
 void ACAnimal_AI::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
+
+	// BP_OnLanded ?? ?? ?? ? ï¿½ ??/?? ??? ?? ???? ????.
+	if (IsValid(MovementComp))
+		MovementComp->SetGravity(1.f);
+
+	PlayLandMontageIfAny();
 
 	UGameplayStatics::PlaySoundAtLocation(this, LandSound, GetActorLocation());
 
@@ -167,9 +218,9 @@ void ACAnimal_AI::Hit()
 
 	Super::Hit();
 
-	// µ¿¹°: HitDataÀÇ Montage, Launch ¾È ¾¸
+	// ?? HitData ??? Launch ??? ??? ??? ??.
 
-	// Interaction
+	// HitData ?? ?? ??ï¿½???ï¿½???
 	const FHitData data = Damage.Event.HitData;
 
 	data.PlayHitStop(GetWorld());

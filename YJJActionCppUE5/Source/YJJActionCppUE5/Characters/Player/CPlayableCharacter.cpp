@@ -1,5 +1,6 @@
 #include "CPlayableCharacter.h"
 #include "Global.h"
+#include "Utilities/YJJLocalizedText.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -7,8 +8,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/PointLightComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/PointLightComponent.h"
+#include "Components/ArrowComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Characters/CAnimInstance_Human.h"
 #include "Components/CStateComponent.h"
@@ -26,13 +28,15 @@
 #include "Components/CCharacterStatComponent.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
+#include "Widgets/Player/CUserWidget_PlayerBar.h"
+#include "Widgets/Player/CUserWidget_PlayerLevel.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/Weapons/CUserWidget_EquipMenu.h"
 #include "Widgets/Weapons/CUserWidget_MagicMenu.h"
 #include "Widgets/Interaction/CUserWidget_Interaction.h"
 #include "Widgets/Weapons/CUserWidget_EquipMenuButton.h"
 #include "Animation/AnimMontage.h"
-#include "Engine/TimerManager.h"
+#include "TimerManager.h"
 #include "UObject/UnrealType.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -167,20 +171,37 @@ ACPlayableCharacter::ACPlayableCharacter()
 	}
 
 	const TObjectPtr<USkeletalMeshComponent> meshComp = GetMesh();
-
-	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", meshComp);
-	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
-	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
-	WeaponComponent = WeaponComp;
-	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "CamComponent");	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
-	TargetComponent = TargetingComp;
-	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
-	YJJHelpers::CreateActorComponent<UCInventoryComponent>(this, &InventoryComp, "InventoryComponent");
-	YJJHelpers::CreateActorComponent<UCPlacementComponent>(this, &PlacementComp, "PlacementComponent");
-
 	const TObjectPtr<UCapsuleComponent> capsuleComp = GetCapsuleComponent();
-	YJJHelpers::CreateComponent<UPointLightComponent>(this, &PointLight, TEXT("PointLight"), capsuleComp);
-	YJJHelpers::CreateComponent<UPointLightComponent>(this, &PointLight1, TEXT("PointLight1"), capsuleComp);
+
+	// BP_Player: CollisionCylinder — ArrowGroup — (Ceil, Center, Floor, Land_0, Left, Right).
+	YJJHelpers::CreateComponent<USceneComponent>(this, &ArrowGroup, TEXT("ArrowGroup"), capsuleComp);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowCeil, TEXT("Ceil"), ArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowCenter, TEXT("Center"), ArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowFloor, TEXT("Floor"), ArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowLand0, TEXT("Land_0"), ArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowLeft, TEXT("Left"), ArrowGroup);
+	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowRight, TEXT("Right"), ArrowGroup);
+
+	// BP_Player: CharacterMesh0 — SpringArm — Camera — MainCamChild; SequenceCamera — SequenceCamChild; Scene — PointLights.
+	YJJHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, TEXT("SpringArm"), meshComp);
+	YJJHelpers::CreateComponent<UCameraComponent>(this, &Camera, TEXT("Camera"), SpringArm);
+	YJJHelpers::CreateComponent<UChildActorComponent>(this, &MainCamChild, TEXT("MainCamChild"), Camera);
+
+	YJJHelpers::CreateComponent<USceneComponent>(this, &SequenceCamera, TEXT("SequenceCamera"), meshComp);
+	YJJHelpers::CreateComponent<UChildActorComponent>(this, &SequenceCamChild, TEXT("SequenceCamChild"), SequenceCamera);
+
+	YJJHelpers::CreateComponent<USceneComponent>(this, &CinematicLightScene, TEXT("Scene"), meshComp);
+	YJJHelpers::CreateComponent<UPointLightComponent>(this, &PointLight, TEXT("PointLight"), CinematicLightScene);
+	YJJHelpers::CreateComponent<UPointLightComponent>(this, &PointLight1, TEXT("PointLight1"), CinematicLightScene);
+
+	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, TEXT("WeaponComponent"));
+	WeaponComponent = WeaponComp;
+	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, TEXT("CamComponent"));
+	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, TEXT("TargetingComponent"));
+	TargetComponent = TargetingComp;
+	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, TEXT("GameUIComponent"));
+	YJJHelpers::CreateActorComponent<UCInventoryComponent>(this, &InventoryComp, TEXT("InventoryComponent"));
+	YJJHelpers::CreateActorComponent<UCPlacementComponent>(this, &PlacementComp, TEXT("PlacementComponent"));
 
 	TObjectPtr<USkeletalMesh> mesh = nullptr;
 	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
@@ -698,13 +719,13 @@ void ACPlayableCharacter::SpawnMessage()
 {
 	TryPlaySystemMessage(
 		SystemMessageComponent.Get(),
-		FText::FromString(TEXT("플레이어가 스폰되었습니다.")),
+		YJJLocalization::LocalizedText_PlayerSpawnedNotice(),
 		5.0);
 }
 
 void ACPlayableCharacter::SetMinimap()
 {
-	if (false == Minimap)
+	if (nullptr == Minimap.Get())
 		return;
 
 	UWorld* world = GetWorld();
@@ -941,14 +962,14 @@ void ACPlayableCharacter::ShakeCam_Implementation()
 void ACPlayableCharacter::NotEnoughStamina()
 {
 	ShakeCam();
-	TryPlaySystemMessage(SystemMessageComponent.Get(), FText::FromString(TEXT("스태미나가 부족합니다.")), 3.0);
+	TryPlaySystemMessage(SystemMessageComponent.Get(), YJJLocalization::LocalizedText_NotEnough_Stamina(), 3.0);
 	SetIdle();
 }
 
 void ACPlayableCharacter::NotEnoughMana()
 {
 	ShakeCam();
-	TryPlaySystemMessage(SystemMessageComponent.Get(), FText::FromString(TEXT("마나가 부족합니다.")), 3.0);
+	TryPlaySystemMessage(SystemMessageComponent.Get(), YJJLocalization::LocalizedText_NotEnough_Mana(), 3.0);
 	SetIdle();
 }
 
@@ -1107,7 +1128,7 @@ bool ACPlayableCharacter::Tick_CheckGround() const
 		const_cast<ACPlayableCharacter*>(this),
 		start,
 		end,
-		UEngineTypes::ConvertToTraceType(ETraceTypeQuery::TraceTypeQuery1),
+		ETraceTypeQuery::TraceTypeQuery1,
 		false,
 		TArray<AActor*>(),
 		EDrawDebugTrace::None,
@@ -1218,7 +1239,9 @@ void ACPlayableCharacter::ReportNoise()
 void ACPlayableCharacter::SetFluidSim()
 {
 	UWorld* world = GetWorld();
-	if (false == IsValid(world) || false == FluidSimClass)
+	if (false == IsValid(world))
+		return;
+	if (nullptr == FluidSimClass.Get())
 		return;
 
 	TArray<AActor*> actors;

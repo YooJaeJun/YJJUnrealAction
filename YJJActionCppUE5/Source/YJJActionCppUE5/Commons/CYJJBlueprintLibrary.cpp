@@ -1,6 +1,13 @@
 #include "Commons/CYJJBlueprintLibrary.h"
+#include "Utilities/YJJLocalizedText.h"
+#include "Internationalization/Text.h"
 #include "Animation/AnimMontage.h"
 #include "Sound/SoundWave.h"
+
+FText UCYJJBlueprintLibrary::GetLocalizedUI(FName Key)
+{
+	return YJJLocalization::LocalizedText_From_UserInterface_Localization_Table_Key(Key);
+}
 
 void UCYJJBlueprintLibrary::BreakCCharacterInfo(
 	const FCCharacterInfo& CharacterInfo,
@@ -26,7 +33,8 @@ void UCYJJBlueprintLibrary::BreakHitData(
 	UFXSystemAsset*& Effect,
 	FVector& EffectLocation,
 	FVector& EffectScale,
-	CEHitType& AttackType)
+	CEHitType& AttackType,
+	TSubclassOf<UCameraShakeBase>& ShakeClass)
 {
 	Montage = HitData.Montage;
 	PlayRate = HitData.PlayRate;
@@ -38,4 +46,5 @@ void UCYJJBlueprintLibrary::BreakHitData(
 	EffectLocation = HitData.EffectLocation;
 	EffectScale = HitData.EffectScale;
 	AttackType = HitData.AttackType;
+	ShakeClass = HitData.ShakeClass;
 }

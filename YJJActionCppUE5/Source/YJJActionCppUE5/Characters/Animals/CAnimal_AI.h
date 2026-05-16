@@ -20,7 +20,7 @@ class CUserWidget_HUD;
 class CUserWidget_Interaction;
 class ACCommonCharacter;
 class UCWeaponComponent;
-class UCameraComponent;
+class UWidgetComponent;
 
 UCLASS(Abstract)
 class YJJACTIONCPPUE5_API ACAnimal_AI :
@@ -38,6 +38,11 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	virtual void Landed(const FHitResult& Hit) override;
+
+	virtual void InputAction_Interact() override;
+
+protected:
+	virtual UWidgetComponent* GetAnimalHpBarWidgetComponent() const override;
 
 protected:
 	virtual void Hit() override;
@@ -61,6 +66,10 @@ public:
 	FORCEINLINE TObjectPtr<USceneComponent> GetUnmountPoint() const { return UnmountPoint; }
 	FORCEINLINE TObjectPtr<USceneComponent> GetEyePoint() const { return EyePoint; }
 
+	// RidingComponent BPVar Eye / EyeClass — C++ 탈것 액터에만 존재.
+	FORCEINLINE TSubclassOf<AActor> GetEyeActorClass() const { return EyeClass; }
+	FORCEINLINE TObjectPtr<AActor> GetSpawnedEyeActor() const { return Eye; }
+
 	virtual TObjectPtr<USpringArmComponent> GetSpringArm() const override;
 	virtual TObjectPtr<UCTargetingComponent> GetTargetingComp() const override;
 	FORCEINLINE TObjectPtr<UCameraComponent> GetCamera() const { return Camera; }
@@ -79,10 +88,13 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCRidingComponent> RidingComp;
 
+	// BP_Animal Variable 이름 "RidingComponent" 와 동일 객체 — 직렬화·에디터 표시용.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (DisplayName = "RidingComponent"))
+	TObjectPtr<UCRidingComponent> RidingComponent;
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCWeaponComponent> WeaponComp;
 
-private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArm;
 
@@ -121,4 +133,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Riding")
 	TObjectPtr<UBoxComponent> InteractionCollision;
+
+	// BP_Animal — 캡슐 하위 Scene(이름 "Scene") + HpBarWidget.
+	UPROPERTY(VisibleAnywhere, Category = "UI", meta = (DisplayName = "Scene"))
+	TObjectPtr<USceneComponent> HpBarSceneRoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (DisplayName = "HpBarWidget"))
+	TObjectPtr<UWidgetComponent> HpBarWidgetComp;
 };

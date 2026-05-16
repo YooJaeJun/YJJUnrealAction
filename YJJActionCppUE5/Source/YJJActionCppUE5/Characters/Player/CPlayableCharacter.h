@@ -29,6 +29,8 @@ class UCUserWidget_Interaction;
 class UPointLightComponent;
 class UNiagaraComponent;
 class UChildActorComponent;
+class UArrowComponent;
+class USceneComponent;
 
 UCLASS()
 class YJJACTIONCPPUE5_API ACPlayableCharacter :
@@ -59,12 +61,37 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Cinematic")
 	void SetupCinematic(bool OnOff);
 
-	// BP_Player 시네 마커용 조명 — 그래프가 PointLight / PointLight1 을 참조한다.
+	// BP_Player 시네 마커용 조명 — Mesh 하위 Scene → PointLight 들 (캡슐이 아님).
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cinematic", meta = (DisplayName = "Scene"))
+	TObjectPtr<USceneComponent> CinematicLightScene;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cinematic")
 	TObjectPtr<UPointLightComponent> PointLight;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cinematic")
 	TObjectPtr<UPointLightComponent> PointLight1;
+
+	// BP_Player — 캡슐 하위 방향 마커(파쿠르·에어 기준점 등).
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers")
+	TObjectPtr<USceneComponent> ArrowGroup;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers")
+	TObjectPtr<UArrowComponent> ArrowCeil;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers")
+	TObjectPtr<UArrowComponent> ArrowCenter;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers")
+	TObjectPtr<UArrowComponent> ArrowFloor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers")
+	TObjectPtr<UArrowComponent> ArrowLand0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers")
+	TObjectPtr<UArrowComponent> ArrowLeft;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Markers")
+	TObjectPtr<UArrowComponent> ArrowRight;
 
 	// 레거시 BP_Player — 활 장착(양궁) 모드 여부. (과거 IsNotBowMode 의 부정을 제거한 긍정형)
 	UFUNCTION(BlueprintPure, Category = "Weapon")
@@ -200,11 +227,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trail", meta = (MultiLine = "true"))
 	TObjectPtr<UNiagaraComponent> MotionTrailEffect;
 
+	// BP_Player — Mesh 하위 SequenceCamera 앵커 아래 시네용 ChildActor.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam")
+	TObjectPtr<USceneComponent> SequenceCamera;
+
 	// BP_Player 스킬 시네 카메라 — ChildActor 의 카메라 액터로 블렌드.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
 	TObjectPtr<UChildActorComponent> SequenceCamChild;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
+	// 메인 카메라 컴포넌트 하위 — BP 의 MainCamChild 와 동일 계층.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
 	TObjectPtr<UChildActorComponent> MainCamChild;
 
 	// BP_Player SkillSequence — UActorSequenceComponent 등, SequencePlayer 프로퍼티가 있으면 Begin_SkillCam 에서 Play 호출.
@@ -396,7 +428,8 @@ public:
 	virtual TObjectPtr<USpringArmComponent> GetSpringArm() const override;
 	virtual TObjectPtr<UCTargetingComponent> GetTargetingComp() const override;
 
-private:
+	// UHT: BlueprintReadOnly/Write 는 private 에 둘 수 없음.
+protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArm;
 

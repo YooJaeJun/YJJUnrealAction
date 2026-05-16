@@ -4,6 +4,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Commons/CEnums.h"
 #include "Engine/DamageEvents.h"
+#include "Camera/CameraShakeBase.h"
 #include "CWeaponStructures.generated.h"
 
 class UAnimMontage;
@@ -118,6 +119,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float StopTime = 0.0f;
+
+	// BP FHitData 의 ShakeClass / 레거시 LegacyCameraShake — CameraShakeBase 파생이면 그대로 대입 가능.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UCameraShakeBase> ShakeClass = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USoundWave* Sound = nullptr;

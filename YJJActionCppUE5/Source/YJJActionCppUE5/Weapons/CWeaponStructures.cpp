@@ -133,14 +133,14 @@ void FHitData::PlayHitStop(const TWeakObjectPtr<UWorld> InWorld) const
 
 	TArray<TWeakObjectPtr<ACCommonCharacter>> characters;
 
-	for (TWeakObjectPtr<AActor> actor : InWorld->GetCurrentLevel()->Actors)
+	for (const TObjectPtr<AActor>& actor : InWorld->GetCurrentLevel()->Actors)
 	{
-		const TWeakObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(actor);
+		const TObjectPtr<ACCommonCharacter> character = Cast<ACCommonCharacter>(actor.Get());
 
-		if (character.IsValid())
+		if (IsValid(character.Get()))
 		{
 			character->CustomTimeDilation = 1e-3f;
-			characters.Add(character);
+			characters.Add(TWeakObjectPtr<ACCommonCharacter>(character.Get()));
 		}
 	}
 

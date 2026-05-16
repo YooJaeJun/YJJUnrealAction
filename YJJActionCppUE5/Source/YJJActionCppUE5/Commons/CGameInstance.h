@@ -64,6 +64,8 @@ public:
 	float DropExp;
 };
 
+class UStringTable;
+
 UCLASS()
 class YJJACTIONCPPUE5_API UCGameInstance : public UGameInstance
 {
@@ -83,4 +85,8 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UDataTable> CharacterStatTable;
+
+	// YJJLocalization::LocalizedText_From_UserInterface_Localization_Table_Key 가 같은 Identifier 사용 — Content/Localization/ST_YJJ_UI; 원본 CSV 는 Source/YJJActionCppUE5/LocalizedText.csv .
+	UPROPERTY()
+	TObjectPtr<UStringTable> UiStringTable;
 };

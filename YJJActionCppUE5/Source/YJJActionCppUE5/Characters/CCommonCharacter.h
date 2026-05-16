@@ -8,6 +8,7 @@
 #include "Interfaces/CInterface_PlayerPossess.h"
 #include "Interfaces/CInterface_CharacterMenu.h"
 #include "Interfaces/CInterface_CharacterGameplay.h"
+#include "Camera/CameraShakeBase.h"
 #include "Commons/CGameInstance.h"
 #include "Weapons/CWeaponStructures.h"
 #include "Animation/AnimInstance.h"
@@ -32,6 +33,7 @@ class UCUserWidget_HUD;
 class UTextRenderComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMount, ACCommonCharacter*, Object);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnmount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteract);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIsDeadCharacter);
 
@@ -152,8 +154,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "세팅")
 	CESpeedType GetCurrentSpeedType(float Tolerance = 1.0f) const;
 
-	// BP_Player 이동 축 — MovingComponent::CanMove(InAxis) 와 동일 판정.
-	UFUNCTION(BlueprintPure, Category = "Movement")
+	// BP_Player / BP_Animal::CanMove — exec 그래프 호환(Callable). |축|>0.5 일 때만 MovingComponent::IsCanMove.
+	UFUNCTION(BlueprintCallable, Category = "Utilities")
 	void CanMove(double InAxis, bool& OutCanMove) const;
 
 	// BP_Character::LaunchBack — 뒤로 밀기 + Z 보정은 BP 와 동일하게 기본 1000.
@@ -179,6 +181,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hit")
 	void PlaySound();
 
+	// BP_Character::SetDamagedInfo — I_Damage.Damaged 에서 피격 맥락을 멤버에 저장한다.
+	UFUNCTION(BlueprintCallable, Category = "Hit", meta = (DisplayName = "Set Damaged Info"))
+	void SetDamagedInfo(ACCommonCharacter* InAttacker, AActor* InCauser, FHitData InHitData, FVector InHitPoint);
+
+	// 로컬 조종/탑승 시 피드백용 카메라 쉐이크. 전용 서버에서는 생략한다.
+	UFUNCTION(BlueprintCallable, Category = "Hit", meta = (DisplayName = "Play Camera Shake"))
+	virtual void PlayCameraShake();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit")
+	TSubclassOf<UCameraShakeBase> HitReactionCameraShakeClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit")
+	float HitReactionCameraShakeScale = 1.0f;
+
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void RenderStateText();
 
@@ -190,7 +206,7 @@ public:
 	void BilboardStateText();
 
 public:
-	void InputAction_Interact();
+	virtual void InputAction_Interact();
 
 	// BP_Player::GetHUD 와 동일: 로컬 PC → EnsureHUD. 위젯 생성 등 부작용이 있으므로 Callable 로 둔다.
 	UFUNCTION(BlueprintCallable, Category = "UI")

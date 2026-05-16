@@ -15,6 +15,10 @@ public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	// 레거시 ABP_Dragon — DragonWeapon C++ 포팅 전까지 Anim BP 에서 설정 가능.
+	UPROPERTY(BlueprintReadWrite, Category = "Dragon", meta = (DisplayName = "Is Firing Flying"))
+	bool bIsFiringFlying = false;
+
 private:
 	TWeakObjectPtr<ACDragon_AI> OwnerDragon;
 	TWeakObjectPtr<ACDragonSkill> Skill;

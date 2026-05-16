@@ -19,7 +19,7 @@ void ACSkillCollider_Aura::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Niagara->SetNiagaraVariableObject(FString(TEXT("Mesh_Scale")), this);
+	Niagara->SetVariableObject(FName(TEXT("Mesh_Scale")), this);
 	Niagara->OnSystemFinished.AddDynamic(this, &ACSkillCollider_Aura::OnSystemFinished);
 
 	Box->OnComponentBeginOverlap.AddDynamic(this, &ACSkillCollider_Aura::OnComponentBeginOverlap);

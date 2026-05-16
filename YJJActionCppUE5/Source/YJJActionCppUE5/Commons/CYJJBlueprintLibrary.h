@@ -5,6 +5,7 @@
 #include "Commons/CGameInstance.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Weapons/CWeaponStructures.h"
+#include "Camera/CameraShakeBase.h"
 #include "CYJJBlueprintLibrary.generated.h"
 
 class UAnimMontage;
@@ -28,6 +29,10 @@ public:
 		FName& Name,
 		FLinearColor& BodyColor);
 
+	// String Table Identifier 는 YJJLocalization::UserInterface_Localization_StringTableIdentifier 과 동일. 키는 Source/YJJActionCppUE5/LocalizedText.csv .
+	UFUNCTION(BlueprintPure, Category = "YJJ|Localization")
+	static FText GetLocalizedUI(FName Key);
+
 	UFUNCTION(BlueprintPure, meta = (NativeBreak), Category = "YJJ|Hit")
 	static void BreakHitData(
 		UPARAM(DisplayName = "Hit Data") const FHitData& HitData,
@@ -40,5 +45,6 @@ public:
 		UFXSystemAsset*& Effect,
 		FVector& EffectLocation,
 		FVector& EffectScale,
-		CEHitType& AttackType);
+		CEHitType& AttackType,
+		TSubclassOf<UCameraShakeBase>& ShakeClass);
 };

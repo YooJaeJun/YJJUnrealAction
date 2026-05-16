@@ -55,6 +55,10 @@ public:
 	void SetRise() { SetRiseMode(); }
 	void SetRidingMode();
 
+	// 레거시 BP — StateComponent 타깃 "Set Riding".
+	UFUNCTION(BlueprintCallable, Category = "State", meta = (DisplayName = "Set Riding"))
+	void SetRiding() { SetRidingMode(); }
+
 	void SetHitMode(const CEHitType InHitType);
 
 	// 레거시 BP_Player — "Set Hitted". 우선 공통 피격 모드로 둔다.
@@ -121,7 +125,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "State")
 	bool IsHitted() const { return false == IsHitNoneMode(); }
 
-private:
+	// UHT: BlueprintReadOnly(Type) 는 private 에 둘 수 없음.
+protected:
 	UPROPERTY(EditAnyWhere, Category = "Settings")
 	CEStateType CurType = CEStateType::Idle;
 

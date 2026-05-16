@@ -16,6 +16,7 @@ public class YJJActionCppUE5 : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
+			"PhysicsCore",
 			"InputCore",
 			"HeadMountedDisplay",
 			"EnhancedInput",
