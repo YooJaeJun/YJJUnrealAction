@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Commons/CEnums.h"
 #include "GameFramework/Actor.h"
 #include "CSkillWeapon.generated.h"
 
@@ -23,6 +24,47 @@ UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API ACMagicSkillContext : public ACSkillContextProvider
 {
 	GENERATED_BODY()
+
+public:
+	// BP Magic_C::Equip — C++ 에서 장착 훅 필요 시 여기 또는 BP 에서 재정의한다.
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Magic")
+	void Equip();
+	virtual void Equip_Implementation();
+
+	// BP Magic_C::Unequip — SetUnarmed / SetMode 가 슬롯 전환 전에 호출한다.
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Magic")
+	void Unequip();
+	virtual void Unequip_Implementation();
+
+	// ---------- BP Magic_C — MagicComponent EventGraph 가 캐릭터 애니·입력에서 포워드 ----------
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Magic")
+	void Begin_Equip();
+	virtual void Begin_Equip_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Magic")
+	void End_Equip();
+	virtual void End_Equip_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Magic")
+	void Begin_Unequip();
+	virtual void Begin_Unequip_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Magic")
+	void End_Unequip();
+	virtual void End_Unequip_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Magic")
+	void DoAction(CEAttackType InAttackType, int32 InSkillIndex);
+	virtual void DoAction_Implementation(CEAttackType InAttackType, int32 InSkillIndex);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Magic")
+	void Begin_DoAction(CEAttackType InAttackType);
+	virtual void Begin_DoAction_Implementation(CEAttackType InAttackType);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Magic")
+	void End_DoAction(CEAttackType InAttackType);
+	virtual void End_DoAction_Implementation(CEAttackType InAttackType);
 };
 
 // BP `/Game/Weapons/Weapon` 가 달도록 하는 마커 부모(두 번째 Cast 분기).

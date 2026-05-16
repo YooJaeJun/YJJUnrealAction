@@ -17,11 +17,14 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/CMagicComponent.h"
 #include "Components/CCamComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Components/CGameUIComponent.h"
 #include "Components/CInventoryComponent.h"
 #include "Components/CPlacementComponent.h"
+#include "Components/CParkourComponent.h"
+#include "Components/CSystemMessageComponent.h"
 #include "Commons/CGameMode.h"
 #include "Commons/CPlayerController.h"
 #include "Components/CCharacterInfoComponent.h"
@@ -143,19 +146,11 @@ namespace
 		Widget->ProcessEvent(fn, nullptr);
 	}
 
-	void TryPlaySystemMessage(UActorComponent* Comp, const FText& InText, const double InSeconds)
+	void TryPlaySystemMessage(UCSystemMessageComponent* Comp, const FText& InText, const double InSeconds)
 	{
 		if (false == IsValid(Comp))
 			return;
-		UFunction* fn = Comp->FindFunction(FName(TEXT("Play")));
-		if (fn == nullptr)
-			return;
-		struct FPay
-		{
-			FText InText;
-			double InTime;
-		} p{ InText, InSeconds };
-		Comp->ProcessEvent(fn, &p);
+		Comp->Play(InText, InSeconds);
 	}
 }
 
@@ -175,6 +170,9 @@ ACPlayableCharacter::ACPlayableCharacter()
 
 	// BP_Player: CollisionCylinder — ArrowGroup — (Ceil, Center, Floor, Land_0, Left, Right).
 	YJJHelpers::CreateComponent<USceneComponent>(this, &ArrowGroup, TEXT("ArrowGroup"), capsuleComp);
+	if (IsValid(ArrowGroup))
+		ArrowGroup->ComponentTags.Add(FName(TEXT("Arrows")));
+
 	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowCeil, TEXT("Ceil"), ArrowGroup);
 	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowCenter, TEXT("Center"), ArrowGroup);
 	YJJHelpers::CreateComponent<UArrowComponent>(this, &ArrowFloor, TEXT("Floor"), ArrowGroup);
@@ -196,12 +194,17 @@ ACPlayableCharacter::ACPlayableCharacter()
 
 	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, TEXT("WeaponComponent"));
 	WeaponComponent = WeaponComp;
+	YJJHelpers::CreateActorComponent<UCMagicComponent>(this, &MagicComp, TEXT("MagicComponent"));
+	MagicComponent = MagicComp;
 	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, TEXT("CamComponent"));
 	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, TEXT("TargetingComponent"));
 	TargetComponent = TargetingComp;
 	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, TEXT("GameUIComponent"));
 	YJJHelpers::CreateActorComponent<UCInventoryComponent>(this, &InventoryComp, TEXT("InventoryComponent"));
 	YJJHelpers::CreateActorComponent<UCPlacementComponent>(this, &PlacementComp, TEXT("PlacementComponent"));
+	YJJHelpers::CreateActorComponent<UCParkourComponent>(this, &ParkourComp, TEXT("ParkourComponent"));
+	YJJHelpers::CreateActorComponent<UCSystemMessageComponent>(
+		this, &SystemMessageComponent, TEXT("SystemMessageComponent"));
 
 	TObjectPtr<USkeletalMesh> mesh = nullptr;
 	YJJHelpers::GetAsset<USkeletalMesh>(&mesh, "SkeletalMesh'/Game/Assets/Character/MercenaryWarrior/Meshes/SK_MercenaryWarrior_WithoutHelmet.SK_MercenaryWarrior_WithoutHelmet'");
@@ -425,10 +428,15 @@ void ACPlayableCharacter::EquipWeaponFromUI(const CEWeaponType InNewType)
 	WeaponComp->SetMode(InNewType);
 }
 
-void ACPlayableCharacter::EquipMagicFromUI(const CEWeaponType InNewType)
+void ACPlayableCharacter::EquipMagicFromUI(const CEMagicType InNewType)
 {
-	// 마법·무기는 동일 UCWeaponComponent 모드 전환으로 처리한다.
-	EquipWeaponFromUI(InNewType);
+	if (false == IsValid(WeaponComp))
+	{
+		CLog::Log(TEXT("[UI] EquipMagicFromUI: WeaponComp 없음"));
+		return;
+	}
+
+	WeaponComp->SetMagicMode(InNewType);
 }
 
 void ACPlayableCharacter::Tick(float DeltaTime)
@@ -484,7 +492,7 @@ void ACPlayableCharacter::Avoid()
 
 void ACPlayableCharacter::Hit()
 {
-	CurHitType = Damage.Event.HitData.AttackType;
+	CurHitType = CEHitReactionFromAttackType(Damage.Event.HitData.AttackType);
 
 	Super::Hit();
 
@@ -602,7 +610,7 @@ void ACPlayableCharacter::SetDamage(const float InDamage, bool& OutHittedOrDead)
 
 	float dmg = InDamage;
 	if (dmg <= KINDA_SMALL_NUMBER)
-		dmg = HitData.Power;
+		dmg = HitData.Damage;
 
 	if (dmg <= KINDA_SMALL_NUMBER)
 		return;
@@ -647,7 +655,6 @@ void ACPlayableCharacter::CanHitAnim(bool& OutCanHitAnim)
 	case CEStateType::Avoid:
 	case CEStateType::Land:
 	case CEStateType::Dead:
-	case CEStateType::Max:
 	default:
 		OutCanHitAnim = false;
 		return;
@@ -874,7 +881,7 @@ void ACPlayableCharacter::RestoreStamina()
 	if (false == IsValid(StateComp))
 		return;
 
-	const bool bAllowRestore = StateComp->IsIdle() || StateComp->IsRiding();
+	const bool bAllowRestore = StateComp->IsIdle() || StateComp->IsRidingRecoverContext();
 	if (false == bAllowRestore)
 	{
 		AccelStaminaRestore = 1.0;
@@ -902,7 +909,7 @@ void ACPlayableCharacter::RestoreMana()
 	if (false == IsValid(StateComp))
 		return;
 
-	const bool bAllowRestore = StateComp->IsIdle() || StateComp->IsRiding();
+	const bool bAllowRestore = StateComp->IsIdle() || StateComp->IsRidingRecoverContext();
 	if (false == bAllowRestore)
 	{
 		AccelManaRestore = 1.0;
@@ -1107,8 +1114,9 @@ void ACPlayableCharacter::Tick_LerpMove(float DeltaTime)
 
 	SetActorLocation(newLoc, false, nullptr, ETeleportType::None);
 
-	const bool bNearX = FMath::IsNearlyEqual(newLoc.X, dest.X, LerpArrivalXYTolerance);
-	const bool bNearY = FMath::IsNearlyEqual(newLoc.Y, dest.Y, LerpArrivalXYTolerance);
+	const float arrivalToleranceResolved = MovementComp->LerpArrivalXYTolerance;
+	const bool bNearX = FMath::IsNearlyEqual(newLoc.X, dest.X, arrivalToleranceResolved);
+	const bool bNearY = FMath::IsNearlyEqual(newLoc.Y, dest.Y, arrivalToleranceResolved);
 	if (bNearX && bNearY)
 		MovementComp->SetLerpMove(false);
 }

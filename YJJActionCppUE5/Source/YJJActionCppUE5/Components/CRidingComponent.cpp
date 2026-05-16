@@ -238,10 +238,10 @@ void UCRidingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	{
 	case CERidingState::None:
 		if (IsValid(Rider.Get()))
-			SetRidingState(CERidingState::ToMountPoint);
+			SetRidingState(CERidingState::MovingToMountPoint);
 		break;
-	case CERidingState::ToMountPoint:
-		Tick_ToMountPoint();
+	case CERidingState::MovingToMountPoint:
+		Tick_MovingToMountPoint();
 		break;
 	case CERidingState::Mounting:
 		Tick_Mounting();
@@ -255,8 +255,8 @@ void UCRidingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	case CERidingState::Unmounting:
 		Tick_Unmounting();
 		break;
-	case CERidingState::UnmountingEnd:
-		Tick_UnmountingEnd();
+	case CERidingState::RidingEnd:
+		Tick_RidingEnd();
 		break;
 	}
 }
@@ -337,7 +337,7 @@ void UCRidingComponent::SetRider(ACCommonCharacter* InCharacter)
 		Owner->OnUnmount.AddDynamic(this, &UCRidingComponent::Unmount);
 }
 
-void UCRidingComponent::Tick_ToMountPoint()
+void UCRidingComponent::Tick_MovingToMountPoint()
 {
 	if (nullptr == RidingPoints[static_cast<uint8>(CERidingPoint::CurMount)])
 	{
@@ -659,7 +659,7 @@ void UCRidingComponent::Tick_Unmounting()
 	SetStatusUI();
 	OnStatusUI(false);
 
-	SetRidingState(CERidingState::UnmountingEnd);
+	SetRidingState(CERidingState::RidingEnd);
 }
 
 void UCRidingComponent::UnpossessAndInterpToCamera()
@@ -694,7 +694,7 @@ void UCRidingComponent::UnpossessAndInterpToCamera()
 		latentInfo);
 }
 
-void UCRidingComponent::Tick_UnmountingEnd()
+void UCRidingComponent::Tick_RidingEnd()
 {
 	// 애니 끝날 때까지 대기 후 실행
 	if (false == IsValid(Rider->GetCurrentMontage()))

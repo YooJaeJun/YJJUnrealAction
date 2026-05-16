@@ -5,7 +5,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CCamComponent.h"
 
-void UCEquipment::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEquipmentData& InData)
+void UCEquipment::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEquipData& InData)
 {
 	Owner = InOwner;
 	Data = InData;

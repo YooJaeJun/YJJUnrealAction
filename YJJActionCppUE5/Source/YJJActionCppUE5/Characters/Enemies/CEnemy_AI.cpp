@@ -95,7 +95,7 @@ void ACEnemy_AI::Hit()
 		GetWorld()->GetTimerManager().SetTimer(RestoreColor_TimerHandle, timerDelegate, 0.2f, false);
 	}
 
-	CurHitType = Damage.Event.HitData.AttackType;
+	CurHitType = CEHitReactionFromAttackType(Damage.Event.HitData.AttackType);
 
 	Super::Hit();
 

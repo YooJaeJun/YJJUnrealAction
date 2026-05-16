@@ -20,6 +20,7 @@ const UCWeaponAsset& UCWeaponAsset::DeepCopy(
 	const TWeakObjectPtr<ACCommonCharacter> Owner)
 {
 	Type = InOther.GetType();
+	MagicType = InOther.GetMagicType();
 	AttachmentClass = InOther.AttachmentClass;
 	Attachment = InOther.GetAttachment();
 	EquipmentClass = InOther.EquipmentClass;

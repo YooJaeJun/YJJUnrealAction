@@ -5,6 +5,7 @@
 #include "Commons/CEnums.h"
 #include "Engine/DamageEvents.h"
 #include "Camera/CameraShakeBase.h"
+#include "Sound/SoundBase.h"
 #include "CWeaponStructures.generated.h"
 
 class UAnimMontage;
@@ -13,8 +14,9 @@ class ACCommonCharacter;
 class UCCharacterStatComponent;
 class USoundWave;
 
-USTRUCT()
-struct FEquipmentData
+// BP Structure "FEquipData" 대응.
+USTRUCT(BlueprintType)
+struct FEquipData
 {
 	GENERATED_BODY()
 
@@ -22,25 +24,25 @@ public:
 	void PlaySoundWave(const TWeakObjectPtr<ACCommonCharacter> InOwner) const;
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAnimMontage> Montage;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PlayRate = 1;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanMove = true;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUseControlRotation = true;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USoundWave* Sound;
 };
 
-
-USTRUCT()
-struct FActData
+// BP Structure "FDoActionData" 대응 — Tag·AttackType·모션트레일·런치는 BP 필드를 C++ 로 옮긴 것.
+USTRUCT(BlueprintType)
+struct FDoActionData
 {
 	GENERATED_BODY()
 
@@ -51,40 +53,54 @@ public:
 	void PlayEffect(const TWeakObjectPtr<UWorld> InWorld, const FVector& InLocation, const FRotator& InRotation) const;
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Tag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	CEAttackType AttackType = CEAttackType::Common;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAnimMontage> Montage;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PlayRate = 1;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanMove = true;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUseControlRotation = true;
 
-	UPROPERTY(EditAnywhere)
-	bool bFixedCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bFixedCamera = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USoundWave> Sound;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UFXSystemAsset> Effect;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector EffectLocation = FVector::ZeroVector;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector EffectScale = FVector::OneVector;
 
-	UPROPERTY(EditAnywhere)
-	float Stamina;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUseMotionTrail = false;
 
-	UPROPERTY(EditAnywhere)
-	float Mana;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Stamina = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Mana = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LaunchForward = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LaunchUp = 0.0f;
 };
-
 
 USTRUCT(BlueprintType)
 struct FHitData
@@ -92,7 +108,7 @@ struct FHitData
 	GENERATED_BODY()
 
 public:
-	void SendDamage(const TWeakObjectPtr<ACCommonCharacter> InAttacker, 
+	void SendDamage(const TWeakObjectPtr<ACCommonCharacter> InAttacker,
 		const TWeakObjectPtr<AActor> InAttackCauser,
 		const TWeakObjectPtr<ACCommonCharacter> InOther) const;
 	void PlayMontage(const TWeakObjectPtr<ACCommonCharacter> InOwner) const;
@@ -111,22 +127,31 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PlayRate = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayName = "Damage"))
+	float Damage = 0.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Power = 0.0f;
+	CEAttackType AttackType = CEAttackType::Common;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanMove = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Launch = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float StopTime = 0.0f;
+	CECrowdControl CrowdControl = CECrowdControl::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayName = "Hit Stop"))
+	float HitStop = 0.0f;
 
 	// BP FHitData 의 ShakeClass / 레거시 LegacyCameraShake — CameraShakeBase 파생이면 그대로 대입 가능.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UCameraShakeBase> ShakeClass = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USoundWave* Sound = nullptr;
-	
+	USoundBase* Sound = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UFXSystemAsset* Effect = nullptr;
 
@@ -135,9 +160,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector EffectScale = FVector::OneVector;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	CEHitType AttackType = CEHitType::Common;
 };
 
 USTRUCT()

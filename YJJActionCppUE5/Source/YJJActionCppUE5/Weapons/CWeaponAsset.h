@@ -29,6 +29,7 @@ public:
 
 public:
 	FORCEINLINE constexpr CEWeaponType GetType() const { return Type; }
+	FORCEINLINE constexpr CEMagicType GetMagicType() const { return MagicType; }
 	FORCEINLINE constexpr ACAttachment* GetAttachment() const { return Attachment; }
 	FORCEINLINE constexpr UCEquipment* GetEquipment() const { return Equipment; }
 	FORCEINLINE constexpr UCAct* GetAct() const { return Act; }
@@ -37,6 +38,10 @@ public:
 protected:
 	UPROPERTY(EditAnywhere)
 	CEWeaponType Type;
+
+	// 마법 전용 DA 는 MagicType 을 채우고 Type 은 Unarmed 로 둔다. BeginPlay 가 맵을 둘로 나눈다.
+	UPROPERTY(EditAnywhere)
+	CEMagicType MagicType = CEMagicType::Unarmed;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ACAttachment> AttachmentClass;
@@ -52,10 +57,10 @@ protected:
 
 
 	UPROPERTY(EditAnywhere)
-	FEquipmentData EquipmentData;
+	FEquipData EquipmentData;
 
 	UPROPERTY(EditAnywhere)
-	TArray<FActData> ActDatas;
+	TArray<FDoActionData> ActDatas;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FHitData> HitDatas;

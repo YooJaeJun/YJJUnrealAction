@@ -8,6 +8,7 @@
 #include "Components/CFlyComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/CMagicComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/Pawn.h"
@@ -23,10 +24,19 @@ void UCAnimInstance_Character::NativeBeginPlay()
 	Character = Owner.Get();
 	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 	WeaponComponent = YJJHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
-	// MagicComponent: BP ?? MagicComponent_C ?? UCLASS ?? ?????? ?? ???? ��???OnMagicTypeChanged ???��?.
+	MagicComponent = YJJHelpers::GetComponent<UCMagicComponent>(Owner.Get());
 
 	if (StateComp.IsValid())
 		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Character::OnStateTypeChanged);
+
+	if (IsValid(MagicComponent))
+	{
+		MagicComponent->OnMagicTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Character::OnMagicTypeChanged);
+	}
+	else if (IsValid(WeaponComponent))
+	{
+		WeaponComponent->OnMagicTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Character::OnMagicTypeChanged);
+	}
 
 	if (IsValid(WeaponComponent))
 		WeaponComponent->OnWeaponTypeChanged.AddUniqueDynamic(this, &UCAnimInstance_Character::OnWeaponTypeChanged);
@@ -92,11 +102,14 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (IsValid(WeaponComponent))
 	{
-		MainWeaponType = WeaponComponent->GetType();
-		const CEWeaponType prevW = WeaponComponent->GetPrevType();
-		SubWeaponType = (prevW == CEWeaponType::Max) ? CEWeaponType::Unarmed : prevW;
-		MagicType = MainWeaponType;
+		MainWeaponType = WeaponComponent->GetLastCommittedPhysicalType();
+		SubWeaponType = WeaponComponent->GetSubWeaponLaneType();
 	}
+
+	if (IsValid(MagicComponent))
+		MagicType = MagicComponent->GetEquippedMagicSlot();
+	else if (IsValid(WeaponComponent))
+		MagicType = WeaponComponent->GetMagicEquipType();
 
 	Bow_Aiming = false;
 	if (IsValid(WeaponComponent))
@@ -224,11 +237,22 @@ void UCAnimInstance_Character::OnStateTypeChanged(const CEStateType InPrevType, 
 	PrevState = InPrevType;
 }
 
-void UCAnimInstance_Character::OnWeaponTypeChanged(const CEWeaponType InPrevType, const CEWeaponType InNewType)
+void UCAnimInstance_Character::OnWeaponTypeChanged(
+	const CEWeaponType InPrevMainType,
+	const CEWeaponType InNewMainType,
+	const CEWeaponType InPrevSubType,
+	const CEWeaponType InNewSubType)
 {
-	MainWeaponType = InNewType;
-	SubWeaponType = InPrevType;
+	(void)InPrevMainType;
+	(void)InPrevSubType;
+	MainWeaponType = InNewMainType;
+	SubWeaponType = InNewSubType;
 	if (SubWeaponType == CEWeaponType::Max)
 		SubWeaponType = CEWeaponType::Unarmed;
-	MagicType = MainWeaponType;
+}
+
+void UCAnimInstance_Character::OnMagicTypeChanged(CEMagicType InType, CEMagicType InPrevType)
+{
+	(void)InPrevType;
+	MagicType = InType;
 }

@@ -5,7 +5,7 @@
 #include "CSkill_Aura.generated.h"
 
 class ACSkillCollider_Aura;
-struct FActData;
+struct FDoActionData;
 
 UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCSkill_Aura : public UCSkill
@@ -21,7 +21,7 @@ private:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Act")
-	FActData ActData;
+	FDoActionData ActData;
 
 public:
 	void Pressed() override;

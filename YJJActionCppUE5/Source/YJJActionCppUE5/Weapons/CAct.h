@@ -25,7 +25,7 @@ public:
 		TWeakObjectPtr<ACCommonCharacter> InOwner,
 		TWeakObjectPtr<ACAttachment> InAttachment,
 		TWeakObjectPtr<UCEquipment> InEquipment,
-		const TArray<FActData>& InActDatas,
+		const TArray<FDoActionData>& InActDatas,
 		const TArray<FHitData>& InHitDatas);
 
 	virtual void Tick(float InDeltaTime) {}
@@ -70,6 +70,6 @@ protected:
 	TWeakObjectPtr<UCStateComponent> StateComp;
 	TWeakObjectPtr<UCCamComponent> CamComp;
 
-	TArray<FActData> ActDatas;
+	TArray<FDoActionData> ActDatas;
 	TArray<FHitData> HitDatas;
 };

@@ -5,7 +5,7 @@
 #include "Commons/CEnums.h"
 #include "CUserWidget_MagicMenu.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEquipMagic, const CEWeaponType, InNewType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEquipMagic, CEMagicType, InNewType);
 
 // BP WB_MagicMenu 용 베이스. BP_Player::SetMenuUI 에서 OnEquipMagic 을 캐릭터로 연결한다.
 UCLASS()
@@ -22,5 +22,5 @@ public:
 	FOnEquipMagic OnEquipMagic;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Magic")
-	CEWeaponType CurMagicType = CEWeaponType::Unarmed;
+	CEMagicType CurMagicType = CEMagicType::Unarmed;
 };

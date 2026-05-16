@@ -3,6 +3,44 @@
 #include "Utilities/CLog.h"
 #include "Weapons/CAttachment.h"
 
+void ACMagicSkillContext::Equip_Implementation()
+{
+	// 장착 가시화·무기 상태는 블루프린트 Magic_C 가 오버라이드 한다.
+}
+
+void ACMagicSkillContext::Unequip_Implementation()
+{
+	// 벗기기 처리도 BP 가 담당하면 빈 구현으로 둔다.
+}
+
+void ACMagicSkillContext::Begin_Equip_Implementation()
+{
+}
+
+void ACMagicSkillContext::End_Equip_Implementation()
+{
+}
+
+void ACMagicSkillContext::Begin_Unequip_Implementation()
+{
+}
+
+void ACMagicSkillContext::End_Unequip_Implementation()
+{
+}
+
+void ACMagicSkillContext::DoAction_Implementation(CEAttackType InAttackType, int32 InSkillIndex)
+{
+}
+
+void ACMagicSkillContext::Begin_DoAction_Implementation(CEAttackType InAttackType)
+{
+}
+
+void ACMagicSkillContext::End_DoAction_Implementation(CEAttackType InAttackType)
+{
+}
+
 ACSkillWeapon::ACSkillWeapon()
 {
 	PrimaryActorTick.bCanEverTick = false;

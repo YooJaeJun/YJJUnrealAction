@@ -16,7 +16,7 @@ void UCAct_Bow::BeginPlay(
 	TWeakObjectPtr<ACCommonCharacter> InOwner,
 	TWeakObjectPtr<ACAttachment> InAttachment,
 	TWeakObjectPtr<UCEquipment> InEquipment, 
-	const TArray<FActData>& InDoActionData,
+	const TArray<FDoActionData>& InDoActionData,
 	const TArray<FHitData>& InHitData)
 {
 	Super::BeginPlay(InOwner, InAttachment, InEquipment, InDoActionData, InHitData);

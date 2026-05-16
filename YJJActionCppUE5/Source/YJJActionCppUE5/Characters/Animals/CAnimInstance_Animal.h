@@ -24,7 +24,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animal", meta = (DisplayName = "Info Class"))
 	TSubclassOf<ACAnimalAnimDynamicInfo> InfoClass;
 
-	UPROPERTY(BlueprintReadOnly, Transient, Category = "Animal", meta = (DisplayName = "Info"))
+	// 레거시 ABP 가 "Set Info" 등으로 변수를 채운다 — ReadOnly 로 두면 에디터 재컴파일이 막히므로 쓰기 허용.
+	// C++ 에서 Spawn 한 경우 Destroy 는 bSpawnedInfo 기준으로 NativeUninitializeAnimation 에서만 수행한다.
+	UPROPERTY(BlueprintReadWrite, Transient, Category = "Animal", meta = (DisplayName = "Info"))
 	TObjectPtr<ACAnimalAnimDynamicInfo> Info;
 
 	// ACCommonCharacter::bIsRotating 과 매 틱 동기화 (ABP_Dragon 등 AnimInstance 로컬 bool 호환).

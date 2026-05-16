@@ -9,7 +9,7 @@
 #include "CYJJBlueprintLibrary.generated.h"
 
 class UAnimMontage;
-class USoundWave;
+class USoundBase;
 
 // 블루프린트 전용 헬퍼. C++ 타입 FHitData 와 Content 의 UserDefinedStruct 이름이 겹치면 기본 Break 노드가 죽을 수 있어
 // NativeBreak 로 분해 경로를 고정한다.
@@ -38,13 +38,15 @@ public:
 		UPARAM(DisplayName = "Hit Data") const FHitData& HitData,
 		UAnimMontage*& Montage,
 		float& PlayRate,
-		float& Power,
+		UPARAM(DisplayName = "Damage") float& Damage,
+		CEAttackType& AttackType,
+		bool& bCanMove,
 		float& Launch,
-		float& StopTime,
-		USoundWave*& Sound,
+		CECrowdControl& CrowdControl,
+		UPARAM(DisplayName = "Hit Stop") float& HitStop,
+		USoundBase*& Sound,
 		UFXSystemAsset*& Effect,
 		FVector& EffectLocation,
 		FVector& EffectScale,
-		CEHitType& AttackType,
 		TSubclassOf<UCameraShakeBase>& ShakeClass);
 };

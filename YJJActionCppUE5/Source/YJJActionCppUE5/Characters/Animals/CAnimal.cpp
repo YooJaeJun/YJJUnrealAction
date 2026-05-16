@@ -121,7 +121,7 @@ void ACAnimal::SetDamage(const float InDamage, bool& OutHittedOrDead)
 
 	float dmg = InDamage;
 	if (dmg <= KINDA_SMALL_NUMBER)
-		dmg = HitData.Power;
+		dmg = HitData.Damage;
 
 	if (dmg <= KINDA_SMALL_NUMBER)
 		return;
@@ -261,7 +261,7 @@ void ACAnimal::Hitted()
 	if (bAlive)
 	{
 		if (IsValid(StateComp))
-			StateComp->SetHitted();
+			StateComp->SetHitCommonMode();
 
 		PlayHitAnim();
 		PlayParticle();
@@ -484,7 +484,7 @@ void ACAnimal::SetFootLocation_Implementation(bool bLeftFoot, FVector WorldLocat
 
 void ACAnimal::PlayHitStop()
 {
-	if (FMath::IsNearlyZero(HitData.StopTime))
+	if (FMath::IsNearlyZero(HitData.HitStop))
 		return;
 
 	UWorld* world = GetWorld();
@@ -526,7 +526,7 @@ void ACAnimal::PlayHitStop()
 
 	FTimerDelegate restoreDel;
 	restoreDel.BindUObject(this, &ACAnimal::RestoreTimeDilation);
-	world->GetTimerManager().SetTimer(HitStopRestoreTimer, restoreDel, HitData.StopTime, false);
+	world->GetTimerManager().SetTimer(HitStopRestoreTimer, restoreDel, HitData.HitStop, false);
 }
 
 void ACAnimal::RestoreTimeDilation()

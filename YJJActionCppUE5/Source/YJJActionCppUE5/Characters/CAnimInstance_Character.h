@@ -12,11 +12,15 @@
 class ACCommonCharacter;
 class UCMovementComponent;
 class UCFlyComponent;
+class UCMagicComponent;
 
 UCLASS(Abstract)
 class YJJACTIONCPPUE5_API UCAnimInstance_Character : public UAnimInstance
 {
 	GENERATED_BODY()
+
+	// ACAnimalAnimDynamicInfo::Tick_Info 가 NativeUpdate 이후 스냅샷을 복사할 수 있게 한다.
+	friend class ACAnimalAnimDynamicInfo;
 
 public:
 	virtual void NativeBeginPlay() override;
@@ -27,7 +31,14 @@ protected:
 	void OnStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
 
 	UFUNCTION()
-	void OnWeaponTypeChanged(const CEWeaponType InPrevType, const CEWeaponType InNewType);
+	void OnWeaponTypeChanged(
+		const CEWeaponType InPrevMainType,
+		const CEWeaponType InNewMainType,
+		const CEWeaponType InPrevSubType,
+		const CEWeaponType InNewSubType);
+
+	UFUNCTION()
+	void OnMagicTypeChanged(CEMagicType InType, CEMagicType InPrevType);
 
 	// --- ABP_Character 의 BPVar — AnimBP 리패어런트 시 핀 이름 호환. ---
 
@@ -35,7 +46,7 @@ protected:
 	TObjectPtr<UCWeaponComponent> WeaponComponent;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default", meta = (DisplayName = "Magic Component"))
-	TObjectPtr<UActorComponent> MagicComponent;
+	TObjectPtr<UCMagicComponent> MagicComponent;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "세팅")
 	TObjectPtr<ACCommonCharacter> Character;
@@ -77,7 +88,7 @@ protected:
 	CEWeaponType SubWeaponType = CEWeaponType::Unarmed;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons", meta = (DisplayName = "Magic Type"))
-	CEWeaponType MagicType = CEWeaponType::Unarmed;
+	CEMagicType MagicType = CEMagicType::Unarmed;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Bows", meta = (DisplayName = "Bow Aiming"))
 	bool Bow_Aiming = false;

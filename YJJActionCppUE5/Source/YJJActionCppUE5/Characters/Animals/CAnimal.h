@@ -156,7 +156,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "세팅|Animal")
 	void LandAt(EPhysicalSurface SurfaceType, FVector StepLocation);
 
-	// BP_Player::SetDamage 와 동일 시맨틱 — InDamage<=0 이면 HitData.Power 사용.
+	// BP_Player::SetDamage 와 동일 시맨틱 — InDamage<=0 이면 HitData.Damage 사용.
 	UFUNCTION(BlueprintCallable, Category = "Combat|Animal")
 	void SetDamage(float InDamage, bool& OutHittedOrDead);
 
@@ -177,7 +177,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hit|Animal", meta = (DisplayName = "Spawn Blood"))
 	void SpawnBlood();
 
-	// BP_Animal::PlayHitStop — StopTime 이 0 이 아닐 때만 적용. 피사체(폰 또는 Movable 메시)만 DilationActors 에 넣는다.
+	// BP_Animal::PlayHitStop — HitStop 이 0 이 아닐 때만 적용. 피사체(폰 또는 Movable 메시)만 DilationActors 에 넣는다.
 	UFUNCTION(BlueprintCallable, Category = "Hit|Animal", meta = (DisplayName = "Play Hit Stop"))
 	void PlayHitStop();
 

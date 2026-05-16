@@ -34,4 +34,18 @@ void UCUserWidget_HUD::SetChildren()
 		if (IsValid(Interaction))
 			Interaction->BindChildren();
 	}
+
+	if (false == IsValid(HudMessageSlotWidget))
+		HudMessageSlotWidget = Cast<UUserWidget>(GetWidgetFromName(TEXT("WB_Message")));
+	if (false == IsValid(HudMessageSlotWidget))
+		HudMessageSlotWidget = Cast<UUserWidget>(GetWidgetFromName(TEXT("CMessage")));
+}
+
+UUserWidget* UCUserWidget_HUD::ResolveWB_MessageWidget()
+{
+	if (false == IsValid(HudMessageSlotWidget))
+		HudMessageSlotWidget = Cast<UUserWidget>(GetWidgetFromName(TEXT("WB_Message")));
+	if (false == IsValid(HudMessageSlotWidget))
+		HudMessageSlotWidget = Cast<UUserWidget>(GetWidgetFromName(TEXT("CMessage")));
+	return HudMessageSlotWidget;
 }

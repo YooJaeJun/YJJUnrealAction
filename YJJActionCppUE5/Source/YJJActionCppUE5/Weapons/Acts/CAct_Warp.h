@@ -10,7 +10,7 @@ class ACCommonCharacter;
 class AController;
 class UDecalComponent;
 class UFXSystemAsset;
-struct FActData;
+struct FDoActionData;
 struct FHitData;
 
 UCLASS(Blueprintable)
@@ -25,7 +25,7 @@ public:
 		TWeakObjectPtr<ACCommonCharacter> InOwner,
 		TWeakObjectPtr<ACAttachment> InAttachment,
 		TWeakObjectPtr<UCEquipment> InEquipment,
-		const TArray<FActData>& InActData,
+		const TArray<FDoActionData>& InActData,
 		const TArray<FHitData>& InHitData) override;
 
 	virtual void Tick(float InDeltaTime) override;

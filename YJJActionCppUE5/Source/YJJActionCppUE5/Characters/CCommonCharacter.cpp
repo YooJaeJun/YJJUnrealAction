@@ -129,7 +129,7 @@ float ACCommonCharacter::TakeDamage(
 	// FDamageEvent는 UObject가 아니므로 커스텀 데미지 이벤트 구조체로 해석해 히트 데이터를 꺼낸다.
 	Damage.Event = *(FActDamageEvent*)&DamageEvent;
 
-	StateComp->SetHitMode(Damage.Event.HitData.AttackType);
+	StateComp->SetHitMode(CEHitReactionFromAttackType(Damage.Event.HitData.AttackType));
 
 	return damage;
 }
@@ -236,6 +236,14 @@ void ACCommonCharacter::ApplyRestoreStateFromPrevMode()
 	case CEStateType::Rise:
 	case CEStateType::Avoid:
 	case CEStateType::Land:
+	case CEStateType::CombatHitted:
+	case CEStateType::Groggy:
+	case CEStateType::Cinematic:
+	case CEStateType::Dash:
+	case CEStateType::Parkour:
+	case CEStateType::Flying:
+	case CEStateType::HitAir:
+	case CEStateType::DownFlying:
 		StateComp->SetIdleMode();
 		break;
 
@@ -492,7 +500,7 @@ void ACCommonCharacter::EndInteraction_Implementation()
 	CurInteractingActor = nullptr;
 }
 
-int32 ACCommonCharacter::GetAction_Implementation()
+int32 ACCommonCharacter::GetCharacterGameplayAction_Implementation()
 {
 	return 0;
 }

@@ -16,7 +16,7 @@ void UCAct_Warp::BeginPlay(
 	TWeakObjectPtr<ACCommonCharacter> InOwner,
 	TWeakObjectPtr<ACAttachment> InAttachment,
 	TWeakObjectPtr<UCEquipment> InEquipment,
-	const TArray<FActData>& InActData, 
+	const TArray<FDoActionData>& InActData, 
 	const TArray<FHitData>& InHitData)
 {
 	Super::BeginPlay(InOwner, InAttachment, InEquipment, InActData, InHitData);

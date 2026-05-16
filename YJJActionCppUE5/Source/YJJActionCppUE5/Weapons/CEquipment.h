@@ -18,7 +18,7 @@ class YJJACTIONCPPUE5_API UCEquipment : public UObject
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEquipmentData& InData);
+	virtual void BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner, const FEquipData& InData);
 
 public:
 	UFUNCTION(BlueprintNativeEvent)
@@ -47,7 +47,7 @@ public:
 
 protected:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
-	FEquipmentData Data;
+	FEquipData Data;
 
 private:
 	TWeakObjectPtr<UCMovementComponent> MovementComp;

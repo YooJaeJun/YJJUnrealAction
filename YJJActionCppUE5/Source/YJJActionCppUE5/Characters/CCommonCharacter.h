@@ -396,5 +396,5 @@ private:
 	virtual void Damaged_Implementation(float DamageAmount) override;
 	virtual void StartInteraction_Implementation(AActor* InteractionTarget) override;
 	virtual void EndInteraction_Implementation() override;
-	virtual int32 GetAction_Implementation() override;
+	virtual int32 GetCharacterGameplayAction_Implementation() override;
 };

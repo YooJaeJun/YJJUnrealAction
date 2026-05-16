@@ -18,9 +18,12 @@ class UCAnimInstance_Character;
 class UCMontagesComponent;
 class UCTargetingComponent;
 class UCWeaponComponent;
+class UCMagicComponent;
 class UCGameUIComponent;
 class UCInventoryComponent;
 class UCPlacementComponent;
+class UCSystemMessageComponent;
+class UCParkourComponent;
 class UWidgetComponent;
 class ACGameMode;
 class UCUserWidget_EquipMenu;
@@ -97,7 +100,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Weapon")
 	bool IsBowMode() const;
 
-	// BP_Player::SetDamage — Hp 차감·UI 갱신. InDamage <= 0 이면 Hit.Power(레거시 Damage 핀) 사용.
+	// BP_Player::SetDamage — Hp 차감·UI 갱신. InDamage <= 0 이면 HitData.Damage 사용.
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void SetDamage(float InDamage, bool& OutHittedOrDead);
 
@@ -243,10 +246,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|SkillCam", meta = (MultiLine = "true"))
 	TObjectPtr<UActorComponent> SkillSequence;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Lerp", meta = (MultiLine = "true"))
-	float LerpArrivalXYTolerance = 100.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "피직스", meta = (MultiLine = "true"))
 	TArray<TObjectPtr<UNiagaraSystem>> LandEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "피직스", meta = (MultiLine = "true"))
@@ -311,9 +310,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Camera", meta = (DisplayName = "Shake Cam"))
 	void ShakeCam();
 
-	// 레거시 SystemMessageComponent(BP) — 에셋에서 컴포넌트를 붙이면 NotEnough* 가 Play 를 호출한다.
+	// 레거시 SystemMessageComponent(BP): Play → HUD WB_Message 에 메시지, InTime 후 Hide.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (DisplayName = "System Message"))
-	TObjectPtr<UActorComponent> SystemMessageComponent;
+	TObjectPtr<UCSystemMessageComponent> SystemMessageComponent;
 
 	// BP_Player::SetZooming — 블루프린트 줌 그래프가 캐릭터를 타깃으로 호출. CamComponent 와 동기화.
 	UFUNCTION(BlueprintCallable, Category = "Camera")
@@ -393,7 +392,7 @@ public:
 	void EquipWeaponFromUI(const CEWeaponType InNewType);
 
 	UFUNCTION()
-	void EquipMagicFromUI(const CEWeaponType InNewType);
+	void EquipMagicFromUI(CEMagicType InNewType);
 
 	UFUNCTION()
 	void OnEquipMenuWeaponHoveredBridge(const CEWeaponType InType);
@@ -442,6 +441,14 @@ protected:
 	// BP_Player 의 WeaponComponent 변수명 — WeaponComp 와 동일.
 	UPROPERTY(BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UCWeaponComponent> WeaponComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UCMagicComponent> MagicComp;
+
+	// BP_Player 의 MagicComponent 변수명 — MagicComp 와 동일.
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UCMagicComponent> MagicComponent;
+
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCTargetingComponent> TargetingComp;
 
@@ -485,6 +492,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCPlacementComponent> PlacementComp;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UCParkourComponent> ParkourComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mode")
 	TWeakObjectPtr<ACGameMode> GameMode;

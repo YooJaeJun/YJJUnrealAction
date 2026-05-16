@@ -15,7 +15,7 @@ void UCAct::BeginPlay(
 	TWeakObjectPtr<ACCommonCharacter> InOwner,
 	TWeakObjectPtr<ACAttachment> InAttachment,
 	TWeakObjectPtr<UCEquipment> InEquipment,
-	const TArray<FActData>& InActDatas, 
+	const TArray<FDoActionData>& InActDatas, 
 	const TArray<FHitData>& InHitDatas)
 {
 	Owner = InOwner;

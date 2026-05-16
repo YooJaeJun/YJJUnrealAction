@@ -27,18 +27,6 @@ class AController;
 class USoundBase;
 class UUserWidget;
 
-UENUM(BlueprintType)
-enum class CERidingState : uint8
-{
-	None,
-	ToMountPoint,
-	Mounting,
-	MountingEnd,
-	Riding,
-	Unmounting,
-	UnmountingEnd
-};
-
 UENUM()
 enum class CERidingPoint : uint8
 {
@@ -100,12 +88,12 @@ public:
 	TWeakObjectPtr<ACCommonCharacter> GetRider() const;
 
 private:
-	void Tick_ToMountPoint();
+	void Tick_MovingToMountPoint();
 	void Tick_Mounting();
 	void Tick_MountingEnd();
 	void Tick_Riding() const;
 	void Tick_Unmounting();
-	void Tick_UnmountingEnd();
+	void Tick_RidingEnd();
 
 public:
 	void CheckValidPoint();

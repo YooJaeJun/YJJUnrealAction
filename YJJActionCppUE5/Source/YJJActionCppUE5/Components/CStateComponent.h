@@ -61,19 +61,68 @@ public:
 
 	void SetHitMode(const CEHitType InHitType);
 
-	// 레거시 BP_Player — "Set Hitted". 우선 공통 피격 모드로 둔다.
-	UFUNCTION(BlueprintCallable, Category = "State", meta = (DisplayName = "Set Hitted"))
-	void SetHitted() { SetHitCommonMode(); }
 	void SetHitNoneMode();
+	// 레거시 BP_Player 피격 "타입" 공통(Common). StateComponent 블루프린트 SetHitted(ChangeType) 과 다르다.
 	void SetHitCommonMode();
 	void SetHitDownMode();
 	void SetHitFlyMode();
 	void SetHitKnockbackMode();
-	void SetHitAirMode();
+	// CEHitType::Air. 상태 전환 SetHitAir(이동 상태) 와 이름이 겹치지 않게 Reaction 으로 구분했다.
+	void SetHitReactionAir();
 	void SetHitFlyingPutDownMode();
 
+	// 레거시 BP StateComponent 그래프: SetEquip/SetAction/SetHitted 등은 ChangeType 과 동등.
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Equip"))
+	void SetEquip() { SetEquipMode(); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Action"))
+	void SetAction() { SetActMode(); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Hitted"))
+	void SetHitted() { InternalSetStateType(CEStateType::CombatHitted); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Parkour"))
+	void SetParkour() { InternalSetStateType(CEStateType::Parkour); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Flying"))
+	void SetFlying() { InternalSetStateType(CEStateType::Flying); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Hit Air"))
+	void SetHitAir() { InternalSetStateType(CEStateType::HitAir); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Down Flying"))
+	void SetDownFlying() { InternalSetStateType(CEStateType::DownFlying); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Down Land"))
+	void SetDownLand() { InternalSetStateType(CEStateType::Land); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Dash"))
+	void SetDash() { InternalSetStateType(CEStateType::Dash); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Cinematic"))
+	void SetCinematic() { InternalSetStateType(CEStateType::Cinematic); }
+
+	UFUNCTION(BlueprintCallable, Category = "State|Mode", meta = (DisplayName = "Set Groggy"))
+	void SetGroggy() { InternalSetStateType(CEStateType::Groggy); }
+
+	// 레거시 BP StateComponent::ChangeType 의 실제 상태 반영(Set* 도 공통 경로).
+	UFUNCTION(BlueprintCallable, Category = "State|Change", meta = (DisplayName = "Change Type"))
+	void ChangeType(CEStateType InNewType);
+
+	// 레거시 BP 노드 이름 SetMode — ChangeType 과 동일.
+	UFUNCTION(BlueprintCallable, Category = "State|Change", meta = (DisplayName = "Set Mode"))
+	void SetMode(CEStateType InStateType);
+
+	// 현재 타입을 Prev 에 복사만 한다(BP SaveType).
+	UFUNCTION(BlueprintCallable, Category = "State|Change")
+	void SaveType();
+
+	// Type 과 Prev 를 스왑 후 델리게이트 브로드캐스트(BP LoadType).
+	UFUNCTION(BlueprintCallable, Category = "State|Change")
+	void LoadType();
+
 private:
-	void ChangeType(const CEStateType InType);
+	void InternalSetStateType(CEStateType InType);
 
 private:
 	void ChangeHitType(const CEHitType InType);
@@ -105,13 +154,66 @@ public:
 	FORCEINLINE constexpr bool IsRiseMode() const { return CurType == CEStateType::Rise; }
 	FORCEINLINE constexpr bool IsRidingMode() const { return CurType == CEStateType::Riding; }
 
-	// 블루프린트 StateComponent::IsRealRiding — 실제 탑승 플래그는 캐릭터 쪽이다.
+	// 블루프린트 StateComponent::IsRealRiding — 레거시 BP 는 CurInteractingActor 유효성, C++ 플래그는 보조.
 	UFUNCTION(BlueprintPure, Category = "State")
 	bool IsRealRiding() const;
 
-	// 레거시 BP_Player RestoreStamina/Mana — StateComponent 타깃 "Is Riding"(탑승 상태·플래그 둘 중 하나).
+	// 레거시 BP_Player RestoreStamina/Mana — 타입이 Riding 이면서 실제 상호작용/플래그로 탑승 중일 때 회복 허용.
+	UFUNCTION(BlueprintPure, Category = "State")
+	bool IsRidingRecoverContext() const;
+
+	// 레거시 BP 의 Is Riding — CurType 만 검사(StateComponent 변수 Type 기준과 동일).
 	UFUNCTION(BlueprintPure, Category = "State", meta = (DisplayName = "Is Riding"))
 	bool IsRiding() const;
+
+	// 현재 StateType 문자열 조회(GetEnumeratorNameAsString 근사).
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	FString GetStringState() const;
+
+	// 블루프린트 IsMoveable 분기표 — Idle / Equip / CombatHitted 만 true.
+	UFUNCTION(BlueprintPure, Category = "State|Mode", meta = (DisplayName = "Is Moveable"))
+	bool IsMoveable() const;
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode", meta = (DisplayName = "Is Equip"))
+	bool IsEquip() const { return IsEquipMode(); }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode", meta = (DisplayName = "Is Action"))
+	bool IsAction() const { return IsActMode(); }
+
+	// 레거시 BP 변수 Type 과의 비교(Is Hitted 상태). 피격 타입 IsHitted() 와 이름이 같아 주석과 DisplayName 로 구분한다.
+	FORCEINLINE constexpr bool IsMovementHittedState() const { return CurType == CEStateType::CombatHitted; }
+	UFUNCTION(BlueprintPure, Category = "State|Mode", meta = (DisplayName = "Is Hitted Movement State"))
+	bool Blueprint_IsMovementHittedState() const { return IsMovementHittedState(); }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	bool IsFalling() const { return IsFallMode(); }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	bool IsDash() const { return CurType == CEStateType::Dash; }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	bool IsParkour() const { return CurType == CEStateType::Parkour; }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	bool IsFlying() const { return CurType == CEStateType::Flying; }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	bool IsHitAir() const { return CurType == CEStateType::HitAir; }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	bool IsDownFlying() const { return CurType == CEStateType::DownFlying; }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	bool IsDownLand() const { return CurType == CEStateType::Land; }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode", meta = (DisplayName = "Is Rise"))
+	bool IsRise() const { return IsRiseMode(); }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	bool IsGroggy() const { return CurType == CEStateType::Groggy; }
+
+	UFUNCTION(BlueprintPure, Category = "State|Mode")
+	bool IsCinematic() const { return CurType == CEStateType::Cinematic; }
 
 	FORCEINLINE constexpr bool IsHitNoneMode() const { return CurHitType == CEHitType::None; }
 	FORCEINLINE constexpr bool IsHitCommonMode() const { return CurHitType == CEHitType::Common; }
@@ -135,7 +237,7 @@ protected:
 	CEStateType Type = CEStateType::Idle;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
-	CEStateType PrevType = CEStateType::Max;
+	CEStateType PrevType = CEStateType::Idle;
 
 	UPROPERTY(EditAnyWhere, Category = "Settings")
 	CEHitType CurHitType = CEHitType::None;

@@ -31,6 +31,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "세팅")
 	void EndInteraction();
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "세팅")
-	int32 GetAction();
+	// 이름을 GetCharacterGameplayAction 으로 둠 — 레거시 I_Interactable::GetAction(FText&) 와 블루프린트 인터페이스 목록에서 동명 충돌한다.
+	UFUNCTION(
+		BlueprintNativeEvent,
+		BlueprintCallable,
+		Category = "세팅",
+		meta = (DisplayName = "Get Character Gameplay Action"))
+	int32 GetCharacterGameplayAction();
 };

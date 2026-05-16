@@ -256,26 +256,26 @@ public:
 		CheckTrueResult(InArray.Num() <= 0, nullptr);
 
 		constexpr float limitLeastAngle = 0.7f;
-		constexpr float maxAngle = 0.0f;
+		float bestDotSeen = limitLeastAngle;
 		TWeakObjectPtr<ACCommonCharacter> outTarget;
 
 		for (const TWeakObjectPtr<ACCommonCharacter>& otherCharacter : InArray)
 		{
-			if (otherCharacter.IsValid())
+			if (false == otherCharacter.IsValid())
+				continue;
+
+			FVector diff = (otherCharacter->GetActorLocation() - InCenter->GetActorLocation());
+			diff.Normalize();
+
+			const FVector forward = UKismetMathLibrary::GetForwardVector(InController->GetControlRotation());
+
+			const float dotToForward = FVector::DotProduct(diff, forward);
+
+			// 같은 시야 콘이면 각도(dot) 더 큰 쪽을 남김 — 기존 maxAngle 이름이 실제 의미 없이 const 에 대입하던 버그 수정.
+			if (dotToForward > limitLeastAngle && dotToForward > bestDotSeen)
 			{
-				FVector diff = (otherCharacter->GetActorLocation() - InCenter->GetActorLocation());
-				diff.Normalize();
-
-				const FVector forward = UKismetMathLibrary::GetForwardVector(InController->GetControlRotation());
-
-				float curAngle = diff.DotProduct(diff, forward);
-
-				if (curAngle > limitLeastAngle &&
-					curAngle > maxAngle)
-				{
-					curAngle = maxAngle;
-					outTarget = otherCharacter;
-				}
+				bestDotSeen = dotToForward;
+				outTarget = otherCharacter;
 			}
 		}
 

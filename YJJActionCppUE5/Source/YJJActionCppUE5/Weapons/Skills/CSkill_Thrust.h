@@ -38,7 +38,7 @@ private:
 
 
     UPROPERTY(EditDefaultsOnly, Category = "Action")
-        FActData ActData;
+        FDoActionData ActData;
 
     UPROPERTY(EditDefaultsOnly, Category = "Action")
         FHitData HitData;

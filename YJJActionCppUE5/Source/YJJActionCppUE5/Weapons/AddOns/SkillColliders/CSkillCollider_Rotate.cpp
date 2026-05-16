@@ -18,7 +18,7 @@ ACSkillCollider_Rotate::ACSkillCollider_Rotate()
 	InitialLifeSpan = 7;
 
 	HitData.Launch = 0;
-	HitData.Power = 5;
+	HitData.Damage = 5;
 
 	YJJHelpers::GetAsset<UAnimMontage>(&HitData.Montage, "AnimMontage'/Game/Character/Player/Montages/Common/CHit_Stop_Montage.CHit_Stop_Montage'");
 }
