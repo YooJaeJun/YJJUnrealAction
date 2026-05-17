@@ -110,6 +110,14 @@ public:
 		*OutClass = asset.Class;
 	}
 
+	/** CDO/ctor 동기 블프 로드는 순환 패키지·AsyncLoading2 Phase 와 충돌할 수 있다 — 게임 시작 후 보충 용도. */
+	template<typename T>
+	static void GetClassDynamic(TSubclassOf<T>* OutClass, const FString& InPath)
+	{
+		UClass* const loaded = StaticLoadClass(T::StaticClass(), nullptr, *InPath, nullptr, LOAD_None, nullptr);
+		*OutClass = loaded;
+	}
+
 	template<typename T>
 	static T* FindActor(const TWeakObjectPtr<UWorld> InWorld)
 	{

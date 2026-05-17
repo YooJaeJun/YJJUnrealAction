@@ -13,7 +13,7 @@ class ACCommonCharacter;
 class ACGameMode;
 class UCUserWidget_HUD;
 class UCUserWidget_Interaction;
-class ACAnimal_AI;
+class ACAnimal;
 class UTexture2D;
 class USceneComponent;
 class USpringArmComponent;
@@ -208,7 +208,7 @@ public:
 	// --- BPVar (RidingComponent.RidingComponent_C) 이름·카테고리 정합 ---
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "세팅", meta = (DisplayName = "Owner"))
-	TObjectPtr<ACAnimal_AI> Owner;
+	TObjectPtr<ACAnimal> Owner;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Default", meta = (DisplayName = "Mesh"))
 	TObjectPtr<USkeletalMeshComponent> Mesh;

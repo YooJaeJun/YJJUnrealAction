@@ -100,6 +100,41 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Magic|Commons")
 	void RestorePrevState();
 
+	/** Warp::SetCandidate 등 — UCStateComponent::IsRealRiding 만 있는데 레거시 BP 가 State UObject·Magic Self 에 붙여 두어 깨지는 분기 대체(Self = 매직 컨텍스트 액터). */
+	UFUNCTION(BlueprintPure, Category = "Magic|State", meta = (DisplayName = "Is Character Real Riding"))
+	bool Magic_IsCharacterRealRiding() const;
+
+	/** State(UObject) 슬롯이 비었거나 클래스 리팩토 후 깨졌을 때 Character 에서 UCStateComponent 를 찾아 갱신(레거시 State Get 핀 복구·순회 호출 빈도는 낮다고 가정). */
+	UFUNCTION(
+		BlueprintCallable,
+		Category = "Magic|State",
+		meta = (DisplayName = "Refresh State Reference From Character Component"))
+	void Magic_RefreshStateReferenceFromCharacter();
+
+	/** Equip/UnEquip(Warp)·타깃 미리보기 — 탑승 시 CurInteractingActor 쪽 이동 컴포넌트 우선, 없으면 캐릭터 검색(레거시 ComponentClass→FixCamera 핀 대체). */
+	UFUNCTION(BlueprintCallable, Category = "Magic|Camera", meta = (DisplayName = "Fix Camera (Owner Movement)"))
+	void Magic_FixCameraForOwnerMovement();
+
+	/** Equip 그래프 짝 — UnFixCamera 를 동일 해석 경로로 호출. */
+	UFUNCTION(BlueprintCallable, Category = "Magic|Camera", meta = (DisplayName = "Un Fix Camera (Owner Movement)"))
+	void Magic_UnFixCameraForOwnerMovement();
+
+	/** DoAction 등 — State 컴포넌트 SetAction 을 Magic Self 경로로 호출(레거시 State 핀·Magic_Warp 대상 노드 대체). */
+	UFUNCTION(BlueprintCallable, Category = "Magic|State", meta = (DisplayName = "Set Action (Magic Owner)"))
+	void Magic_SetOwnerStateAction();
+
+	/** DoAction 조건 분기 — UCStateComponent::IsIdle 로 위임(State UObject 핀 제거용). */
+	UFUNCTION(BlueprintPure, Category = "Magic|State", meta = (DisplayName = "Is Idle (Magic Owner)"))
+	bool Magic_IsOwnerIdle() const;
+
+	/** DoAction 조건 분기 — UCStateComponent::IsRiding 로 위임. */
+	UFUNCTION(BlueprintPure, Category = "Magic|State", meta = (DisplayName = "Is Riding (Magic Owner)"))
+	bool Magic_IsOwnerRiding() const;
+
+	/** DoAction 조건 분기 — UCStateComponent::IsAction 로 위임. */
+	UFUNCTION(BlueprintPure, Category = "Magic|State", meta = (DisplayName = "Is Action (Magic Owner)"))
+	bool Magic_IsOwnerInAction() const;
+
 	UFUNCTION(
 		BlueprintCallable,
 		Category = "Magic|Commons",
@@ -174,6 +209,9 @@ private:
 protected:
 	/** State UObject 또는 Character 조회로 UCStateComponent 해석(SetEquip 과 동형 — Magic_Around 등 확장 클래스에서 상태 분기에 사용). */
 	UCStateComponent* Magic_ResolveStateComponent() const;
+
+	/** Tick 이 갱신한 Moving 캐시 우선, 없으면 탑승 상대·캐릭터에서 UCMovementComponent 탐색. */
+	UCMovementComponent* Magic_ResolveMovementForOwnerOrMount() const;
 };
 
 // 레거시 `/Game/Magics/Around/Magic_Around` — 어라운드 볼 클래스 배열 무작위 스폰(Begin_DoAction) + 조건 충족 시 SetAction 후 PlayAction.
@@ -785,7 +823,8 @@ private:
 	FTimerHandle GuardClearHittedTimerHandle;
 };
 
-// BP `Skill_Weapon` — Owner 가 마법·무기 중 어디에 붙었는지에 따라 Character 캐시.
+// BP Skill_Weapon / Skill_Magic — ChildActor 또는 스폰 시 Owner 가 Magic(ACMagicSkillContext) 또는 Weapon(ACWeaponSkillContext) 이면
+// BeginPlay 에서 아래 참조가 채워진다. 블루프린트에 동일 이름(Character/Weapon/Magic) 변수를 만들면 숨김·복제 충돌이 나므로 두지 않는다.
 UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API ACSkillWeapon : public AActor
 {
@@ -802,12 +841,28 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	// BeginPlay 채우기 전 수동 에디터 대입 허용(레거시). 스킬 BP는 중복 변수 대신 여기 연결 또는 그래프 제거 후 상속 Getter만 사용.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
 	TObjectPtr<ACMagicSkillContext> Magic;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
 	TObjectPtr<ACWeaponSkillContext> Weapon;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
 	TObjectPtr<ACCommonCharacter> Character;
+};
+
+// BP `/Game/Magics/Skill_Magic` — 부모 `ACSkillMagic` 에서 상속 프로퍼티 Character/Magic/Weapon 만 쓸 것(블프 동명 변수 금지). BeginPlay 순서 상 C++ 채운 뒤 BP Event 가능.
+// 무기 블프 `/Game/Weapons/Weapon` 은 반드시 `ACWeaponSkillContext` 계통이어야 `Character` 속성 노드가 유효하다(`ACSkillContextProvider::Character`).
+UCLASS(
+	Blueprintable,
+	meta=(
+		DisplayName="Skill Magic Actor",
+		BlueprintDescription="AActor 가 아니라 ACSkillMagic(ACSkillWeapon) 을 부모로 지정해야 BeginPlay 에서 Owner(Magic/Weapon) 기준 Character 등이 채워진다."))
+class YJJACTIONCPPUE5_API ACSkillMagic : public ACSkillWeapon
+{
+	GENERATED_BODY()
+
+public:
+	ACSkillMagic() = default;
 };

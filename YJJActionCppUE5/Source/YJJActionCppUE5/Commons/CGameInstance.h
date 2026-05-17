@@ -5,16 +5,18 @@
 #include "Engine/DataTable.h"
 #include "CGameInstance.generated.h"
 
+// 레거시 BP 사용자 정의 구조체 "FCharacter Info"(Group Index, Index, Body Color, Name)와 같은 페이로드.
+// C++/데이터테이블 키는 기존대로 Type · Group 이름을 유지하고, 디스플레이 이름만 BP 필드명에 맞춘다.
 USTRUCT(BlueprintType)
 struct FCCharacterInfo : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (DisplayName = "Index"))
 	int32 Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (DisplayName = "Group Index"))
 	int32 Group;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")

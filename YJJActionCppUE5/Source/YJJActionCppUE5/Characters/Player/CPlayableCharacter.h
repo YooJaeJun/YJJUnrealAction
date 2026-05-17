@@ -378,8 +378,7 @@ public:
 	bool IsChangedLandCoord() const;
 
 	// BP_Player::Tick_AirBone — 비행이 아니고 낙하 중일 때 FlyToFall 1회만 StartFall 유도.
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-	void Tick_AirBone();
+	virtual void Tick_AirBone() override;
 
 	// BP_Player::Tick_LerpMove — MovingComponent Lerp 플래그일 때 Dest 까지 보간, XY 도착 시 Lerp 종료.
 	UFUNCTION(BlueprintCallable, Category = "Movement")

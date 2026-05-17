@@ -1,6 +1,33 @@
 #include "Characters/Animals/CAnimal.h"
-#include "Components/CCharacterStatComponent.h"
+
+#include "Global.h"
+#include "Characters/AI/CAIController_Animal.h"
 #include "Animation/AnimMontage.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "Blueprint/UserWidget.h"
+#include "Camera/PlayerCameraManager.h"
+#include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/CWeaponComponent.h"
+#include "Components/CCharacterStatComponent.h"
+#include "Components/CGameUIComponent.h"
+#include "Components/CMovementComponent.h"
+#include "Components/CCamComponent.h"
+#include "Components/CPatrolComponent.h"
+#include "Components/CCharacterInfoComponent.h"
+#include "Components/CRidingComponent.h"
+#include "Components/CMontagesComponent.h"
+#include "Components/CTargetingComponent.h"
+#include "Components/CStateComponent.h"
+#include "Components/InputComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/MeshComponent.h"
+#include "Components/SceneComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Sound/SoundBase.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Pawn.h"
@@ -8,14 +35,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "NiagaraFunctionLibrary.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/MeshComponent.h"
-#include "Components/WidgetComponent.h"
-#include "Components/CStateComponent.h"
-#include "Components/CMontagesComponent.h"
-#include "Camera/PlayerCameraManager.h"
-#include "Particles/ParticleSystem.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Math/RotationMatrix.h"
@@ -40,20 +59,350 @@ namespace
 
 ACAnimal::ACAnimal()
 {
+	const TObjectPtr<USkeletalMeshComponent> mesh = GetMesh();
+
+	// 레거시 BP_Animal SCS 변수명과 같은 UPROPERTY 식별자를 쓰면 스켈 병합 시 ObjectProperty 중복 또는
+	// 다른 클래스 치환 assert 가 난다. 멤버 명 접두(DisplayName)·서브오브젝트 FName(YJJ…) 로 분리한다.
+	YJJHelpers::CreateComponent<USceneComponent>(this, &MountLeftPoint, TEXT("MountLeft"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &MountRightPoint, TEXT("MountRight"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &MountBackPoint, TEXT("MountBack"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &AnimalRiderPoint, TEXT("YJJAnimalRiderPoint"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &UnmountPoint, TEXT("Unmount"), mesh);
+	YJJHelpers::CreateComponent<UBoxComponent>(this, &InteractionCollision, TEXT("InterationCollision"), mesh);
+	YJJHelpers::CreateComponent<USceneComponent>(this, &AnimalEyePoint, TEXT("YJJAnimalEyePoint"), mesh);
+
+	YJJHelpers::CreateComponent<USpringArmComponent>(this, &AnimalSpringArm, TEXT("YJJAnimalSpringArm"), AnimalRiderPoint);
+	YJJHelpers::CreateComponent<UCameraComponent>(this, &AnimalViewCamera, TEXT("YJJAnimalCamera"), AnimalSpringArm);
+
+	YJJHelpers::CreateComponent<USceneComponent>(this, &HpBarSceneRoot, TEXT("Scene"), GetCapsuleComponent());
+	YJJHelpers::CreateComponent<UWidgetComponent>(this, &HpBarWidgetComp, TEXT("HpBarWidget"), HpBarSceneRoot);
+
+	YJJHelpers::CreateActorComponent<UCCamComponent>(this, &CamComp, "CamComponent");
+	YJJHelpers::CreateActorComponent<UCGameUIComponent>(this, &GameUIComp, "GameUIComponent");
+	YJJHelpers::CreateActorComponent<UCPatrolComponent>(this, &PatrolComp, "YJJAnimalPatrol");
+	YJJHelpers::CreateActorComponent<UCRidingComponent>(this, &AnimalRidingComponent, TEXT("YJJAnimalRiding"));
+	YJJHelpers::CreateActorComponent<UCWeaponComponent>(this, &WeaponComp, "WeaponComponent");
+	YJJHelpers::CreateActorComponent<UCTargetingComponent>(this, &TargetingComp, "TargetingComponent");
+
+	if (IsValid(StateComp))
+	{
+		StateComp->OnStateTypeChanged.AddUniqueDynamic(this, &ACAnimal::OnMountedAnimalStateTypeChanged);
+		StateComp->OnHitStateTypeChanged.AddUniqueDynamic(this, &ACAnimal::OnMountedAnimalHitStateTypeChanged);
+	}
+
+	if (IsValid(MovementComp))
+	{
+		MovementComp->SetSpeeds(Speeds);
+		MovementComp->SetSpeed(CESpeedType::Sprint);
+		MovementComp->SetFriction(2.0f, 256.0f);
+		MovementComp->SetJumpZ(700.0f);
+	}
+
+	if (IsValid(CamComp))
+	{
+		CamComp->EnableControlRotation();
+		CamComp->DisableFixedCamera();
+	}
+
+	// LandingSound / LandEffect / CBP_Eye / AnimalWeapon 블프는 ctor 에서 동기 로드하면 BP_Animal↔AnimalWeapon 등과 순환·AsyncLoading2 Phase2 에서 깨진다 —
+	// `AnimalEnsureLandingAndDeferredBlueprintAssetsLoadedAfterCommonBeginPlay()` 에서만 보충한다.
+
+	if (IsValid(AnimalSpringArm))
+	{
+		AnimalSpringArm->bDoCollisionTest = false;
+		AnimalSpringArm->SetRelativeLocation(FVector(0, 3, 100));
+		AnimalSpringArm->SetRelativeRotation(FRotator(-5, 90, 0));
+	}
+
+	if (IsValid(HpBarWidgetComp))
+	{
+		HpBarWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+		HpBarWidgetComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		HpBarWidgetComp->SetDrawAtDesiredSize(true);
+	}
+
+	if (IsValid(MountLeftPoint))
+		MountLeftPoint->SetRelativeLocation(FVector(40, 0, 80));
+	if (IsValid(MountRightPoint))
+		MountRightPoint->SetRelativeLocation(FVector(-40, 0, 80));
+	if (IsValid(MountBackPoint))
+		MountBackPoint->SetRelativeLocation(FVector(0, -60, 80));
+	if (IsValid(UnmountPoint))
+		UnmountPoint->SetRelativeLocation(FVector(-40, 0, 80));
+
+	AIControllerClass = ACAIController_Animal::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 UWidgetComponent* ACAnimal::GetAnimalHpBarWidgetComponent() const
 {
-	return nullptr;
+	return HpBarWidgetComp.Get();
 }
 
 void ACAnimal::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// StatComp 기반 Hp 미러 후 UI 갱신. HpBarWidgetComp 는 자식 BeginPlay 에서 SetWidgetClass 될 수 있어 AI 는 끝에서 SetHpUI 를 한 번 더 호출한다.
+	AnimalEnsureLandingAndDeferredBlueprintAssetsLoadedAfterCommonBeginPlay();
+
+	// 스탯 기반 Hp 미러 및 UI 초기 패스.
 	SetHp();
 	SetHpUI();
+
+	SpawnAnimalWeaponFromClassIfConfigured();
+	if (IsValid(HpBarWidgetComp) && AnimalHpBarWidgetClass != nullptr)
+		HpBarWidgetComp->SetWidgetClass(AnimalHpBarWidgetClass);
+
+	if (IsValid(AnimalRidingComponent) && IsValid(InteractionCollision))
+	{
+		InteractionCollision->OnComponentBeginOverlap.AddDynamic(
+			AnimalRidingComponent.Get(), &UCRidingComponent::MountInteraction_OnBeginOverlap);
+		InteractionCollision->OnComponentEndOverlap.AddDynamic(
+			AnimalRidingComponent.Get(), &UCRidingComponent::MountInteraction_OnEndOverlap);
+	}
+
+	if (IsValid(AnimalRiderPoint))
+		AnimalRiderPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "Rider");
+
+	if (IsValid(AnimalEyePoint))
+	{
+		AnimalEyePoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "EyeEffect");
+
+		if (IsValid(EyeClass))
+		{
+			FActorSpawnParameters params;
+			params.Owner = Cast<AActor>(this);
+
+			Eye = GetWorld()->SpawnActor<AActor>(EyeClass,
+				AnimalEyePoint->GetComponentLocation(), AnimalEyePoint->GetComponentRotation(), params);
+
+			const FAttachmentTransformRules attachRules(
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::SnapToTarget,
+				EAttachmentRule::KeepRelative,
+				false);
+
+			if (IsValid(Eye))
+				Eye->AttachToComponent(GetMesh(), attachRules, "EyeEffect");
+		}
+	}
+
+	if (IsValid(CharacterInfoComp))
+		CharacterInfoComp->SetCharacterType(CECharacterType::Companion);
+
+	if (IsValid(CharacterStatComp))
+		CharacterStatComp->SetAttackRange(250.0f);
+
+	// HpBarWidgetComp 클래스 지정 후 위젯 캐시를 다시 채운다.
+	SetHpUI();
+}
+
+void ACAnimal::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAxis("MoveForward", MovementComp.Get(), &UCMovementComponent::InputAxis_MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", MovementComp.Get(), &UCMovementComponent::InputAxis_MoveRight);
+	PlayerInputComponent->BindAxis("HorizontalLook", CamComp.Get(), &UCCamComponent::InputAxis_HorizontalLook);
+	PlayerInputComponent->BindAxis("VerticalLook", CamComp.Get(), &UCCamComponent::InputAxis_VerticalLook);
+	PlayerInputComponent->BindAxis("Zoom", AnimalRidingComponent.Get(), &UCRidingComponent::Input_Zoom);
+
+	PlayerInputComponent->BindAction("Walk", IE_Pressed, MovementComp.Get(), &UCMovementComponent::InputAction_Walk);
+	PlayerInputComponent->BindAction("Walk", IE_Released, MovementComp.Get(), &UCMovementComponent::InputAction_Run);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, MovementComp.Get(), &UCMovementComponent::InputAction_Jump);
+	PlayerInputComponent->BindAction("Targeting", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::TargetingInput);
+	PlayerInputComponent->BindAction("Menu", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_Menu);
+	PlayerInputComponent->BindAction("Menu", IE_Released, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_MenuHide);
+	PlayerInputComponent->BindAction("MagicMenu", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_MagicMenu);
+	PlayerInputComponent->BindAction("MagicMenu", IE_Released, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_MagicMenuHide);
+	PlayerInputComponent->BindAction("Action", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_Action);
+	PlayerInputComponent->BindAction("SubWeapon_Action", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_SubWeaponPressed);
+	PlayerInputComponent->BindAction("SubWeapon_Action", IE_Released, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_SubWeaponReleased);
+	PlayerInputComponent->BindAction("Skill_1", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_Skill1Pressed);
+	PlayerInputComponent->BindAction("Skill_2", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_Skill2Pressed);
+	PlayerInputComponent->BindAction("Magic", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_Magic);
+}
+
+void ACAnimal::InputAction_Interact()
+{
+	if (GetbRiding() && IsValid(AnimalRidingComponent.Get()) && AnimalRidingComponent->GetRider().IsValid())
+	{
+		AnimalRidingComponent->EndInteraction();
+		return;
+	}
+
+	ACCommonCharacter::InputAction_Interact();
+}
+
+void ACAnimal::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	if (IsValid(MovementComp))
+		MovementComp->SetGravity(1.f);
+
+	PlayLandMontageIfAny();
+
+	UGameplayStatics::PlaySoundAtLocation(this, LandSound, GetActorLocation());
+
+	FTransform landEffectTransform = GetActorTransform();
+	landEffectTransform.SetScale3D(landEffectTransform.GetScale3D() * LandEffectScaleFactor);
+
+	YJJHelpers::PlayEffect(GetWorld(), LandEffect, landEffectTransform);
+}
+
+void ACAnimal::Hit()
+{
+	CheckNull(MontagesComp);
+	MontagesComp->PlayAvoidAnim();
+
+	Super::Hit();
+
+	const FHitData data = Damage.Event.HitData;
+
+	data.PlayHitStop(GetWorld());
+	data.PlaySoundWave(this);
+	data.PlayEffect(GetWorld(), Damage.Event.HitData.EffectLocation, GetActorRotation());
+
+	if (false == CharacterStatComp->IsDead())
+	{
+		const FVector start = GetActorLocation();
+
+		CheckNull(Damage.Attacker);
+		const FVector target = Damage.Attacker->GetActorLocation();
+
+		FVector direction = target - start;
+		direction.Normalize();
+
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
+	}
+
+	if (CharacterStatComp->IsDead())
+	{
+		StateComp->SetDeadMode();
+		return;
+	}
+
+	Damage.Attacker = nullptr;
+	Damage.Causer = nullptr;
+}
+
+void ACAnimal::OnMountedAnimalStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType)
+{
+	(void)InPrevType;
+
+	switch (InNewType)
+	{
+	case CEStateType::Land:
+		Land();
+		break;
+	case CEStateType::Dead:
+		Dead();
+		break;
+	default:
+		break;
+	}
+}
+
+void ACAnimal::OnMountedAnimalHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType)
+{
+	(void)InPrevType;
+	(void)InNewType;
+
+	Hit();
+}
+
+void ACAnimal::SetZoomMinRange(const float InMinRange) const
+{
+	CheckNull(CamComp);
+	CamComp->ZoomData.MinRange = InMinRange;
+}
+
+void ACAnimal::SetZoomMaxRange(const float InMaxRange) const
+{
+	CheckNull(CamComp);
+	CamComp->ZoomData.MaxRange = InMaxRange;
+}
+
+TObjectPtr<USpringArmComponent> ACAnimal::GetSpringArm() const
+{
+	return AnimalSpringArm;
+}
+
+TObjectPtr<UCTargetingComponent> ACAnimal::GetTargetingComp() const
+{
+	return TargetingComp;
+}
+
+UBehaviorTree* ACAnimal::GetAnimalBehaviorTreeForController() const
+{
+	// CDO ctor 에서 BehaviorTree 동기 로드(BT_Animal_Run 등)하면 BB_Enemy·BP_Player 체인이 ACAnimal 과 순환 패키지로 AsyncLoading 교착이 날 수 있다.
+	if (false == IsValid(BehaviorTree))
+	{
+		ACAnimal* const mutableAnimal = const_cast<ACAnimal*>(this);
+		YJJHelpers::GetAssetDynamic<UBehaviorTree>(
+			&mutableAnimal->BehaviorTree,
+			FString(TEXT("/Script/AIModule.BehaviorTree'/Game/Character/Animals/BT_Animal_Run.BT_Animal_Run'")));
+	}
+	return BehaviorTree.Get();
+}
+
+void ACAnimal::AnimalEnsureLandingAndDeferredBlueprintAssetsLoadedAfterCommonBeginPlay()
+{
+	// 부모 BeginPlay 의 LandSound 할당 후에 동물 전용 에셋을 덮어쓴다(레거시 ctor 와 동일한 우선순위).
+	YJJHelpers::GetAssetDynamic<USoundBase>(&LandSound,
+		FString(TEXT("/Script/Engine.SoundCue'/Game/Assets/Sounds/Footsteps/Run/Stone/SC_Footstep_Stone_Run.SC_Footstep_Stone_Run'")));
+	YJJHelpers::GetAssetDynamic<UFXSystemAsset>(&LandEffect,
+		FString(TEXT("/Script/Niagara.NiagaraSystem'/Game/Assets/Effects/SuperheroFlight/VFX/Niagara/System/SuperheroLanding/NS_Superhero_Landing_Concrete.NS_Superhero_Landing_Concrete'")));
+
+	if (nullptr == EyeClass)
+	{
+		YJJHelpers::GetClassDynamic<AActor>(&EyeClass,
+			FString(TEXT("/Script/Engine.Blueprint'/Game/Character/Animals/CBP_Eye.CBP_Eye_C'")));
+		if (nullptr == EyeClass)
+		{
+			CLog::Log(FString::Printf(TEXT("ACAnimal: CBP_Eye 로드 실패 — Eye 포인터 스폰 분기 무시 가능 [%s]"), *GetNameSafe(this)));
+		}
+	}
+
+	if (true == bAnimalFillDefaultWeaponClassFromDiskWhenUnset && nullptr == AnimalWeaponClass)
+	{
+		YJJHelpers::GetClassDynamic<AActor>(&AnimalWeaponClass,
+			FString(TEXT("/Script/Engine.Blueprint'/Game/Character/Animals/AnimalWeapon.AnimalWeapon_C'")));
+		if (nullptr == AnimalWeaponClass)
+		{
+			CLog::Log(FString::Printf(TEXT("ACAnimal: AnimalWeapon 디스크 기본 블프 로드 실패 — 무기 미스폰 [%s]"), *GetNameSafe(this)));
+		}
+	}
+}
+
+void ACAnimal::SpawnAnimalWeaponFromClassIfConfigured()
+{
+	if (IsValid(AnimalWeapon))
+		return;
+
+	if (nullptr == AnimalWeaponClass)
+		return;
+
+	UWorld* const world = GetWorld();
+	if (nullptr == world)
+		return;
+
+	FActorSpawnParameters params;
+	params.Owner = this;
+
+	AActor* const spawnedActor = world->SpawnActor<AActor>(AnimalWeaponClass, GetActorTransform(), params);
+	if (IsValid(spawnedActor))
+	{
+		AnimalWeapon = spawnedActor;
+		return;
+	}
+
+	UE_LOG(
+		LogTemp,
+		Error,
+		TEXT("[ACAnimal] AnimalWeapon 스폰 실패 — 클래스/레벨 상태 확인 필요 (%s)."),
+		*GetNameSafe(this));
 }
 
 void ACAnimal::SetHp()
@@ -253,7 +602,7 @@ void ACAnimal::TryGrantKillRewardToAttacker()
 	Attacker->ProcessEvent(fn, &pay);
 }
 
-void ACAnimal::Hitted()
+void ACAnimal::InvokeHittedEffects()
 {
 	bool bAlive = false;
 	SetDamage(0.0f, bAlive);
@@ -286,7 +635,7 @@ void ACAnimal::Dead()
 
 	bAnimalDeathSequenceStarted = true;
 
-	IsDead.Broadcast();
+	OnIsDead.Broadcast();
 
 	if (IsValid(StateComp))
 		StateComp->SetDeadMode();
@@ -349,11 +698,6 @@ void ACAnimal::OnAnimalDeathSpawnSoulAndDestroy()
 	}
 
 	Destroy();
-}
-
-void ACAnimal::Begin_Dead()
-{
-	Dead();
 }
 
 void ACAnimal::FootstepAt(const bool bLeftOrRight, const EPhysicalSurface SurfaceType, const FVector StepLocation)
@@ -421,7 +765,7 @@ void ACAnimal::Footstep_Implementation(bool bLeftFoot, EPhysicalSurface SurfaceT
 
 void ACAnimal::ToggleIK_Implementation()
 {
-	// ICInterface_IK 의 알파를 토글 — 탑승 시 RidingComp 가 별도 값을 줄 수 있다.
+	// ICInterface_IK 의 알파를 토글 — 탑승 시 AnimalRidingComponent 가 별도 값을 줄 수 있다.
 	const float cur = GetLegIKAlpha();
 	if (cur > 0.01f)
 		SetLegIKAlpha(0.0f);

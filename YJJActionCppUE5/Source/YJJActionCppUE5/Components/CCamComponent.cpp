@@ -5,7 +5,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "Characters/CCommonCharacter.h"
-#include "Characters/Animals/CAnimal_AI.h"
+#include "Characters/Animals/CAnimal.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 UCCamComponent::UCCamComponent()

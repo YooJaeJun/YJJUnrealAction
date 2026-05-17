@@ -10,14 +10,26 @@
 #include "Particles/ParticleSystem.h"
 #include "Camera/CameraShakeBase.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Components/CStateComponent.h"
 #include "CAnimal.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAnimalRidingSimpleEvent);
 
 class UWidgetComponent;
+class USceneComponent;
+class UInputComponent;
+class USpringArmComponent;
+class UCameraComponent;
+class UCCamComponent;
+class UCGameUIComponent;
+class UCRidingComponent;
+class UCWeaponComponent;
+class UCPatrolComponent;
+class UBoxComponent;
+class UBehaviorTree;
+class UCTargetingComponent;
 
-// BP_Character 상속 BP_Animal 포팅 — 스탯 권위는 CharacterStatComp 가 우선일 수 있으나,
-// BP 그래프·직렬화 호환을 위해 레거시 멤버를 둔다. (값 동기화는 BeginPlay 이후 설계에 따름.)
+// BP_Animal 등 — 탈 것/카메라/BT 등 공통 규칙은 ACAnimal 에 둠(과거 별도 AI 서브타입 로직 포함).
 UCLASS(Abstract)
 class YJJACTIONCPPUE5_API ACAnimal : public ACCommonCharacter
 {
@@ -29,7 +41,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	// BP_Animal 의 HpBarWidget(WidgetComponent) — AI 는 오버라이드. 없으면 SetHpUI 는 HpBar_NPC 캐시만 갱신한다.
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	virtual void Landed(const FHitResult& Hit) override;
+
+	virtual void InputAction_Interact() override;
+
+	// HpBarWidget(WidgetComponent) — 없으면 SetHpUI 는 HpBar_NPC 갱신만 한다.
 	virtual UWidgetComponent* GetAnimalHpBarWidgetComponent() const;
 
 public:
@@ -105,7 +123,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials|Animal", meta = (MultiLine = "true"))
 	TArray<TObjectPtr<UMaterialInstanceDynamic>> Materials;
 
-	// BP End_Dead 직후 스폰하던 레거시 파티클(예: P_SoulAura). 없으면 생략.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Death|Animal", meta = (MultiLine = "true"))
 	TObjectPtr<UParticleSystem> DeathSoulEmitterTemplate;
 
@@ -121,7 +138,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Animal")
 	TSubclassOf<UUserWidget> AnimalHpBarWidgetClass;
 
-	// BP_Animal / BP_Player 와 동일한 발소리·착지 이펙트 배열.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "피직스|Animal", meta = (MultiLine = "true"))
 	TArray<TObjectPtr<USoundBase>> FootstepSounds;
 
@@ -131,7 +147,84 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "피직스|Animal", meta = (MultiLine = "true"))
 	TArray<TObjectPtr<UNiagaraSystem>> LandEffects;
 
-	// BP_Animal BeginPlay — CharacterStatComp 기준으로 Hp/MaxHp 미러 후 바 갱신.
+	// --- 탑승 카메라·타게팅·UI 등 야수 전용 컴포넌트·데이터 ---
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UCCamComponent> CamComp;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UCTargetingComponent> TargetingComp;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UCGameUIComponent> GameUIComp;
+
+	UPROPERTY(
+		VisibleAnywhere,
+		BlueprintReadOnly,
+		Category = "Components",
+		meta = (DisplayName = "RidingComponent"))
+	TObjectPtr<UCRidingComponent> AnimalRidingComponent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UCWeaponComponent> WeaponComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI", meta = (MultiLine = "true"))
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat|AnimalWeapon", meta = (MultiLine = "true", DisplayName = "Weapon Class"))
+	TSubclassOf<AActor> AnimalWeaponClass;
+
+	/** false 이면 BeginPlay 가 AnimalWeapon 디스크 기본 경로로 클래스를 채우지 않는다(CDragon 등 무기 블프 별도). */
+	UPROPERTY(EditDefaultsOnly, Category = "Combat|AnimalWeapon")
+	bool bAnimalFillDefaultWeaponClassFromDiskWhenUnset = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|AnimalWeapon", meta = (MultiLine = "true", DisplayName = "Weapon"))
+	TObjectPtr<AActor> AnimalWeapon;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (DisplayName = "SpringArm"))
+	TObjectPtr<USpringArmComponent> AnimalSpringArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (DisplayName = "Camera"))
+	TObjectPtr<UCameraComponent> AnimalViewCamera;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	TArray<float> Speeds{ 400, 1000, 1600 };
+
+	UPROPERTY(VisibleAnywhere, Category = "AI", meta = (DisplayName = "Patrol Component"))
+	TObjectPtr<UCPatrolComponent> PatrolComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
+	TObjectPtr<USceneComponent> MountLeftPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
+	TObjectPtr<USceneComponent> MountRightPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
+	TObjectPtr<USceneComponent> MountBackPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Riding", meta = (DisplayName = "RiderPoint"))
+	TObjectPtr<USceneComponent> AnimalRiderPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
+	TObjectPtr<USceneComponent> UnmountPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Riding", meta = (DisplayName = "EyePoint"))
+	TObjectPtr<USceneComponent> AnimalEyePoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
+	TSubclassOf<AActor> EyeClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
+	TObjectPtr<AActor> Eye;
+
+	UPROPERTY(VisibleAnywhere, Category = "Riding")
+	TObjectPtr<UBoxComponent> InteractionCollision;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI", meta = (DisplayName = "Scene"))
+	TObjectPtr<USceneComponent> HpBarSceneRoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (DisplayName = "HpBarWidget"))
+	TObjectPtr<UWidgetComponent> HpBarWidgetComp;
+
 	UFUNCTION(BlueprintCallable, Category = "Status|Animal", meta = (DisplayName = "Set Hp"))
 	void SetHp();
 
@@ -141,33 +234,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI|Animal", meta = (DisplayName = "Update Hp NPC"))
 	void UpdateHp_NPC();
 
-	// BP_Animal 상태 스위치 — 피격 연출(레거시 커스텀 이벤트 Hitted).
-	UFUNCTION(BlueprintCallable, Category = "Combat|Animal", meta = (DisplayName = "Hitted"))
-	void Hitted();
+	/** 부모 `ACCommonCharacter::InvokeHittedEffects` 에 UFUNCTION 이 있음 — 재선언 시 UFUNCTION 블록을 붙이면 UHT 에러난다. */
+	virtual void InvokeHittedEffects() override;
 
-	// BP 노드명 Begin_Dead — Dead() 진입 래퍼.
-	UFUNCTION(BlueprintCallable, Category = "Combat|Animal", meta = (DisplayName = "Begin Dead"))
-	void Begin_Dead();
-
-	// 애님 노티파이 / BP 가 I_Character 시그니처 대신 호출.
 	UFUNCTION(BlueprintCallable, Category = "세팅|Animal")
 	void FootstepAt(bool bLeftOrRight, EPhysicalSurface SurfaceType, FVector StepLocation);
 
 	UFUNCTION(BlueprintCallable, Category = "세팅|Animal")
 	void LandAt(EPhysicalSurface SurfaceType, FVector StepLocation);
 
-	// BP_Player::SetDamage 와 동일 시맨틱 — InDamage<=0 이면 HitData.Damage 사용.
 	UFUNCTION(BlueprintCallable, Category = "Combat|Animal")
 	void SetDamage(float InDamage, bool& OutHittedOrDead);
 
-	// BP 그래프 함수명 LevelUp — 레벨++ 후 Exp 에서 MaxExp 차감.
 	UFUNCTION(BlueprintCallable, Category = "Reward|Animal", meta = (DisplayName = "Level Up"))
 	void LevelUp();
 
 	UFUNCTION(BlueprintCallable, Category = "Combat|Animal", meta = (DisplayName = "Load Prev State"))
 	void LoadPrevState();
 
-	// BP_Character::PlayHitAnim 근사 — HitData.Montage 우선, 없으면 HitAnim.
 	UFUNCTION(BlueprintCallable, Category = "Combat|Animal", meta = (DisplayName = "Play Hit Anim"))
 	void PlayHitAnim();
 
@@ -177,33 +261,26 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hit|Animal", meta = (DisplayName = "Spawn Blood"))
 	void SpawnBlood();
 
-	// BP_Animal::PlayHitStop — HitStop 이 0 이 아닐 때만 적용. 피사체(폰 또는 Movable 메시)만 DilationActors 에 넣는다.
 	UFUNCTION(BlueprintCallable, Category = "Hit|Animal", meta = (DisplayName = "Play Hit Stop"))
 	void PlayHitStop();
 
 	UFUNCTION(BlueprintCallable, Category = "Hit|Animal", meta = (DisplayName = "Restore Time Dilation"))
 	void RestoreTimeDilation();
 
-	// BP_PlayCameraShake — 공격자가 로컬 플레이어일 때만 HitData.ShakeClass 재생.
 	virtual void PlayCameraShake() override;
 
-	// BP Composite Reward — I_Reward.Rewarded 본문을 C++ 로 옮긴 진입점(그래프에서 직접 호출).
 	UFUNCTION(BlueprintCallable, Category = "Reward|Animal")
 	void ApplyRewardedEvent(ACharacter* Invoker, double InExp, int32 BuffIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Reward|Animal")
 	void LevelUpAnimal();
 
-	// BP_Animal 인터페이스(AnimBP·레거시) 대응 — 세부 값은 프로젝트 애님에서 오버라이드.
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animal|IK", meta = (DisplayName = "Toggle IK"))
 	void ToggleIK();
 
-	// BP_Animal::GetControlDirection — GetControlRotation 의 요만 사용(롤·피치 0) 후 전·우 단위 벡터.
 	UFUNCTION(BlueprintCallable, Category = "Utilities", meta = (DisplayName = "Get Control Direction"))
 	void GetControlDirection(FVector& OutForward, FVector& OutRight) const;
 
-	// 레거시 ABP 출력 핀 이름 "Out Movement" 는 UPARAM(DisplayName) 으로 맞춘다.
-	// C++ 함수 심볼은 GetAnimalDesiredMovement 로 둠 — BP_Animal 에 구 BPI 의 GetDesiredMovement 등과 동일 이름 UFunction 이 겹치면 "function name ... already used" 컴파일 Fatal 이 난다.
 	UFUNCTION(
 		BlueprintNativeEvent,
 		BlueprintCallable,
@@ -214,11 +291,44 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animal|IK")
 	void SetFootLocation(bool bLeftFoot, FVector WorldLocation);
 
+	void SetZoomMinRange(const float InMinRange) const;
+	void SetZoomMaxRange(const float InMaxRange) const;
+
+	FORCEINLINE TObjectPtr<UBoxComponent> GetInteractionCollision() const { return InteractionCollision; }
+	FORCEINLINE TObjectPtr<USceneComponent> GetMountLeftPoint() const { return MountLeftPoint; }
+	FORCEINLINE TObjectPtr<USceneComponent> GetMountRightPoint() const { return MountRightPoint; }
+	FORCEINLINE TObjectPtr<USceneComponent> GetMountBackPoint() const { return MountBackPoint; }
+	FORCEINLINE TObjectPtr<USceneComponent> GetRiderPoint() const { return AnimalRiderPoint; }
+	FORCEINLINE TObjectPtr<USceneComponent> GetUnmountPoint() const { return UnmountPoint; }
+	FORCEINLINE TObjectPtr<USceneComponent> GetEyePoint() const { return AnimalEyePoint; }
+
+	FORCEINLINE TSubclassOf<AActor> GetEyeActorClass() const { return EyeClass; }
+	FORCEINLINE TObjectPtr<AActor> GetSpawnedEyeActor() const { return Eye; }
+
+	virtual TObjectPtr<USpringArmComponent> GetSpringArm() const override;
+	virtual TObjectPtr<UCTargetingComponent> GetTargetingComp() const override;
+	FORCEINLINE TObjectPtr<UCameraComponent> GetCamera() const { return AnimalViewCamera; }
+	FORCEINLINE TObjectPtr<UCCamComponent> GetZoomComp() const { return CamComp; }
+
+	UBehaviorTree* GetAnimalBehaviorTreeForController() const;
+
 protected:
+	virtual void Hit() override;
 	virtual void Dead() override;
 	virtual void End_Dead() override;
 
 private:
+	UFUNCTION()
+	void OnMountedAnimalStateTypeChanged(const CEStateType InPrevType, const CEStateType InNewType);
+
+	UFUNCTION()
+	void OnMountedAnimalHitStateTypeChanged(const CEHitType InPrevType, const CEHitType InNewType);
+
+	void SpawnAnimalWeaponFromClassIfConfigured();
+
+	/** ctor 의 ConstructorHelpers/동기 블프 로드는 BP_Animal CDO·AnimalWeapon 과 순환해 AsyncLoading2 assertion 나기 쉬움 → BeginPlay 에서 보충. */
+	void AnimalEnsureLandingAndDeferredBlueprintAssetsLoadedAfterCommonBeginPlay();
+
 	void TryGrantKillRewardToAttacker();
 
 	UFUNCTION()
@@ -233,12 +343,8 @@ private:
 	FTimerHandle AnimalDeathTimer_SoulFx;
 
 protected:
-	virtual void Footstep_Implementation(
-		bool bLeftFoot,
-		EPhysicalSurface SurfaceType,
-		FVector HitLocation) override;
+	virtual void Footstep_Implementation(bool bLeftFoot, EPhysicalSurface SurfaceType, FVector HitLocation) override;
 
-	// HpBar_NPC 와(있으면) 자식의 HpBarWidget 위젯에 SetHPUI 브로드캐스트.
 	virtual void RefreshAnimalHpBarWidgets();
 
 	void ApplyEnemyHpBarPercent();

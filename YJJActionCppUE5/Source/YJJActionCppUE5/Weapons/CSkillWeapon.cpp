@@ -7,6 +7,8 @@
 #include "Components/ShapeComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Characters/CCommonCharacter.h"
+#include "Characters/Animals/Dragon/CDragon.h"
+#include "Characters/Animals/Dragon/Weapon/CDragonWeapon.h"
 #include "Characters/Player/CPlayableCharacter.h"
 #include "Components/CWeaponComponent.h"
 #include "Components/CStateComponent.h"
@@ -103,6 +105,145 @@ UCStateComponent* ACMagicSkillContext::Magic_ResolveStateComponent() const
 	}
 
 	return Character->FindComponentByClass<UCStateComponent>();
+}
+
+bool ACMagicSkillContext::Magic_IsCharacterRealRiding() const
+{
+	UCStateComponent* stateCompResolved = Magic_ResolveStateComponent();
+	if (false == IsValid(stateCompResolved))
+	{
+		// SetCandidate 류 간헐 호출 — Tick 아님, State UObject 미설정만 false 처리(레거시 그래프와 동일하게 조용히 실패).
+		return false;
+	}
+
+	return stateCompResolved->IsRealRiding();
+}
+
+void ACMagicSkillContext::Magic_RefreshStateReferenceFromCharacter()
+{
+	if (false == IsValid(Character))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[MagicSkillContext] State 갱신: Character 없음 — 컨텍스트=%s Owner=%s"),
+			*GetNameSafe(this),
+			*GetNameSafe(GetOwner())));
+		State = nullptr;
+		return;
+	}
+
+	UCStateComponent* resolvedState = Character->FindComponentByClass<UCStateComponent>();
+	State = resolvedState;
+
+	if (false == IsValid(resolvedState))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[MagicSkillContext] State 갱신: UCStateComponent 없음 — Character=%s 컨텍스트=%s"),
+			*GetNameSafe(Character),
+			*GetNameSafe(this)));
+	}
+}
+
+UCMovementComponent* ACMagicSkillContext::Magic_ResolveMovementForOwnerOrMount() const
+{
+	if (IsValid(Moving))
+	{
+		return Moving;
+	}
+
+	if (false == IsValid(Character))
+	{
+		return nullptr;
+	}
+
+	if (IsValid(Character->CurInteractingActor))
+	{
+		UCMovementComponent* fromInteract = Character->CurInteractingActor->FindComponentByClass<UCMovementComponent>();
+		if (IsValid(fromInteract))
+		{
+			return fromInteract;
+		}
+	}
+
+	return Character->FindComponentByClass<UCMovementComponent>();
+}
+
+void ACMagicSkillContext::Magic_FixCameraForOwnerMovement()
+{
+	UCMovementComponent* moveResolved = Magic_ResolveMovementForOwnerOrMount();
+	if (false == IsValid(moveResolved))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[MagicSkillContext] FixCamera: UCMovementComponent 없음 — %s Character=%s"),
+			*GetNameSafe(this),
+			*GetNameSafe(Character)));
+		return;
+	}
+
+	moveResolved->FixCamera();
+}
+
+void ACMagicSkillContext::Magic_UnFixCameraForOwnerMovement()
+{
+	UCMovementComponent* moveResolved = Magic_ResolveMovementForOwnerOrMount();
+	if (false == IsValid(moveResolved))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[MagicSkillContext] UnFixCamera: UCMovementComponent 없음 — %s Character=%s"),
+			*GetNameSafe(this),
+			*GetNameSafe(Character)));
+		return;
+	}
+
+	moveResolved->UnFixCamera();
+}
+
+void ACMagicSkillContext::Magic_SetOwnerStateAction()
+{
+	UCStateComponent* stateCompResolved = Magic_ResolveStateComponent();
+	if (false == IsValid(stateCompResolved))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[MagicSkillContext] SetAction: UCStateComponent 없음 — %s Character=%s"),
+			*GetNameSafe(this),
+			*GetNameSafe(Character)));
+		return;
+	}
+
+	stateCompResolved->SetAction();
+}
+
+bool ACMagicSkillContext::Magic_IsOwnerIdle() const
+{
+	UCStateComponent* stateCompResolved = Magic_ResolveStateComponent();
+	if (false == IsValid(stateCompResolved))
+	{
+		// DoAction 조건식에서 자주 조합됨 — State 미연결은 false 만 반환(로그 스팸 방지).
+		return false;
+	}
+
+	return stateCompResolved->IsIdle();
+}
+
+bool ACMagicSkillContext::Magic_IsOwnerRiding() const
+{
+	UCStateComponent* stateCompResolved = Magic_ResolveStateComponent();
+	if (false == IsValid(stateCompResolved))
+	{
+		return false;
+	}
+
+	return stateCompResolved->IsRiding();
+}
+
+bool ACMagicSkillContext::Magic_IsOwnerInAction() const
+{
+	UCStateComponent* stateCompResolved = Magic_ResolveStateComponent();
+	if (false == IsValid(stateCompResolved))
+	{
+		return false;
+	}
+
+	return stateCompResolved->IsAction();
 }
 
 void ACMagicSkillContext::Magic_ApplyEquipRowFacingAndMovement(const FEquipData& Row)
@@ -3350,6 +3491,30 @@ void ACSkillWeapon::BeginPlay()
 		Character = weaponActor->Character;
 		if (false == IsValid(Character))
 			CLog::Log(FString::Printf(TEXT("[SkillWeapon] Weapon 컨텍스트의 Character 미설정 — %s"), *GetName()));
+		return;
+	}
+
+	// 레거시 Skill_Magic 계열 Skill_Dragon 등 — 소유 주체가 드래곤 폰이거나 무기(ACDragonWeapon)인 경우(ACDragon 은 ACCommonCharacter 계열).
+	if (ACDragon* dragonDirectScratch = Cast<ACDragon>(ownerActor))
+	{
+		Magic = nullptr;
+		Weapon = nullptr;
+		Character = dragonDirectScratch;
+		return;
+	}
+
+	if (ACDragonWeapon* dragonWeaponScratch = Cast<ACDragonWeapon>(ownerActor))
+	{
+		Magic = nullptr;
+		Weapon = nullptr;
+
+		ACDragon* owningDragonScratch = dragonWeaponScratch->Dragon_ResolveOwningDragon();
+		Character = owningDragonScratch;
+		if (false == IsValid(Character))
+		{
+			CLog::Log(FString::Printf(TEXT("[SkillWeapon] ACDragonWeapon Owner 이지만 Dragon_ResolveOwningDragon 실패 — %s"),
+				*GetNameSafe(this)));
+		}
 		return;
 	}
 

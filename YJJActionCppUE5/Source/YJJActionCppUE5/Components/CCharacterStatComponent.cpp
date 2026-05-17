@@ -71,6 +71,11 @@ void UCCharacterStatComponent::SetDamage(const float InNewDamage)
 	SetHp(FMath::Clamp<float>(CurHp - InNewDamage, 0.0f, CurStat.MaxHp));
 }
 
+void UCCharacterStatComponent::RestoreHpToMax()
+{
+	SetHp(GetMaxHp());
+}
+
 void UCCharacterStatComponent::SetStaminaDamage(const float InNewDamage)
 {
 	SetStamina(FMath::Clamp<float>(CurStamina - InNewDamage, 0.0f, CurStat.MaxStamina));

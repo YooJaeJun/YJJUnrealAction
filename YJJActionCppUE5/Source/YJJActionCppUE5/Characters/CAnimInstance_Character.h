@@ -48,8 +48,13 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default", meta = (DisplayName = "Magic Component"))
 	TObjectPtr<UCMagicComponent> MagicComponent;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "세팅")
-	TObjectPtr<ACCommonCharacter> Character;
+	// 이름 "Character" 는 UCharacter·ABP 변수 검증과 겹치기 쉬워 핀 깨짐이 난다 — AnimBP 에서는 Owning Character 로만 접근한다.
+	UPROPERTY(
+		BlueprintReadWrite,
+		EditAnywhere,
+		Category = "세팅",
+		meta = (DisplayName = "Owning Character"))
+	TObjectPtr<ACCommonCharacter> OwningCharacter;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Default", meta = (DisplayName = "State Component"))
 	TObjectPtr<UCStateComponent> StateComponent;
@@ -78,6 +83,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States", meta = (DisplayName = "Falling"))
 	bool Falling = false;
 
+	/** CABP 레거시 bFalling — Anim Graph Set 노드 호환용(Falling 과 동일 값 동기화). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "States", meta = (DisplayName = "bFalling Legacy"))
+	bool bFalling = false;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States", meta = (DisplayName = "Hitting"))
 	bool Hitting = false;
 
@@ -87,11 +96,23 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons", meta = (DisplayName = "Sub Weapon Type"))
 	CEWeaponType SubWeaponType = CEWeaponType::Unarmed;
 
+	/** CABP 레거시 핀 "Weapon Type" — NativeUpdate 에서 마법 슬롯·실물 무기별 블렌드용으로 채운다. */
+	UPROPERTY(
+		BlueprintReadWrite,
+		EditAnywhere,
+		Category = "Weapons",
+		meta = (DisplayName = "Weapon Type Legacy Pin"))
+	CEWeaponType WeaponType = CEWeaponType::Unarmed;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons", meta = (DisplayName = "Magic Type"))
 	CEMagicType MagicType = CEMagicType::Unarmed;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Bows", meta = (DisplayName = "Bow Aiming"))
 	bool Bow_Aiming = false;
+
+	/** CABP 레거시 bBowAiming — Bow_Aiming 과 동일. */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Bows", meta = (DisplayName = "bBowAiming Legacy"))
+	bool bBowAiming = false;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Feets", meta = (DisplayName = "Feet"))
 	bool Feet = false;
@@ -107,6 +128,14 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Riding", meta = (DisplayName = "Riding Animal Falling"))
 	bool RidingAnimalFalling = false;
+
+	/** CABP 레거시 bRidingFalling — RidingAnimalFalling 과 동일. */
+	UPROPERTY(
+		BlueprintReadWrite,
+		EditAnywhere,
+		Category = "Riding",
+		meta = (DisplayName = "bRidingFalling Legacy"))
+	bool bRidingFalling = false;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Riding", meta = (DisplayName = "Riding Speed"))
 	double RidingSpeed = 0.0;

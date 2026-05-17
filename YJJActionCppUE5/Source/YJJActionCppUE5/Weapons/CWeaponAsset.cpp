@@ -10,7 +10,7 @@ UCWeaponAsset::UCWeaponAsset()
 {
 	AttachmentClass = ACAttachment::StaticClass();
 	EquipmentClass = UCEquipment::StaticClass();
-	// Abstract Å¬·¡½º´Â ±âº»°ª ÃÊ±âÈ­ x
+	// Abstract Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½âº»ï¿½ï¿½ ï¿½Ê±ï¿½È­ x
 	// ActClass = UCAct::StaticClass();
 	// SkillClasses = UCSkill::StaticClass();
 }

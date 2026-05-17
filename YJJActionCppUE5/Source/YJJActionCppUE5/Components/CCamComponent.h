@@ -16,16 +16,16 @@ struct FZoomData
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom", meta = (ToolTip = "줌 입력(예: 마우스 휠 축)에 따른 변경 속도입니다."))
 	float ZoomSpeed = 40;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom", meta = (ToolTip = "암 길이(줌 거리)의 최소값입니다."))
 	float MinRange = 100;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom", meta = (ToolTip = "암 길이(줌 거리)의 최대값입니다."))
 	float MaxRange = 600;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zoom", meta = (ToolTip = "목표 암 길이로 보간되는 속도입니다."))
 	float InterpSpeed = 5;
 };
 

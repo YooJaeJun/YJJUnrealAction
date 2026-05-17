@@ -11,9 +11,376 @@
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "UObject/UnrealType.h"
+#include "UObject/EnumProperty.h"
 
 namespace
 {
+	bool Legacy_InputParmIsEligible(const FProperty* const Prop)
+	{
+		CheckNullResult(Prop, false);
+		if ((Prop->PropertyFlags & CPF_Parm) == 0)
+			return false;
+		if (Prop->HasAnyPropertyFlags(CPF_ReturnParm))
+			return false;
+		if (Prop->HasAnyPropertyFlags(CPF_OutParm))
+			return false;
+		return true;
+	}
+
+	// 레거시 BP 의 DoAction(Enum, int) 패킹이 에디터별로 미세하게 달라 직접 struct 를 쓰기 어렵다 — Parms 버퍼에 반영 속성 순서대로 채운다.
+	bool TryDispatch_ProcessEvent_WithAttackSkillIndexParms(
+		UObject* const TargetActor,
+		const FName FunctionName,
+		const CEAttackType InAttackType,
+		const int32 InSkillIndex)
+	{
+		CheckNullResult(TargetActor, false);
+
+		UFunction* const Fn = TargetActor->FindFunction(FunctionName);
+		if (nullptr == Fn)
+			return false;
+
+		const int32 ParmsByteSize = Fn->ParmsSize;
+		if (ParmsByteSize <= 0)
+		{
+			TargetActor->ProcessEvent(Fn, nullptr);
+			return true;
+		}
+
+		TArray<uint8> ParamsScratch;
+		ParamsScratch.SetNumZeroed(ParmsByteSize);
+		uint8* const ParmsMem = ParamsScratch.GetData();
+
+		bool bWroteKnownField = false;
+		bool bSawEligibleCategoryField = false;
+		bool bSawForeignInputParm = false;
+
+		bool bEnumSlotFilled = false;
+		bool bIntSlotFilled = false;
+
+		for (TFieldIterator<FProperty> Iterator(Fn, EFieldIteratorFlags::ExcludeSuper); Iterator; ++Iterator)
+		{
+			FProperty* Property = *Iterator;
+			if (false == Legacy_InputParmIsEligible(Property))
+				continue;
+
+			if (nullptr != CastField<FBoolProperty>(Property))
+			{
+				bSawForeignInputParm = true;
+				continue;
+			}
+
+			const FEnumProperty* const AsEnumProp = CastField<FEnumProperty>(Property);
+			const FByteProperty* const AsByteProp = CastField<FByteProperty>(Property);
+			const FIntProperty* const AsIntProp = CastField<FIntProperty>(Property);
+
+			if ((nullptr == AsEnumProp) && (nullptr == AsByteProp) && (nullptr == AsIntProp))
+			{
+				bSawForeignInputParm = true;
+				continue;
+			}
+
+			bSawEligibleCategoryField = true;
+
+			if ((nullptr != AsEnumProp) && (false == bEnumSlotFilled))
+			{
+				FNumericProperty* const Under = AsEnumProp->GetUnderlyingProperty();
+				CheckNullResult(Under, false);
+				void* const Addr = Property->ContainerPtrToValuePtr<void>(ParmsMem);
+				Under->SetIntPropertyValue(Addr, static_cast<int64>(static_cast<uint8>(InAttackType)));
+				bEnumSlotFilled = true;
+				bWroteKnownField = true;
+				continue;
+			}
+
+			if ((nullptr != AsByteProp) && AsByteProp->IsEnum() && (false == bEnumSlotFilled))
+			{
+				void* const Addr = Property->ContainerPtrToValuePtr<void>(ParmsMem);
+				AsByteProp->SetIntPropertyValue(Addr, static_cast<int64>(static_cast<uint8>(InAttackType)));
+				bEnumSlotFilled = true;
+				bWroteKnownField = true;
+				continue;
+			}
+
+			if ((nullptr != AsIntProp) && (false == bIntSlotFilled))
+			{
+				void* const Addr = Property->ContainerPtrToValuePtr<void>(ParmsMem);
+				AsIntProp->SetIntPropertyValue(Addr, static_cast<int64>(InSkillIndex));
+				bIntSlotFilled = true;
+				bWroteKnownField = true;
+				continue;
+			}
+		}
+
+		if (bSawForeignInputParm)
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("[CWeaponComponent][TryDispatch_ProcessEvent_WithAttackSkillIndexParms] 미지원 인자 타입이라 호출 포기(Target=%s, Fn=%s)"),
+				*TargetActor->GetName(),
+				*FunctionName.ToString());
+
+			return false;
+		}
+
+		if ((false == bWroteKnownField) && (true == bSawEligibleCategoryField))
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("[CWeaponComponent][TryDispatch_ProcessEvent_WithAttackSkillIndexParms] 인자 패턴 인식 불가(Target=%s, Fn=%s)"),
+				*TargetActor->GetName(),
+				*FunctionName.ToString());
+
+			return false;
+		}
+
+		TargetActor->ProcessEvent(Fn, ParmsMem);
+		return true;
+	}
+
+	bool TryDispatch_ProcessEvent_AttackEnumOnlyParms_WithValue(UObject* const TargetActor, const FName FunctionName,
+	                                                            const CEAttackType InAttackType)
+	{
+		CheckNullResult(TargetActor, false);
+
+		UFunction* const Fn = TargetActor->FindFunction(FunctionName);
+		if (nullptr == Fn)
+			return false;
+
+		const int32 ParmsByteSize = Fn->ParmsSize;
+		if (ParmsByteSize <= 0)
+		{
+			TargetActor->ProcessEvent(Fn, nullptr);
+			return true;
+		}
+
+		TArray<uint8> ParamsScratch;
+		ParamsScratch.SetNumZeroed(ParmsByteSize);
+		uint8* const ParmsMem = ParamsScratch.GetData();
+
+		bool bWroteKnownField = false;
+		bool bSawEligibleCategoryField = false;
+		bool bSawForeignInputParm = false;
+
+		for (TFieldIterator<FProperty> Iterator(Fn, EFieldIteratorFlags::ExcludeSuper); Iterator; ++Iterator)
+		{
+			FProperty* Property = *Iterator;
+			if (false == Legacy_InputParmIsEligible(Property))
+				continue;
+
+			if (nullptr != CastField<FBoolProperty>(Property))
+			{
+				bSawForeignInputParm = true;
+				continue;
+			}
+
+			const FEnumProperty* const AsEnumProp = CastField<FEnumProperty>(Property);
+			const FByteProperty* const AsByteProp = CastField<FByteProperty>(Property);
+
+			if ((nullptr == AsEnumProp) && ((nullptr == AsByteProp) || (false == AsByteProp->IsEnum())))
+			{
+				bSawForeignInputParm = true;
+				continue;
+			}
+
+			bSawEligibleCategoryField = true;
+
+			if (nullptr != AsEnumProp)
+			{
+				FNumericProperty* const Under = AsEnumProp->GetUnderlyingProperty();
+				CheckNullResult(Under, false);
+				void* const Addr = Property->ContainerPtrToValuePtr<void>(ParmsMem);
+				Under->SetIntPropertyValue(Addr, static_cast<int64>(static_cast<uint8>(InAttackType)));
+				bWroteKnownField = true;
+				break;
+			}
+
+			if (nullptr != AsByteProp)
+			{
+				void* const Addr = Property->ContainerPtrToValuePtr<void>(ParmsMem);
+				AsByteProp->SetIntPropertyValue(Addr, static_cast<int64>(static_cast<uint8>(InAttackType)));
+				bWroteKnownField = true;
+				break;
+			}
+		}
+
+		if (bSawForeignInputParm)
+			return false;
+		if ((false == bWroteKnownField) && (true == bSawEligibleCategoryField))
+			return false;
+
+		TargetActor->ProcessEvent(Fn, ParmsMem);
+		return true;
+	}
+
+	bool TryDispatch_ProcessEvent_FirstInt32Parm(UObject* const TargetActor, const FName FunctionName,
+	                                             const int32 InValue)
+	{
+		CheckNullResult(TargetActor, false);
+
+		UFunction* const Fn = TargetActor->FindFunction(FunctionName);
+		if (nullptr == Fn)
+			return false;
+
+		const int32 ParmsByteSize = Fn->ParmsSize;
+		if (ParmsByteSize <= 0)
+		{
+			TargetActor->ProcessEvent(Fn, nullptr);
+			return true;
+		}
+
+		TArray<uint8> ParamsScratch;
+		ParamsScratch.SetNumZeroed(ParmsByteSize);
+		uint8* const ParmsMem = ParamsScratch.GetData();
+
+		bool bWroteKnownField = false;
+		bool bSawEligibleCategoryField = false;
+		bool bSawForeignInputParm = false;
+
+		for (TFieldIterator<FProperty> Iterator(Fn, EFieldIteratorFlags::ExcludeSuper); Iterator; ++Iterator)
+		{
+			FProperty* Property = *Iterator;
+			if (false == Legacy_InputParmIsEligible(Property))
+				continue;
+
+			if (nullptr != CastField<FBoolProperty>(Property))
+			{
+				bSawForeignInputParm = true;
+				continue;
+			}
+
+			const FIntProperty* const AsIntProp = CastField<FIntProperty>(Property);
+			if (nullptr == AsIntProp)
+			{
+				bSawForeignInputParm = true;
+				continue;
+			}
+
+			bSawEligibleCategoryField = true;
+			void* const Addr = Property->ContainerPtrToValuePtr<void>(ParmsMem);
+			AsIntProp->SetIntPropertyValue(Addr, static_cast<int64>(InValue));
+			bWroteKnownField = true;
+			break;
+		}
+
+		if (bSawForeignInputParm)
+			return false;
+		if ((false == bWroteKnownField) && (true == bSawEligibleCategoryField))
+			return false;
+
+		TargetActor->ProcessEvent(Fn, ParmsMem);
+		return true;
+	}
+
+	bool TryDispatch_ProcessEvent_FirstBoolParm(UObject* const TargetActor, const FName FunctionName, const bool bValue)
+	{
+		CheckNullResult(TargetActor, false);
+
+		UFunction* const Fn = TargetActor->FindFunction(FunctionName);
+		if (nullptr == Fn)
+			return false;
+
+		const int32 ParmsByteSize = Fn->ParmsSize;
+		if (ParmsByteSize <= 0)
+		{
+			TargetActor->ProcessEvent(Fn, nullptr);
+			return true;
+		}
+
+		TArray<uint8> ParamsScratch;
+		ParamsScratch.SetNumZeroed(ParmsByteSize);
+		uint8* const ParmsMem = ParamsScratch.GetData();
+
+		bool bWroteKnownField = false;
+
+		for (TFieldIterator<FProperty> Iterator(Fn, EFieldIteratorFlags::ExcludeSuper); Iterator; ++Iterator)
+		{
+			FProperty* Property = *Iterator;
+			if (false == Legacy_InputParmIsEligible(Property))
+				continue;
+
+			const FBoolProperty* const BoolProp = CastField<FBoolProperty>(Property);
+			if (nullptr == BoolProp)
+			{
+				UE_LOG(LogTemp, Warning,
+					TEXT("[CWeaponComponent][TryDispatch_ProcessEvent_FirstBoolParm] bool 이 아닌 인자 존재 — 레거시 Equip 패킹 불명(Target=%s, Fn=%s)"),
+					*TargetActor->GetName(),
+					*FunctionName.ToString());
+
+				return false;
+			}
+
+			void* const Addr = Property->ContainerPtrToValuePtr<void>(ParmsMem);
+			BoolProp->SetPropertyValue(Addr, bValue);
+			bWroteKnownField = true;
+			break;
+		}
+
+		if (false == bWroteKnownField)
+			return false;
+
+		TargetActor->ProcessEvent(Fn, ParmsMem);
+		return true;
+	}
+
+	void TryLegacyWeaponProcessEventIfBound(AActor* const WeaponActor, const FName& FunctionName);
+
+	// 레거시 BP 무기 레인 구분 플래그 — Begin_Equip / End_Unequip 등에 bool 이 있으면 사용, 없으면 무 인자 노드만 호출한다.
+	void DispatchLegacyEquipOrBeginEquipGate(AActor* const WeaponActor, const bool bMainLaneWeaponGate)
+	{
+		if (false == IsValid(WeaponActor))
+			return;
+
+		static const FName Begin(TEXT("Begin_Equip"));
+
+		if (TryDispatch_ProcessEvent_FirstBoolParm(WeaponActor, Begin, bMainLaneWeaponGate))
+			return;
+
+		static const FName Equip(TEXT("Equip"));
+		TryLegacyWeaponProcessEventIfBound(WeaponActor, Equip);
+	}
+
+	void DispatchLegacyUnequipOrEndUnequipGate(AActor* const WeaponActor, const bool bMainLaneWeaponGate)
+	{
+		if (false == IsValid(WeaponActor))
+			return;
+
+		static const FName EndUnequip(TEXT("End_Unequip"));
+
+		if (TryDispatch_ProcessEvent_FirstBoolParm(WeaponActor, EndUnequip, bMainLaneWeaponGate))
+			return;
+
+		static const FName Unequip(TEXT("Unequip"));
+		TryLegacyWeaponProcessEventIfBound(WeaponActor, Unequip);
+	}
+
+	// 레거시 BP 무기 레인 플래그 — End_Equip 에 bool 이 있으면 사용하고, 없으면 무인자 호출만 시도한다(Equip 폴백은 없음: 착장 해제와 혼동).
+	void DispatchLegacyEndEquipGate(AActor* const WeaponActor, const bool bMainLaneWeaponGate)
+	{
+		if (false == IsValid(WeaponActor))
+			return;
+
+		static const FName EndEquip(TEXT("End_Equip"));
+
+		if (TryDispatch_ProcessEvent_FirstBoolParm(WeaponActor, EndEquip, bMainLaneWeaponGate))
+			return;
+
+		TryLegacyWeaponProcessEventIfBound(WeaponActor, EndEquip);
+	}
+
+	// 레거시 BP — Begin_Unequip bool 게이트가 있으면 사용, 없으면 무인자 Begin_Unequip 만 시도한다(Unequip 폴백 금지: 타이밍이 다름).
+	void DispatchLegacyBeginUnequipGate(AActor* const WeaponActor, const bool bMainLaneWeaponGate)
+	{
+		if (false == IsValid(WeaponActor))
+			return;
+
+		static const FName BeginUnequip(TEXT("Begin_Unequip"));
+
+		if (TryDispatch_ProcessEvent_FirstBoolParm(WeaponActor, BeginUnequip, bMainLaneWeaponGate))
+			return;
+
+		TryLegacyWeaponProcessEventIfBound(WeaponActor, BeginUnequip);
+	}
+
 	// 레거시 BP Weapon 의 커스텀 이벤트 Equip/Unequip — 네이티브 액터는 FindFunction 이 실패할 수 있다(VERBOSE 로만 통지).
 	void TryLegacyWeaponProcessEventIfBound(AActor* const WeaponActor, const FName& FunctionName)
 	{
@@ -193,6 +560,21 @@ void UCWeaponComponent::SpawnEquippedActorsFromConfiguredClasses()
 	}
 }
 
+bool UCWeaponComponent::IsUnarmed() const
+{
+	return MainType == CEWeaponType::Unarmed;
+}
+
+bool UCWeaponComponent::IsBow() const
+{
+	return MainType == CEWeaponType::Bow;
+}
+
+void UCWeaponComponent::GetMainType(CEWeaponType& OutMainType) const
+{
+	OutMainType = MainType;
+}
+
 void UCWeaponComponent::ChangeBlueprintWeaponLanes(CEWeaponType InNewMainType, CEWeaponType InNewSubType)
 {
 	const CEWeaponType PrevMainType = MainType;
@@ -207,19 +589,14 @@ void UCWeaponComponent::ChangeBlueprintWeaponLanes(CEWeaponType InNewMainType, C
 
 void UCWeaponComponent::SetBlueprintUnarmed_WithSpawnedWeapons()
 {
-	static const FName UnequipName(TEXT("Unequip"));
-
-	TryLegacyWeaponProcessEventIfBound(MainWeapon, UnequipName);
-	TryLegacyWeaponProcessEventIfBound(SubWeapon, UnequipName);
+	DispatchLegacyUnequipOrEndUnequipGate(MainWeapon, true);
+	DispatchLegacyUnequipOrEndUnequipGate(SubWeapon, false);
 
 	ChangeBlueprintWeaponLanes(CEWeaponType::Unarmed, CEWeaponType::Unarmed);
 }
 
 void UCWeaponComponent::SetBlueprintSpawnedWeaponMode(CEWeaponType InMainType, CEWeaponType InSubType)
 {
-	static const FName EquipName(TEXT("Equip"));
-	static const FName UnequipName(TEXT("Unequip"));
-
 	// BP: 요청 무기 종류와 현재 MainType 이 같으면 전부 Unequip + Unarmed 레인 전환만 수행한다(토글 해방 규약).
 	if (InMainType == MainType)
 	{
@@ -229,11 +606,11 @@ void UCWeaponComponent::SetBlueprintSpawnedWeaponMode(CEWeaponType InMainType, C
 
 	const bool bMainLaneWasUnarmed = (MainType == CEWeaponType::Unarmed);
 
-	// 현재 무장 중이었다면 순서대로 주·보조 BP Weapon 을 Unequip.
+	// 현재 무장 중이었다면 순서대로 주·보조 BP Weapon 을 레거시 Unequip(또는 bool 게이트 포함 End_Unequip) 순으로 처리한다.
 	if (false == bMainLaneWasUnarmed)
 	{
-		TryLegacyWeaponProcessEventIfBound(MainWeapon, UnequipName);
-		TryLegacyWeaponProcessEventIfBound(SubWeapon, UnequipName);
+		DispatchLegacyUnequipOrEndUnequipGate(MainWeapon, true);
+		DispatchLegacyUnequipOrEndUnequipGate(SubWeapon, false);
 	}
 
 	const int32 SlotIndex = static_cast<int32>(InMainType);
@@ -249,7 +626,7 @@ void UCWeaponComponent::SetBlueprintSpawnedWeaponMode(CEWeaponType InMainType, C
 	}
 
 	if (IsValid(MainWeapon))
-		TryLegacyWeaponProcessEventIfBound(MainWeapon, EquipName);
+		DispatchLegacyEquipOrBeginEquipGate(MainWeapon, true);
 
 	if (SubWeapons.IsValidIndex(SlotIndex))
 		SubWeapon = SubWeapons[SlotIndex];
@@ -260,6 +637,7 @@ void UCWeaponComponent::SetBlueprintSpawnedWeaponMode(CEWeaponType InMainType, C
 		SubWeapon = nullptr;
 	}
 
+	// BP SetMode 그래프는 SubWeapon 슬롯만 갈아 끼우고 Begin_Equip/Equip 호출은 MainWeapon 에만 준다.
 	ChangeBlueprintWeaponLanes(InMainType, InSubType);
 }
 
@@ -539,6 +917,165 @@ bool UCWeaponComponent::TryDispatchLegacyMainWeaponCollisionToggle(const bool bC
 
 	MainWeapon->ProcessEvent(functionPtrLocal, nullptr);
 	return true;
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_DoAction(CEAttackType InAttackType, int32 InSkillIndex)
+{
+	if (false == IsValid(MainWeapon))
+		return;
+
+	static const FName DoActionName(TEXT("DoAction"));
+	if (nullptr == MainWeapon->FindFunction(DoActionName))
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("[CWeaponComponent][LegacyBp_DispatchMain_DoAction] DoAction 미정의 — %s"), *MainWeapon->GetName());
+
+		return;
+	}
+
+	(void)TryDispatch_ProcessEvent_WithAttackSkillIndexParms(MainWeapon, DoActionName, InAttackType, InSkillIndex);
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_BeginDoAction(CEAttackType InAttackType)
+{
+	if (false == IsValid(MainWeapon))
+		return;
+
+	static const FName Begin(TEXT("Begin_DoAction"));
+	if (false == TryDispatch_ProcessEvent_AttackEnumOnlyParms_WithValue(MainWeapon, Begin, InAttackType))
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("[CWeaponComponent][LegacyBp_DispatchMain_BeginDoAction] Begin_DoAction 호출 불가 — %s"), *MainWeapon->GetName());
+	}
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_EndDoAction(CEAttackType InAttackType)
+{
+	if (false == IsValid(MainWeapon))
+		return;
+
+	static const FName End(TEXT("End_DoAction"));
+	if (false == TryDispatch_ProcessEvent_AttackEnumOnlyParms_WithValue(MainWeapon, End, InAttackType))
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("[CWeaponComponent][LegacyBp_DispatchMain_EndDoAction] End_DoAction 호출 불가 — %s"), *MainWeapon->GetName());
+	}
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_Pressed()
+{
+	TryLegacyWeaponProcessEventIfBound(MainWeapon, FName(TEXT("Pressed")));
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_Released()
+{
+	TryLegacyWeaponProcessEventIfBound(MainWeapon, FName(TEXT("Released")));
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_Dash()
+{
+	TryLegacyWeaponProcessEventIfBound(MainWeapon, FName(TEXT("Dash")));
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_EndGroundDash()
+{
+	TryLegacyWeaponProcessEventIfBound(MainWeapon, FName(TEXT("End_GroundDash")));
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_AirDash()
+{
+	TryLegacyWeaponProcessEventIfBound(MainWeapon, FName(TEXT("AirDash")));
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_EndAirDash()
+{
+	TryLegacyWeaponProcessEventIfBound(MainWeapon, FName(TEXT("End_AirDash")));
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_Skill(const int32 InSkillIndex)
+{
+	if (false == IsValid(MainWeapon))
+		return;
+
+	static const FName SkillName(TEXT("Skill"));
+	if (TryDispatch_ProcessEvent_FirstInt32Parm(MainWeapon, SkillName, InSkillIndex))
+		return;
+
+	// Skill 커스텀 이벤트가 없으면 DoAction(Skill, Index) 규약으로 폴백한다.
+	(void)TryDispatch_ProcessEvent_WithAttackSkillIndexParms(MainWeapon, FName(TEXT("DoAction")), CEAttackType::Skill, InSkillIndex);
+}
+
+void UCWeaponComponent::LegacyBp_DispatchMain_EndSkill()
+{
+	TryLegacyWeaponProcessEventIfBound(MainWeapon, FName(TEXT("End_Skill")));
+}
+
+void UCWeaponComponent::LegacyBp_DispatchSub_HoldSubWeapon()
+{
+	TryLegacyWeaponProcessEventIfBound(SubWeapon, FName(TEXT("Hold_SubWeapon")));
+}
+
+void UCWeaponComponent::LegacyBp_DispatchSub_ReleasedSubWeapon()
+{
+	TryLegacyWeaponProcessEventIfBound(SubWeapon, FName(TEXT("Released_SubWeapon")));
+}
+
+void UCWeaponComponent::LegacyBp_DispatchSub_DoSubWeaponAction(CEAttackType InAttackType, int32 InSkillIndex)
+{
+	if (false == IsValid(SubWeapon))
+		return;
+
+	static const FName Fn(TEXT("DoSubWeaponAction"));
+
+	if (TryDispatch_ProcessEvent_WithAttackSkillIndexParms(SubWeapon, Fn, InAttackType, InSkillIndex))
+		return;
+
+	(void)TryDispatch_ProcessEvent_WithAttackSkillIndexParms(SubWeapon, FName(TEXT("DoAction")), InAttackType, InSkillIndex);
+}
+
+void UCWeaponComponent::LegacyBp_DispatchSub_BeginDoSubWeaponAction(CEAttackType InAttackType)
+{
+	if (false == IsValid(SubWeapon))
+		return;
+
+	static const FName Fn(TEXT("Begin_DoSubWeaponAction"));
+	if (false == TryDispatch_ProcessEvent_AttackEnumOnlyParms_WithValue(SubWeapon, Fn, InAttackType))
+	{
+		(void)TryDispatch_ProcessEvent_AttackEnumOnlyParms_WithValue(SubWeapon, FName(TEXT("Begin_DoAction")), InAttackType);
+	}
+}
+
+void UCWeaponComponent::LegacyBp_DispatchSub_EndDoSubWeaponAction(CEAttackType InAttackType)
+{
+	if (false == IsValid(SubWeapon))
+		return;
+
+	static const FName Fn(TEXT("End_DoSubWeaponAction"));
+	if (false == TryDispatch_ProcessEvent_AttackEnumOnlyParms_WithValue(SubWeapon, Fn, InAttackType))
+	{
+		(void)TryDispatch_ProcessEvent_AttackEnumOnlyParms_WithValue(SubWeapon, FName(TEXT("End_DoAction")), InAttackType);
+	}
+}
+
+void UCWeaponComponent::Begin_Equip()
+{
+	DispatchLegacyEquipOrBeginEquipGate(MainWeapon, true);
+	DispatchLegacyEquipOrBeginEquipGate(SubWeapon, false);
+}
+
+void UCWeaponComponent::End_Equip()
+{
+	DispatchLegacyEndEquipGate(MainWeapon, true);
+	DispatchLegacyEndEquipGate(SubWeapon, false);
+}
+
+void UCWeaponComponent::Begin_Unequip()
+{
+	DispatchLegacyBeginUnequipGate(MainWeapon, true);
+	DispatchLegacyBeginUnequipGate(SubWeapon, false);
+}
+
+void UCWeaponComponent::End_Unequip()
+{
+	DispatchLegacyUnequipOrEndUnequipGate(MainWeapon, true);
+	DispatchLegacyUnequipOrEndUnequipGate(SubWeapon, false);
 }
 
 bool UCWeaponComponent::IsIdleStateMode()

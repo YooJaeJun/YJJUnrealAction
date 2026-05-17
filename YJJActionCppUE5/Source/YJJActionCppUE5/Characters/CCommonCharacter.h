@@ -20,7 +20,7 @@ class UCMontagesComponent;
 class UCCharacterInfoComponent;
 class UCCharacterStatComponent;
 class UCWeaponStructures;
-class ACAnimal_AI;
+class ACAnimal;
 class USoundBase;
 class UFXSystemAsset;
 class UWidgetComponent;
@@ -205,6 +205,41 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void BilboardStateText();
 
+	// 블프 Custom Event "Hitted" 와 같은 표시 이름의 UFUNCTION 가 한 클래스에서 겹치면 충돌한다 — 네이티브 진입점은 이름을 분리한다.
+	UFUNCTION(
+		BlueprintCallable,
+		Category = "Combat",
+		meta = (DisplayName = "Invoke Hitted Effects (Native)"))
+	virtual void InvokeHittedEffects();
+
+	UFUNCTION(BlueprintCallable, Category = "Combat", meta = (DisplayName = "Begin Dead"))
+	virtual void Begin_Dead();
+
+	// StateComp 타깅 노드 대신 Self 로만 남았을 때(Refresh 전·StateComponent 변수 중복 깨짐) 대비.
+	UFUNCTION(BlueprintCallable, Category = "State", meta = (DisplayName = "Set Dead"))
+	void SetDead_CharacterDelegatesToState();
+
+	UFUNCTION(BlueprintPure, Category = "State", meta = (DisplayName = "Is Dead (Movement Mode)"))
+	bool IsDead_CharacterMovementStateDelegate() const;
+
+	UFUNCTION(BlueprintPure, Category = "State", meta = (DisplayName = "Is Hit Air"))
+	bool IsHitAir_CharacterMovementDelegate() const;
+
+	UFUNCTION(BlueprintPure, Category = "State", meta = (DisplayName = "Is Down Flying"))
+	bool IsDownFlying_CharacterMovementDelegate() const;
+
+	// BP_Enemy 등 — 레거시 그래프가 self 에서 호출. 플레이어만 ACPlayableCharacter 에서 의미 있는 구현을 둔다.
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual void Tick_AirBone();
+
+	// 레거시 그래프가 MovingComponent 대신 self 를 Target 으로 쓸 때(ACCommonCharacter → UCMovementComponent).
+	UFUNCTION(BlueprintCallable, Category = "Movement", meta = (DisplayName = "Set Gravity"))
+	void SetGravity(double InGravity);
+
+	// 레거시 그래프가 UCStateComponent 대신 self 가 Target 일 때(StateComp::SetRise 위임).
+	UFUNCTION(BlueprintCallable, Category = "State", meta = (DisplayName = "Set Rise"))
+	void SetRise();
+
 public:
 	virtual void InputAction_Interact();
 
@@ -237,14 +272,40 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State", meta = (DisplayName = "Set Idle"))
 	void SetIdle();
 
-public:
+	// BTTask_Animal_Action 등 — Pawn 에서 UCStateComponent::IsIdle 접근 노드 깨짐 시 캐릭터 타깃으로 대체 가능.
+	UFUNCTION(BlueprintPure, Category = "State", meta = (DisplayName = "Is Idle"))
+	bool IsIdle() const;
+
+	// BP_Enemy::SetTargetWidget 등 — 구 컴포넌트 이름 TargetingWidget_0 와 다른 경우 Get 노드를 이걸로 교체한다.
+	UFUNCTION(BlueprintPure, Category = "Components|Targeting")
+	UWidgetComponent* GetTargetingWorldWidgetComp() const { return TargetingWidgetComp.Get(); }
+
+	// CharacterStatComp 는 protected 라 블프 Variables 에 안 보일 수 있다 — 명시 접근만 제공(이름 충돌 줄임).
+	UFUNCTION(BlueprintPure, Category = "Components|Stat")
+	UCCharacterStatComponent* GetYJJCharacterStatComponent() const { return CharacterStatComp.Get(); }
+
 	// 모든 ActorComponent DefaultSubobject FName 은 /Game 의 BP 컴포넌트(같은 슬롯 이름)와 겹치면 Fatal 이 난다. YJJ 접두사로 통일.
-	// 블루프린트 Variable Get "StateComponent" 가 자식 BP_Player 에서도 해석되도록 public 에 둔다.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (DisplayName = "State Component"))
+	// StateComp(State Component) 과 StateComponent 는 같은 인스턴스를 가리킨다. 자식 BP에 구 "State Component" 블프 컴포넌트 슬롯을 남겨두면
+	// 동일 디스플레이 이름 컴포넌트가 둘이 되므로 변수·바인드가 엇갈릴 수 있어 YJJStateComponent 하나만 두는 것이 안전하다.
+	UPROPERTY(
+		VisibleAnywhere,
+		Category = "Components",
+		meta = (BlueprintHidden, DisplayName = "State Component (Native)"))
 	TObjectPtr<UCStateComponent> StateComp;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components")
+	// 블루프린트 Variable Get "StateComponent" — 그래프·바인드는 이 속성명을 타깃으로 사용한다.
+	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (DisplayName = "State Component"))
 	TObjectPtr<UCStateComponent> StateComponent;
+
+	// 무기/BT 헬퍼용 — protected 멤버를 외부 .cpp 에서 직접 건드리지 않도록 얕은 접근만 제공한다.
+	UFUNCTION(BlueprintPure, Category = "Components|Movement", meta = (DisplayName = "Get YJJ Movement Component"))
+	UCMovementComponent* GetYJJMovementComponent() const { return MovementComp.Get(); }
+
+	UFUNCTION(
+		BlueprintPure,
+		Category = "Debug",
+		meta = (DisplayName = "Get State Text Render (Native)"))
+	UTextRenderComponent* GetYJJStateTextRenderComponent() const { return StateTextComponent.Get(); }
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
@@ -253,12 +314,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Mount")
 	FUnmount OnUnmount;
 
-	// BP Event Dispatchers: OnInteract(Interact 눌림), IsDead(사망 처리 진입 시).
+	// BP Event Dispatchers: OnInteract(Interact 눌림), OnIsDead(사망 처리 브로드캐스트).
 	UPROPERTY(BlueprintAssignable, Category = "Character|Events")
 	FOnInteract OnInteract;
 
-	UPROPERTY(BlueprintAssignable, Category = "Character|Events", meta = (DisplayName = "IsDead"))
-	FOnIsDeadCharacter IsDead;
+	// IsDead 이름은 UCStateComponent 등과 블프 그래프에서 혼동·충돌이 나기 쉬워 멀티캐스트 식별자를 분리한다.
+	UPROPERTY(
+		BlueprintAssignable,
+		Category = "Character|Events",
+		meta = (DisplayName = "Death Event (Multicast)"))
+	FOnIsDeadCharacter OnIsDead;
 
 	// BP_Character 변수를 네이티브로 옮김 — 애님·상호작용·피격·AI가 동일 프로퍼티를 참조하도록 통일한다.
 
@@ -309,9 +374,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UCMovementComponent> MovementComp;
 
-	// BP_Character 가 Variables 또는 SCS 슬롯에 "MovingComponent" 를 두면 부모 MovingComponent UObjectProperty 와 이름이 겹쳐 SKEL 재컴파일 ICE 가 난다 — 네이티브 속성 이름을 분리한다. MovementComp 와 같은 인스턴스.
+	// 레거시 BP 변수명 MovingComponent 와 호환(Target = self). 인스턴스는 MovementComp 와 동일.
+	// 주의: 자식 BP 변수/컴포넌트 슬롯에 또 "MovingComponent" 를 만들면 속성 이름이 겹쳐 SKEL 재컴파일 문제가 재발한다. YJJMovementComponent 하나만 두는 것이 안전하다.
 	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (DisplayName = "Moving Component"))
-	TObjectPtr<UCMovementComponent> NativeMovingMovementBp;
+	TObjectPtr<UCMovementComponent> MovingComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCMontagesComponent> MontagesComp;

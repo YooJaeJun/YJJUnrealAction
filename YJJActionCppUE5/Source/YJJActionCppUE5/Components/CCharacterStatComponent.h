@@ -33,6 +33,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetDamage(const float InNewDamage);
 
+	// BP_Enemy::SetStatus 등 — 로컬 Hp 변수 대신 StatComp 하나에만 채워 UI 는 OnHpChanged 로 맞춘다.
+	UFUNCTION(BlueprintCallable, Category = "Stat|Hp", meta = (DisplayName = "Restore Hp To Max"))
+	void RestoreHpToMax();
+
 	UFUNCTION(BlueprintCallable)
 	void SetStaminaDamage(const float InNewDamage);
 

@@ -7,7 +7,6 @@
 #include "Commons/CPlayerController.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Interaction/CUserWidget_Interaction.h"
-#include "Characters/Animals/CAnimal_AI.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/Texture2D.h"
 #include "AIController.h"
@@ -36,7 +35,7 @@
 
 namespace
 {
-void FindMountSceneComponent(ACAnimal_AI* Animal, TObjectPtr<USceneComponent>& OutMount)
+void FindMountSceneComponent(ACAnimal* Animal, TObjectPtr<USceneComponent>& OutMount)
 {
 	OutMount = nullptr;
 	if (!IsValid(Animal))
@@ -100,7 +99,7 @@ UCRidingComponent::UCRidingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	Owner = Cast<ACAnimal_AI>(GetOwner());
+	Owner = Cast<ACAnimal>(GetOwner());
 
 	eMoveAction = EMoveComponentAction::Type::Move;
 	latentInfo.CallbackTarget = this;
@@ -136,10 +135,10 @@ void UCRidingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Owner = Cast<ACAnimal_AI>(GetOwner());
+	Owner = Cast<ACAnimal>(GetOwner());
 	CheckNull(Owner.Get());
 
-	// BP RidingComponent — Begin Play / UI Event: 오너(탈것)의 컴포넌트·포인트 캐시. (Eye 스폰·RiderPoint 부착은 ACAnimal_AI::BeginPlay 에서 처리.)
+	// BP RidingComponent — Begin Play / UI Event: 오너(탈것)의 컴포넌트·포인트 캐시. (Eye 스폰·RiderPoint 부착은 ACAnimal::BeginPlay 에서 처리.)
 	Mesh = Owner->GetMesh();
 	SpringArm = Owner->GetSpringArm();
 	Camera = Owner->GetCamera();

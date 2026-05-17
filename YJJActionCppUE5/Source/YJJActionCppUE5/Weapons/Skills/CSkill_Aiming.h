@@ -11,8 +11,9 @@ class UCAct;
 class USpringArmComponent;
 class UCameraComponent;
 
+// Bow Skill_Aim 의 FAimData(Weapons/Bow/FAimData.h) 와 동일 이름이면 UHT 가 둘 다 "AimData" 로 처리해 충돌한다.
 USTRUCT()
-struct FAimData
+struct FAimingSkillSnapData
 {
 	GENERATED_BODY()
 
@@ -60,7 +61,7 @@ private:
 	TObjectPtr<UCurveVector> Curve;
 
 	UPROPERTY(EditAnywhere, Category = "Aiming")
-	FAimData AimData;
+	FAimingSkillSnapData AimData;
 
 	UPROPERTY(EditAnywhere, Category = "Aiming")
 	float AimingSpeed = 200;
@@ -69,6 +70,6 @@ private:
 	TWeakObjectPtr<USpringArmComponent> SpringArm;
 	TWeakObjectPtr<UCameraComponent> Camera;
 	FTimeline Timeline;
-	FAimData OriginData;
+	FAimingSkillSnapData OriginData;
 	TSharedPtr<float> Bend;
 };

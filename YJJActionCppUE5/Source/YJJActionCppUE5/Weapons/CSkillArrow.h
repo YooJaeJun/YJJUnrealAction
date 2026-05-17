@@ -13,7 +13,7 @@ class UStaticMeshComponent;
 class UParticleSystemComponent;
 class UProjectileMovementComponent;
 
-/** BP Skill_Arrow 과 동형: DefaultSceneRoot → Sphere → StaticMesh + Trail(PSC), ProjectileMovement 분리 계층. */
+/** BP Skill_Arrow 과 동형: DefaultSceneRoot → Sphere(반경 20, Nav obstacle) → StaticMesh SM_ElvenArrow + Trail P_Trail_Trace(스케일 2×2×2, 비표시), ProjectileMovement(8000 중력 0 비자동 활성화). Shoot 시 트레일 표시. OnArrowDestroied(InArrow UObject). */
 UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API ACSkillArrow : public ACSkillWeapon{
 	GENERATED_BODY()

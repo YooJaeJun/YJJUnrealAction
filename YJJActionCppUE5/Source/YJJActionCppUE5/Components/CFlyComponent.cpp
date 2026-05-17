@@ -119,10 +119,11 @@ void UCFlyComponent::InputAxis_FlyUp(const float InAxis)
 
 	if (true == MovementComp->CanMove())
 	{
-		UpFactor = (InAxis > 0.0f) ? 20.0f : -50.0f;
+		const float verticalSigned =
+			(InAxis > 0.0f) ? VerticalFlyStrengthPositive : (-VerticalFlyStrengthNegative);
 
 		const FVector targetLocation = Owner->GetActorLocation() +
-			(Owner->GetCapsuleComponent()->GetForwardVector() * InAxis * UpFactor);
+			(Owner->GetCapsuleComponent()->GetForwardVector() * InAxis * verticalSigned);
 
 		const float pitch = UKismetMathLibrary::Clamp(
 			Owner->GetActorRotation().Pitch + InAxis,
@@ -245,4 +246,10 @@ void UCFlyComponent::LandOn() const
 		false,
 		EMoveComponentAction::Move,
 		latentInfo);
+}
+
+void UCFlyComponent::SetFlyVerticalStrengths(const float InPositiveStrength, const float InNegativeStrengthAbsolute)
+{
+	VerticalFlyStrengthPositive = FMath::Max(InPositiveStrength, 0.0f);
+	VerticalFlyStrengthNegative = FMath::Max(InNegativeStrengthAbsolute, 0.0f);
 }

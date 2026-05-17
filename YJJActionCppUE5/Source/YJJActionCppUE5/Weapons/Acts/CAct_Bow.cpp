@@ -1,4 +1,4 @@
-#include "Weapons/ACts/CAct_Bow.h"
+#include "Weapons/Acts/CAct_Bow.h"
 #include "Global.h"
 #include "Weapons/CEquipment.h"
 #include "Weapons/Attachments/CAttachment_Bow.h"
@@ -122,7 +122,6 @@ void UCAct_Bow::End_BowString()
 
 void UCAct_Bow::CreateArrow()
 {
-	// 레벨 이동, 게임 종료
 	if (World->bIsTearingDown == true)
 		return;
 

@@ -1,6 +1,6 @@
 #include "Characters/CAnimInstance_Character.h"
 #include "Global.h"
-#include "Animals/Dragon/CDragon_AI.h"
+#include "Characters/Animals/Dragon/CDragon.h"
 #include "Characters/CCommonCharacter.h"
 #include "Characters/Player/CPlayableCharacter.h"
 #include "Components/CFeetComponent.h"
@@ -14,6 +14,43 @@
 #include "GameFramework/Pawn.h"
 #include "Weapons/CSkill.h"
 
+namespace
+{
+	// CABP BlendList(CEWeaponType) 이 마법(EMagicType)·Shield/Dual 별칭을 하나의 열거로 기대할 때의 표시용.
+	CEWeaponType ResolveLegacyAnimWeaponBlendType(UCWeaponComponent* WeaponComp)
+	{
+		if (false == IsValid(WeaponComp))
+			return CEWeaponType::Unarmed;
+
+		if (WeaponComp->IsMagicEquipped())
+		{
+			switch (WeaponComp->GetMagicEquipType())
+			{
+			case CEMagicType::Warp:
+				return CEWeaponType::Warp;
+			case CEMagicType::Around:
+				return CEWeaponType::Around;
+			case CEMagicType::FireBall:
+				return CEWeaponType::Fireball;
+			case CEMagicType::Bomb:
+				return CEWeaponType::Bomb;
+			case CEMagicType::Yondu:
+				return CEWeaponType::Yondu;
+			case CEMagicType::Unarmed:
+			default:
+				return CEWeaponType::Unarmed;
+			}
+		}
+
+		const CEWeaponType phys = WeaponComp->GetLastCommittedPhysicalType();
+		if (phys == CEWeaponType::Shield)
+			return CEWeaponType::Guard;
+		if (phys == CEWeaponType::Dual)
+			return CEWeaponType::Sword_Hook;
+		return phys;
+	}
+}
+
 void UCAnimInstance_Character::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
@@ -21,7 +58,7 @@ void UCAnimInstance_Character::NativeBeginPlay()
 	Owner = Cast<ACCommonCharacter>(TryGetPawnOwner());
 	CheckNull(Owner);
 
-	Character = Owner.Get();
+	OwningCharacter = Owner.Get();
 	StateComp = YJJHelpers::GetComponent<UCStateComponent>(Owner.Get());
 	WeaponComponent = YJJHelpers::GetComponent<UCWeaponComponent>(Owner.Get());
 	MagicComponent = YJJHelpers::GetComponent<UCMagicComponent>(Owner.Get());
@@ -55,15 +92,16 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 	if (false == Owner.IsValid())
 		return;
 
-	Character = Owner.Get();
+	OwningCharacter = Owner.Get();
 	if (StateComp.IsValid())
 		StateComponent = StateComp.Get();
 
 	// ABP: ?? ? CurInteractingActor ?? RidingAnimal ?? ????(??? ???? ?��????? ????).
-	if (IsValid(Character))
-		RidingAnimal = Character->CurInteractingActor;
+	if (IsValid(OwningCharacter))
+		RidingAnimal = OwningCharacter->CurInteractingActor;
 
-	UCapsuleComponent* ownerCapsule = IsValid(Character) ? Character->GetCapsuleComponent() : nullptr;
+	UCapsuleComponent* ownerCapsule =
+		IsValid(OwningCharacter) ? OwningCharacter->GetCapsuleComponent() : nullptr;
 
 	const UWorld* world = GetWorld();
 	const float worldDt = (IsValid(world) && world->GetDeltaSeconds() > 0.f) ? world->GetDeltaSeconds() : DeltaSeconds;
@@ -79,9 +117,9 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 	Direction = static_cast<double>(PrevRotation.Yaw);
 
 	// ABP: CurController ?? GetControlRotation ?? BF_Helpers.RotateFrom360To180 ?? ??????? NormalizeAxis.
-	if (IsValid(Character))
+	if (IsValid(OwningCharacter))
 	{
-		AController* curController = Character->GetMyCurController().Get();
+		AController* curController = OwningCharacter->GetMyCurController().Get();
 		if (IsValid(curController))
 		{
 			const FRotator ctrlRot = curController->GetControlRotation();
@@ -99,6 +137,8 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 		Falling = StateComp->IsFallMode();
 		Hitting = StateComp->IsActMode();
 	}
+
+	bFalling = Falling;
 
 	if (IsValid(WeaponComponent))
 	{
@@ -119,10 +159,14 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 			Bow_Aiming = (MainWeaponType == CEWeaponType::Bow) && skill0->GetInAction();
 	}
 
+	bBowAiming = Bow_Aiming;
+
+	WeaponType = ResolveLegacyAnimWeaponBlendType(WeaponComponent);
+
 	Feet = false;
-	if (IsValid(Character))
+	if (IsValid(OwningCharacter))
 	{
-		UCFeetComponent* feetComp = YJJHelpers::GetComponent<UCFeetComponent>(Character);
+		UCFeetComponent* feetComp = YJJHelpers::GetComponent<UCFeetComponent>(OwningCharacter);
 		if (IsValid(feetComp))
 		{
 			FeetData = feetComp->Data;
@@ -139,7 +183,7 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 	ControllerNormalizedDirection = 0.0;
 	ControllerDirection = 0.0;
-	if (IsValid(RidingAnimal) && IsValid(Character))
+	if (IsValid(RidingAnimal) && IsValid(OwningCharacter))
 	{
 		APawn* instigatorPawn = RidingAnimal->GetInstigator();
 		if (IsValid(instigatorPawn) && IsValid(ownerCapsule))
@@ -183,6 +227,8 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 		RidingAnimalFalling = false;
 	}
 
+	bRidingFalling = RidingAnimalFalling;
+
 	bFootIK = true;
 	bRidingIK = false;
 	if (bRiding && IsValid(RidingAnimal))
@@ -213,7 +259,7 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (FlyComp.IsValid())
 	{
-		const TWeakObjectPtr<ACDragon_AI> flyingCharacter = Cast<ACDragon_AI>(Owner);
+		const TWeakObjectPtr<ACDragon> flyingCharacter = Cast<ACDragon>(Owner);
 		CheckNull(flyingCharacter);
 		forward = UKismetMathLibrary::GetForwardVector(rotatorControllerForYaw) * flyingCharacter->FlyComp->Forward;
 		right = UKismetMathLibrary::GetRightVector(rotatorControllerForYaw) * flyingCharacter->FlyComp->Right;
@@ -249,10 +295,13 @@ void UCAnimInstance_Character::OnWeaponTypeChanged(
 	SubWeaponType = InNewSubType;
 	if (SubWeaponType == CEWeaponType::Max)
 		SubWeaponType = CEWeaponType::Unarmed;
+
+	WeaponType = ResolveLegacyAnimWeaponBlendType(WeaponComponent);
 }
 
 void UCAnimInstance_Character::OnMagicTypeChanged(CEMagicType InType, CEMagicType InPrevType)
 {
 	(void)InPrevType;
 	MagicType = InType;
+	WeaponType = ResolveLegacyAnimWeaponBlendType(WeaponComponent);
 }

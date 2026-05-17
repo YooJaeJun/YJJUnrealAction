@@ -3,7 +3,7 @@
 #include "Characters/Animals/CAnimInstance_Animal.h"
 #include "CAnimInstance_Dragon.generated.h"
 
-class ACDragon_AI;
+class ACDragon;
 class ACDragonSkill;
 
 UCLASS()
@@ -20,6 +20,6 @@ public:
 	bool bIsFiringFlying = false;
 
 private:
-	TWeakObjectPtr<ACDragon_AI> OwnerDragon;
+	TWeakObjectPtr<ACDragon> OwnerDragon;
 	TWeakObjectPtr<ACDragonSkill> Skill;
 };

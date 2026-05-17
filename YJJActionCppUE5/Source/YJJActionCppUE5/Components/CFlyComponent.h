@@ -39,6 +39,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	float Right;
 
+	void SetFlyVerticalStrengths(float InPositiveStrength, float InNegativeStrengthAbsolute);
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
+	float VerticalFlyStrengthPositive = 20.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move")
+	float VerticalFlyStrengthNegative = 50.0f;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float HorizontalLook = 45;
@@ -52,10 +61,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Move")
 	float InterpSpeed = 2;
 
-	UPROPERTY(EditAnywhere, Category = "Move")
-	float UpFactor;
-
-private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCStateComponent> StateComp;
 	TWeakObjectPtr<UCMovementComponent> MovementComp;

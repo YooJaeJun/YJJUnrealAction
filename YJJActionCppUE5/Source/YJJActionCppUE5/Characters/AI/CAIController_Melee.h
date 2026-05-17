@@ -7,4 +7,7 @@ UCLASS()
 class YJJACTIONCPPUE5_API ACAIController_Melee : public ACAIController
 {
 	GENERATED_BODY()
+
+public:
+	ACAIController_Melee(const FObjectInitializer& ObjectInitializer);
 };

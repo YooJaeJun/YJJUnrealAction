@@ -26,7 +26,8 @@ public class YJJActionCppUE5 : ModuleRules
 			"GameplayTasks",
 			"NavigationSystem",
 			"ReplicationGraph",
-			"EngineCameras"
+			"EngineCameras",
+			"Landscape"
 		});
 	}
 }

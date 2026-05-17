@@ -3,7 +3,6 @@
 #include "Characters/AI/CAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "NavigationSystem.h"
-#include "Characters/Enemies/CEnemy_AI.h"
 
 UCBTTask_Patrol::UCBTTask_Patrol()
 {

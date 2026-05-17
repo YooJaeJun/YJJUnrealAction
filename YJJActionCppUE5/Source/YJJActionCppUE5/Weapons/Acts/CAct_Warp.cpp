@@ -84,7 +84,7 @@ bool UCAct_Warp::GetCursorLocationAndRotation(FVector& OutLocation, FRotator& Ou
 
 	FHitResult hitResult;
 
-	// �÷��̾� ����
+	// 커서 아래 월드 히트는 PlayerController API 이므로 로컬 조작자 전제로 캐스트한다.
 	const TWeakObjectPtr<APlayerController> playerController =
 		Cast<APlayerController>(Controller);
 
@@ -93,7 +93,7 @@ bool UCAct_Warp::GetCursorLocationAndRotation(FVector& OutLocation, FRotator& Ou
 		false,
 		hitResult);
 
-	// TODO �� ����
+	// TODO: 최대 워프 거리·내비 가능 지점·태그/레이어 제외 등 규칙 검증을 추가할 수 있다.
 
 	CheckFalseResult(hitResult.bBlockingHit, false);
 

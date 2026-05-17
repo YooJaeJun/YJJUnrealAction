@@ -101,6 +101,75 @@ public:
 	/** ANS_Collision 레거시 경로 — 스폰된 MainWeapon(BP Combo/RandomPattern 등)에 OnCollisions·OffCollisions 가 있으면 호출 후 true 를 돌린다. */
 	bool TryDispatchLegacyMainWeaponCollisionToggle(bool bCollisionOn);
 
+	//
+	// 레거시 BP WeaponComponent 가 스폰된 Weapon_C 액터로 직접 보던 커스텀 이벤트(ProcessEvent 규약).
+	// 애니 노티파이·캐릭터 블루프린트에서 호출 가능 — 해당 UFunction 이름이 무기 블루프린트에 없으면 Verbose 로만 남긴다.
+	//
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main DoAction")
+	void LegacyBp_DispatchMain_DoAction(CEAttackType InAttackType, int32 InSkillIndex = 0);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main Begin DoAction")
+	void LegacyBp_DispatchMain_BeginDoAction(CEAttackType InAttackType);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main End DoAction")
+	void LegacyBp_DispatchMain_EndDoAction(CEAttackType InAttackType);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main Pressed")
+	void LegacyBp_DispatchMain_Pressed();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main Released")
+	void LegacyBp_DispatchMain_Released();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main Dash")
+	void LegacyBp_DispatchMain_Dash();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main End Ground Dash")
+	void LegacyBp_DispatchMain_EndGroundDash();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main Air Dash")
+	void LegacyBp_DispatchMain_AirDash();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main End Air Dash")
+	void LegacyBp_DispatchMain_EndAirDash();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main Skill")
+	void LegacyBp_DispatchMain_Skill(const int32 InSkillIndex);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Main End Skill")
+	void LegacyBp_DispatchMain_EndSkill();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Sub Hold SubWeapon")
+	void LegacyBp_DispatchSub_HoldSubWeapon();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Sub Released SubWeapon")
+	void LegacyBp_DispatchSub_ReleasedSubWeapon();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Sub DoSubWeapon Action")
+	void LegacyBp_DispatchSub_DoSubWeaponAction(CEAttackType InAttackType, int32 InSkillIndex);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Sub Begin Do SubWeapon Action")
+	void LegacyBp_DispatchSub_BeginDoSubWeaponAction(CEAttackType InAttackType);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Legacy — Sub End Do SubWeapon Action")
+	void LegacyBp_DispatchSub_EndDoSubWeaponAction(CEAttackType InAttackType);
+
+	/** BP WeaponComponent_EventGraph 의 Begin_Equip 와 동일하게 주 무기(Main_Or_Sub=true) 다음 보조(false) 순으로 디스패치한다. */
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Begin Equip")
+	void Begin_Equip();
+
+	/** BP WeaponComponent_EventGraph 의 End_Equip 과 동일한 주→보조 순서(스폰된 Weapon 액터 쪽 함수 시그니처는 bool 또는 무인자). */
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "End Equip")
+	void End_Equip();
+
+	/** BP WeaponComponent_EventGraph 의 Begin_Unequip 과 동일한 주→보조 순서. */
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "Begin Unequip")
+	void Begin_Unequip();
+
+	/** BP WeaponComponent_EventGraph 의 End_Unequip 과 동일 — End_Unequip/Unequip 게이트는 DispatchLegacyUnequipOrEndUnequipGate 규약. */
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Legacy Spawned", DisplayName = "End Unequip")
+	void End_Unequip();
+
 	FORCEINLINE constexpr CEWeaponType GetType() const
 	{
 		return bMagicEquipped ? CEWeaponType::Unarmed : PhysicalType;
@@ -137,15 +206,19 @@ public:
 	FORCEINLINE constexpr bool IsBombMode() const { return bMagicEquipped && MagicEquipType == CEMagicType::Bomb; }
 	FORCEINLINE constexpr bool IsYonduMode() const { return bMagicEquipped && MagicEquipType == CEMagicType::Yondu; }
 
-	/** BP IsUnarmed/GetMainType/… 그래프: MainType 는 “레인 표기” 로만 해석된다. */
-	UFUNCTION(BlueprintPure, Category = "Weapons|Blueprint|Mode", DisplayName = "IsUnarmed")
-	bool Blueprint_MainLane_IsUnarmed_LegacyGraph() const { return MainType == CEWeaponType::Unarmed; }
+	/**
+	 * BP WeaponComponent:IsUnarmed — MainType == Unarmed (레인 표기 전용).
+	 * 장착 DA 기준 IsUnarmedMode / 주먹·마법 장착 등과 목적이 다르다 — BP 그래프와 동명으로 둔다.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Weapons|Blueprint|Mode")
+	bool IsUnarmed() const;
 
-	UFUNCTION(BlueprintPure, Category = "Weapons|Blueprint|Mode", DisplayName = "IsBow")
-	bool Blueprint_MainLane_IsBow_LegacyGraph() const { return MainType == CEWeaponType::Bow; }
+	/** BP WeaponComponent:IsBow — MainType == Bow(NewEnumerator 순서는 CEWeaponType 과 동일하다고 둔다). */
+	UFUNCTION(BlueprintPure, Category = "Weapons|Blueprint|Mode")
+	bool IsBow() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Weapons|Blueprint|Utility", DisplayName = "GetMainType")
-	void Blueprint_GetMainType(CEWeaponType& OutMainType) const { OutMainType = MainType; }
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Blueprint|Utility")
+	void GetMainType(CEWeaponType& OutMainType) const;
 
 	/** 레거시 BP 의 ChangeType — MainType/SubType 멤버와 OnWeaponTypeChanged 만 갱신(Equipment/PhysicalType 과 별개). */
 	UFUNCTION(BlueprintCallable, Category = "Weapons|Blueprint|Utility", DisplayName = "ChangeType")

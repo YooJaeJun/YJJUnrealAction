@@ -12,6 +12,11 @@
 class AActor;
 class ACharacter;
 class ACCommonCharacter;
+class ACAnimalWeapon;
+class ACDragon;
+class APawn;
+class UCStateComponent;
+class UCPatrolComponent;
 class UAnimMontage;
 class UPrimitiveComponent;
 class USoundBase;
@@ -40,6 +45,9 @@ public:
 	static FText GetLocalizedUI(FName Key);
 
 	// 레거시 BF_Helpers::IsSameGroup — Break FCharacterInfo UDS 노드와 C++ CharacterInfo 핀 타입 불일치로 BP 컴파일이 깨질 때 교체한다.
+	UFUNCTION(BlueprintPure, Category = "Character", meta = (DisplayName = "Is Same Group"))
+	static bool BFCompat_IsSameGroup(ACCommonCharacter* InCharacterA, ACCommonCharacter* InCharacterB);
+
 	UFUNCTION(BlueprintPure, Category = "Character", meta = (DisplayName = "Are Characters Same Group"))
 	static bool AreCharactersSameGroup(ACCommonCharacter* InA, ACCommonCharacter* InB);
 
@@ -61,6 +69,68 @@ public:
 	// 레거시 BF_Helpers::RotateFrom360To180 (ABP 회전 각 정규화 등).
 	UFUNCTION(BlueprintPure, Category = "Math", meta = (DisplayName = "Rotate From 360 To 180"))
 	static double RotateYawFrom360ToMinus180Degrees(double DegreesAroundFullCircle);
+
+	// 레거시 BTTask_Animal_Action 의 GetComponentByClass → State 를 통해 IsIdle 을 거는 경로 노드 깨짐 방지(APawn 에서 호출 가능).
+	UFUNCTION(BlueprintPure, Category = "AI|Behaviour Tree", meta = (DisplayName = "Is Idle (Controlled Pawn)"))
+	static bool BFCompat_IsIdleFromControlledPawn(APawn* ControlledPawn);
+
+	// 레거시 AnimalWeapon.BP 의 Get InAction 노드 깨짐 시 대체(ACAnimalWeapon::InAction).
+	UFUNCTION(BlueprintPure, Category = "Animal|Weapon", meta = (DisplayName = "Animal Weapon — In Action"))
+	static bool BFCompat_GetAnimalWeaponInAction(ACAnimalWeapon* AnimalWeapon);
+
+	// BTTask_Animal_Action 등 — 제거된 BP_Animal_AI.Weapon 접근 회피(ACAnimal 의 AnimalWeapon, Display Name "Weapon").
+	UFUNCTION(
+		BlueprintPure,
+		Category = "AI|Behaviour Tree",
+		meta = (DisplayName = "Get Animal Weapon (From Controlled Pawn)"))
+	static ACAnimalWeapon* BFCompat_GetAnimalWeaponFromControlledPawn(APawn* ControlledPawn);
+
+	// BTService_DragonBoss / 레거시 BT — 제거된 BP_Dragon_AI 캐스트 대신 ACDragon (과거 로직 단일 클래스).
+	UFUNCTION(BlueprintPure, Category = "AI|Behaviour Tree", meta = (DisplayName = "Get Controlled Dragon"))
+	static ACDragon* BFCompat_GetControlledDragon(APawn* ControlledPawn);
+
+	// BTService 드래곤 보스 등 — 무기 블프 InAction 과 동물 무기 헬퍼 공유(DragonWeapon 은 TObjectPtr<AActor>, ACAnimalWeapon 캐스트).
+	UFUNCTION(BlueprintPure, Category = "AI|Behaviour Tree", meta = (DisplayName = "Dragon Weapon — In Action"))
+	static bool BFCompat_GetDragonWeaponInAction(ACDragon* Dragon);
+
+	/** BTService_DragonBoss::InAction — 드래곤 전용 무기 + 동물 무기 레이어 OR. */
+	UFUNCTION(
+		BlueprintPure,
+		Category = "AI|Behaviour Tree",
+		meta = (DisplayName = "DragonBoss — Weapons In Action (Pawn)"))
+	static bool BFCompat_IsDragonBossWeaponsOrAnimalInAction(APawn* ControlledPawn);
+
+	// UObject 로 깨진 Dragon 참조 없이 상태 조회 가능 — 레거시 GetComponent(State) 경로 교체 후 Type 핀은 UCStateComponent::Type 사용.
+	UFUNCTION(BlueprintPure, Category = "AI|Behaviour Tree", meta = (DisplayName = "Find State Component (Pawn)"))
+	static UCStateComponent* BFCompat_FindStateComponentOnPawn(APawn* ControlledPawn);
+
+	// BTService_DragonBoss — 깨진 Get(State)→Type 또는 UObject Dragon 기반 GetComponentByClass 대신 공통 문자 CEStateType 으로 읽는다(블프 CurState 변수를 UDS EStateType 대신 CEStateType 로 바꾸는 것을 권장).
+	UFUNCTION(
+		BlueprintPure,
+		Category = "AI|Behaviour Tree",
+		meta = (DisplayName = "State — Get Type (Controlled Pawn)"))
+	static CEStateType BFCompat_GetStateTypeFromControlledPawn(APawn* ControlledPawn);
+
+	// 같은 서비스 — SetBehaviorType(InCharacter) 에 BP Dragon 캐시 없이 Pawn 에서 바로 긁을 때(ACDragon 포함).
+	UFUNCTION(
+		BlueprintPure,
+		Category = "AI|Behaviour Tree",
+		meta = (DisplayName = "Get Common Character (Controlled Pawn)"))
+	static ACCommonCharacter* BFCompat_GetCommonCharacterFromControlledPawn(APawn* ControlledPawn);
+
+	// 레거시 BTTask_Patrol — PatrolComponent_C 의 GetMoveTo / UpdateNextIndex 가 C++ UCPatrolComponent 로 옮겨졌을 때 블프 노드 유령화 방지.
+	UFUNCTION(BlueprintPure, Category = "AI|Behaviour Tree", meta = (DisplayName = "Find Patrol Component (Pawn)"))
+	static UCPatrolComponent* BFCompat_FindPatrolComponentOnPawn(APawn* ControlledPawn);
+
+	UFUNCTION(BlueprintPure, Category = "AI|Behaviour Tree", meta = (DisplayName = "Patrol Get Move To (Pawn)"))
+	static void BFCompat_PatrolGetMoveTo(APawn* ControlledPawn, bool& OutResult, FVector& OutLocation);
+
+	UFUNCTION(BlueprintCallable, Category = "AI|Behaviour Tree", meta = (DisplayName = "Patrol Update Next Index (Pawn)"))
+	static void BFCompat_PatrolUpdateNextIndex(APawn* ControlledPawn);
+
+	/** Patrol Path 액터가 설정돼 있는지(UCPatrolComponent::IsValidPath) — BT 분기용 */
+	UFUNCTION(BlueprintPure, Category = "AI|Behaviour Tree", meta = (DisplayName = "Patrol Is Valid Path (Pawn)"))
+	static bool BFCompat_PatrolIsValidPath(APawn* ControlledPawn);
 
 	UFUNCTION(
 		BlueprintCallable,

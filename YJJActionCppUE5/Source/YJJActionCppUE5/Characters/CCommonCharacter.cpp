@@ -32,7 +32,7 @@ ACCommonCharacter::ACCommonCharacter()
 	YJJHelpers::CreateActorComponent<UCMovementComponent>(this, &MovementComp, "YJJMovementComponent");
 
 	StateComponent = StateComp;
-	NativeMovingMovementBp = MovementComp;
+	MovingComponent = MovementComp;
 	YJJHelpers::CreateActorComponent<UCMontagesComponent>(this, &MontagesComp, "YJJMontagesComponent");
 	YJJHelpers::CreateActorComponent<UCCharacterInfoComponent>(this, &CharacterInfoComp, "YJJCharacterInfoComponent");
 	YJJHelpers::CreateActorComponent<UCCharacterStatComponent>(this, &CharacterStatComp, "YJJCharacterStatComponent");
@@ -155,7 +155,7 @@ void ACCommonCharacter::Hit()
 
 void ACCommonCharacter::Dead()
 {
-	IsDead.Broadcast();
+	OnIsDead.Broadcast();
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -447,6 +447,75 @@ void ACCommonCharacter::BilboardStateText()
 	StateTextComponent->SetWorldRotation(billboardRotation);
 }
 
+void ACCommonCharacter::InvokeHittedEffects()
+{
+	if (false == IsValid(MontagesComp) || false == IsValid(StateComp))
+	{
+		CLog::Log(TEXT("[ACCommonCharacter::InvokeHittedEffects] MontagesComp 또는 StateComp 없음 — 레거시 Hitted 연출 스킵"));
+		return;
+	}
+
+	MontagesComp->PlayHitCommonAnim();
+}
+
+void ACCommonCharacter::SetDead_CharacterDelegatesToState()
+{
+	if (false == IsValid(StateComp))
+	{
+		CLog::Log(TEXT("[ACCommonCharacter::SetDead_CharacterDelegatesToState] StateComp 없음 — Set Dead 호출 무시"));
+		return;
+	}
+
+	StateComp->SetDead();
+}
+
+bool ACCommonCharacter::IsDead_CharacterMovementStateDelegate() const
+{
+	return IsValid(StateComp) ? StateComp->IsDead() : false;
+}
+
+bool ACCommonCharacter::IsHitAir_CharacterMovementDelegate() const
+{
+	return IsValid(StateComp) ? StateComp->IsHitAir() : false;
+}
+
+bool ACCommonCharacter::IsDownFlying_CharacterMovementDelegate() const
+{
+	return IsValid(StateComp) ? StateComp->IsDownFlying() : false;
+}
+
+void ACCommonCharacter::Begin_Dead()
+{
+	Dead();
+}
+
+void ACCommonCharacter::Tick_AirBone()
+{
+	// 레거시 BP_Enemy 기본은 무조건. 플레이어만 ACPlayableCharacter::Tick_AirBone 재정의 참고.
+}
+
+void ACCommonCharacter::SetGravity(double InGravity)
+{
+	if (false == IsValid(MovementComp))
+	{
+		CLog::Log(TEXT("[ACCommonCharacter::SetGravity] MovementComp 미해결 — 중력 변경 생략"));
+		return;
+	}
+
+	MovementComp->SetGravity(static_cast<float>(InGravity));
+}
+
+void ACCommonCharacter::SetRise()
+{
+	if (false == IsValid(StateComp))
+	{
+		CLog::Log(TEXT("[ACCommonCharacter::SetRise] StateComp 미해결 — Set Rise 생략"));
+		return;
+	}
+
+	StateComp->SetRise();
+}
+
 void ACCommonCharacter::TogglePossess_Implementation(const bool InEnable)
 {
 	TogglePlayerPossessLocal(InEnable);
@@ -518,6 +587,11 @@ void ACCommonCharacter::SetIdle()
 {
 	if (IsValid(StateComp))
 		StateComp->SetIdleMode();
+}
+
+bool ACCommonCharacter::IsIdle() const
+{
+	return IsValid(StateComp) && StateComp->IsIdle();
 }
 
 void ACCommonCharacter::OnEquipMenu_Implementation()
