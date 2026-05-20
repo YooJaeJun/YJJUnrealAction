@@ -281,7 +281,7 @@ void UCMovementComponent::InputAxis_MoveForward(const float InAxis)
 	Forward = InAxis;
 
 	CheckFalse(CanMove(InAxis));
-	CheckTrue(StateComp->IsFallMode());
+	// CheckTrue(StateComp->IsFallMode()) 는 공중(StateComp 폴 모드)에서 매 프레임 바로 return 해 착지 전까지 입력 이동이 막혔었다. 물리 이동은 CharacterMovement 에서 처리.
 
 	const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 	FVector direction = FQuat(rotator).GetForwardVector();
@@ -297,7 +297,7 @@ void UCMovementComponent::InputAxis_MoveRight(const float InAxis)
 	Right = InAxis;
 
 	CheckFalse(CanMove(InAxis));
-	CheckTrue(StateComp->IsFallMode());
+	// 동일하게 공중 입력 이동 허용(위 MoveForward 참고).
 
 	const FRotator rotator = FRotator(0, Owner->GetControlRotation().Yaw, 0);
 	FVector direction = FQuat(rotator).GetRightVector();

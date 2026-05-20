@@ -284,12 +284,17 @@ void ACPlayableCharacter::BeginPlay()
 	}
 
 	TObjectPtr<ACPlayerController> yjjPlayerController = Cast<ACPlayerController>(GetController());
+	if (false == IsValid(yjjPlayerController))
+		yjjPlayerController = Cast<ACPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+
 	if (IsLocallyControlled())
 	{
 		if (IsValid(yjjPlayerController))
 			yjjPlayerController->InitializeHUDForPawn(this);
 		else
-			CLog::Log(FString::Printf(TEXT("[UI] CPlayableCharacter::BeginPlay: 로컬 조종인데 ACPlayerController 가 아님 또는 무효 — %s"), *GetName()));
+			CLog::Log(FString::Printf(
+				TEXT("[UI] CPlayableCharacter::BeginPlay: 로컬 폰 HUD 초기화 실패 — ACPlayerController 없음(Project Settings → Game Mode 의 Player Controller Class 확인) (%s)"),
+				*GetName()));
 	}
 
 	if (IsValid(CharacterInfoComp))
@@ -501,8 +506,12 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 void ACPlayableCharacter::InputAction_Avoid()
 {
-	CheckFalse(StateComp->IsIdleMode());
-	CheckFalse(MovementComp->CanMove());
+	CheckNull(StateComp);
+
+	// IsIdleOnly(IsIdleMode) 이면 Equip/Fall 등에서 Shift 회피가 전부 차단된다. 레거시 IsMoveable + 공중은 허용.
+	// bCanMove(CheckFalse MovementComp::CanMove) 는 Stop()·일시 봉인과 무관하게 회피까지 막으므로 쓰지 않는다.
+	if (false == StateComp->IsMoveable() && false == StateComp->IsFallMode())
+		return;
 
 	StateComp->SetAvoidMode();
 }

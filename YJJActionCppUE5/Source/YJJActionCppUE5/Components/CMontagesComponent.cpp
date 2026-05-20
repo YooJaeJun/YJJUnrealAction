@@ -21,6 +21,17 @@ void UCMontagesComponent::BeginPlay()
 		return;
 	}
 
+	const UScriptStruct* const rowStructLocal = DataTable->GetRowStruct();
+	const UScriptStruct* const expectedLocal = FMontagesData::StaticStruct();
+	if ((false == IsValid(rowStructLocal)) || (rowStructLocal != expectedLocal))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Montages] DataTable RowStruct 가 FMontagesData 가 아니거나 비어 있음(GetAllRows 미호출). 에디터에서 Row Structure=FMontagesData(YJJActionCppUE5) 지정. 현재 DT=%s Struct=%s"),
+			*DataTable->GetPathName(),
+			IsValid(rowStructLocal) ? *rowStructLocal->GetStructPathName().ToString() : TEXT("(null)")));
+		return;
+	}
+
 	TArray<FMontagesData*> datas;
 	DataTable->GetAllRows<FMontagesData>("", datas);
 

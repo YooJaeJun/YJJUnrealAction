@@ -255,6 +255,17 @@ void UCParkourComponent::LoadDatasFromParkourTable()
 	if (false == IsValid(DataTable.Get()))
 		return;
 
+	const UScriptStruct* const rowStructResolved = DataTable->GetRowStruct();
+	const UScriptStruct* const expectedResolved = FParkourData::StaticStruct();
+	if ((false == IsValid(rowStructResolved)) || (rowStructResolved != expectedResolved))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Parkour] ParkourData RowStruct 가 FParkourData 아님 또는 미설정 — 엔진 FindRow 스팸 방지 위해 로드를 건너뜀. DT=%s Struct=%s (에디터에서 Row Structure=YJJActionCppUE5 FParkourData)"),
+			*DataTable->GetPathName(),
+			IsValid(rowStructResolved) ? *rowStructResolved->GetStructPathName().ToString() : TEXT("(null)")));
+		return;
+	}
+
 	TArray<FName> RowNames = DataTable->GetRowNames();
 	for (const FName& RowName : RowNames)
 	{

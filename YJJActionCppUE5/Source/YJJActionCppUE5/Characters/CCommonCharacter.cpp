@@ -718,15 +718,15 @@ void ACCommonCharacter::ApplyEmbeddedWidgetClassesIfNeeded()
 	{
 		if (false == IsValid(InfoWidget))
 		{
-			UClass* enemyBarClass = LoadClass<UCUserWidget_EnemyBar>(
-				nullptr, TEXT("/Game/Widgets/Enemy/CWB_Enemy_HpBar_Guage.CWB_Enemy_HpBar_Guage_C"));
+			UClass* enemyBarClass =
+				LoadClass<UCUserWidget_EnemyBar>(nullptr, TEXT("/Game/Widgets/Enemy/WB_Enemy_HpBar_Guage.WB_Enemy_HpBar_Guage_C"));
 			if (false == IsValid(enemyBarClass))
-				enemyBarClass = LoadClass<UCUserWidget_EnemyBar>(
-					nullptr, TEXT("/Game/Widgets/Enemy/WB_Enemy_HpBar_Guage.WB_Enemy_HpBar_Guage_C"));
+				enemyBarClass =
+					LoadClass<UCUserWidget_EnemyBar>(nullptr, TEXT("/Game/Widgets/Enemy/CWB_Enemy_HpBar_Guage.CWB_Enemy_HpBar_Guage_C"));
 			if (IsValid(enemyBarClass))
 				InfoWidget = enemyBarClass;
 			else
-				CLog::Log(TEXT("[UI] 적 HP 바 위젯 클래스 로드 실패 — CWB_Enemy_HpBar_Guage 또는 WB_Enemy_HpBar_Guage 에셋·부모(UCUserWidget_EnemyBar) 확인"));
+				CLog::Log(TEXT("[UI] 적 HP 바 블프 부모 클래스가 레거시 YJJActionCpp 이면 로드 불가 — 에디터에서 Reparent to UCUserWidget_EnemyBar(YJJActionCppUE5 모듈) 후 저장."));
 		}
 		if (IsValid(InfoWidget))
 			InfoWidgetComp->SetWidgetClass(InfoWidget);
@@ -736,15 +736,14 @@ void ACCommonCharacter::ApplyEmbeddedWidgetClassesIfNeeded()
 	{
 		if (false == IsValid(TargetingWidget))
 		{
-			UClass* targetingClass = LoadClass<UCUserWidget_Custom>(
-				nullptr, TEXT("/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C"));
+			UClass* targetingClass =
+				LoadClass<UCUserWidget_Custom>(nullptr, TEXT("/Game/Widgets/Enemy/WB_Targeting.WB_Targeting_C"));
 			if (false == IsValid(targetingClass))
-				targetingClass = LoadClass<UCUserWidget_Custom>(
-					nullptr, TEXT("/Game/Widgets/Enemy/WB_Targeting.WB_Targeting_C"));
+				targetingClass = LoadClass<UCUserWidget_Custom>(nullptr, TEXT("/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C"));
 			if (IsValid(targetingClass))
 				TargetingWidget = targetingClass;
 			else
-				CLog::Log(TEXT("[UI] 타겟팅 위젯 클래스 로드 실패 — CWB_Targeting 부모를 YJJActionCppUE5 UCUserWidget_Custom 으로 Reparent 하거나 WB_Targeting 사용"));
+				CLog::Log(TEXT("[UI] 타겟팅 블프 부모가 YJJActionCpp 이면 실패 — Reparent to UCUserWidget_Custom(YJJActionCppUE5) 후 컴파일."));
 		}
 		if (IsValid(TargetingWidget))
 			TargetingWidgetComp->SetWidgetClass(TargetingWidget);

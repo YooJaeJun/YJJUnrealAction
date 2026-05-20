@@ -10,6 +10,7 @@
 #include "Components/ShapeComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "Weapons/CWeaponStructures.h"
 #include "Engine/DataTable.h"
 #include "Engine/HitResult.h"
 #include "Engine/World.h"
@@ -297,6 +298,17 @@ void ACAnimalWeapon::Animal_LoadTablesAllRows_LoadHitDatas()
 		return;
 	}
 
+	const UScriptStruct* const rowStructLocal = HitDataTable->GetRowStruct();
+	const UScriptStruct* const hitStructLocal = FHitData::StaticStruct();
+	if ((false == IsValid(rowStructLocal)) || (rowStructLocal != hitStructLocal))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[AnimalWeapon] HitDataTable RowStruct 가 FHitData 가 아니거나 미설정. 에디터에서 DT 행 타입을 /Script/YJJActionCppUE5.HitData 로 지정(구 YJJActionCpp 레퍼런스 제거). DT=%s 현재 Struct=%s"),
+			*HitDataTable->GetPathName(),
+			IsValid(rowStructLocal) ? *rowStructLocal->GetStructPathName().ToString() : TEXT("(null)")));
+		return;
+	}
+
 	const TArray<FName> rowNamesResolved = HitDataTable->GetRowNames();
 	const int upperLocal = rowNamesResolved.Num();
 
@@ -321,6 +333,17 @@ void ACAnimalWeapon::Animal_LoadTablesAllRows_LoadDoActionDatas()
 
 	if (false == IsValid(DoActionDataTable))
 	{
+		return;
+	}
+
+	const UScriptStruct* const rowStructLocal = DoActionDataTable->GetRowStruct();
+	const UScriptStruct* const doActStructLocal = FDoActionData::StaticStruct();
+	if ((false == IsValid(rowStructLocal)) || (rowStructLocal != doActStructLocal))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[AnimalWeapon] DoAction Table RowStruct 가 FDoActionData 가 아니거나 미설정. 에디터에서 YJJActionCppUE5.FDoActionData 로 지정. DT=%s 현재 Struct=%s"),
+			*DoActionDataTable->GetPathName(),
+			IsValid(rowStructLocal) ? *rowStructLocal->GetStructPathName().ToString() : TEXT("(null)")));
 		return;
 	}
 

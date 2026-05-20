@@ -18,11 +18,17 @@ void UCGameUIComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Owner = Cast<ACCommonCharacter>(GetOwner());
+
+	// AI·네트 리모트 폰 등에는 로컬 HUD 가 없음 — 타이밍 순서 때문에 스팸 경고 내지 않는다.
+	if (false == Owner.IsValid() || false == Owner->IsLocallyControlled())
+		return;
+
 	PlayerController = Cast<APlayerController>(Owner->GetController());
 	if (false == PlayerController.IsValid() || false == PlayerController->IsLocalController())
 	{
 		const FString ownerName = Owner.IsValid() ? Owner->GetName() : TEXT("(Owner 무효)");
-		CLog::Log(FString::Printf(TEXT("[UI] CGameUIComponent::BeginPlay: PlayerController 무효 또는 비로컬 — Owner=%s"), *ownerName));
+		CLog::Log(FString::Printf(TEXT("[UI] CGameUIComponent::BeginPlay: 로컬 폰인데 PlayerController 무효 또는 네트워크 비로컬 — Owner=%s"), *ownerName));
 		return;
 	}
 

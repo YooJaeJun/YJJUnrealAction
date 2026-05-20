@@ -191,6 +191,18 @@ void UCRidingComponent::BeginPlay()
 	if (UKismetSystemLibrary::IsDedicatedServer(this))
 		return;
 
+	// AI 로만 소유되는 탈 것은 PC0 HUD·Interaction 과 무관 — BP_Horse_AI 등에서 경고 도배하지 않도록 조기 종료.
+	if (IsValid(Owner))
+	{
+		APawn* const ownerPawn = Cast<APawn>(Owner.Get());
+		if (IsValid(ownerPawn))
+		{
+			const AController* const ownerControllerLocal = ownerPawn->GetController();
+			if (Cast<AAIController>(ownerControllerLocal) != nullptr)
+				return;
+		}
+	}
+
 	const TWeakObjectPtr<ACPlayerController> playerController = Cast<ACPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (playerController.IsValid())
 		Hud = playerController->EnsureHUD();

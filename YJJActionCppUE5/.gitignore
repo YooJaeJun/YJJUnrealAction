@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# Starter Content — 엔진이 샘플을 복사·검증하며 재저장해 Git diff 가 반복됨
+**/StarterContent/
+
 # Unreal Assets Folder
 **/Assets/
 
