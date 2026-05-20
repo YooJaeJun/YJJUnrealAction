@@ -718,7 +718,20 @@ void ACDragon::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
 
-	// ??? BP ?? ? ?? ??? ?? Fly/Move ??? ????.
+	UCMovementComponent* const resolvedMovement = EnsureMovementComp();
+	if (IsValid(resolvedMovement))
+	{
+		PlayerInputComponent->BindAction("Walk", IE_Pressed, resolvedMovement, &UCMovementComponent::InputAction_Walk);
+		PlayerInputComponent->BindAction("Walk", IE_Released, resolvedMovement, &UCMovementComponent::InputAction_Run);
+	}
+	else if (IsLocallyControlled())
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[입력 바인딩] MovementComp 없음 — Walk 미바인딩. BP 레거시 컴포넌트 중복 여부 확인. Actor=%s"),
+			*GetNameSafe(this)));
+	}
+
+	// 공중 입력은 클래스 내부 Fly/Move 핸들러로 묶임.
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACDragon::Dragon_InputAxis_MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACDragon::Dragon_InputAxis_MoveRight);
 	PlayerInputComponent->BindAxis("HorizontalLook", FlyComp.Get(), &UCFlyComponent::InputAxis_HorizontalLook);
@@ -726,8 +739,6 @@ void ACDragon::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("FlyUp", this, &ACDragon::Dragon_InputAxis_FlyUp);
 	PlayerInputComponent->BindAxis("Zoom", CamComp.Get(), &UCCamComponent::InputAxis_Zoom);
 
-	PlayerInputComponent->BindAction("Walk", IE_Pressed, MovementComp.Get(), &UCMovementComponent::InputAction_Walk);
-	PlayerInputComponent->BindAction("Walk", IE_Released, MovementComp.Get(), &UCMovementComponent::InputAction_Run);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACDragon::Dragon_InputAction_Jump);
 	PlayerInputComponent->BindAction("Targeting", IE_Pressed, TargetingComp.Get(), &UCTargetingComponent::InputAction_Targeting);
 	PlayerInputComponent->BindAction("Menu", IE_Pressed, GameUIComp.Get(), &UCGameUIComponent::InputAction_ActivateEquipMenu);

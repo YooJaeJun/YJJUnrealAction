@@ -11,6 +11,7 @@
 #include "Components/CMagicComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "Weapons/CSkill.h"
 
@@ -139,6 +140,18 @@ void UCAnimInstance_Character::NativeUpdateAnimation(float DeltaSeconds)
 	}
 
 	bFalling = Falling;
+
+	bAirborne = false;
+	bJumpRising = false;
+	if (ACharacter* ownerCharacter = Cast<ACharacter>(Owner.Get()))
+	{
+		if (UCharacterMovementComponent* characterMovement = ownerCharacter->GetCharacterMovement())
+		{
+			bAirborne = characterMovement->IsFalling();
+			if (bAirborne)
+				bJumpRising = characterMovement->Velocity.Z > JumpRisingZThreshold;
+		}
+	}
 
 	if (IsValid(WeaponComponent))
 	{

@@ -80,8 +80,18 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States", meta = (DisplayName = "Prev State"))
 	CEStateType PrevState = CEStateType::Idle;
 
+	/** StateComp 폴 모드 — 착지해도 Idle 로 안 돌아오면 true 가 오래 유지될 수 있다. 지상 대비 점프 레이어는 CharacterMovement 의 bAirborne 권장. */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "States", meta = (DisplayName = "Falling"))
 	bool Falling = false;
+
+	/** CharacterMovement::IsFalling() — 지상 블렌드 vs 공중(Jump SM) 등. Falling(StateComp) 과 별개. */
+	UPROPERTY(BlueprintReadOnly, Category = "Locomotion") bool bAirborne = false;
+
+	/** 공중일 때 상승(Z 속도 > JumpRisingZThreshold). Jump_Start → Jump_Loop 전이 규칙 등. */
+	UPROPERTY(BlueprintReadOnly, Category = "Locomotion") bool bJumpRising = false;
+
+	/** bJumpRising 판별 임계(cm/s). ABP 디폴트에서 조정. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Locomotion") float JumpRisingZThreshold = 75.f;
 
 	/** CABP 레거시 bFalling — Anim Graph Set 노드 호환용(Falling 과 동일 값 동기화). */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "States", meta = (DisplayName = "bFalling Legacy"))

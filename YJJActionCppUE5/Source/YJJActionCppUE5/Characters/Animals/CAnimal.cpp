@@ -201,15 +201,26 @@ void ACAnimal::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", MovementComp.Get(), &UCMovementComponent::InputAxis_MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", MovementComp.Get(), &UCMovementComponent::InputAxis_MoveRight);
+	UCMovementComponent* const resolvedMovement = EnsureMovementComp();
+	if (IsValid(resolvedMovement))
+	{
+		PlayerInputComponent->BindAxis("MoveForward", resolvedMovement, &UCMovementComponent::InputAxis_MoveForward);
+		PlayerInputComponent->BindAxis("MoveRight", resolvedMovement, &UCMovementComponent::InputAxis_MoveRight);
+
+		PlayerInputComponent->BindAction("Walk", IE_Pressed, resolvedMovement, &UCMovementComponent::InputAction_Walk);
+		PlayerInputComponent->BindAction("Walk", IE_Released, resolvedMovement, &UCMovementComponent::InputAction_Run);
+		PlayerInputComponent->BindAction("Jump", IE_Pressed, resolvedMovement, &UCMovementComponent::InputAction_Jump);
+	}
+	else if (IsLocallyControlled())
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[입력 바인딩] MovementComp 없음 — 이동 축/Walk/Jump 미바인딩. BP 레거시 컴포넌트 중복 여부 확인. Actor=%s"),
+			*GetNameSafe(this)));
+	}
+
 	PlayerInputComponent->BindAxis("HorizontalLook", CamComp.Get(), &UCCamComponent::InputAxis_HorizontalLook);
 	PlayerInputComponent->BindAxis("VerticalLook", CamComp.Get(), &UCCamComponent::InputAxis_VerticalLook);
 	PlayerInputComponent->BindAxis("Zoom", AnimalRidingComponent.Get(), &UCRidingComponent::Input_Zoom);
-
-	PlayerInputComponent->BindAction("Walk", IE_Pressed, MovementComp.Get(), &UCMovementComponent::InputAction_Walk);
-	PlayerInputComponent->BindAction("Walk", IE_Released, MovementComp.Get(), &UCMovementComponent::InputAction_Run);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, MovementComp.Get(), &UCMovementComponent::InputAction_Jump);
 	PlayerInputComponent->BindAction("Targeting", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::TargetingInput);
 	PlayerInputComponent->BindAction("Menu", IE_Pressed, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_Menu);
 	PlayerInputComponent->BindAction("Menu", IE_Released, AnimalRidingComponent.Get(), &UCRidingComponent::Ride_Input_MenuHide);

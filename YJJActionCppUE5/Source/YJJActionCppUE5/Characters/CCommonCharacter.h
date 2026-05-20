@@ -379,6 +379,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (DisplayName = "Moving Component"))
 	TObjectPtr<UCMovementComponent> MovingComponent;
 
+	/** BP 슬롯 머지 등으로 MovementComp 가 비었을 때 액터에서 UCMovementComponent 를 다시 찾아 연결한다. */
+	UCMovementComponent* EnsureMovementComp();
+
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCMontagesComponent> MontagesComp;
 

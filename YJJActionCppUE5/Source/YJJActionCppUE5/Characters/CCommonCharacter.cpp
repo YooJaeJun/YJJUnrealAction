@@ -73,9 +73,52 @@ void ACCommonCharacter::BeginPlay()
 	if (IsValid(TargetingPoint))
 		TargetingPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Targeting");
 
+	// BP 에 레거시·네이티브 컴포넌트가 겹치면 MovementComp 포인터만 비는 경우가 있어 먼저 복구한다.
+	EnsureMovementComp();
+
 	// BP BeginPlay: MovingComponent GetSprintSpeed 를 CharacterMovement.MaxWalkSpeed 에 반영.
 	if (IsValid(MovementComp))
 		MovementComp->SetSprintSpeed();
+}
+
+UCMovementComponent* ACCommonCharacter::EnsureMovementComp()
+{
+	if (IsValid(MovementComp.Get()))
+		return MovementComp.Get();
+
+	TArray<UCMovementComponent*> movementComponents;
+	GetComponents(movementComponents);
+	const int32 movementCount = movementComponents.Num();
+
+	for (int32 movementIndex = 0; movementIndex < movementCount; ++movementIndex)
+	{
+		UCMovementComponent* const movementCandidate = movementComponents[movementIndex];
+		if (false == IsValid(movementCandidate))
+			continue;
+		if (movementCandidate->GetFName() != FName(TEXT("YJJMovementComponent")))
+			continue;
+
+		MovementComp = movementCandidate;
+		MovingComponent = movementCandidate;
+		return movementCandidate;
+	}
+
+	for (int32 movementIndex = 0; movementIndex < movementCount; ++movementIndex)
+	{
+		UCMovementComponent* const fallbackMovement = movementComponents[movementIndex];
+		if (IsValid(fallbackMovement))
+		{
+			MovementComp = fallbackMovement;
+			MovingComponent = fallbackMovement;
+			CLog::Log(FString::Printf(
+				TEXT("[MovementComp 복구] YJJMovementComponent 이름 없음 — 첫 UCMovementComponent 로 연결했다. Actor=%s — BP 에서 레거시 중복 컴포넌트 제거 권장."),
+				*GetNameSafe(this)));
+			return fallbackMovement;
+		}
+	}
+
+	CLog::Log(FString::Printf(TEXT("[MovementComp 복구 실패] UCMovementComponent 없음 — Actor=%s"), *GetNameSafe(this)));
+	return nullptr;
 }
 
 void ACCommonCharacter::Tick(float DeltaSeconds)

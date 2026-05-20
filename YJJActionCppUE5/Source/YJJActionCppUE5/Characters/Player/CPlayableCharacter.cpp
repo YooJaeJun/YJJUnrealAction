@@ -464,15 +464,26 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", MovementComp.Get(), &UCMovementComponent::InputAxis_MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", MovementComp.Get(), &UCMovementComponent::InputAxis_MoveRight);
+	UCMovementComponent* const resolvedMovement = EnsureMovementComp();
+	if (IsValid(resolvedMovement))
+	{
+		PlayerInputComponent->BindAxis("MoveForward", resolvedMovement, &UCMovementComponent::InputAxis_MoveForward);
+		PlayerInputComponent->BindAxis("MoveRight", resolvedMovement, &UCMovementComponent::InputAxis_MoveRight);
+
+		PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, resolvedMovement, &UCMovementComponent::InputAction_Walk);
+		PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, resolvedMovement, &UCMovementComponent::InputAction_Run);
+		PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, resolvedMovement, &UCMovementComponent::InputAction_Jump);
+	}
+	else if (IsLocallyControlled())
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[입력 바인딩] MovementComp 없음 — MoveForward/Walk/Jump 미바인딩. BP 레거시 컴포넌트 중복 여부 확인. Actor=%s"),
+			*GetNameSafe(this)));
+	}
+
 	PlayerInputComponent->BindAxis("HorizontalLook", CamComp.Get(), &UCCamComponent::InputAxis_HorizontalLook);
 	PlayerInputComponent->BindAxis("VerticalLook", CamComp.Get(), &UCCamComponent::InputAxis_VerticalLook);
 	PlayerInputComponent->BindAxis("Zoom", CamComp.Get(), &UCCamComponent::InputAxis_Zoom);
-
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComp.Get(), &UCMovementComponent::InputAction_Walk);
-	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComp.Get(), &UCMovementComponent::InputAction_Run);
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, MovementComp.Get(), &UCMovementComponent::InputAction_Jump);
 	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, this, &ACPlayableCharacter::InputAction_Avoid);
 	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComp.Get(), &UCTargetingComponent::InputAction_Targeting);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp.Get(), &UCGameUIComponent::InputAction_ActivateEquipMenu);
