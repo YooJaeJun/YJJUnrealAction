@@ -24,6 +24,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
 #include "Blueprint/UserWidget.h"
+#include "Widgets/Boss/CUserWidget_BossGroggyBar.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Particles/ParticleSystem.h"
 #include "TimerManager.h"
@@ -90,9 +91,7 @@ namespace
 		UFunction* fnPct = Widget->FindFunction(FName(TEXT("SetGroggyPercent")));
 		if (nullptr != fnPct)
 		{
-			const double pct = (MaxGroggyVal > static_cast<double>(KINDA_SMALL_NUMBER))
-				? FMath::Clamp(CurGroggy / MaxGroggyVal, 0.0, 1.0)
-				: 0.0;
+			const double pct = UCUserWidget_BossGroggyBar::ComputeGroggyRatio(CurGroggy, MaxGroggyVal);
 
 			struct FPctPay
 			{

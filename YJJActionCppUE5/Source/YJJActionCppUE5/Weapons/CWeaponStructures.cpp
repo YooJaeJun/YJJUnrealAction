@@ -43,7 +43,12 @@ void FDoActionData::Act(const TWeakObjectPtr<ACCommonCharacter> InOwner) const
 
 	if (stat->GetCurStamina() < Stamina)
 	{
-		// TODO: 스태미나가 부족할 때 UI나 카메라 연출로 피드백을 추가한다.
+		const AActor* const ownerActor = InOwner.Get();
+		CLog::Log(FString::Printf(
+			TEXT("[입력][Action] 스태미나 부족 — 필요=%.1f 현재=%.1f Owner=%s"),
+			Stamina,
+			stat->GetCurStamina(),
+			IsValid(ownerActor) ? *ownerActor->GetName() : TEXT("(null)")));
 		return;
 	}
 

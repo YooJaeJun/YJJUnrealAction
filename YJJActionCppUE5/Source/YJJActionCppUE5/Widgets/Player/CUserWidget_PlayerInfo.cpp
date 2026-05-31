@@ -3,12 +3,59 @@
 #include "CUserWidget_PlayerLevel.h"
 #include "Components/CCharacterStatComponent.h"
 
+namespace
+{
+	template<typename TWidget>
+	TWidget* FindChildWidgetByNames(UUserWidget* Root, const TArray<FName>& CandidateNames)
+	{
+		if (false == IsValid(Root))
+			return nullptr;
+
+		const int32 nameCount = CandidateNames.Num();
+		for (int32 nameIndex = 0; nameIndex < nameCount; ++nameIndex)
+		{
+			TWidget* const found = Cast<TWidget>(Root->GetWidgetFromName(CandidateNames[nameIndex]));
+			if (IsValid(found))
+				return found;
+		}
+
+		return nullptr;
+	}
+}
+
 void UCUserWidget_PlayerInfo::BindChildren()
 {
-	LevelBar = Cast<UCUserWidget_PlayerLevel>(GetWidgetFromName(TEXT("CLevelBar")));
-	HpBar = Cast<UCUserWidget_PlayerBar>(GetWidgetFromName(TEXT("CHpBar")));
-	StaminaBar = Cast<UCUserWidget_PlayerBar>(GetWidgetFromName(TEXT("CStaminaBar")));
-	ManaBar = Cast<UCUserWidget_PlayerBar>(GetWidgetFromName(TEXT("CManaBar")));
+	static const FName LevelBarNames[] = {
+		FName(TEXT("CLevelBar")),
+		FName(TEXT("WB_Player_Level")),
+		FName(TEXT("LevelBar")),
+	};
+	BoundLevelBar = FindChildWidgetByNames<UCUserWidget_PlayerLevel>(
+		this, TArray<FName>(LevelBarNames, UE_ARRAY_COUNT(LevelBarNames)));
+
+	static const FName HpBarNames[] = {
+		FName(TEXT("CHpBar")),
+		FName(TEXT("WB_Player_HpBar")),
+		FName(TEXT("HpBar")),
+	};
+	BoundHpBar = FindChildWidgetByNames<UCUserWidget_PlayerBar>(
+		this, TArray<FName>(HpBarNames, UE_ARRAY_COUNT(HpBarNames)));
+
+	static const FName StaminaBarNames[] = {
+		FName(TEXT("CStaminaBar")),
+		FName(TEXT("WB_Player_StaminaBar")),
+		FName(TEXT("StaminaBar")),
+	};
+	BoundStaminaBar = FindChildWidgetByNames<UCUserWidget_PlayerBar>(
+		this, TArray<FName>(StaminaBarNames, UE_ARRAY_COUNT(StaminaBarNames)));
+
+	static const FName ManaBarNames[] = {
+		FName(TEXT("CManaBar")),
+		FName(TEXT("WB_Player_ManaBar")),
+		FName(TEXT("ManaBar")),
+	};
+	BoundManaBar = FindChildWidgetByNames<UCUserWidget_PlayerBar>(
+		this, TArray<FName>(ManaBarNames, UE_ARRAY_COUNT(ManaBarNames)));
 }
 
 void UCUserWidget_PlayerInfo::BindStats(TObjectPtr<UCCharacterStatComponent> StatComp)
@@ -21,30 +68,30 @@ void UCUserWidget_PlayerInfo::BindStats(TObjectPtr<UCCharacterStatComponent> Sta
 
 	BoundStatComp = StatComp;
 
-	if (IsValid(LevelBar))
-		LevelBar->BindLevelStat(StatComp);
+	if (IsValid(BoundLevelBar))
+		BoundLevelBar->BindLevelStat(StatComp);
 
-	if (IsValid(HpBar))
-		HpBar->BindHpStat(StatComp);
+	if (IsValid(BoundHpBar))
+		BoundHpBar->BindHpStat(StatComp);
 
-	if (IsValid(StaminaBar))
-		StaminaBar->BindStaminaStat(StatComp);
+	if (IsValid(BoundStaminaBar))
+		BoundStaminaBar->BindStaminaStat(StatComp);
 
-	if (IsValid(ManaBar))
-		ManaBar->BindManaStat(StatComp);
+	if (IsValid(BoundManaBar))
+		BoundManaBar->BindManaStat(StatComp);
 }
 
 void UCUserWidget_PlayerInfo::RefreshPlayerInfoWidgets()
 {
-	if (IsValid(HpBar))
-		HpBar->RefreshBoundDisplay();
+	if (IsValid(BoundHpBar))
+		BoundHpBar->RefreshBoundDisplay();
 
-	if (IsValid(StaminaBar))
-		StaminaBar->RefreshBoundDisplay();
+	if (IsValid(BoundStaminaBar))
+		BoundStaminaBar->RefreshBoundDisplay();
 
-	if (IsValid(ManaBar))
-		ManaBar->RefreshBoundDisplay();
+	if (IsValid(BoundManaBar))
+		BoundManaBar->RefreshBoundDisplay();
 
-	if (IsValid(LevelBar))
-		LevelBar->RefreshBoundDisplay();
+	if (IsValid(BoundLevelBar))
+		BoundLevelBar->RefreshBoundDisplay();
 }

@@ -21,12 +21,16 @@ void UCAnimNotifyState_Combo::NotifyBegin(
 
 	const TWeakObjectPtr<UCWeaponComponent> weapon = YJJHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
 	CheckNull(weapon.Get());
-	CheckNull(weapon->GetAct());
 
 	const TWeakObjectPtr<UCAct_Combo> combo = Cast<UCAct_Combo>(weapon->GetAct());
-	CheckNull(combo.Get());
+	if (combo.IsValid())
+	{
+		combo->EnableCombo();
+		return;
+	}
 
-	combo->EnableCombo();
+	// 레거시 ANS_Combo — MainWeapon(Weapon_Combo) 의 EnableCombo 직접 호출 경로.
+	weapon->ApplyLegacyMainWeaponComboWindow(true);
 }
 
 void UCAnimNotifyState_Combo::NotifyEnd(
@@ -41,10 +45,13 @@ void UCAnimNotifyState_Combo::NotifyEnd(
 
 	const TWeakObjectPtr<UCWeaponComponent> weapon = YJJHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
 	CheckNull(weapon.Get());
-	CheckNull(weapon->GetAct());
 
 	const TWeakObjectPtr<UCAct_Combo> combo = Cast<UCAct_Combo>(weapon->GetAct());
-	CheckNull(combo.Get());
+	if (combo.IsValid())
+	{
+		combo->DisableCombo();
+		return;
+	}
 
-	combo->DisableCombo();
+	weapon->ApplyLegacyMainWeaponComboWindow(false);
 }

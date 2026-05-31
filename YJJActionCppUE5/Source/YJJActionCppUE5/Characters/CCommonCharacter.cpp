@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CCamComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CCharacterInfoComponent.h"
 #include "Components/CCharacterStatComponent.h"
@@ -11,6 +12,7 @@
 #include "UMG/Public/Blueprint/WidgetLayoutLibrary.h"
 #include "Components/WidgetComponent.h"
 #include "Widgets/CUserWidget_Custom.h"
+#include "Widgets/Interaction/CUserWidget_Targeting.h"
 #include "Components/SceneComponent.h"
 #include "Widgets/Enemies/CUserWidget_EnemyBar.h"
 #include "Interfaces/CInterface_Interactable.h"
@@ -21,6 +23,7 @@
 #include "Camera/PlayerCameraManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Components/CWeaponComponent.h"
 
 ACCommonCharacter::ACCommonCharacter()
 {
@@ -79,6 +82,13 @@ void ACCommonCharacter::BeginPlay()
 	// BP BeginPlay: MovingComponent GetSprintSpeed 를 CharacterMovement.MaxWalkSpeed 에 반영.
 	if (IsValid(MovementComp))
 		MovementComp->SetSprintSpeed();
+
+	// BP/장비가 회전 플래그를 덮어쓴 뒤에도 탐색 이동은 카메라·몸 분리(스트레이프) 유지.
+	UCCamComponent* const camCompLocal = YJJHelpers::GetComponent<UCCamComponent>(this);
+	if (IsValid(camCompLocal))
+		camCompLocal->DisableControlRotation();
+	else if (IsValid(MovementComp))
+		MovementComp->DisableControlRotation();
 }
 
 UCMovementComponent* ACCommonCharacter::EnsureMovementComp()
@@ -326,6 +336,29 @@ void ACCommonCharacter::EndHitted_ApplyRestoreIfStillInHit()
 void ACCommonCharacter::End_Hitted()
 {
 	EndHitted_ApplyRestoreIfStillInHit();
+}
+
+void ACCommonCharacter::Begin_Bound()
+{
+	UCWeaponComponent* weaponComp = FindComponentByClass<UCWeaponComponent>();
+	if (false == IsValid(weaponComp))
+	{
+		// WeaponComponent 없는 액터 — Bound 노티가 붙은 몽타주가 아니면 정상적으로 스킵.
+		return;
+	}
+
+	weaponComp->ApplyLegacyMainWeaponCollisionBound(true);
+}
+
+void ACCommonCharacter::End_Bound()
+{
+	UCWeaponComponent* weaponComp = FindComponentByClass<UCWeaponComponent>();
+	if (false == IsValid(weaponComp))
+	{
+		return;
+	}
+
+	weaponComp->ApplyLegacyMainWeaponCollisionBound(false);
 }
 
 void ACCommonCharacter::TogglePlayerPossessLocal(const bool bEnable)
@@ -736,14 +769,28 @@ void ACCommonCharacter::ApplyEmbeddedWidgetClassesIfNeeded()
 	{
 		if (false == IsValid(TargetingWidget))
 		{
-			UClass* targetingClass =
-				LoadClass<UCUserWidget_Custom>(nullptr, TEXT("/Game/Widgets/Enemy/WB_Targeting.WB_Targeting_C"));
-			if (false == IsValid(targetingClass))
-				targetingClass = LoadClass<UCUserWidget_Custom>(nullptr, TEXT("/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C"));
+			static const TCHAR* const TargetingWidgetPaths[] = {
+				TEXT("/Game/Widgets/Interaction/CWB_Targeting.CWB_Targeting_C"),
+				TEXT("/Game/Widgets/Enemy/WB_Targeting.WB_Targeting_C"),
+			};
+
+			UClass* targetingClass = nullptr;
+			for (const TCHAR* const widgetPath : TargetingWidgetPaths)
+			{
+				targetingClass = LoadClass<UCUserWidget_Custom>(nullptr, widgetPath);
+				if (IsValid(targetingClass) && targetingClass->IsChildOf(UCUserWidget_Custom::StaticClass()))
+					break;
+
+				targetingClass = nullptr;
+			}
+
 			if (IsValid(targetingClass))
 				TargetingWidget = targetingClass;
 			else
-				CLog::Log(TEXT("[UI] 타겟팅 블프 부모가 YJJActionCpp 이면 실패 — Reparent to UCUserWidget_Custom(YJJActionCppUE5) 후 컴파일."));
+			{
+				TargetingWidget = UCUserWidget_Targeting::StaticClass();
+				CLog::Log(TEXT("[UI] 타겟팅 블프 로드 실패 — UCUserWidget_Targeting 폴백 사용. 블프 Reparent=UCUserWidget_Custom 권장."));
+			}
 		}
 		if (IsValid(TargetingWidget))
 			TargetingWidgetComp->SetWidgetClass(TargetingWidget);

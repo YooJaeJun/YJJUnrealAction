@@ -9,7 +9,7 @@ class UCUserWidget_EquipMenu;
 class UCUserWidget_MagicMenu;
 class UCUserWidget_Interaction;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCUserWidget_HUD : public UCUserWidget_Custom
 {
 	GENERATED_BODY()
@@ -19,16 +19,16 @@ public:
 	void SetChildren();
 
 	UFUNCTION(BlueprintPure, Category = "HUD")
-	UCUserWidget_PlayerInfo* GetPlayerInfoWidget() const { return PlayerInfo; }
+	UCUserWidget_PlayerInfo* GetPlayerInfoWidget() const { return BoundPlayerInfo; }
 
 	UFUNCTION(BlueprintPure, Category = "HUD")
-	UCUserWidget_EquipMenu* GetEquipMenuWidget() const { return EquipMenu; }
+	UCUserWidget_EquipMenu* GetEquipMenuWidget() const { return BoundEquipMenu; }
 
 	UFUNCTION(BlueprintPure, Category = "HUD")
-	UCUserWidget_MagicMenu* GetMagicMenuWidget() const { return MagicMenu; }
+	UCUserWidget_MagicMenu* GetMagicMenuWidget() const { return BoundMagicMenu; }
 
 	UFUNCTION(BlueprintPure, Category = "HUD")
-	UCUserWidget_Interaction* GetInteractionWidget() const { return Interaction; }
+	UCUserWidget_Interaction* GetInteractionWidget() const { return BoundInteraction; }
 
 	// 레거시 WB_HUDUI::WB_Message — 이름으로 바인드. C 접두 블루프린트 레이아웃용 보조 이름도 시도한다.
 	UUserWidget* ResolveWB_MessageWidget();
@@ -37,17 +37,18 @@ public:
 	UUserWidget* GetWB_MessageWidgetReadOnly() const { return HudMessageSlotWidget; }
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
-	TObjectPtr<UCUserWidget_PlayerInfo> PlayerInfo;
+	// 위젯 트리 노드명(PlayerInfo, EquipMenu 등)과 UPROPERTY 동명이면 SKEL 재컴파일·GUID 검증 Ensure 가 난다.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (DisplayName = "PlayerInfo"))
+	TObjectPtr<UCUserWidget_PlayerInfo> BoundPlayerInfo;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
-	TObjectPtr<UCUserWidget_EquipMenu> EquipMenu;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons", meta = (DisplayName = "EquipMenu"))
+	TObjectPtr<UCUserWidget_EquipMenu> BoundEquipMenu;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
-	TObjectPtr<UCUserWidget_MagicMenu> MagicMenu;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons", meta = (DisplayName = "MagicMenu"))
+	TObjectPtr<UCUserWidget_MagicMenu> BoundMagicMenu;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TObjectPtr<UCUserWidget_Interaction> Interaction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (DisplayName = "Interaction"))
+	TObjectPtr<UCUserWidget_Interaction> BoundInteraction;
 
 	// UMG 에서 위젯 트리 이름이 "WB_Message" 인 노드와 동명인 UPROPERTY 를 두면 SKEL 재컴파일 시 부모·자식 이중 속성 충돌로 Ensure 나므로 이름을 분리한다.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SystemMessage", meta = (DisplayName = "Message Slot (바인드)"))

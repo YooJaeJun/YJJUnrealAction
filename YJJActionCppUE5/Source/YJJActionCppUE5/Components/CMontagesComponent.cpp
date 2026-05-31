@@ -4,11 +4,29 @@
 #include "GameFramework/Character.h"
 #include "Commons/CEnums.h"
 
+namespace
+{
+	// UE5 Content/Character 실제 에셋명(CDT_Anim_Human)과 레거시 CDT_HumanAnim·DT_* 후보를 순서대로 시도한다.
+	static const TCHAR* const HumanAnimTablePaths[] = {
+		TEXT("/Game/Character/CDT_Anim_Human.CDT_Anim_Human"),
+		TEXT("/Game/Character/CDT_HumanAnim.CDT_HumanAnim"),
+		TEXT("/Game/Character/DT_HumanAnim.DT_HumanAnim"),
+		TEXT("/Game/Character/DT_CHumanAnim.DT_CHumanAnim"),
+	};
+}
+
 UCMontagesComponent::UCMontagesComponent()
 {
 	Owner = Cast<ACCommonCharacter>(GetOwner());
 
-	YJJHelpers::GetAsset<UDataTable>(&DataTable, "DataTable'/Game/Character/CDT_HumanAnim.CDT_HumanAnim'");
+
+	for (const TCHAR* const tablePath : HumanAnimTablePaths)
+	{
+		if (nullptr != DataTable)
+			break;
+
+		YJJHelpers::GetAsset<UDataTable>(&DataTable, FString::Printf(TEXT("DataTable'%s'"), tablePath));
+	}
 }
 
 void UCMontagesComponent::BeginPlay()
@@ -17,7 +35,17 @@ void UCMontagesComponent::BeginPlay()
 
 	if (nullptr == DataTable)
 	{
-		CLog::Log("DataTable is not selected");
+		for (const TCHAR* const tablePath : HumanAnimTablePaths)
+		{
+			YJJHelpers::GetAssetDynamic<UDataTable>(&DataTable, tablePath);
+			if (nullptr != DataTable)
+				break;
+		}
+	}
+
+	if (nullptr == DataTable)
+	{
+		CLog::Log(TEXT("[Montages] HumanAnim DataTable 로드 실패 — Content/Character 의 CDT_Anim_Human(또는 레거시 CDT_HumanAnim) 존재·RowStruct=FMontagesData(YJJActionCppUE5) 확인"));
 		return;
 	}
 

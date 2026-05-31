@@ -8,7 +8,7 @@ class UCUserWidget_PlayerBar;
 class UCUserWidget_PlayerLevel;
 class UCCharacterStatComponent;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCUserWidget_PlayerInfo : public UCUserWidget_Custom
 {
 	GENERATED_BODY()
@@ -20,17 +20,17 @@ public:
 	void RefreshPlayerInfoWidgets();
 
 public:
-	UPROPERTY()
-	TObjectPtr<UCUserWidget_PlayerLevel> LevelBar;
+	UPROPERTY(meta = (DisplayName = "LevelBar"))
+	TObjectPtr<UCUserWidget_PlayerLevel> BoundLevelBar;
 
-	UPROPERTY()
-	TObjectPtr<UCUserWidget_PlayerBar> HpBar;
+	UPROPERTY(meta = (DisplayName = "HpBar"))
+	TObjectPtr<UCUserWidget_PlayerBar> BoundHpBar;
 
-	UPROPERTY()
-	TObjectPtr<UCUserWidget_PlayerBar> StaminaBar;
+	UPROPERTY(meta = (DisplayName = "StaminaBar"))
+	TObjectPtr<UCUserWidget_PlayerBar> BoundStaminaBar;
 
-	UPROPERTY()
-	TObjectPtr<UCUserWidget_PlayerBar> ManaBar;
+	UPROPERTY(meta = (DisplayName = "ManaBar"))
+	TObjectPtr<UCUserWidget_PlayerBar> BoundManaBar;
 
 private:
 	// 동일 스탯에 대해 BindStats 가 반복 호출될 때 델리게이트가 중복 구독되지 않도록 막는다.

@@ -61,6 +61,41 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill", DisplayName = "End Do Action")
 	void End_DoAction(CEAttackType InAttackType);
 
+	/** 레거시 AN_Begin_Action — Magic(IsUnarmed) 분기 후 MainWeapon Begin_DoAction. */
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill", DisplayName = "Begin Do Action")
+	void Begin_DoAction(CEAttackType InAttackType);
+
+	/** 레거시 AN_Begin/End_AirCombo 등 — 콤보 AttackType 을 MainWeapon 으로 전달. */
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill|Combo", DisplayName = "Begin Do Air Combo")
+	void Begin_DoAirCombo();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill|Combo", DisplayName = "End Do Air Combo")
+	void End_DoAirCombo();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill|Combo", DisplayName = "Begin Do Flying Attack")
+	void Begin_DoFlyingAttack();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill|Combo", DisplayName = "End Do Flying Attack")
+	void End_DoFlyingAttack();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill|Combo", DisplayName = "End Do Down Attack")
+	void End_DoDownAttack();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill|Combo", DisplayName = "End Dash Attack")
+	void End_DashAttack();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapons|Skill|Combo", DisplayName = "End Fall Down")
+	void End_FallDown();
+
+	/** AN_ConsumeStamina — MainWeapon 스태미나 소모, 부족 시 End_DoAction + 몽타주 중단. */
+	bool TryNotifyConsumeStamina(double InStamina);
+
+	/** AN_BoxCollision — MainWeapon 이 콤보 무기일 때 Box 콜리전만 켠다. */
+	void ApplyLegacyMainWeaponBoxCollisions();
+
+	/** AN_End_BowString — MainWeapon 이 활일 때 AttachBowString = true. */
+	void ApplyLegacyEndBowStringAttach();
+
 	FORCEINLINE constexpr bool IsMagicEquipped() const { return bMagicEquipped; }
 
 	/** 현재 선택된 마법 EMagicType (비장착 시 Unarmed). AnimBP 의 Magic Type 핀과 맞춘다. */
@@ -76,10 +111,31 @@ private:
 	void DispatchEquippedMagicDelegates(CEMagicType CurrentMagic, CEMagicType PreviousMagic);
 	bool IsIdleStateMode();
 
-	// 레거시 BP WeaponComponent::BeginPlay — 클래스 배열로 액터를 스폰해 MainWeapons/SubWeapons/Armors 슬롯을 채운다.
-	void SpawnEquippedActorsFromConfiguredClasses();
+	/** GetWeaponAsset·InputAction_Act 공통 — 마법·Unarmed·BP 레인 불일치 해석. */
+	CEWeaponType ResolveCombatWeaponLookupType() const;
+
+	/** BP BeginPlay — Main/Sub/Armor 클래스 배열에서 스폰 액터 채움. */
+	void SpawnConfiguredWeapons();
 
 public:
+	/** DataAssets 비어 있으면 동료 WeaponComp·/Game/Weapons/CDA_* 에서 채운다. */
+	void EnsureDataAssets();
+
+	/** DataAssets → WeaponAssetMap / MagicAssetMap 재구성. */
+	void RebuildAssetMaps();
+
+	/** Owner 캐시 갱신 → DataAssets → Map 재구성(입력·BeginPlay 공통). */
+	void EnsureWeaponPipelineReady();
+
+	/** Physical=Unarmed 이면 Fist(또는 MainType) 장착 — Idle 검사 없이 SetMode 호출. */
+	void EnsureCombatWeaponEquipped();
+
+	/** 파이프라인 상태 1줄 로그(디버그). */
+	void LogWeaponPipelineStatus(const TCHAR* Context);
+
+	/** MainType 무장인데 Physical 만 Unarmed 일 때 동기화(LMB 무반응 방지). */
+	void SyncBpWeaponLanes();
+
 	void SetUnarmedMode();
 	void SetSwordMode();
 	void SetFistMode();
@@ -100,6 +156,12 @@ public:
 
 	/** ANS_Collision 레거시 경로 — 스폰된 MainWeapon(BP Combo/RandomPattern 등)에 OnCollisions·OffCollisions 가 있으면 호출 후 true 를 돌린다. */
 	bool TryDispatchLegacyMainWeaponCollisionToggle(bool bCollisionOn);
+
+	/** ANS_Collision·Begin/End_Bound 공통 — MainWeapon ProcessEvent 후 실패 시 ACAttachment On/OffCollisions. */
+	void ApplyLegacyMainWeaponCollisionBound(bool bCollisionOn);
+
+	/** ANS_Combo 폴백 — UCAct_Combo 없을 때 MainWeapon(Weapon_Combo) EnableCombo/DisableCombo. */
+	void ApplyLegacyMainWeaponComboWindow(bool bEnableCombo);
 
 	//
 	// 레거시 BP WeaponComponent 가 스폰된 Weapon_C 액터로 직접 보던 커스텀 이벤트(ProcessEvent 규약).
@@ -253,6 +315,10 @@ public:
 	void Blueprint_SetDual_WithSpawnedWeapons();
 
 private:
+	void RefreshOwnerCache();
+	void MergeDataAssetsFromSiblingComponents();
+	void CreateSyntheticDataAssetsIfStillEmpty();
+
 	/** 물리 애니 레이어(활 조준 등)는 장착 슬롯이 마법이어도 직전 주무기 타입으로 판별한다. */
 	FORCEINLINE constexpr CEWeaponType GetResolvedPhysicalStyle() const { return LastCommittedPhysical; }
 

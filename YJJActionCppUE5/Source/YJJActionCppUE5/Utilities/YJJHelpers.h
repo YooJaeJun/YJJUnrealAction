@@ -114,8 +114,22 @@ public:
 	template<typename T>
 	static void GetClassDynamic(TSubclassOf<T>* OutClass, const FString& InPath)
 	{
-		UClass* const loaded = StaticLoadClass(T::StaticClass(), nullptr, *InPath, nullptr, LOAD_None, nullptr);
-		*OutClass = loaded;
+		UClass* ExistingClass = FindObject<UClass>(nullptr, *InPath);
+		if (IsValid(ExistingClass) && ExistingClass->IsChildOf(T::StaticClass()))
+		{
+			*OutClass = ExistingClass;
+			return;
+		}
+
+		// AsyncLoading 중 FlushCompilationQueue 가 orphan GUID Ensure 로 PIE 를 멈춘다 — 로드 완료 후 재시도.
+		if (IsAsyncLoading())
+		{
+			*OutClass = nullptr;
+			return;
+		}
+
+		UClass* const LoadedClass = StaticLoadClass(T::StaticClass(), nullptr, *InPath, nullptr, LOAD_None, nullptr);
+		*OutClass = LoadedClass;
 	}
 
 	template<typename T>

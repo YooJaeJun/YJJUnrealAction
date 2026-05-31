@@ -9,7 +9,7 @@ class UCUserWidget_EquipMenuButton;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponEquipped, const CEWeaponType, InNewType);
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCUserWidget_EquipMenu : public UCUserWidget_Custom
 {
 	GENERATED_BODY()

@@ -10,7 +10,7 @@
  * BP_Animal_AI 캐스트·StateComponent 노드 깨짐을 ACAnimal 경로로 복구한다.
  * 블랙보드 타깃 액터 위치로 무기 DoAction 재생 후, 무기 !InAction + UCStateComponent::IsIdle 이 될 때까지 Tick 하다 성공한다.
  */
-UCLASS(DisplayName = "Animal Action")
+UCLASS(DisplayName = "BTTask Animal Action")
 class YJJACTIONCPPUE5_API UCBTTask_AnimalAction : public UBTTaskNode
 {
 	GENERATED_BODY()

@@ -2,7 +2,6 @@
 #include "Components/CWeaponComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Actor.h"
-#include "Weapons/CAttachment.h"
 
 FString UCAnimNotifyState_Collision::GetNotifyName_Implementation() const
 {
@@ -18,11 +17,15 @@ void UCAnimNotifyState_Collision::NotifyBegin(
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
 	if (false == IsValid(MeshComp))
+	{
 		return;
+	}
 
 	AActor* meshOwnerActor = MeshComp->GetOwner();
 	if (false == IsValid(meshOwnerActor))
+	{
 		return;
+	}
 
 	UCWeaponComponent* weaponComp = meshOwnerActor->FindComponentByClass<UCWeaponComponent>();
 	if (false == IsValid(weaponComp))
@@ -31,14 +34,7 @@ void UCAnimNotifyState_Collision::NotifyBegin(
 		return;
 	}
 
-	if (weaponComp->TryDispatchLegacyMainWeaponCollisionToggle(true))
-		return;
-
-	const TObjectPtr<ACAttachment> attachment = weaponComp->GetAttachment();
-	if (false == IsValid(attachment))
-		return;
-
-	attachment->OnCollisions();
+	weaponComp->ApplyLegacyMainWeaponCollisionBound(true);
 }
 
 void UCAnimNotifyState_Collision::NotifyEnd(
@@ -49,22 +45,21 @@ void UCAnimNotifyState_Collision::NotifyEnd(
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
 	if (false == IsValid(MeshComp))
+	{
 		return;
+	}
 
 	AActor* meshOwnerActor = MeshComp->GetOwner();
 	if (false == IsValid(meshOwnerActor))
+	{
 		return;
+	}
 
 	UCWeaponComponent* weaponComp = meshOwnerActor->FindComponentByClass<UCWeaponComponent>();
 	if (false == IsValid(weaponComp))
+	{
 		return;
+	}
 
-	if (weaponComp->TryDispatchLegacyMainWeaponCollisionToggle(false))
-		return;
-
-	const TObjectPtr<ACAttachment> attachment = weaponComp->GetAttachment();
-	if (false == IsValid(attachment))
-		return;
-
-	attachment->OffCollisions();
+	weaponComp->ApplyLegacyMainWeaponCollisionBound(false);
 }

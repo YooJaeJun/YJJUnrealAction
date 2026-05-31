@@ -145,6 +145,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Combat", meta = (DisplayName = "End Hitted"))
 	void End_Hitted();
 
+	// 레거시 AN_Begin_Bound / BP_Player·BP_Enemy 커스텀 이벤트 — 공격 판정 구간 시작(무기 OnCollisions 우선).
+	UFUNCTION(BlueprintCallable, Category = "Combat", meta = (DisplayName = "Begin Bound"))
+	void Begin_Bound();
+
+	// 레거시 AN_End_Bound — 공격 판정 구간 종료(무기 OffCollisions 우선).
+	UFUNCTION(BlueprintCallable, Category = "Combat", meta = (DisplayName = "End Bound"))
+	void End_Bound();
+
 	// BP I_PlayerPossess::TogglePossess — 로컬 PlayerIndex 0. 전용 서버에서는 조종할 PC 가 없으면 무시한다.
 	UFUNCTION(BlueprintCallable, Category = "탑승")
 	void TogglePlayerPossessLocal(const bool bEnable);

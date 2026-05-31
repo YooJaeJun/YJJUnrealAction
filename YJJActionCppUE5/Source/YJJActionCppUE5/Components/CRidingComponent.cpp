@@ -191,12 +191,15 @@ void UCRidingComponent::BeginPlay()
 	if (UKismetSystemLibrary::IsDedicatedServer(this))
 		return;
 
-	// AI 로만 소유되는 탈 것은 PC0 HUD·Interaction 과 무관 — BP_Horse_AI 등에서 경고 도배하지 않도록 조기 종료.
+	// 플레이어가 타지 않는 탈 것(BP_*_AI)은 Begin 시점에 Controller 가 없거나 PC0 과 무관 — HUD 경로 생략(로그 없음).
 	if (IsValid(Owner))
 	{
-		APawn* const ownerPawn = Cast<APawn>(Owner.Get());
+		const APawn* const ownerPawn = Cast<APawn>(Owner.Get());
 		if (IsValid(ownerPawn))
 		{
+			if (ownerPawn->IsLocallyControlled() == false)
+				return;
+
 			const AController* const ownerControllerLocal = ownerPawn->GetController();
 			if (Cast<AAIController>(ownerControllerLocal) != nullptr)
 				return;
@@ -216,7 +219,7 @@ void UCRidingComponent::BeginPlay()
 	}
 
 	Hud->SetChildren();
-	Interaction = Hud->Interaction;
+	Interaction = Hud->GetInteractionWidget();
 
 	InteractionText = YJJLocalization::LocalizedText_MountInteract();
 

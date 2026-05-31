@@ -5,6 +5,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/ShapeComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/CTargetingComponent.h"
 #include "Characters/CCommonCharacter.h"
 #include "Characters/Animals/Dragon/CDragon.h"
@@ -18,6 +19,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Components/MeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -2305,6 +2307,25 @@ void ACWeaponComboSkillContext::OnCollisions()
 	}
 }
 
+void ACWeaponComboSkillContext::OnBoxCollisions()
+{
+	for (TObjectPtr<UShapeComponent>& ShapeWeak : ComboCollisionShapes)
+	{
+		UShapeComponent* ShapePtr = ShapeWeak.Get();
+		if (false == IsValid(ShapePtr))
+		{
+			continue;
+		}
+
+		if (false == ShapePtr->IsA<UBoxComponent>())
+		{
+			continue;
+		}
+
+		ShapePtr->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+}
+
 void ACWeaponComboSkillContext::OffCollisions()
 {
 	for (TObjectPtr<UShapeComponent>& ShapeWeak : ComboCollisionShapes)
@@ -3448,6 +3469,468 @@ void ACWeaponComboSkillContext::ComboFork_End_Riding()
 		CLog::Log(FString::Printf(
 			TEXT("[WeaponComboSkillContext] ComboFork_End_Riding: Moving 없어 UnFixCamera 생략 — %s"),
 			*GetNameSafe(this)));
+	}
+}
+
+ACWeaponRandomPatternSkillContext::ACWeaponRandomPatternSkillContext()
+{
+	PrimaryActorTick.bCanEverTick = true;
+	RandomSeed.Initialize(FMath::Rand());
+}
+
+void ACWeaponRandomPatternSkillContext::BeginPlay()
+{
+	Super::BeginPlay();
+
+	RandomSeed.Initialize(FMath::Rand());
+
+	Collisions.Reset();
+	GetComponents<UShapeComponent>(Collisions, true);
+	OffCollisions();
+
+	for (TObjectPtr<UShapeComponent>& ShapeWeak : Collisions)
+	{
+		UShapeComponent* ShapePtr = ShapeWeak.Get();
+		if (false == IsValid(ShapePtr))
+		{
+			continue;
+		}
+
+		UPrimitiveComponent* PrimPtr = ShapePtr;
+		PrimPtr->OnComponentBeginOverlap.AddDynamic(
+			this,
+			&ACWeaponRandomPatternSkillContext::RandomPatternOnShapeBeginOverlap);
+	}
+}
+
+void ACWeaponRandomPatternSkillContext::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	for (TObjectPtr<UShapeComponent>& ShapeWeak : Collisions)
+	{
+		UShapeComponent* ShapePtr = ShapeWeak.Get();
+		if (false == IsValid(ShapePtr))
+		{
+			continue;
+		}
+
+		UPrimitiveComponent* PrimPtr = ShapePtr;
+		PrimPtr->OnComponentBeginOverlap.RemoveDynamic(
+			this,
+			&ACWeaponRandomPatternSkillContext::RandomPatternOnShapeBeginOverlap);
+	}
+
+	Collisions.Reset();
+	Super::EndPlay(EndPlayReason);
+}
+
+void ACWeaponRandomPatternSkillContext::OnCollisions()
+{
+	for (TObjectPtr<UShapeComponent>& ShapeWeak : Collisions)
+	{
+		UShapeComponent* ShapePtr = ShapeWeak.Get();
+		if (false == IsValid(ShapePtr))
+		{
+			continue;
+		}
+
+		ShapePtr->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+}
+
+void ACWeaponRandomPatternSkillContext::OffCollisions()
+{
+	for (TObjectPtr<UShapeComponent>& ShapeWeak : Collisions)
+	{
+		UShapeComponent* ShapePtr = ShapeWeak.Get();
+		if (false == IsValid(ShapePtr))
+		{
+			continue;
+		}
+
+		ShapePtr->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	Hitted.Reset();
+}
+
+void ACWeaponRandomPatternSkillContext::EnableCombo()
+{
+	Enable = true;
+}
+
+void ACWeaponRandomPatternSkillContext::DisableCombo()
+{
+	Enable = false;
+}
+
+void ACWeaponRandomPatternSkillContext::PlayRandomActionMontage()
+{
+	if (false == IsValid(Character))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[WeaponRandomPattern] PlayRandomActionMontage(Character 없음): %s"),
+			*GetNameSafe(this)));
+		return;
+	}
+
+	if (DoActionDatas.Num() <= 0)
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[WeaponRandomPattern] PlayRandomActionMontage(DoActionDatas 비어 있음): %s"),
+			*GetNameSafe(this)));
+		return;
+	}
+
+	const int32 MaxInclusive =
+		FMath::Min(RandomPatternMontageRandomMax, DoActionDatas.Num() - 1);
+	if (MaxInclusive < 0)
+	{
+		return;
+	}
+
+	RandomIndex = UKismetMathLibrary::RandomIntegerFromStream(RandomSeed, MaxInclusive);
+
+	if (false == DoActionDatas.IsValidIndex(RandomIndex))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[WeaponRandomPattern] PlayRandomActionMontage(인덱스 무효): %s Index=%d Count=%d"),
+			*GetNameSafe(this),
+			RandomIndex,
+			DoActionDatas.Num()));
+		return;
+	}
+
+	const FDoActionData& Row = DoActionDatas[RandomIndex];
+	if (IsValid(Row.Montage))
+	{
+		Character->PlayAnimMontage(Row.Montage, Row.PlayRate);
+	}
+
+	if (IsValid(Moving))
+	{
+		if (Row.bCanMove)
+		{
+			Moving->Move();
+		}
+		else
+		{
+			Moving->Stop();
+		}
+	}
+}
+
+bool ACWeaponRandomPatternSkillContext::RandomPattern_TryRegisterHitTarget(ACCommonCharacter* InCharacter)
+{
+	if (false == IsValid(InCharacter))
+	{
+		return false;
+	}
+
+	TArray<ACCommonCharacter*> Scratch;
+	Scratch.Reserve(Hitted.Num() + 1);
+	for (TObjectPtr<ACCommonCharacter>& EntryWeak : Hitted)
+	{
+		ACCommonCharacter* EntryRaw = EntryWeak.Get();
+		if (IsValid(EntryRaw))
+		{
+			Scratch.Add(EntryRaw);
+		}
+	}
+
+	const bool bInserted = UCYJJBlueprintLibrary::TryAddUniqueCommonCharacter(Scratch, InCharacter);
+	Hitted.Reset();
+	for (ACCommonCharacter* EntryRaw : Scratch)
+	{
+		Hitted.Add(EntryRaw);
+	}
+
+	return bInserted;
+}
+
+void ACWeaponRandomPatternSkillContext::OnBeginOverlap_Implementation(
+	ACCommonCharacter* InOtherCharacter,
+	const FVector& InHitPoint)
+{
+	(void)InHitPoint;
+
+	if (false == IsValid(InOtherCharacter) || false == IsValid(Character))
+	{
+		return;
+	}
+
+	if (false == RandomPattern_TryRegisterHitTarget(InOtherCharacter))
+	{
+		return;
+	}
+
+	if (false == HitCommonDatas.IsValidIndex(RandomIndex))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[WeaponRandomPattern] OnBeginOverlap(HitCommonDatas 인덱스 없음): %s RandomIndex=%d Count=%d"),
+			*GetNameSafe(this),
+			RandomIndex,
+			HitCommonDatas.Num()));
+		return;
+	}
+
+	HitCommonDatas[RandomIndex].SendDamage(
+		TWeakObjectPtr<ACCommonCharacter>(Character),
+		this,
+		InOtherCharacter);
+}
+
+void ACWeaponRandomPatternSkillContext::RandomPatternOnShapeBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+	(void)OtherBodyIndex;
+	(void)bFromSweep;
+	(void)SweepResult;
+
+	ACCommonCharacter* HitChar = Cast<ACCommonCharacter>(OtherActor);
+	if (false == IsValid(HitChar) || false == IsValid(Character))
+	{
+		return;
+	}
+
+	if (true == UCYJJBlueprintLibrary::AreCharactersSameGroup(Character, HitChar))
+	{
+		return;
+	}
+
+	TArray<AActor*> ActorsIgnore;
+	ActorsIgnore.Reserve(2);
+	ActorsIgnore.Add(Character);
+
+	FVector ImpactWorld =
+		IsValid(OtherComp) ? OtherComp->K2_GetComponentLocation() : HitChar->GetActorLocation();
+
+	const bool TraceOk = UCYJJBlueprintLibrary::TryGetHitPointBetweenPrimitives(
+		OverlappedComponent,
+		OtherComp,
+		RandomPatternMeleeHitSphereRadius,
+		ActorsIgnore,
+		ImpactWorld);
+
+	if (false == TraceOk)
+	{
+		if (true == IsValid(OtherComp))
+		{
+			ImpactWorld = OtherComp->K2_GetComponentLocation();
+		}
+		else
+		{
+			ImpactWorld = HitChar->GetActorLocation();
+		}
+	}
+
+	OnBeginOverlap(HitChar, ImpactWorld);
+}
+
+void ACWeaponRandomPatternSkillContext::Weapon_DoActionImpl(
+	const CEAttackType InAttackType,
+	const int32 InSkillIndex)
+{
+	(void)InSkillIndex;
+
+	CancelDashes();
+
+	if (DoActionDatas.Num() <= 0)
+	{
+		return;
+	}
+
+	if (false == Enable)
+	{
+		return;
+	}
+
+	DisableCombo();
+
+	UCStateComponent* StateComp = Weapon_ResolveStateComponent();
+	if (false == IsValid(StateComp))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[WeaponRandomPattern] DoAction(State 없음): %s"),
+			*GetNameSafe(this)));
+		return;
+	}
+
+	const CEStateType CurMode = StateComp->GetCurMode();
+	if (CurMode == CEStateType::Idle || CurMode == CEStateType::CombatHitted)
+	{
+		StateComp->SetAction();
+		PlayRandomActionMontage();
+		InAction = true;
+		PrevAttackType = InAttackType;
+	}
+}
+
+void ACWeaponRandomPatternSkillContext::End_DoAction(const CEAttackType InAttackType)
+{
+	Super::End_DoAction(InAttackType);
+	Enable = true;
+}
+
+void ACWeaponRandomPatternSkillContext::End_Equip_Implementation(const bool bMainOrSubWeapon)
+{
+	Super::End_Equip_Implementation(bMainOrSubWeapon);
+	EnableCombo();
+}
+
+ACWeaponComboSwordSkillContext::ACWeaponComboSwordSkillContext()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
+void ACWeaponComboSwordSkillContext::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ComboSword_ResolveSkeletalMesh();
+	ComboSword_SetMeshVisible(false);
+}
+
+void ACWeaponComboSwordSkillContext::Unequip_Implementation()
+{
+	ComboSword_SetMeshVisible(false);
+	Super::Unequip_Implementation();
+}
+
+void ACWeaponComboSwordSkillContext::Begin_Equip_Implementation(const bool bMainOrSubWeapon)
+{
+	Super::Begin_Equip_Implementation(bMainOrSubWeapon);
+
+	ComboSword_SetMeshVisible(true);
+	ComboSword_AttachToCharacterSocket(HandAttachSocketName);
+}
+
+void ACWeaponComboSwordSkillContext::ComboSword_ResolveSkeletalMesh()
+{
+	if (IsValid(ComboSwordMesh))
+	{
+		return;
+	}
+
+	ComboSwordMesh = Cast<USkeletalMeshComponent>(GetDefaultSubobjectByName(TEXT("SkeletalMesh")));
+	if (false == IsValid(ComboSwordMesh))
+	{
+		ComboSwordMesh = FindComponentByClass<USkeletalMeshComponent>();
+	}
+	if (false == IsValid(ComboSwordMesh))
+	{
+		TArray<USkeletalMeshComponent*> MeshComponents;
+		GetComponents<USkeletalMeshComponent>(MeshComponents, true);
+		if (MeshComponents.Num() > 0)
+		{
+			ComboSwordMesh = MeshComponents[0];
+		}
+	}
+
+	if (false == IsValid(ComboSwordMesh))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[WeaponComboSword] SkeletalMesh 컴포넌트 없음 — %s (BP에 SkeletalMesh 추가 또는 할당 필요)"),
+			*GetNameSafe(this)));
+	}
+}
+
+void ACWeaponComboSwordSkillContext::ComboSword_SetMeshVisible(const bool bVisible)
+{
+	if (false == IsValid(ComboSwordMesh))
+	{
+		return;
+	}
+
+	ComboSwordMesh->SetVisibility(bVisible, false);
+}
+
+void ACWeaponComboSwordSkillContext::ComboSword_AttachToCharacterSocket(const FName SocketName)
+{
+	if (false == IsValid(Character) || false == IsValid(ComboSwordMesh))
+	{
+		return;
+	}
+
+	ACharacter* CharActor = Cast<ACharacter>(Character);
+	if (false == IsValid(CharActor))
+	{
+		return;
+	}
+
+	USkeletalMeshComponent* CharMesh = CharActor->GetMesh();
+	if (false == IsValid(CharMesh))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[WeaponComboSword] Character Mesh 없음 — %s Character=%s"),
+			*GetNameSafe(this),
+			*GetNameSafe(Character)));
+		return;
+	}
+
+	ComboSwordMesh->AttachToComponent(
+		CharMesh,
+		FAttachmentTransformRules::KeepRelativeTransform,
+		SocketName);
+}
+
+ACWeaponComboFistSkillContext::ACWeaponComboFistSkillContext()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
+void ACWeaponComboFistSkillContext::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ComboFist_AttachCollisionShapesToCharacterMesh();
+}
+
+void ACWeaponComboFistSkillContext::ComboFist_AttachCollisionShapesToCharacterMesh()
+{
+	if (false == IsValid(Character))
+	{
+		return;
+	}
+
+	const ACharacter* const CharActor = Cast<ACharacter>(Character);
+	if (false == IsValid(CharActor))
+	{
+		return;
+	}
+
+	USkeletalMeshComponent* const CharacterMesh = CharActor->GetMesh();
+	if (false == IsValid(CharacterMesh))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[WeaponComboFist] Character Mesh 없음 — %s Character=%s"),
+			*GetNameSafe(this),
+			*GetNameSafe(Character)));
+		return;
+	}
+
+	// 레거시 Combo_Fist BP: Collisions ForEach → Attach, SocketName = Shape 컴포넌트 Object Name.
+	static const FAttachmentTransformRules AttachRules(
+		EAttachmentRule::KeepRelative,
+		EAttachmentRule::KeepRelative,
+		EAttachmentRule::KeepRelative,
+		true);
+
+	const int32 shapeCount = ComboCollisionShapes.Num();
+	for (int32 shapeIndex = 0; shapeIndex < shapeCount; ++shapeIndex)
+	{
+		UShapeComponent* const Shape = ComboCollisionShapes[shapeIndex].Get();
+		if (false == IsValid(Shape))
+		{
+			continue;
+		}
+
+		const FName SocketName = Shape->GetFName();
+		Shape->AttachToComponent(CharacterMesh, AttachRules, SocketName);
 	}
 }
 

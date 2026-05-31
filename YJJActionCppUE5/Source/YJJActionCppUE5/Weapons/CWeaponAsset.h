@@ -33,7 +33,14 @@ public:
 	FORCEINLINE constexpr ACAttachment* GetAttachment() const { return Attachment; }
 	FORCEINLINE constexpr UCEquipment* GetEquipment() const { return Equipment; }
 	FORCEINLINE constexpr UCAct* GetAct() const { return Act; }
+	FORCEINLINE int32 GetActDatasNum() const { return ActDatas.Num(); }
 	UCSkill* GetSkill(const int32 SkillIndex) const;
+
+	/** CDA uasset 로드 실패 시 Content 경로로만 채운 런타임 템플릿. */
+	static UCWeaponAsset* CreateRuntimeTemplate(
+		UObject* Outer,
+		CEWeaponType InType,
+		CEMagicType InMagicType = CEMagicType::Unarmed);
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -77,4 +84,7 @@ protected:
 
 	UPROPERTY()
 	TArray<UCSkill*> Skills;
+
+	/** CDA ActClass/DT 가 비었을 때 Fist·Sword 등 Content 경로로 보충. */
+	void EnsureConfigFromContent();
 };

@@ -8,14 +8,64 @@
 #include "Weapons/CEquipment.h"
 #include "Weapons/CAct.h"
 #include "Weapons/CSkill.h"
+#include "Weapons/CWeaponAsset.h"
+#include "Weapons/CSkillWeapon.h"
+#include "Weapons/Bow/CWeaponBow.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "UObject/SoftObjectPath.h"
 #include "UObject/UnrealType.h"
 #include "UObject/EnumProperty.h"
 
 namespace
 {
+	/** CDA uasset 는 레거시 CWeaponAsset 부모를 가질 수 있어 클래스 필터 StaticLoadObject 보다 TryLoad·무타입 로드가 리다이렉트에 유리하다. */
+	static UCWeaponAsset* TryLoadWeaponDataAssetFromContentPath(const FString& AssetPath)
+	{
+		if (AssetPath.IsEmpty())
+		{
+			return nullptr;
+		}
+
+		const FSoftObjectPath softPath(AssetPath);
+		UObject* loadedObject = softPath.TryLoad();
+		if (IsValid(loadedObject))
+		{
+			UCWeaponAsset* const asWeaponAsset = Cast<UCWeaponAsset>(loadedObject);
+			if (IsValid(asWeaponAsset))
+			{
+				return asWeaponAsset;
+			}
+
+			CLog::Log(FString::Printf(
+				TEXT("[Weapon] CDA 클래스 불일치 — %s Stored=%s (Reparent=UCWeaponAsset)"),
+				*AssetPath,
+				*loadedObject->GetClass()->GetPathName()));
+			return nullptr;
+		}
+
+		loadedObject = StaticLoadObject(nullptr, nullptr, *AssetPath);
+		if (IsValid(loadedObject))
+		{
+			UCWeaponAsset* const asWeaponAsset = Cast<UCWeaponAsset>(loadedObject);
+			if (IsValid(asWeaponAsset))
+			{
+				return asWeaponAsset;
+			}
+
+			CLog::Log(FString::Printf(
+				TEXT("[Weapon] CDA 클래스 불일치 — %s Stored=%s (Reparent=UCWeaponAsset)"),
+				*AssetPath,
+				*loadedObject->GetClass()->GetPathName()));
+			return nullptr;
+		}
+
+		UCWeaponAsset* typedAsset = nullptr;
+		YJJHelpers::GetAssetDynamic<UCWeaponAsset>(&typedAsset, AssetPath);
+		return typedAsset;
+	}
 	bool Legacy_InputParmIsEligible(const FProperty* const Prop)
 	{
 		CheckNullResult(Prop, false);
@@ -461,20 +511,292 @@ void UCWeaponComponent::DispatchEquippedMagicDelegates(CEMagicType CurrentMagic,
 		OnMagicTypeChanged.Broadcast(CurrentMagic, PreviousMagic);
 }
 
-void UCWeaponComponent::BeginPlay()
+void UCWeaponComponent::SyncBpWeaponLanes()
 {
-	Super::BeginPlay();
+	if (bMagicEquipped)
+		return;
 
-	CheckNull(Owner);
+	if (MainType == CEWeaponType::Unarmed)
+		return;
+
+	if (PhysicalType == MainType)
+		return;
+
+	// PhysicalType 만 Unarmed 인데 MainType 은 무장 — ChangeBlueprintWeaponLanes 직후 LMB 무반응의 주 원인.
+	if (PhysicalType != CEWeaponType::Unarmed)
+		return;
+
+	const TObjectPtr<UCWeaponAsset>* foundAsset = WeaponAssetMap.Find(MainType);
+	if (nullptr == foundAsset)
+		return;
+
+	ChangePhysicalType(MainType);
+}
+
+void UCWeaponComponent::RefreshOwnerCache()
+{
+	ACCommonCharacter* const ownerChar = Cast<ACCommonCharacter>(GetOwner());
+	Owner = ownerChar;
+
+	if (IsValid(ownerChar))
+	{
+		StateComp = YJJHelpers::GetComponent<UCStateComponent>(ownerChar);
+		MovementComp = YJJHelpers::GetComponent<UCMovementComponent>(ownerChar);
+	}
+}
+
+void UCWeaponComponent::MergeDataAssetsFromSiblingComponents()
+{
+	AActor* const ownerActor = GetOwner();
+	if (false == IsValid(ownerActor))
+		return;
+
+	TArray<UCWeaponComponent*> weaponComponents;
+	ownerActor->GetComponents<UCWeaponComponent>(weaponComponents);
+
+	const int32 componentCount = weaponComponents.Num();
+	for (int32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+	{
+		UCWeaponComponent* const otherComp = weaponComponents[componentIndex];
+		if ((false == IsValid(otherComp)) || (otherComp == this))
+			continue;
+
+		for (const TObjectPtr<UCWeaponAsset>& sourceAsset : otherComp->DataAssets)
+		{
+			if (IsValid(sourceAsset))
+				DataAssets.AddUnique(sourceAsset);
+		}
+	}
+}
+
+void UCWeaponComponent::CreateSyntheticDataAssetsIfStillEmpty()
+{
+	if (DataAssets.Num() > 0)
+		return;
+
+	struct FSyntheticWeaponEntry
+	{
+		CEWeaponType WeaponType;
+		CEMagicType MagicType;
+	};
+
+	static const FSyntheticWeaponEntry SyntheticEntries[] = {
+		{ CEWeaponType::Fist, CEMagicType::Unarmed },
+		{ CEWeaponType::Sword, CEMagicType::Unarmed },
+		{ CEWeaponType::Hammer, CEMagicType::Unarmed },
+		{ CEWeaponType::Dual, CEMagicType::Unarmed },
+		{ CEWeaponType::Bow, CEMagicType::Unarmed },
+		{ CEWeaponType::Warp, CEMagicType::Warp },
+		{ CEWeaponType::Around, CEMagicType::Around },
+		{ CEWeaponType::Fireball, CEMagicType::FireBall },
+		{ CEWeaponType::Bomb, CEMagicType::Bomb },
+		{ CEWeaponType::Yondu, CEMagicType::Yondu },
+	};
+
+	UObject* const outer = IsValid(GetOwner()) ? GetOwner() : static_cast<UObject*>(this);
+	int32 createdCount = 0;
+
+	for (const FSyntheticWeaponEntry& entry : SyntheticEntries)
+	{
+		UCWeaponAsset* const templateAsset =
+			UCWeaponAsset::CreateRuntimeTemplate(outer, entry.WeaponType, entry.MagicType);
+		if (IsValid(templateAsset))
+		{
+			DataAssets.Add(templateAsset);
+			++createdCount;
+		}
+	}
+
+	if (createdCount > 0)
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Weapon] CDA 로드 전부 실패 — Content 경로 합성 DA %d개 생성 Comp=%s Owner=%s"),
+			createdCount,
+			*GetName(),
+			IsValid(GetOwner()) ? *GetOwner()->GetName() : TEXT("(null)")));
+	}
+}
+
+void UCWeaponComponent::EnsureWeaponPipelineReady()
+{
+	RefreshOwnerCache();
+
+	if (false == Owner.IsValid())
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Weapon] EnsureWeaponPipelineReady: Owner 캐시 없음 — Comp=%s Actor=%s"),
+			*GetName(),
+			IsValid(GetOwner()) ? *GetOwner()->GetName() : TEXT("(null)")));
+		return;
+	}
+
+	MergeDataAssetsFromSiblingComponents();
+	EnsureDataAssets();
+
+	if (WeaponAssetMap.Num() < 1 && MagicAssetMap.Num() < 1)
+		RebuildAssetMaps();
+}
+
+void UCWeaponComponent::LogWeaponPipelineStatus(const TCHAR* Context)
+{
+	const AActor* const ownerActor = GetOwner();
+	const UCAct* const act = GetAct();
+	CLog::Log(FString::Printf(
+		TEXT("[Weapon][%s] Comp=%s Owner=%s OwnerCache=%s DataAssets=%d Map=%d MagicMap=%d Physical=%s Main=%s Act=%s Equip=%s"),
+		Context,
+		*GetName(),
+		IsValid(ownerActor) ? *ownerActor->GetName() : TEXT("(null)"),
+		Owner.IsValid() ? TEXT("O") : TEXT("X"),
+		DataAssets.Num(),
+		WeaponAssetMap.Num(),
+		MagicAssetMap.Num(),
+		*YJJHelpers::ConvertEnumToString(PhysicalType),
+		*YJJHelpers::ConvertEnumToString(MainType),
+		IsValid(act) ? TEXT("O") : TEXT("X"),
+		IsValid(GetEquipment()) ? TEXT("O") : TEXT("X")));
+}
+
+void UCWeaponComponent::EnsureCombatWeaponEquipped()
+{
+	if (bMagicEquipped)
+		return;
+
+	if (PhysicalType != CEWeaponType::Unarmed)
+		return;
+
+	CEWeaponType desiredType = MainType;
+	if (desiredType == CEWeaponType::Unarmed)
+		desiredType = CEWeaponType::Fist;
+
+	if (false == WeaponAssetMap.Contains(desiredType))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Weapon] EnsureCombatWeaponEquipped — Map에 %s 없음(Map=%d DataAssets=%d) Comp=%s"),
+			*YJJHelpers::ConvertEnumToString(desiredType),
+			WeaponAssetMap.Num(),
+			DataAssets.Num(),
+			*GetName()));
+		return;
+	}
+
+	SetMode(desiredType);
+}
+
+CEWeaponType UCWeaponComponent::ResolveCombatWeaponLookupType() const
+{
+	if (bMagicEquipped)
+		return CEWeaponType::Unarmed;
+
+	if (PhysicalType != CEWeaponType::Unarmed)
+		return PhysicalType;
+
+	if (MainType != CEWeaponType::Unarmed)
+		return MainType;
+
+	return CEWeaponType::Unarmed;
+}
+
+void UCWeaponComponent::EnsureDataAssets()
+{
+	MergeDataAssetsFromSiblingComponents();
+
+	if (DataAssets.Num() > 0)
+		return;
+
+	AActor* const ownerActor = GetOwner();
+
+	static const TCHAR* const DefaultWeaponDataPaths[] = {
+		TEXT("/Game/Weapons/Fist/CDA_Fist.CDA_Fist"),
+		TEXT("/Game/Weapons/Sword/CDA_Sword.CDA_Sword"),
+		TEXT("/Game/Weapons/Hammer/CDA_Hammer.CDA_Hammer"),
+		TEXT("/Game/Weapons/Dual/CDA_Dual.CDA_Dual"),
+		TEXT("/Game/Weapons/Bow/CDA_Bow.CDA_Bow"),
+		TEXT("/Game/Weapons/Warp/CDA_Warp.CDA_Warp"),
+		TEXT("/Game/Weapons/Around/CDA_Around.CDA_Around"),
+		TEXT("/Game/Weapons/Fireball/CDA_Fireball.CDA_Fireball"),
+		TEXT("/Game/Weapons/Bomb/CDA_Bomb.CDA_Bomb"),
+		TEXT("/Game/Weapons/Yondu/CDA_Yondu.CDA_Yondu"),
+	};
+
+	for (const TCHAR* const assetPath : DefaultWeaponDataPaths)
+	{
+		UCWeaponAsset* loadedAsset = TryLoadWeaponDataAssetFromContentPath(FString(assetPath));
+		if (IsValid(loadedAsset))
+		{
+			DataAssets.AddUnique(loadedAsset);
+			continue;
+		}
+
+		// .CDA_Fist suffix 없이 시도
+		FString shortPath = FString(assetPath);
+		const int32 dotIndex = shortPath.Find(TEXT("."), ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+		if (dotIndex != INDEX_NONE)
+		{
+			shortPath = shortPath.Left(dotIndex);
+			loadedAsset = TryLoadWeaponDataAssetFromContentPath(shortPath);
+			if (IsValid(loadedAsset))
+			{
+				DataAssets.AddUnique(loadedAsset);
+				continue;
+			}
+		}
+
+		CLog::Log(FString::Printf(
+			TEXT("[Weapon] CDA 로드 실패 — %s (ActiveGameNameRedirects·Reparent=UCWeaponAsset 확인) Comp=%s"),
+			assetPath,
+			*GetName()));
+	}
+
+	if (DataAssets.Num() > 0)
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Weapon] Content CDA_* 로드 %d개 — Comp=%s Owner=%s"),
+			DataAssets.Num(),
+			*GetName(),
+			IsValid(ownerActor) ? *ownerActor->GetName() : TEXT("(null)")));
+	}
+	else
+	{
+		CreateSyntheticDataAssetsIfStillEmpty();
+	}
+
+	if (DataAssets.Num() < 1)
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Weapon] DataAssets 최종 0 — 합성 DA 생성도 실패 Comp=%s Owner=%s"),
+			*GetName(),
+			IsValid(ownerActor) ? *ownerActor->GetName() : TEXT("(null)")));
+	}
+}
+
+void UCWeaponComponent::RebuildAssetMaps()
+{
+	RefreshOwnerCache();
+
+	ACCommonCharacter* ownerChar = Owner.Get();
+	if (false == IsValid(ownerChar))
+		ownerChar = Cast<ACCommonCharacter>(GetOwner());
+
+	if (false == IsValid(ownerChar))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Weapon] RebuildAssetMaps: Owner 없음 — Comp=%s Actor=%s DataAssets=%d"),
+			*GetName(),
+			IsValid(GetOwner()) ? *GetOwner()->GetName() : TEXT("(null)"),
+			DataAssets.Num()));
+		return;
+	}
+
+	WeaponAssetMap.Empty();
+	MagicAssetMap.Empty();
 
 	for (int32 i = 0; i < DataAssets.Num(); i++)
 	{
 		if (IsValid(DataAssets[i]))
 		{
-			// MagicType 과 Type 을 함께 채운 DA 는 Magic 쪽 우선이라 물리 Weapon 맵에는 넣히지 않는다. 한 축만 지정한다.
 			TObjectPtr<UCWeaponAsset> asset = NewObject<UCWeaponAsset>(this, UCWeaponAsset::StaticClass());
 
-			asset->DeepCopy(*DataAssets[i], Owner);
+			asset->DeepCopy(*DataAssets[i], ownerChar);
 
 			if (asset->GetMagicType() != CEMagicType::Unarmed)
 				MagicAssetMap.Emplace(asset->GetMagicType(), asset);
@@ -483,10 +805,31 @@ void UCWeaponComponent::BeginPlay()
 		}
 	}
 
-	SpawnEquippedActorsFromConfiguredClasses();
+	CLog::Log(FString::Printf(
+		TEXT("[Weapon] RebuildAssetMaps — Comp=%s DataAssets=%d WeaponMap=%d MagicMap=%d Owner=%s"),
+		*GetName(),
+		DataAssets.Num(),
+		WeaponAssetMap.Num(),
+		MagicAssetMap.Num(),
+		*ownerChar->GetName()));
 }
 
-void UCWeaponComponent::SpawnEquippedActorsFromConfiguredClasses()
+void UCWeaponComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	EnsureWeaponPipelineReady();
+
+	SpawnConfiguredWeapons();
+
+	SyncBpWeaponLanes();
+
+	EnsureCombatWeaponEquipped();
+
+	LogWeaponPipelineStatus(TEXT("BeginPlay"));
+}
+
+void UCWeaponComponent::SpawnConfiguredWeapons()
 {
 	AActor* const OwnerActor = GetOwner();
 	CheckNull(OwnerActor);
@@ -582,6 +925,22 @@ void UCWeaponComponent::ChangeBlueprintWeaponLanes(CEWeaponType InNewMainType, C
 
 	MainType = InNewMainType;
 	SubType = InNewSubType;
+
+	// 레거시 BP 무기 레인(MainType/SubType) 과 PhysicalType 을 동기화하지 않으면 InputAction_Act → GetWeaponAsset 이
+	// PhysicalType==Unarmed 만 보고 무기가 착장된 상태에서도 GetAct()==null 로 무반응된다(블프 SetMode 후 LMB 불능).
+	if (false == bMagicEquipped)
+	{
+		if (MainType == CEWeaponType::Unarmed)
+		{
+			PhysicalType = CEWeaponType::Unarmed;
+			LastCommittedPhysical = CEWeaponType::Unarmed;
+		}
+		else
+		{
+			PhysicalType = MainType;
+			LastCommittedPhysical = MainType;
+		}
+	}
 
 	if (OnWeaponTypeChanged.IsBound())
 		OnWeaponTypeChanged.Broadcast(PrevMainType, MainType, PrevSubType, SubType);
@@ -692,8 +1051,44 @@ void UCWeaponComponent::TickComponent(
 
 void UCWeaponComponent::InputAction_Act()
 {
+	EnsureWeaponPipelineReady();
+	SyncBpWeaponLanes();
+	EnsureCombatWeaponEquipped();
+
 	const TWeakObjectPtr<UCAct> act = GetAct();
-	CheckNull(act);
+	if (false == act.IsValid())
+	{
+		const CEWeaponType lookupType = ResolveCombatWeaponLookupType();
+		const AActor* const ownerActor = GetOwner();
+		const TWeakObjectPtr<UCWeaponAsset> asset = GetWeaponAsset();
+
+		if (asset.IsValid() && (false == IsValid(asset->GetAct())) && Owner.IsValid())
+		{
+			asset->BeginPlay(Owner);
+		}
+
+		const TWeakObjectPtr<UCAct> actRetry = GetAct();
+		if (actRetry.IsValid())
+		{
+			actRetry->Act();
+			return;
+		}
+
+		LogWeaponPipelineStatus(TEXT("ActionFail"));
+		CLog::Log(FString::Printf(
+			TEXT("[입력][Action] UCAct 없음 — Physical=%s Lookup=%s Equip=%s Map=%d MagicMap=%d DataAssets=%d ActDatas=%d State=%s Owner=%s"),
+			*YJJHelpers::ConvertEnumToString(PhysicalType),
+			*YJJHelpers::ConvertEnumToString(lookupType),
+			(IsValid(GetEquipment()) ? TEXT("O") : TEXT("X")),
+			WeaponAssetMap.Num(),
+			MagicAssetMap.Num(),
+			DataAssets.Num(),
+			(asset.IsValid() && IsValid(asset.Get()) ? asset->GetActDatasNum() : -1),
+			(StateComp.IsValid() ? *YJJHelpers::ConvertEnumToString(StateComp->GetCurMode()) : TEXT("(null)")),
+			IsValid(ownerActor) ? *ownerActor->GetName() : TEXT("(null)")));
+		return;
+	}
+
 	act->Act();
 }
 
@@ -905,6 +1300,121 @@ void UCWeaponComponent::End_DoAction(CEAttackType InAttackType)
 	act->End_Act();
 }
 
+void UCWeaponComponent::Begin_DoAction(CEAttackType InAttackType)
+{
+	const TObjectPtr<AActor> ownerActor = GetOwner();
+	if (false == IsValid(ownerActor))
+	{
+		return;
+	}
+
+	const TObjectPtr<UCMagicComponent> magicComp = ownerActor->FindComponentByClass<UCMagicComponent>();
+	if (IsValid(magicComp))
+	{
+		if (magicComp->IsUnarmed())
+		{
+			LegacyBp_DispatchMain_BeginDoAction(InAttackType);
+		}
+		else
+		{
+			magicComp->Begin_DoAction(InAttackType);
+		}
+		return;
+	}
+
+	LegacyBp_DispatchMain_BeginDoAction(InAttackType);
+}
+
+void UCWeaponComponent::Begin_DoAirCombo()
+{
+	LegacyBp_DispatchMain_BeginDoAction(CEAttackType::Air);
+}
+
+void UCWeaponComponent::End_DoAirCombo()
+{
+	LegacyBp_DispatchMain_EndDoAction(CEAttackType::Air);
+}
+
+void UCWeaponComponent::Begin_DoFlyingAttack()
+{
+	const TObjectPtr<ACWeaponComboSkillContext> comboWeapon = Cast<ACWeaponComboSkillContext>(MainWeapon);
+	if (IsValid(comboWeapon))
+	{
+		comboWeapon->Combo_BeginFlyingSegmentFromNotify();
+		return;
+	}
+
+	LegacyBp_DispatchMain_BeginDoAction(CEAttackType::Flying);
+}
+
+void UCWeaponComponent::End_DoFlyingAttack()
+{
+	LegacyBp_DispatchMain_EndDoAction(CEAttackType::Flying);
+}
+
+void UCWeaponComponent::End_DoDownAttack()
+{
+	LegacyBp_DispatchMain_EndDoAction(CEAttackType::Down);
+}
+
+void UCWeaponComponent::End_DashAttack()
+{
+	LegacyBp_DispatchMain_EndDoAction(CEAttackType::DashAttack);
+}
+
+void UCWeaponComponent::End_FallDown()
+{
+	LegacyBp_DispatchMain_EndDoAction(CEAttackType::FallDown);
+}
+
+bool UCWeaponComponent::TryNotifyConsumeStamina(const double InStamina)
+{
+	ACWeaponSkillContext* weapon = Cast<ACWeaponSkillContext>(MainWeapon);
+	if (false == IsValid(weapon))
+	{
+		// WeaponComponent 유효·MainWeapon 없음 — 레거시 IsValid 분기와 동일하게 소모 없이 통과.
+		return true;
+	}
+
+	const bool bEnoughStamina = weapon->ConsumeStamina(InStamina);
+	if (bEnoughStamina)
+	{
+		return true;
+	}
+
+	End_DoAction(CEAttackType::Common);
+
+	ACharacter* character = Cast<ACharacter>(GetOwner());
+	if (IsValid(character))
+	{
+		character->StopAnimMontage(nullptr);
+	}
+
+	return false;
+}
+
+void UCWeaponComponent::ApplyLegacyMainWeaponBoxCollisions()
+{
+	ACWeaponComboSkillContext* comboWeapon = Cast<ACWeaponComboSkillContext>(MainWeapon);
+	if (false == IsValid(comboWeapon))
+	{
+		return;
+	}
+
+	comboWeapon->OnBoxCollisions();
+}
+
+void UCWeaponComponent::ApplyLegacyEndBowStringAttach()
+{
+	ACWeaponBow* bowWeapon = Cast<ACWeaponBow>(MainWeapon);
+	if (false == IsValid(bowWeapon))
+	{
+		return;
+	}
+
+	bowWeapon->AttachBowString = true;
+}
+
 bool UCWeaponComponent::TryDispatchLegacyMainWeaponCollisionToggle(const bool bCollisionOn)
 {
 	if (false == IsValid(MainWeapon))
@@ -917,6 +1427,47 @@ bool UCWeaponComponent::TryDispatchLegacyMainWeaponCollisionToggle(const bool bC
 
 	MainWeapon->ProcessEvent(functionPtrLocal, nullptr);
 	return true;
+}
+
+void UCWeaponComponent::ApplyLegacyMainWeaponCollisionBound(const bool bCollisionOn)
+{
+	if (TryDispatchLegacyMainWeaponCollisionToggle(bCollisionOn))
+	{
+		return;
+	}
+
+	const TObjectPtr<ACAttachment> attachment = GetAttachment();
+	if (false == IsValid(attachment))
+	{
+		return;
+	}
+
+	if (bCollisionOn)
+	{
+		attachment->OnCollisions();
+	}
+	else
+	{
+		attachment->OffCollisions();
+	}
+}
+
+void UCWeaponComponent::ApplyLegacyMainWeaponComboWindow(const bool bEnableCombo)
+{
+	ACWeaponComboSkillContext* comboWeapon = Cast<ACWeaponComboSkillContext>(MainWeapon);
+	if (false == IsValid(comboWeapon))
+	{
+		return;
+	}
+
+	if (bEnableCombo)
+	{
+		comboWeapon->EnableCombo();
+	}
+	else
+	{
+		comboWeapon->DisableCombo();
+	}
 }
 
 void UCWeaponComponent::LegacyBp_DispatchMain_DoAction(CEAttackType InAttackType, int32 InSkillIndex)
@@ -1175,10 +1726,11 @@ TWeakObjectPtr<UCWeaponAsset> UCWeaponComponent::GetWeaponAsset()
 		return magicAsset;
 	}
 
-	if (PhysicalType == CEWeaponType::Unarmed)
+	const CEWeaponType lookupType = ResolveCombatWeaponLookupType();
+	if (lookupType == CEWeaponType::Unarmed)
 		return nullptr;
 
-	const TObjectPtr<UCWeaponAsset>* foundWeapon = WeaponAssetMap.Find(PhysicalType);
+	const TObjectPtr<UCWeaponAsset>* foundWeapon = WeaponAssetMap.Find(lookupType);
 	CheckNullResult(foundWeapon, nullptr);
 
 	const TWeakObjectPtr<UCWeaponAsset> wAsset = *foundWeapon;

@@ -24,7 +24,7 @@ public:
 	virtual void OnUnequip_Implementation() override;
 
 public:
-	TSharedPtr<float> GetBend() const;
+	TSharedPtr<float> GetBend();
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "View")

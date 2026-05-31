@@ -11,11 +11,35 @@
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
 
+namespace
+{
+	void ResolvePlayerHudWidgetClass(TSubclassOf<UCUserWidget_HUD>& OutClass)
+	{
+		if (IsValid(OutClass))
+			return;
+
+		static const TCHAR* const HudWidgetPaths[] = {
+			TEXT("/Game/Widgets/CWB_HUD.CWB_HUD_C"),
+			TEXT("/Game/Widgets/WB_HUDUI.WB_HUDUI_C"),
+			TEXT("/Game/Widgets/HUD.HUD_C"),
+		};
+
+		for (const TCHAR* const widgetPath : HudWidgetPaths)
+		{
+			YJJHelpers::GetClassDynamic<UCUserWidget_HUD>(&OutClass, widgetPath);
+			if (IsValid(OutClass))
+				return;
+		}
+	}
+}
+
 ACPlayerController::ACPlayerController()
 {
 	bReplicates = true;
 	DefaultPlacedActorClass = ACPlacedActor::StaticClass();
-	YJJHelpers::GetClass<UCUserWidget_HUD>(&PlayerHUDClass, "/Script/UMGEditor.WidgetBlueprint'/Game/Widgets/CWB_HUD.CWB_HUD_C'");
+	// HUD 블루프린트는 BeginPlay/EnsureHUD 시점에만 로드한다.
+	// ctor 에서 StaticLoadClass 하면 CDO 생성·모듈 기동 중 위젯 BP 컴파일이 돌며
+	// WidgetVariableNameToGuidMap 정리 Ensure 가 에디터 기동 직후에 걸릴 수 있다.
 }
 
 void ACPlayerController::BeginPlay()
@@ -23,7 +47,7 @@ void ACPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	if (IsLocalController())
-		InitializeHUDForPawn(GetPawn());
+		ScheduleInitializeHUDForPawn();
 }
 
 void ACPlayerController::AcknowledgePossession(APawn* P)
@@ -31,7 +55,23 @@ void ACPlayerController::AcknowledgePossession(APawn* P)
 	Super::AcknowledgePossession(P);
 
 	if (IsLocalController())
-		InitializeHUDForPawn(P);
+		ScheduleInitializeHUDForPawn();
+}
+
+void ACPlayerController::ScheduleInitializeHUDForPawn()
+{
+	UWorld* World = GetWorld();
+	if (false == IsValid(World))
+		return;
+
+	// OnRep_ReplicatedHasBegunPlay 등 AsyncLoading 중 StaticLoadClass 는 위젯 BP 동기 컴파일·Ensure 를 유발한다.
+	if (IsAsyncLoading())
+	{
+		World->GetTimerManager().SetTimerForNextTick(this, &ACPlayerController::ScheduleInitializeHUDForPawn);
+		return;
+	}
+
+	InitializeHUDForPawn(GetPawn());
 }
 
 UCUserWidget_HUD* ACPlayerController::EnsureHUD()
@@ -42,6 +82,8 @@ UCUserWidget_HUD* ACPlayerController::EnsureHUD()
 		return nullptr;
 	}
 
+	ResolvePlayerHudWidgetClass(PlayerHUDClass);
+
 	if (false == IsValid(PlayerHUD) && IsValid(PlayerHUDClass))
 	{
 		PlayerHUD = CreateWidget<UCUserWidget_HUD>(this, PlayerHUDClass);
@@ -51,11 +93,12 @@ UCUserWidget_HUD* ACPlayerController::EnsureHUD()
 			PlayerHUD->AddToViewport();
 		}
 		else
-			CLog::Log(FString::Printf(TEXT("[UI] EnsureHUD: HUD 위젯 생성 실패 — PlayerHUDClass=%s"),
-				IsValid(PlayerHUDClass) ? *PlayerHUDClass->GetPathName() : TEXT("(클래스 미설정)")));
+			CLog::Log(FString::Printf(
+				TEXT("[UI] EnsureHUD: HUD 위젯 생성 실패 — %s (UMG 에서 Compile & Save 로 stale GUID 정리)"),
+				*PlayerHUDClass->GetPathName()));
 	}
 	else if (false == IsValid(PlayerHUD) && false == IsValid(PlayerHUDClass))
-		CLog::Log(TEXT("[UI] EnsureHUD: PlayerHUD 없음이고 PlayerHUDClass 도 설정되지 않았습니다."));
+		CLog::Log(TEXT("[UI] EnsureHUD: PlayerHUDClass 로드 실패 — CWB_HUD/WB_HUDUI 부모=UCUserWidget_HUD(YJJActionCppUE5) 후 Compile & Save."));
 
 	return PlayerHUD;
 }
@@ -84,8 +127,8 @@ void ACPlayerController::InitializeHUDForPawn(APawn* InPawn)
 	hud->SetChildren();
 
 	UCCharacterStatComponent* characterStatComp = InPawn->FindComponentByClass<UCCharacterStatComponent>();
-	if (IsValid(characterStatComp) && IsValid(hud->PlayerInfo))
-		hud->PlayerInfo->BindStats(characterStatComp);
+	if (IsValid(characterStatComp) && IsValid(hud->GetPlayerInfoWidget()))
+		hud->GetPlayerInfoWidget()->BindStats(characterStatComp);
 }
 
 void ACPlayerController::RequestPickup(ACWorldItemActor* WorldItem)

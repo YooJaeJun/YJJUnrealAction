@@ -63,7 +63,30 @@ void ACAttachment_Bow::OnUnequip_Implementation()
 	}
 }
 
-TSharedPtr<float> ACAttachment_Bow::GetBend() const
+TSharedPtr<float> ACAttachment_Bow::GetBend()
 {
-	return Cast<UCAnimInstance_Bow>(SkeletalMesh->GetAnimInstance())->GetBend();
+	if (false == IsValid(SkeletalMesh))
+	{
+		CLog::Log(TEXT("[Bow] GetBend — SkeletalMesh 없음"));
+		return MakeShared<float>(0.0f);
+	}
+
+	// Spawn 직후·비표시 메시 등에서 AnimInstance가 아직 없을 수 있어 한 번 초기화를 시도한다.
+	USkeletalMeshComponent* mesh = SkeletalMesh;
+	UCAnimInstance_Bow* bowAnim = Cast<UCAnimInstance_Bow>(mesh->GetAnimInstance());
+	if (false == IsValid(bowAnim))
+	{
+		mesh->InitAnim(false);
+		bowAnim = Cast<UCAnimInstance_Bow>(mesh->GetAnimInstance());
+	}
+
+	if (false == IsValid(bowAnim))
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Bow] GetBend — UCAnimInstance_Bow 없음 (AnimClass=%s)"),
+			IsValid(mesh->GetAnimClass()) ? *mesh->GetAnimClass()->GetName() : TEXT("(null)")));
+		return MakeShared<float>(0.0f);
+	}
+
+	return bowAnim->GetBend();
 }

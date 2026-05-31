@@ -6,7 +6,7 @@
 class UImage;
 class UTextBlock;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCUserWidget_Interaction : public UCUserWidget_Custom
 {
 	GENERATED_BODY()

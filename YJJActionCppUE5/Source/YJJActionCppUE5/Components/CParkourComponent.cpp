@@ -134,6 +134,36 @@ void UCParkourComponent::ResolveOwningCharacterCached()
 		CLog::Log(FString(TEXT("UCParkourComponent: Owner 가 유효한 ACharacter 로 캐스팅되지 않았다.")));
 }
 
+namespace
+{
+	bool ParkourArrowGroupHasEssentialChildren(USceneComponent* SceneGroup)
+	{
+		if (false == IsValid(SceneGroup))
+			return false;
+
+		TArray<USceneComponent*> Children;
+		SceneGroup->GetChildrenComponents(false, Children);
+
+		bool bHasCenter = false;
+		bool bHasLand = false;
+
+		for (USceneComponent* Child : Children)
+		{
+			const UArrowComponent* const ArrowChild = Cast<UArrowComponent>(Child);
+			if (false == IsValid(ArrowChild))
+				continue;
+
+			const FName childName = ArrowChild->GetFName();
+			if (childName == FName(TEXT("Center")))
+				bHasCenter = true;
+			if (childName == FName(TEXT("Land_0")) || childName == FName(TEXT("Land")))
+				bHasLand = true;
+		}
+
+		return bHasCenter && bHasLand;
+	}
+}
+
 void UCParkourComponent::ResolveArrowGroupResolved()
 {
 	ArrowGroup = nullptr;
@@ -146,37 +176,62 @@ void UCParkourComponent::ResolveArrowGroupResolved()
 
 	static const FName arrowsTag(TEXT("Arrows"));
 
+	USceneComponent* bestNamedGroup = nullptr;
+	USceneComponent* fallbackTaggedGroup = nullptr;
+
+	// Arrows 태그만 단 네 빈 장식 Scene 이 먼저 나오면 UArrow 자식 매칭이 전부 빠져 경고만 난다 —
+	// Center+Land 자식이 실제로 있는 ArrowGroup/YJJ_PlayerArrowGroup 을 우선한다.
 	for (UActorComponent* Elem : Components)
 	{
 		if (false == IsValid(Elem))
 			continue;
 
-		USceneComponent* Scene = Cast<USceneComponent>(Elem);
+		USceneComponent* const Scene = Cast<USceneComponent>(Elem);
 		if (false == IsValid(Scene))
 			continue;
 
-		if (Elem->ComponentHasTag(arrowsTag))
-		{
-			ArrowGroup = Scene;
-			return;
-		}
-	}
+		const bool bNamedGroup =
+			(Elem->GetFName() == FName(TEXT("ArrowGroup")) ||
+			 Elem->GetFName() == FName(TEXT("YJJ_PlayerArrowGroup")));
 
-	for (UActorComponent* Elem : Components)
-	{
-		// 플레이어 네이티브 블루프린트 SCS 이름 충돌 회피로 YJJ_PlayerArrowGroup 으로도 스폰할 수 있다.
-		if (Elem != nullptr
-			&& (Elem->GetFName() == FName(TEXT("ArrowGroup"))
-				|| Elem->GetFName() == FName(TEXT("YJJ_PlayerArrowGroup"))))
+		if (bNamedGroup)
 		{
-			ArrowGroup = Cast<USceneComponent>(Elem);
-			if (IsValid(ArrowGroup.Get()))
+			if (ParkourArrowGroupHasEssentialChildren(Scene))
+			{
+				ArrowGroup = Scene;
 				return;
+			}
+
+			if (nullptr == bestNamedGroup)
+				bestNamedGroup = Scene;
+			continue;
 		}
+
+		if (Elem->ComponentHasTag(arrowsTag) && (nullptr == fallbackTaggedGroup))
+			fallbackTaggedGroup = Scene;
 	}
 
-	CLog::Log(FString::Printf(TEXT("UCParkourComponent('%s'): ArrowGroup 을 찾지 못했다."),
-		IsValid(OwningCharacter.Get()) ? *OwningCharacter->GetName() : TEXT("(null character)")));
+	if (IsValid(bestNamedGroup) && ParkourArrowGroupHasEssentialChildren(bestNamedGroup))
+	{
+		ArrowGroup = bestNamedGroup;
+		return;
+	}
+
+	if (IsValid(fallbackTaggedGroup) && ParkourArrowGroupHasEssentialChildren(fallbackTaggedGroup))
+	{
+		ArrowGroup = fallbackTaggedGroup;
+		return;
+	}
+
+	ArrowGroup = bestNamedGroup;
+	if (false == IsValid(ArrowGroup))
+		ArrowGroup = fallbackTaggedGroup;
+
+	if (false == IsValid(ArrowGroup))
+	{
+		CLog::Log(FString::Printf(TEXT("UCParkourComponent('%s'): ArrowGroup 을 찾지 못했다."),
+			IsValid(OwningCharacter.Get()) ? *OwningCharacter->GetName() : TEXT("(null character)")));
+	}
 }
 
 void UCParkourComponent::RebuildArrowListFromArrowGroupChildren()
@@ -223,6 +278,39 @@ void UCParkourComponent::RebuildArrowListFromArrowGroupChildren()
 
 		const int32 EnumIndex = static_cast<int32>(SlotType);
 		Arrows[EnumIndex] = MatchedArrow;
+	}
+
+	// BP 빈 ArrowGroup 만 잡힌 경우 — 캐릭터 전체에서 이름으로 UArrow 를 한 번 더 찾는다.
+	if (IsValid(OwningCharacter.Get()))
+	{
+		TArray<UArrowComponent*> allArrows;
+		OwningCharacter->GetComponents<UArrowComponent>(allArrows);
+
+		for (uint8 RawFallback = 0; RawFallback < static_cast<uint8>(CEParkourArrowType::Max); ++RawFallback)
+		{
+			const CEParkourArrowType slotType = static_cast<CEParkourArrowType>(RawFallback);
+			const int32 enumIndex = static_cast<int32>(slotType);
+			if (IsValid(Arrows[enumIndex]))
+				continue;
+
+			const FName targetName = ResolveArrowActorSubobjectName(slotType);
+			if (targetName.IsNone())
+				continue;
+
+			for (UArrowComponent* candidate : allArrows)
+			{
+				if (false == IsValid(candidate))
+					continue;
+
+				const FName childName = candidate->GetFName();
+				if (childName == targetName ||
+					(slotType == CEParkourArrowType::Land && childName == FName(TEXT("Land"))))
+				{
+					Arrows[enumIndex] = candidate;
+					break;
+				}
+			}
+		}
 	}
 
 	bool bMissingAnyEssentialArrow = false;

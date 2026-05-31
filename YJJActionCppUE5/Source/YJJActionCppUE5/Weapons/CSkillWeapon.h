@@ -574,6 +574,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Combo")
 	void OnCollisions();
 
+	/** 레거시 AN_BoxCollision — ComboCollisionShapes 중 Box 만 QueryAndPhysics. */
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Combo")
+	void OnBoxCollisions();
+
 	/** 레거시 ANS 종료 분기 및 BeginPlay 초기 상태. 피격 누적(`ComboHitted`)을 비운다. */
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Combo")
 	void OffCollisions();
@@ -821,6 +825,125 @@ private:
 	FTimerHandle GuardParriableResetTimerHandle;
 	FTimerHandle GuardParriedReflectTimerHandle;
 	FTimerHandle GuardClearHittedTimerHandle;
+};
+
+class USkeletalMeshComponent;
+
+// 레거시 `/Game/Weapons/Weapon_RandomPattern` — 랜덤 DoAction 몽타주·Shape 오버랩 피격(`HitCommonDatas[RandomIndex]`).
+UCLASS(Blueprintable)
+class YJJACTIONCPPUE5_API ACWeaponRandomPatternSkillContext : public ACWeaponSkillContext
+{
+	GENERATED_BODY()
+
+public:
+	ACWeaponRandomPatternSkillContext();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|RandomPattern")
+	bool Enable = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|RandomPattern")
+	int32 RandomIndex = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|RandomPattern")
+	FRandomStream RandomSeed;
+
+	/** `PlayRandomActionMontage` 에서 `RandomIntegerInRange` 상한(레거시 BP 기본 3). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|RandomPattern", meta = (ClampMin = "0"))
+	int32 RandomPatternMontageRandomMax = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|RandomPattern|Collision")
+	TArray<TObjectPtr<UShapeComponent>> Collisions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|RandomPattern|Hit")
+	TArray<TObjectPtr<ACCommonCharacter>> Hitted;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon|RandomPattern|Hit", meta = (ClampMin = "1.0"))
+	float RandomPatternMeleeHitSphereRadius = 48.f;
+
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|RandomPattern|Collision")
+	void OnCollisions();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|RandomPattern|Collision")
+	void OffCollisions();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|RandomPattern")
+	void EnableCombo();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|RandomPattern")
+	void DisableCombo();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|RandomPattern|Actions")
+	void PlayRandomActionMontage();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Weapon|RandomPattern|Hit")
+	void OnBeginOverlap(ACCommonCharacter* InOtherCharacter, const FVector& InHitPoint);
+
+	virtual void End_DoAction(CEAttackType InAttackType) override;
+
+protected:
+	virtual void Weapon_DoActionImpl(CEAttackType InAttackType, int32 InSkillIndex) override;
+
+	virtual void End_Equip_Implementation(bool bMainOrSubWeapon) override;
+
+	UFUNCTION()
+	void RandomPatternOnShapeBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+private:
+	bool RandomPattern_TryRegisterHitTarget(ACCommonCharacter* InCharacter);
+};
+
+// 레거시 `/Game/Weapons/Sword/Combo_Sword` — 콤보 무기 + 검 메시 장착 소켓(`Hand_Sword`/`Holster_Sword`) 표시.
+UCLASS(Blueprintable)
+class YJJACTIONCPPUE5_API ACWeaponComboSwordSkillContext : public ACWeaponComboSkillContext
+{
+	GENERATED_BODY()
+
+public:
+	ACWeaponComboSwordSkillContext();
+
+	virtual void BeginPlay() override;
+
+	virtual void Unequip_Implementation() override;
+
+	virtual void Begin_Equip_Implementation(bool bMainOrSubWeapon) override;
+
+	// BP 자식(Combo_Sword)의 SkeletalMesh 컴포넌트와 UPROPERTY 동명이면 reparent 시 ICE — BeginPlay 에서만 해석한다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Combo|Sword")
+	FName HandAttachSocketName = TEXT("Hand_Sword");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon|Combo|Sword")
+	FName HolsterAttachSocketName = TEXT("Holster_Sword");
+
+private:
+	TObjectPtr<USkeletalMeshComponent> ComboSwordMesh;
+
+	void ComboSword_ResolveSkeletalMesh();
+	void ComboSword_SetMeshVisible(bool bVisible);
+	void ComboSword_AttachToCharacterSocket(FName SocketName);
+};
+
+// 레거시 `/Game/Weapons/Fist/Combo_Fist` — Shape(Fist_*Hand/Foot) 를 캐릭터 Mesh 소켓(컴포넌트 이름)에 부착. BP EventGraph BeginPlay 제거용.
+UCLASS(Blueprintable)
+class YJJACTIONCPPUE5_API ACWeaponComboFistSkillContext : public ACWeaponComboSkillContext
+{
+	GENERATED_BODY()
+
+public:
+	ACWeaponComboFistSkillContext();
+
+	virtual void BeginPlay() override;
+
+private:
+	void ComboFist_AttachCollisionShapesToCharacterMesh();
 };
 
 // BP Skill_Weapon / Skill_Magic — ChildActor 또는 스폰 시 Owner 가 Magic(ACMagicSkillContext) 또는 Weapon(ACWeaponSkillContext) 이면

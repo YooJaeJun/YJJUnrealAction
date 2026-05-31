@@ -8,7 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEquipMagic, CEMagicType, InNewType);
 
 // BP WB_MagicMenu 용 베이스. BP_Player::SetMenuUI 에서 OnEquipMagic 을 캐릭터로 연결한다.
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCUserWidget_MagicMenu : public UCUserWidget_Custom
 {
 	GENERATED_BODY()

@@ -8,6 +8,11 @@
 			"Name": "YJJActionCppUE5",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "YJJActionCppUE5Editor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
 		}
 	],
 	"Plugins": [

@@ -269,6 +269,37 @@ ACPlayableCharacter::ACPlayableCharacter()
 	}
 }
 
+void ACPlayableCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// CBP_PlayableCharacter 의 CharacterMesh0 가 abstract UCAnimInstance_Character 로 저장된 경우
+	// OnRegister(AnimInstance 생성) 전에 구체 AnimBP 로 교정한다. ctor 의 SetAnimInstanceClass 는 BP 기본값에 덮인다.
+	USkeletalMeshComponent* const mesh = GetMesh();
+	if (false == IsValid(mesh))
+		return;
+
+	UClass* const currentAnimClass = mesh->GetAnimClass();
+	if (IsValid(currentAnimClass) && false == currentAnimClass->HasAnyClassFlags(CLASS_Abstract))
+		return;
+
+	TSubclassOf<UCAnimInstance_Human> animInstanceClass;
+	YJJHelpers::GetClassDynamic<UCAnimInstance_Human>(
+		&animInstanceClass,
+		TEXT("/Game/Character/CABP_Human.CABP_Human_C"));
+
+	if (IsValid(animInstanceClass))
+	{
+		mesh->SetAnimInstanceClass(animInstanceClass);
+		return;
+	}
+
+	CLog::Log(FString::Printf(
+		TEXT("[Anim] PostInitializeComponents: CABP_Human 로드 실패 — CharacterMesh AnimClass=%s Actor=%s"),
+		IsValid(currentAnimClass) ? *currentAnimClass->GetName() : TEXT("(null)"),
+		*GetName()));
+}
+
 void ACPlayableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -322,6 +353,64 @@ void ACPlayableCharacter::BeginPlay()
 	}
 
 	OriginZooming = Zooming;
+
+	UCWeaponComponent* const resolvedWeapon = EnsureWeaponComp();
+	if (IsValid(resolvedWeapon))
+	{
+		resolvedWeapon->EnsureWeaponPipelineReady();
+		resolvedWeapon->SyncBpWeaponLanes();
+		resolvedWeapon->EnsureCombatWeaponEquipped();
+		resolvedWeapon->LogWeaponPipelineStatus(TEXT("PlayableBeginPlay"));
+	}
+	else
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Weapon] PlayableCharacter::BeginPlay — UCWeaponComponent 없음 Actor=%s"),
+			*GetName()));
+	}
+}
+
+UCWeaponComponent* ACPlayableCharacter::EnsureWeaponComp()
+{
+	if (IsValid(WeaponComp) && (WeaponComp->GetOwner() == this))
+		return WeaponComp.Get();
+
+	TArray<UCWeaponComponent*> weaponComponents;
+	GetComponents<UCWeaponComponent>(weaponComponents);
+
+	UCWeaponComponent* resolved = nullptr;
+	const int32 componentCount = weaponComponents.Num();
+	for (int32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+	{
+		UCWeaponComponent* const candidate = weaponComponents[componentIndex];
+		if (false == IsValid(candidate))
+			continue;
+		if (candidate->GetFName() == FName(TEXT("YJJ_PlayerWeaponComp")))
+		{
+			resolved = candidate;
+			break;
+		}
+	}
+
+	if (false == IsValid(resolved) && componentCount > 0)
+		resolved = weaponComponents[0];
+
+	if (IsValid(resolved))
+	{
+		WeaponComp = resolved;
+		NativeBpWeaponAlias = resolved;
+
+		if (componentCount > 1)
+		{
+			CLog::Log(FString::Printf(
+				TEXT("[Weapon] WeaponComp %d개 — YJJ_PlayerWeaponComp=%s 사용 Actor=%s"),
+				componentCount,
+				*resolved->GetName(),
+				*GetName()));
+		}
+	}
+
+	return resolved;
 }
 
 void ACPlayableCharacter::SetStatusUI()
@@ -352,10 +441,10 @@ void ACPlayableCharacter::SetStatusUI()
 	playerInfo->BindStats(CharacterStatComp);
 	playerInfo->RefreshPlayerInfoWidgets();
 
-	HpBar = Cast<UUserWidget>(playerInfo->HpBar.Get());
-	StaminaBar = Cast<UUserWidget>(playerInfo->StaminaBar.Get());
-	ManaBar = Cast<UUserWidget>(playerInfo->ManaBar.Get());
-	LevelBar = Cast<UUserWidget>(playerInfo->LevelBar.Get());
+	HpBar = Cast<UUserWidget>(playerInfo->BoundHpBar.Get());
+	StaminaBar = Cast<UUserWidget>(playerInfo->BoundStaminaBar.Get());
+	ManaBar = Cast<UUserWidget>(playerInfo->BoundManaBar.Get());
+	LevelBar = Cast<UUserWidget>(playerInfo->BoundLevelBar.Get());
 
 	hud->SetVisibility(ESlateVisibility::Visible);
 }
@@ -426,7 +515,9 @@ void ACPlayableCharacter::SetMenuUI()
 		Interaction = interactionWidget;
 	}
 	else
-		CLog::Log(FString::Printf(TEXT("[UI] SetMenuUI: Interaction(CInteraction) 없음 — %s"), *GetName()));
+		CLog::Log(FString::Printf(TEXT("[UI] SetMenuUI: Interaction(CInteraction) 없음 — HUD=%s Actor=%s"),
+			IsValid(hud) ? *hud->GetClass()->GetName() : TEXT("(null)"),
+			*GetName()));
 }
 
 void ACPlayableCharacter::SetupCinematic_Implementation(bool OnOff)
@@ -436,24 +527,28 @@ void ACPlayableCharacter::SetupCinematic_Implementation(bool OnOff)
 
 void ACPlayableCharacter::EquipWeaponFromUI(const CEWeaponType InNewType)
 {
-	if (false == IsValid(WeaponComp))
+	UCWeaponComponent* const weapon = EnsureWeaponComp();
+	if (false == IsValid(weapon))
 	{
 		CLog::Log(TEXT("[UI] EquipWeaponFromUI: WeaponComp 없음"));
 		return;
 	}
 
-	WeaponComp->SetMode(InNewType);
+	weapon->EnsureWeaponPipelineReady();
+	weapon->SetMode(InNewType);
 }
 
 void ACPlayableCharacter::EquipMagicFromUI(const CEMagicType InNewType)
 {
-	if (false == IsValid(WeaponComp))
+	UCWeaponComponent* const weapon = EnsureWeaponComp();
+	if (false == IsValid(weapon))
 	{
 		CLog::Log(TEXT("[UI] EquipMagicFromUI: WeaponComp 없음"));
 		return;
 	}
 
-	WeaponComp->SetMagicMode(InNewType);
+	weapon->EnsureWeaponPipelineReady();
+	weapon->SetMagicMode(InNewType);
 }
 
 void ACPlayableCharacter::Tick(float DeltaTime)
@@ -468,6 +563,8 @@ void ACPlayableCharacter::Tick(float DeltaTime)
 void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	UCWeaponComponent* const resolvedWeapon = EnsureWeaponComp();
 
 	UCMovementComponent* const resolvedMovement = EnsureMovementComp();
 	if (IsValid(resolvedMovement))
@@ -493,15 +590,28 @@ void ACPlayableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, TargetingComp.Get(), &UCTargetingComponent::InputAction_Targeting);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Pressed, GameUIComp.Get(), &UCGameUIComponent::InputAction_ActivateEquipMenu);
 	PlayerInputComponent->BindAction("Menu", EInputEvent::IE_Released, GameUIComp.Get(), &UCGameUIComponent::InputAction_DeactivateEquipMenu);
-	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, WeaponComp.Get(), &UCWeaponComponent::InputAction_Act);
-	PlayerInputComponent->BindAction("SubAction", EInputEvent::IE_Pressed, WeaponComp.Get(), &UCWeaponComponent::InputAction_SubAct_Pressed);
-	PlayerInputComponent->BindAction("SubAction", EInputEvent::IE_Released, WeaponComp.Get(), &UCWeaponComponent::InputAction_SubAct_Released);
-	PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Pressed, WeaponComp.Get(), &UCWeaponComponent::InputAction_Skill_1_Pressed);
-	PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Released, WeaponComp.Get(), &UCWeaponComponent::InputAction_Skill_1_Released);
-	PlayerInputComponent->BindAction("Skill_2", EInputEvent::IE_Pressed, WeaponComp.Get(), &UCWeaponComponent::InputAction_Skill_2_Pressed);
-	PlayerInputComponent->BindAction("Skill_2", EInputEvent::IE_Released, WeaponComp.Get(), &UCWeaponComponent::InputAction_Skill_2_Released);
-	PlayerInputComponent->BindAction("Skill_3", EInputEvent::IE_Pressed, WeaponComp.Get(), &UCWeaponComponent::InputAction_Skill_3_Pressed);
-	PlayerInputComponent->BindAction("Skill_3", EInputEvent::IE_Released, WeaponComp.Get(), &UCWeaponComponent::InputAction_Skill_3_Released);
+	if (IsValid(resolvedWeapon))
+	{
+		PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, resolvedWeapon, &UCWeaponComponent::InputAction_Act);
+	}
+	else if (IsLocallyControlled())
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[입력 바인딩] WeaponComp 없음 — Action(좌클릭) 미바인딩. BP_Player 가 YJJ_PlayerWeaponComp 를 덮었는지 확인. Actor=%s"),
+			*GetNameSafe(this)));
+	}
+
+	if (IsValid(resolvedWeapon))
+	{
+		PlayerInputComponent->BindAction("SubAction", EInputEvent::IE_Pressed, resolvedWeapon, &UCWeaponComponent::InputAction_SubAct_Pressed);
+		PlayerInputComponent->BindAction("SubAction", EInputEvent::IE_Released, resolvedWeapon, &UCWeaponComponent::InputAction_SubAct_Released);
+		PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Pressed, resolvedWeapon, &UCWeaponComponent::InputAction_Skill_1_Pressed);
+		PlayerInputComponent->BindAction("Skill_1", EInputEvent::IE_Released, resolvedWeapon, &UCWeaponComponent::InputAction_Skill_1_Released);
+		PlayerInputComponent->BindAction("Skill_2", EInputEvent::IE_Pressed, resolvedWeapon, &UCWeaponComponent::InputAction_Skill_2_Pressed);
+		PlayerInputComponent->BindAction("Skill_2", EInputEvent::IE_Released, resolvedWeapon, &UCWeaponComponent::InputAction_Skill_2_Released);
+		PlayerInputComponent->BindAction("Skill_3", EInputEvent::IE_Pressed, resolvedWeapon, &UCWeaponComponent::InputAction_Skill_3_Pressed);
+		PlayerInputComponent->BindAction("Skill_3", EInputEvent::IE_Released, resolvedWeapon, &UCWeaponComponent::InputAction_Skill_3_Released);
+	}
 }
 
 void ACPlayableCharacter::InputAction_Avoid()

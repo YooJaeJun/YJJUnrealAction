@@ -6,7 +6,7 @@
 
 class ACCommonCharacter;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCUserWidget_Custom : public UUserWidget
 {
 	GENERATED_BODY()

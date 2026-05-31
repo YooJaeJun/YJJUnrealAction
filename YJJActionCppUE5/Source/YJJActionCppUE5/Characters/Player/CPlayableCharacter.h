@@ -45,6 +45,7 @@ public:
 	ACPlayableCharacter();
 
 protected:
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
 public:
@@ -421,6 +422,9 @@ public:
 	// FluidForceDynamic/Register Dynamic Force 는 Water UDS·BP 전용이라 기본 구현은 비우고 BP 에서 오버라이드한다.
 	UFUNCTION(BlueprintNativeEvent, Category = "Water")
 	void OnFluidSimActorRegistered(AActor* InFluidSimActor);
+
+	/** YJJ_PlayerWeaponComp 우선 — BP 중복 WeaponComp·입력 바인딩 대상 통일. */
+	UCWeaponComponent* EnsureWeaponComp();
 
 	UFUNCTION()
 	void EquipWeaponFromUI(const CEWeaponType InNewType);

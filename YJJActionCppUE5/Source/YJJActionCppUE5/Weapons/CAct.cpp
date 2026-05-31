@@ -34,7 +34,15 @@ void UCAct::BeginPlay(
 
 void UCAct::Act()
 {
-	CheckNull(StateComp);
+	if (false == StateComp.IsValid())
+	{
+		const AActor* const ownerActor = Owner.Get();
+		CLog::Log(FString::Printf(
+			TEXT("[입력][Action] StateComp 없음 — Owner=%s"),
+			IsValid(ownerActor) ? *ownerActor->GetName() : TEXT("(null)")));
+		return;
+	}
+
 	StateComp->SetActMode();
 }
 
@@ -54,5 +62,8 @@ void UCAct::End_Act()
 		MovementComp->Move();
 
 	if (CamComp.IsValid())
+	{
 		CamComp->DisableFixedCamera();
+		CamComp->DisableControlRotation();
+	}
 }

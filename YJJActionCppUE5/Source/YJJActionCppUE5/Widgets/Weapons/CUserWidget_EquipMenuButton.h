@@ -9,7 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponTypeHoveredMulticast, const C
 
 class UButton;
 
-UCLASS(Abstract)
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCUserWidget_EquipMenuButton : public UCUserWidget_Custom
 {
 	GENERATED_BODY()

@@ -8,7 +8,7 @@ class UCCharacterStatComponent;
 class UProgressBar;
 class UTextBlock;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCUserWidget_PlayerLevel : public UCUserWidget_Custom
 {
 	GENERATED_BODY()

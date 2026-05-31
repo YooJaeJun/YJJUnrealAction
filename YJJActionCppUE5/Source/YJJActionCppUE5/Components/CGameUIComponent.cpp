@@ -40,7 +40,7 @@ void UCGameUIComponent::BeginPlay()
 
 	hud->SetChildren();
 
-	EquipMenu = hud->EquipMenu;
+	EquipMenu = hud->GetEquipMenuWidget();
 	if (false == EquipMenu.IsValid())
 		CLog::Log(FString::Printf(TEXT("[UI] CGameUIComponent::BeginPlay: EquipMenu 없음 — Owner=%s"),
 			Owner.IsValid() ? *Owner->GetName() : TEXT("(무효)")));

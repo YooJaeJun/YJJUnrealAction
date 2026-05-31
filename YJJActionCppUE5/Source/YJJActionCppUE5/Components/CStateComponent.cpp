@@ -16,7 +16,8 @@ void UCStateComponent::BeginPlay()
 
 bool UCStateComponent::CanAttack() const
 {
-	return IsIdleMode();
+	// 장착 몽타주(Equip) 구간에도 좌클릭 콤보 진입 허용 — End_Equip 전 Idle 만 요구하면 입력이 막힌다.
+	return IsIdleMode() || IsEquipMode();
 }
 
 void UCStateComponent::SetIdleMode()

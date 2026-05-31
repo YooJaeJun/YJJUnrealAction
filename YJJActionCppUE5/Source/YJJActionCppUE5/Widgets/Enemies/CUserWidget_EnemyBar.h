@@ -6,7 +6,7 @@
 class UCCharacterStatComponent;
 class UProgressBar;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API UCUserWidget_EnemyBar : public UCUserWidget_Custom
 {
 	GENERATED_BODY()

@@ -7,7 +7,7 @@
 void UCAct_Around::Act()
 {
 	CheckFalse(ActDatas.Num() > 0);
-	CheckFalse(StateComp->IsIdleMode());
+	CheckFalse(StateComp->CanAttack());
 
 	Super::Act();
 

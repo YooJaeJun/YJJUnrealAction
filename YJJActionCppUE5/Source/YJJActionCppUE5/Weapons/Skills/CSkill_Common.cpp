@@ -49,7 +49,12 @@ void UCSkill_Common::End_Skill_Implementation()
 	CheckNull(MovementComp);
 
 	MovementComp->Move();
-	CamComp->DisableFixedCamera();
+
+	if (CamComp.IsValid())
+	{
+		CamComp->DisableFixedCamera();
+		CamComp->DisableControlRotation();
+	}
 
 	for (const TWeakObjectPtr<ACCommonCharacter> character : Overlapped)
 		character->GetCapsuleComponent()->SetCollisionProfileName("Pawn");
@@ -65,7 +70,7 @@ void UCSkill_Common::OnAttachmentBeginOverlap(
 {
 	CheckNull(InOther);
 
-	// ´Ù´ÜÈ÷Æ® µÇµµ·Ï
+	// ï¿½Ù´ï¿½ï¿½ï¿½Æ® ï¿½Çµï¿½ï¿½ï¿½
 	//for (const TWeakObjectPtr<ACCommonCharacter> character : Hitted)
 	//	CheckTrue(character == InOther);
 

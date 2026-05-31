@@ -10,7 +10,7 @@
  * 블프 덤프의 `NewEnumerator*` 정수 표기와 Content 의 `EBehaviorType` 순서가 틀릴 수 있으므로
  * `BehaviorByte_*` 는 BT 에디터에서 UDE 순서 확인 후 교정한다(예: 근거리 17·멀 Idle/Rise 분기 11·트레이스 실패 18).
  */
-UCLASS(meta = (DisplayName = "BT Service (Animal Melee)"))
+UCLASS(meta = (DisplayName = "BTService Animal Melee"))
 class YJJACTIONCPPUE5_API UCBTService_AnimalMelee : public UCBTService_Character
 {
 	GENERATED_BODY()

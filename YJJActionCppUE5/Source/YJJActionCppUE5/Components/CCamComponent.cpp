@@ -91,8 +91,17 @@ void UCCamComponent::EnableControlRotation() const
 
 void UCCamComponent::DisableControlRotation() const
 {
+	if (false == Owner.IsValid())
+		return;
+
 	Owner->bUseControllerRotationYaw = false;
-	Owner->GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	UCharacterMovementComponent* const moveComp = Owner->GetCharacterMovement();
+	if (IsValid(moveComp))
+	{
+		// 컨트롤러 요는 끄고 이동 방향으로 몸을 돌린다(방향키·WASD 입력 방향).
+		moveComp->bOrientRotationToMovement = true;
+	}
 }
 
 void UCCamComponent::EnableTopViewCamera() const

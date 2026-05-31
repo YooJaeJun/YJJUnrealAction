@@ -11,5 +11,6 @@ public class YJJActionCppUE5EditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
 		ExtraModuleNames.Add("YJJActionCppUE5");
+		ExtraModuleNames.Add("YJJActionCppUE5Editor");
 	}
 }

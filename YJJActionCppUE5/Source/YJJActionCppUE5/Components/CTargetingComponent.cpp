@@ -72,8 +72,7 @@ void UCTargetingComponent::SpawnMarkerParticleForTarget(ACCommonCharacter* InTar
 
 	if (false == IsValid(ParticleAsset))
 	{
-		CLog::Log(FString::Printf(TEXT("Targeting: ParticleAsset 미설정 — 대상=%s"),
-			*InTarget->GetName()));
+		// 마커 파티클은 선택 사항 — 타겟 UI·카메라 고정은 Particle 없이도 동작한다.
 		return;
 	}
 
@@ -118,6 +117,13 @@ void UCTargetingComponent::BeginPlay()
 
 	MovingFocusCurCoolTime = MovingFocusInitTime;
 	Controller = ResolveTargetingController(OwnerCharacter.Get());
+
+	if (false == IsValid(ParticleAsset))
+	{
+		YJJHelpers::GetAssetDynamic<UParticleSystem>(
+			&ParticleAsset,
+			TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Effects/ArcherySystem/Assets/FX/Particles/Core/P_SingleTargetCore_Projectile.P_SingleTargetCore_Projectile'"));
+	}
 }
 
 void UCTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType,

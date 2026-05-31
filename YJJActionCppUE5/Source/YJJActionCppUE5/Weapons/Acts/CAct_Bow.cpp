@@ -26,7 +26,8 @@ void UCAct_Bow::BeginPlay(
 
 
 	const TWeakObjectPtr<ACAttachment_Bow> bow = Cast<ACAttachment_Bow>(InAttachment);
-	Bending = MakeShared<float>(*bow->GetBend());
+	CheckNull(bow);
+	Bending = bow->GetBend();
 
 	OriginLocation = PoseableMesh->GetBoneLocationByName("bow_string_mid", EBoneSpaces::ComponentSpace);
 

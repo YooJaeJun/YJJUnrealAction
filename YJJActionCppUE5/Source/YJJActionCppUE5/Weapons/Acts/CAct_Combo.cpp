@@ -17,7 +17,15 @@ void UCAct_Combo::Act()
 		return;
 	}
 
-	CheckFalse(StateComp->CanAttack());
+	if (false == StateComp->CanAttack())
+	{
+		const AActor* const ownerActor = Owner.Get();
+		CLog::Log(FString::Printf(
+			TEXT("[입력][Action] CanAttack=false — CurState=%s Owner=%s"),
+			*YJJHelpers::ConvertEnumToString(StateComp->GetCurMode()),
+			IsValid(ownerActor) ? *ownerActor->GetName() : TEXT("(null)")));
+		return;
+	}
 
 	Super::Act();
 

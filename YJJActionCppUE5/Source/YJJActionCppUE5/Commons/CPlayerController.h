@@ -51,6 +51,7 @@ protected:
 	void Client_NotifyServerActionResult(bool bSucceeded, FName Reason);
 
 private:
+	void ScheduleInitializeHUDForPawn();
 	bool ValidatePlacementRequest(const FTransform& RequestedTransform, const FName ItemID) const;
 	UCInventoryComponent* FindInventoryComponent() const;
 

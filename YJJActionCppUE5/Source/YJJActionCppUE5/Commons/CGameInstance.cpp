@@ -4,8 +4,9 @@
 
 UCGameInstance::UCGameInstance()
 {
-	YJJHelpers::GetAsset(&CharacterInfoTable, "/Script/Engine.DataTable'/Game/Character/CDT_CharacterInfo.CDT_CharacterInfo'");
-	YJJHelpers::GetAsset(&CharacterStatTable, "/Script/Engine.DataTable'/Game/Character/CDT_CharacterStat.CDT_CharacterStat'");
+	// 캐릭터 데이터 테이블은 CDT_* 가 아니라 DT_* 네이밍 — Content 에셟명과 경로 동기화 필요.
+	YJJHelpers::GetAsset(&CharacterInfoTable, "/Script/Engine.DataTable'/Game/Character/DT_CharacterInfo.DT_CharacterInfo'");
+	YJJHelpers::GetAsset(&CharacterStatTable, "/Script/Engine.DataTable'/Game/Character/DT_CharacterStat.DT_CharacterStat'");
 
 	YJJHelpers::GetAsset(&UiStringTable, "/Script/Engine.StringTable'/Game/Localization/ST_YJJ_UI.ST_YJJ_UI'");
 	if (false == IsValid(UiStringTable))
