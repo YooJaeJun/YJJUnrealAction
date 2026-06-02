@@ -2,6 +2,8 @@
 #include "Global.h"
 #include "Characters/CCommonCharacter.h"
 #include "Weapons/CAttachment.h"
+#include "Weapons/Attachments/CAttachment_Melee.h"
+#include "Weapons/Attachments/CAttachment_Bow.h"
 #include "Weapons/CEquipment.h"
 #include "Weapons/CAct.h"
 #include "Weapons/CSkill.h"
@@ -10,6 +12,7 @@
 #include "Weapons/Acts/CAct_Warp.h"
 #include "Weapons/Acts/CAct_Around.h"
 #include "Engine/DataTable.h"
+#include "Utilities/CLog.h"
 
 namespace WeaponAssetRuntime
 {
@@ -74,6 +77,25 @@ namespace WeaponAssetRuntime
 	bool IsUsableActClass(const TSubclassOf<UCAct>& InClass)
 	{
 		return IsValid(InClass) && InClass->IsChildOf(UCAct::StaticClass());
+	}
+
+	TSubclassOf<ACAttachment> ResolveDefaultAttachmentClass(const CEWeaponType InType)
+	{
+		switch (InType)
+		{
+		case CEWeaponType::Fist:
+			return ACAttachment_Fist::StaticClass();
+		case CEWeaponType::Sword:
+			return ACAttachment_Sword::StaticClass();
+		case CEWeaponType::Hammer:
+			return ACAttachment_Hammer::StaticClass();
+		case CEWeaponType::Dual:
+			return ACAttachment_Dual::StaticClass();
+		case CEWeaponType::Bow:
+			return ACAttachment_Bow::StaticClass();
+		default:
+			return ACAttachment::StaticClass();
+		}
 	}
 
 	TSubclassOf<UCAct> ResolveDefaultActClass(const CEWeaponType InType)
@@ -183,12 +205,23 @@ void UCWeaponAsset::EnsureConfigFromContent()
 
 	if (false == IsValid(AttachmentClass))
 	{
-		TSubclassOf<ACAttachment> loadedAttachment = nullptr;
-		YJJHelpers::GetClassDynamic<ACAttachment>(&loadedAttachment, paths->AttachmentBlueprint);
-		if (IsValid(loadedAttachment))
-			AttachmentClass = loadedAttachment;
-		else
+		AttachmentClass = WeaponAssetRuntime::ResolveDefaultAttachmentClass(GetType());
+
+		if (nullptr != paths)
+		{
+			// BP 자식에 Shape 가 구성돼 있으면 우선 사용 — 네이티브 기본 클래스로 reparent 후에도 콘텐츠를 유지한다.
+			TSubclassOf<ACAttachment> loadedAttachment = nullptr;
+			YJJHelpers::GetClassDynamic<ACAttachment>(&loadedAttachment, paths->AttachmentBlueprint);
+			if (IsValid(loadedAttachment))
+			{
+				AttachmentClass = loadedAttachment;
+			}
+		}
+
+		if (false == IsValid(AttachmentClass))
+		{
 			AttachmentClass = ACAttachment::StaticClass();
+		}
 	}
 
 	if (false == IsValid(EquipmentClass))
@@ -271,6 +304,14 @@ void UCWeaponAsset::BeginPlay(TWeakObjectPtr<ACCommonCharacter> InOwner)
 		params.Owner = Cast<AActor>(InOwner.Get());
 
 		Attachment = InOwner->GetWorld()->SpawnActor<ACAttachment>(AttachmentClass, params);
+		if (false == IsValid(Attachment))
+		{
+			CLog::Log(FString::Printf(
+				TEXT("[WeaponAsset] Attachment 스폰 실패 — Type=%s Class=%s Owner=%s"),
+				*YJJHelpers::ConvertEnumToString(Type),
+				*AttachmentClass->GetPathName(),
+				*InOwner->GetName()));
+		}
 	}
 
 	if (IsValid(EquipmentClass))

@@ -17,6 +17,7 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 private:
+	void ScheduleStartupFix(double InDuration);
 	void RunStartupFix();
 	void FixAllWidgetBlueprints();
 

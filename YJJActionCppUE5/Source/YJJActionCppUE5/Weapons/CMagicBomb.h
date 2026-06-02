@@ -2,14 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "Weapons/CSkillWeapon.h"
-#include "CMagicBombSkillContext.generated.h"
+#include "CMagicBomb.generated.h"
 
 /**
  * 레거시 `/Game/Magics/Bomb/Magic_Bomb` — Idle/Riding 및 DoActionDatas 가 있으면 SetAction 후 PlayAction(0),
  * Begin_DoAction 에서 소켓 기준 폭발 액터 스폰 후 Shoot 호출(AI 의 경우 블랙보드 Target 방향).
  */
 UCLASS(Blueprintable)
-class YJJACTIONCPPUE5_API ACMagicBombSkillContext : public ACMagicSkillContext
+class YJJACTIONCPPUE5_API ACMagicBomb : public ACMagic
 {
 	GENERATED_BODY()
 

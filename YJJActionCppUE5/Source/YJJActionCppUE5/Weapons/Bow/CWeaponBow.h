@@ -9,11 +9,11 @@ class ACSkillArrow;
 class ACSkillAim;
 
 /**
- * 레거시 `/Game/Weapons/Bow/Weapon_Bow` — `/Game/Weapons/Weapon` (ACWeaponSkillContext) 계승 + 활 줄·연출용 변수.
+ * 레거시 `/Game/Weapons/Bow/Weapon_Bow` — `/Game/Weapons/Weapon` (ACWeapon) 계승 + 활 줄·연출용 변수.
  * PoseableMesh 서브오브젝트명은 에디터 `PoseableMesh` 와 동일하게 두고, C++ 멤버만 BowPoseableMesh 로 두어 식별 충돌을 피한다.
  */
 UCLASS(Blueprintable)
-class YJJACTIONCPPUE5_API ACWeaponBow : public ACWeaponSkillContext
+class YJJACTIONCPPUE5_API ACWeaponBow : public ACWeapon
 {
 	GENERATED_BODY()
 

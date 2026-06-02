@@ -1,4 +1,4 @@
-#include "Weapons/CMagicFireBallSkillContext.h"
+#include "Weapons/CMagicFireBall.h"
 
 #include "Weapons/CSkillFireBall.h"
 #include "Utilities/CLog.h"
@@ -11,9 +11,9 @@
 #include "GameFramework/Controller.h"
 #include "Kismet/KismetMathLibrary.h"
 
-const FName ACMagicFireBallSkillContext::FireBallAiBlackboardTargetKey(TEXT("Target"));
+const FName ACMagicFireBall::FireBallAiBlackboardTargetKey(TEXT("Target"));
 
-void ACMagicFireBallSkillContext::DoAction_Implementation(CEAttackType const InAttackType, int32 const InSkillIndex)
+void ACMagicFireBall::DoAction_Implementation(CEAttackType const InAttackType, int32 const InSkillIndex)
 {
 	(void)InAttackType;
 	(void)InSkillIndex;
@@ -33,7 +33,7 @@ void ACMagicFireBallSkillContext::DoAction_Implementation(CEAttackType const InA
 	PlayAction(DoActionDatas, 0);
 }
 
-void ACMagicFireBallSkillContext::Begin_DoAction_Implementation(CEAttackType const InAttackType)
+void ACMagicFireBall::Begin_DoAction_Implementation(CEAttackType const InAttackType)
 {
 	Super::Begin_DoAction_Implementation(InAttackType);
 
@@ -130,7 +130,7 @@ void ACMagicFireBallSkillContext::Begin_DoAction_Implementation(CEAttackType con
 	SpawnedScratch->Shoot(FireBallDirectionScratch);
 }
 
-bool ACMagicFireBallSkillContext::FireBall_TryResolveDirectionFromBlackboardScratch(FVector& OutDirectionScratch) const
+bool ACMagicFireBall::FireBall_TryResolveDirectionFromBlackboardScratch(FVector& OutDirectionScratch) const
 {
 	ACCommonCharacter* OwnerScratch = Character.Get();
 	if (false == IsValid(OwnerScratch))

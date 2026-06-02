@@ -53,10 +53,22 @@ void UYJJWidgetBlueprintFixer::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	// PostEngineInit 직후 한 틱 미룸 — YJJActionCppUE5 런타임 모듈·리다이렉트가 모두 올라온 뒤 실행.
+	// RegisterBlueprintValidators 이전 Compile/Save 는 "Blueprint validators may be missing" 스팸을 낸다.
 	if (GEditor)
 	{
-		GEditor->GetTimerManager()->SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &UYJJWidgetBlueprintFixer::RunStartupFix));
+		FEditorDelegates::OnEditorInitialized.AddUObject(this, &UYJJWidgetBlueprintFixer::ScheduleStartupFix);
+	}
+}
+
+void UYJJWidgetBlueprintFixer::ScheduleStartupFix(double InDuration)
+{
+	(void)InDuration;
+	FEditorDelegates::OnEditorInitialized.RemoveAll(this);
+
+	if (GEditor)
+	{
+		GEditor->GetTimerManager()->SetTimerForNextTick(
+			FTimerDelegate::CreateUObject(this, &UYJJWidgetBlueprintFixer::RunStartupFix));
 	}
 }
 

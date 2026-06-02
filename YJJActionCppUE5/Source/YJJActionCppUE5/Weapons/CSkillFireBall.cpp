@@ -238,10 +238,7 @@ void ACSkillFireBall::SkillFireBall_OnSphereBeginOverlapScratch(
 	if ((true == IsValid(CasterScratch)) &&
 		true == UCYJJBlueprintLibrary::AreCharactersSameGroup(CasterScratch, VictimScratch))
 	{
-		// 블프 `IsSameGroup` 결과 true 분기에는 Damaged 미연결 — 아군이면 즉시 정리근사.
-		bSkillFireBallOverlapConsumedScratch = true;
-		Destroy();
-
+		// 블프 `IsSameGroup` true 분기 — Damaged·Destroy 미연결, 투사체는 관통.
 		return;
 	}
 
@@ -254,7 +251,7 @@ void ACSkillFireBall::SkillFireBall_OnSphereBeginOverlapScratch(
 		return;
 	}
 
-	const ACMagicSkillContext* MagicScratch = Magic.Get();
+	const ACMagic* MagicScratch = Magic.Get();
 	if ((false == IsValid(MagicScratch)) || (false == MagicScratch->HitCommonDatas.IsValidIndex(0)))
 	{
 		CLog::Log(FString::Printf(

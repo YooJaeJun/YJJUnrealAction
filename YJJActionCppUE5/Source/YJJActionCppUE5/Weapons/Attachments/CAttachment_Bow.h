@@ -8,7 +8,7 @@ class ACArrow;
 class USkeletalMeshComponent;
 class UPoseableMeshComponent;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API ACAttachment_Bow : public ACAttachment
 {
 	GENERATED_BODY()

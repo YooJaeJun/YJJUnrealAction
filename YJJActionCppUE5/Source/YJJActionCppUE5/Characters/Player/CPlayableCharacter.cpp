@@ -360,6 +360,7 @@ void ACPlayableCharacter::BeginPlay()
 		resolvedWeapon->EnsureWeaponPipelineReady();
 		resolvedWeapon->SyncBpWeaponLanes();
 		resolvedWeapon->EnsureCombatWeaponEquipped();
+		resolvedWeapon->EnsureSpawnedWeaponMatchesPhysicalType();
 		resolvedWeapon->LogWeaponPipelineStatus(TEXT("PlayableBeginPlay"));
 	}
 	else
@@ -367,6 +368,19 @@ void ACPlayableCharacter::BeginPlay()
 		CLog::Log(FString::Printf(
 			TEXT("[Weapon] PlayableCharacter::BeginPlay — UCWeaponComponent 없음 Actor=%s"),
 			*GetName()));
+	}
+
+	if (IsLocallyControlled())
+	{
+		BindLocalPlayerUI();
+
+		UWorld* const world = GetWorld();
+		if (IsValid(world))
+		{
+			// PC::InitializeHUDForPawn(다음 틱)보다 GameUIComp BeginPlay 가 먼저일 수 있어 한 번 더 바인딩한다.
+			world->GetTimerManager().SetTimerForNextTick(
+				this, &ACPlayableCharacter::BindLocalPlayerUI);
+		}
 	}
 }
 
@@ -447,6 +461,22 @@ void ACPlayableCharacter::SetStatusUI()
 	LevelBar = Cast<UUserWidget>(playerInfo->BoundLevelBar.Get());
 
 	hud->SetVisibility(ESlateVisibility::Visible);
+}
+
+void ACPlayableCharacter::BindLocalPlayerUI()
+{
+	if (false == IsLocallyControlled())
+	{
+		return;
+	}
+
+	SetStatusUI();
+	SetMenuUI();
+
+	if (IsValid(GameUIComp))
+	{
+		GameUIComp->RefreshEquipMenuFromHud();
+	}
 }
 
 void ACPlayableCharacter::SetMenuUI()

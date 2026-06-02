@@ -860,7 +860,7 @@ void ACSkillYondu::SkillYondu_OnCapsuleBeginOverlap(
 
 
 
-	const ACMagicSkillContext* MagicScratch = Magic.Get();
+	const ACMagic* MagicScratch = Magic.Get();
 
 
 

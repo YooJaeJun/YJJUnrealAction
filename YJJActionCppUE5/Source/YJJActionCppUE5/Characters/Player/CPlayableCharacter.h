@@ -61,6 +61,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetMenuUI();
 
+	/** StatusUI + MenuUI + GameUIComp 캐시 — PC HUD 초기화·다음 틱 재시도 공통. */
+	UFUNCTION()
+	void BindLocalPlayerUI();
+
 	// 구 I_Cinematic::SetupCinematic — 시네 HUD/조명 토글 그래프가 타깃으로 호출.
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Cinematic")
 	void SetupCinematic(bool OnOff);

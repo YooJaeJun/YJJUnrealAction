@@ -4,12 +4,18 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CMagicComponent.h"
 #include "Characters/CCommonCharacter.h"
+#include "Characters/Player/CPlayableCharacter.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CEquipment.h"
 #include "Weapons/CAct.h"
 #include "Weapons/CSkill.h"
 #include "Weapons/CWeaponAsset.h"
 #include "Weapons/CSkillWeapon.h"
+#include "Weapons/CWeapon.h"
+#include "Weapons/CWeaponCombo.h"
+#include "Weapons/CWeaponComboVisual.h"
+#include "Weapons/ICombatActionHost.h"
+#include "Weapons/Acts/CAct_Combo.h"
 #include "Weapons/Bow/CWeaponBow.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
@@ -46,7 +52,8 @@ namespace
 			return nullptr;
 		}
 
-		loadedObject = StaticLoadObject(nullptr, nullptr, *AssetPath);
+		// TryLoad 실패 시 무타입 1회만 — typed StaticLoadObject 는 실패할 때 LogUObjectGlobals 6줄 스팸.
+		loadedObject = StaticLoadObject(UObject::StaticClass(), nullptr, *AssetPath);
 		if (IsValid(loadedObject))
 		{
 			UCWeaponAsset* const asWeaponAsset = Cast<UCWeaponAsset>(loadedObject);
@@ -59,12 +66,9 @@ namespace
 				TEXT("[Weapon] CDA 클래스 불일치 — %s Stored=%s (Reparent=UCWeaponAsset)"),
 				*AssetPath,
 				*loadedObject->GetClass()->GetPathName()));
-			return nullptr;
 		}
 
-		UCWeaponAsset* typedAsset = nullptr;
-		YJJHelpers::GetAssetDynamic<UCWeaponAsset>(&typedAsset, AssetPath);
-		return typedAsset;
+		return nullptr;
 	}
 	bool Legacy_InputParmIsEligible(const FProperty* const Prop)
 	{
@@ -449,6 +453,77 @@ namespace
 			*FunctionName.ToString());
 	}
 
+	/** MainWeapon 이 ACWeaponCombo/RandomPattern 이면 ICombatActionHost 로 콜리전을 켠다. */
+	bool TryDispatchWeaponCollisionHost(ACWeapon* const Weapon, const bool bCollisionOn)
+	{
+		if (false == IsValid(Weapon))
+		{
+			return false;
+		}
+
+		if (false == (Cast<ACWeaponCombo>(Weapon) || Cast<ACWeaponRandomPattern>(Weapon)))
+		{
+			return false;
+		}
+
+		ICombatActionHost* const Host = Cast<ICombatActionHost>(Weapon);
+		if (nullptr == Host)
+		{
+			return false;
+		}
+
+		if (bCollisionOn)
+		{
+			Host->Host_OnCollisions();
+		}
+		else
+		{
+			Host->Host_OffCollisions();
+		}
+
+		return true;
+	}
+
+	bool TrySpawnOrReplaceEquippedWeapon(
+		UWorld* World,
+		TObjectPtr<ACWeapon>& SlotWeapon,
+		const TSubclassOf<ACWeapon>& WeaponClass,
+		AActor* OwnerActor)
+	{
+		CheckNullResult(World, false);
+		CheckNullResult(OwnerActor, false);
+
+		if (false == UKismetSystemLibrary::IsValidClass(WeaponClass))
+		{
+			// 레거시 BP와 동일: 클래스가 무효면 해당 슬롯은 건드리지 않는다(잘못된 인덱스/에디터 초기값).
+			return false;
+		}
+
+		if (IsValid(SlotWeapon))
+		{
+			SlotWeapon->Destroy();
+			SlotWeapon = nullptr;
+		}
+
+		FActorSpawnParameters Params;
+		Params.Owner = OwnerActor;
+		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
+
+		ACWeapon* const SpawnedWeapon = World->SpawnActor<ACWeapon>(WeaponClass, FTransform::Identity, Params);
+
+		if (false == IsValid(SpawnedWeapon))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[CWeaponComponent] 무기 액터 스폰 실패(Class=%s, Owner=%s)"),
+				*WeaponClass->GetPathName(),
+				IsValid(OwnerActor) ? *OwnerActor->GetPathName() : TEXT("<null Owner>"));
+
+			return false;
+		}
+
+		SlotWeapon = SpawnedWeapon;
+		return true;
+	}
+
 	bool TrySpawnOrReplaceEquippedActor(UWorld* World, TObjectPtr<AActor>& SlotActor, const TSubclassOf<AActor>& ActorClass,
 	                                   AActor* OwnerActor)
 	{
@@ -484,6 +559,29 @@ namespace
 
 		SlotActor = SpawnedActor;
 		return true;
+	}
+
+	struct FMainWeaponSlotDefault
+	{
+		const TCHAR* ContentPath;
+		UClass* NativeClass;
+	};
+
+	TSubclassOf<ACWeapon> ResolveMainWeaponClassForSlot(
+		const FMainWeaponSlotDefault& SlotDefault)
+	{
+		TSubclassOf<ACWeapon> resolvedClass = nullptr;
+		if (nullptr != SlotDefault.ContentPath)
+		{
+			YJJHelpers::GetClassDynamic<ACWeapon>(&resolvedClass, SlotDefault.ContentPath);
+		}
+
+		if (false == IsValid(resolvedClass) && IsValid(SlotDefault.NativeClass))
+		{
+			resolvedClass = SlotDefault.NativeClass;
+		}
+
+		return resolvedClass;
 	}
 } // namespace
 
@@ -609,8 +707,8 @@ void UCWeaponComponent::CreateSyntheticDataAssetsIfStillEmpty()
 
 	if (createdCount > 0)
 	{
-		CLog::Log(FString::Printf(
-			TEXT("[Weapon] CDA 로드 전부 실패 — Content 경로 합성 DA %d개 생성 Comp=%s Owner=%s"),
+		CLog::LogDisplay(FString::Printf(
+			TEXT("[Weapon] CDA Content 로드 실패 — 런타임 합성 DA %d개 사용 Comp=%s Owner=%s"),
 			createdCount,
 			*GetName(),
 			IsValid(GetOwner()) ? *GetOwner()->GetName() : TEXT("(null)")));
@@ -641,7 +739,7 @@ void UCWeaponComponent::LogWeaponPipelineStatus(const TCHAR* Context)
 {
 	const AActor* const ownerActor = GetOwner();
 	const UCAct* const act = GetAct();
-	CLog::Log(FString::Printf(
+	CLog::LogDisplay(FString::Printf(
 		TEXT("[Weapon][%s] Comp=%s Owner=%s OwnerCache=%s DataAssets=%d Map=%d MagicMap=%d Physical=%s Main=%s Act=%s Equip=%s"),
 		Context,
 		*GetName(),
@@ -749,7 +847,7 @@ void UCWeaponComponent::EnsureDataAssets()
 
 	if (DataAssets.Num() > 0)
 	{
-		CLog::Log(FString::Printf(
+		CLog::LogDisplay(FString::Printf(
 			TEXT("[Weapon] Content CDA_* 로드 %d개 — Comp=%s Owner=%s"),
 			DataAssets.Num(),
 			*GetName(),
@@ -805,7 +903,7 @@ void UCWeaponComponent::RebuildAssetMaps()
 		}
 	}
 
-	CLog::Log(FString::Printf(
+	CLog::LogDisplay(FString::Printf(
 		TEXT("[Weapon] RebuildAssetMaps — Comp=%s DataAssets=%d WeaponMap=%d MagicMap=%d Owner=%s"),
 		*GetName(),
 		DataAssets.Num(),
@@ -814,17 +912,101 @@ void UCWeaponComponent::RebuildAssetMaps()
 		*ownerChar->GetName()));
 }
 
+void UCWeaponComponent::EnsureDefaultMainWeaponClasses()
+{
+	if (MainWeaponClasses.Num() > 0)
+	{
+		return;
+	}
+
+	const ACPlayableCharacter* const playableOwner = Cast<ACPlayableCharacter>(GetOwner());
+	if (false == IsValid(playableOwner))
+	{
+		return;
+	}
+
+	static const FMainWeaponSlotDefault SlotDefaults[] = {
+		{ nullptr, nullptr },
+		{ TEXT("/Game/Weapons/Fist/Combo_Fist.Combo_Fist_C"), ACWeaponComboFist::StaticClass() },
+		{ TEXT("/Game/Weapons/Sword/RandomPattern_Sword.RandomPattern_Sword_C"), ACWeaponRandomPatternSword::StaticClass() },
+		{ TEXT("/Game/Weapons/Hammer/Combo_Hammer.Combo_Hammer_C"), ACWeaponComboHammer::StaticClass() },
+		{ TEXT("/Game/Weapons/Bow/Weapon_Bow.Weapon_Bow_C"), ACWeaponBow::StaticClass() },
+		{ TEXT("/Game/Weapons/Dual/Combo_Dual.Combo_Dual_C"), ACWeaponComboDual::StaticClass() },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+		{ nullptr, nullptr },
+	};
+
+	MainWeaponClasses.SetNum(WeaponEquipmentSlotCount);
+
+	int32 filledCount = 0;
+	for (int32 slotIndex = 0; slotIndex < WeaponEquipmentSlotCount; ++slotIndex)
+	{
+		const FMainWeaponSlotDefault& slotDefault = SlotDefaults[slotIndex];
+		const TSubclassOf<ACWeapon> resolvedClass = ResolveMainWeaponClassForSlot(slotDefault);
+		if (IsValid(resolvedClass))
+		{
+			MainWeaponClasses[slotIndex] = resolvedClass;
+			++filledCount;
+		}
+	}
+
+	CLog::LogDisplay(FString::Printf(
+		TEXT("[Weapon] EnsureDefaultMainWeaponClasses — Comp=%s Owner=%s Filled=%d/%d"),
+		*GetName(),
+		*playableOwner->GetName(),
+		filledCount,
+		WeaponEquipmentSlotCount));
+}
+
+void UCWeaponComponent::EnsureSpawnedWeaponMatchesPhysicalType()
+{
+	if (bMagicEquipped)
+	{
+		return;
+	}
+
+	if (PhysicalType == CEWeaponType::Unarmed)
+	{
+		return;
+	}
+
+	const int32 slotIndex = static_cast<int32>(PhysicalType);
+	if (false == MainWeapons.IsValidIndex(slotIndex))
+	{
+		return;
+	}
+
+	ACWeapon* const slotWeapon = MainWeapons[slotIndex].Get();
+	if (false == IsValid(slotWeapon))
+	{
+		return;
+	}
+
+	if (MainWeapon.Get() == slotWeapon)
+	{
+		return;
+	}
+
+	MainWeapon = slotWeapon;
+	DispatchLegacyEquipOrBeginEquipGate(MainWeapon, true);
+}
+
 void UCWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	EnsureWeaponPipelineReady();
 
+	EnsureDefaultMainWeaponClasses();
+
 	SpawnConfiguredWeapons();
 
 	SyncBpWeaponLanes();
 
 	EnsureCombatWeaponEquipped();
+
+	EnsureSpawnedWeaponMatchesPhysicalType();
 
 	LogWeaponPipelineStatus(TEXT("BeginPlay"));
 }
@@ -860,17 +1042,17 @@ void UCWeaponComponent::SpawnConfiguredWeapons()
 	// 마스터 BP: 메인 무기 클래스 foreach 가 기준 스트라이드. 서브만 길거나 메인 보다 긴 경우에는 위 크기 확장만 반영된다.
 	for (int32 Idx = 0; Idx < MainConfiguredCount; ++Idx)
 	{
-		(void)TrySpawnOrReplaceEquippedActor(World, MainWeapons[Idx], MainWeaponClasses[Idx], OwnerActor);
+		(void)TrySpawnOrReplaceEquippedWeapon(World, MainWeapons[Idx], MainWeaponClasses[Idx], OwnerActor);
 
 		if (false == bHasAnySubConfigured)
 		{
 			continue;
 		}
 
-		const TSubclassOf<AActor> SubWeaponClass =
-			SubWeaponClasses.IsValidIndex(Idx) ? SubWeaponClasses[Idx] : TSubclassOf<AActor>();
+		const TSubclassOf<ACWeapon> SubWeaponClass =
+			SubWeaponClasses.IsValidIndex(Idx) ? SubWeaponClasses[Idx] : TSubclassOf<ACWeapon>();
 
-		(void)TrySpawnOrReplaceEquippedActor(World, SubWeapons[Idx], SubWeaponClass, OwnerActor);
+		(void)TrySpawnOrReplaceEquippedWeapon(World, SubWeapons[Idx], SubWeaponClass, OwnerActor);
 	}
 
 	// 레거시 BP 에서는 무기 각 슬롯 처리마다 Armor foreach 가 다시 실행되어 동일 블루프린트를 반복 소유했을 수 있다.
@@ -1054,6 +1236,7 @@ void UCWeaponComponent::InputAction_Act()
 	EnsureWeaponPipelineReady();
 	SyncBpWeaponLanes();
 	EnsureCombatWeaponEquipped();
+	EnsureSpawnedWeaponMatchesPhysicalType();
 
 	const TWeakObjectPtr<UCAct> act = GetAct();
 	if (false == act.IsValid())
@@ -1337,7 +1520,7 @@ void UCWeaponComponent::End_DoAirCombo()
 
 void UCWeaponComponent::Begin_DoFlyingAttack()
 {
-	const TObjectPtr<ACWeaponComboSkillContext> comboWeapon = Cast<ACWeaponComboSkillContext>(MainWeapon);
+	const TObjectPtr<ACWeaponCombo> comboWeapon = Cast<ACWeaponCombo>(MainWeapon);
 	if (IsValid(comboWeapon))
 	{
 		comboWeapon->Combo_BeginFlyingSegmentFromNotify();
@@ -1369,7 +1552,7 @@ void UCWeaponComponent::End_FallDown()
 
 bool UCWeaponComponent::TryNotifyConsumeStamina(const double InStamina)
 {
-	ACWeaponSkillContext* weapon = Cast<ACWeaponSkillContext>(MainWeapon);
+	ACWeapon* weapon = Cast<ACWeapon>(MainWeapon);
 	if (false == IsValid(weapon))
 	{
 		// WeaponComponent 유효·MainWeapon 없음 — 레거시 IsValid 분기와 동일하게 소모 없이 통과.
@@ -1395,13 +1578,16 @@ bool UCWeaponComponent::TryNotifyConsumeStamina(const double InStamina)
 
 void UCWeaponComponent::ApplyLegacyMainWeaponBoxCollisions()
 {
-	ACWeaponComboSkillContext* comboWeapon = Cast<ACWeaponComboSkillContext>(MainWeapon);
-	if (false == IsValid(comboWeapon))
+	ACWeaponCombo* const ComboWeapon = Cast<ACWeaponCombo>(MainWeapon);
+	if (false == IsValid(ComboWeapon))
 	{
 		return;
 	}
 
-	comboWeapon->OnBoxCollisions();
+	if (ICombatActionHost* const Host = Cast<ICombatActionHost>(ComboWeapon))
+	{
+		Host->Host_OnBoxCollisions();
+	}
 }
 
 void UCWeaponComponent::ApplyLegacyEndBowStringAttach()
@@ -1417,13 +1603,22 @@ void UCWeaponComponent::ApplyLegacyEndBowStringAttach()
 
 bool UCWeaponComponent::TryDispatchLegacyMainWeaponCollisionToggle(const bool bCollisionOn)
 {
+	if (TryDispatchWeaponCollisionHost(MainWeapon, bCollisionOn))
+	{
+		return true;
+	}
+
 	if (false == IsValid(MainWeapon))
+	{
 		return false;
+	}
 
 	const FName functionNameLocal = bCollisionOn ? FName(TEXT("OnCollisions")) : FName(TEXT("OffCollisions"));
 	UFunction* functionPtrLocal = MainWeapon->FindFunction(functionNameLocal);
 	if (nullptr == functionPtrLocal)
+	{
 		return false;
+	}
 
 	MainWeapon->ProcessEvent(functionPtrLocal, nullptr);
 	return true;
@@ -1454,26 +1649,58 @@ void UCWeaponComponent::ApplyLegacyMainWeaponCollisionBound(const bool bCollisio
 
 void UCWeaponComponent::ApplyLegacyMainWeaponComboWindow(const bool bEnableCombo)
 {
-	ACWeaponComboSkillContext* comboWeapon = Cast<ACWeaponComboSkillContext>(MainWeapon);
-	if (false == IsValid(comboWeapon))
+	if (IsValid(MainWeapon))
 	{
-		return;
+		if (Cast<ACWeaponCombo>(MainWeapon) || Cast<ACWeaponRandomPattern>(MainWeapon))
+		{
+			if (ICombatActionHost* const Host = Cast<ICombatActionHost>(MainWeapon))
+			{
+				if (bEnableCombo)
+				{
+					Host->Host_EnableCombo();
+				}
+				else
+				{
+					Host->Host_DisableCombo();
+				}
+
+				return;
+			}
+		}
 	}
 
-	if (bEnableCombo)
+	UCAct* const Act = GetAct().Get();
+	if (IsValid(Act))
 	{
-		comboWeapon->EnableCombo();
-	}
-	else
-	{
-		comboWeapon->DisableCombo();
+		if (ICombatActionHost* const ActHost = Cast<ICombatActionHost>(Act))
+		{
+			if (bEnableCombo)
+			{
+				ActHost->Host_EnableCombo();
+			}
+			else
+			{
+				ActHost->Host_DisableCombo();
+			}
+		}
 	}
 }
 
 void UCWeaponComponent::LegacyBp_DispatchMain_DoAction(CEAttackType InAttackType, int32 InSkillIndex)
 {
+	if (IsValid(MainWeapon))
+	{
+		if (ICombatActionHost* const Host = Cast<ICombatActionHost>(MainWeapon))
+		{
+			Host->Host_DoAction(InAttackType, InSkillIndex);
+			return;
+		}
+	}
+
 	if (false == IsValid(MainWeapon))
+	{
 		return;
+	}
 
 	static const FName DoActionName(TEXT("DoAction"));
 	if (nullptr == MainWeapon->FindFunction(DoActionName))
@@ -1488,8 +1715,19 @@ void UCWeaponComponent::LegacyBp_DispatchMain_DoAction(CEAttackType InAttackType
 
 void UCWeaponComponent::LegacyBp_DispatchMain_BeginDoAction(CEAttackType InAttackType)
 {
+	if (IsValid(MainWeapon))
+	{
+		if (ICombatActionHost* const Host = Cast<ICombatActionHost>(MainWeapon))
+		{
+			Host->Host_BeginDoAction(InAttackType);
+			return;
+		}
+	}
+
 	if (false == IsValid(MainWeapon))
+	{
 		return;
+	}
 
 	static const FName Begin(TEXT("Begin_DoAction"));
 	if (false == TryDispatch_ProcessEvent_AttackEnumOnlyParms_WithValue(MainWeapon, Begin, InAttackType))
@@ -1500,8 +1738,19 @@ void UCWeaponComponent::LegacyBp_DispatchMain_BeginDoAction(CEAttackType InAttac
 
 void UCWeaponComponent::LegacyBp_DispatchMain_EndDoAction(CEAttackType InAttackType)
 {
+	if (IsValid(MainWeapon))
+	{
+		if (ICombatActionHost* const Host = Cast<ICombatActionHost>(MainWeapon))
+		{
+			Host->Host_EndDoAction(InAttackType);
+			return;
+		}
+	}
+
 	if (false == IsValid(MainWeapon))
+	{
 		return;
+	}
 
 	static const FName End(TEXT("End_DoAction"));
 	if (false == TryDispatch_ProcessEvent_AttackEnumOnlyParms_WithValue(MainWeapon, End, InAttackType))
@@ -1542,12 +1791,28 @@ void UCWeaponComponent::LegacyBp_DispatchMain_EndAirDash()
 
 void UCWeaponComponent::LegacyBp_DispatchMain_Skill(const int32 InSkillIndex)
 {
+	if (IsValid(MainWeapon))
+	{
+		if (ACWeaponComboVisual* const VisualWeapon = Cast<ACWeaponComboVisual>(MainWeapon))
+		{
+			if (ICombatActionHost* const Host = Cast<ICombatActionHost>(VisualWeapon))
+			{
+				Host->Host_Skill(InSkillIndex);
+				return;
+			}
+		}
+	}
+
 	if (false == IsValid(MainWeapon))
+	{
 		return;
+	}
 
 	static const FName SkillName(TEXT("Skill"));
 	if (TryDispatch_ProcessEvent_FirstInt32Parm(MainWeapon, SkillName, InSkillIndex))
+	{
 		return;
+	}
 
 	// Skill 커스텀 이벤트가 없으면 DoAction(Skill, Index) 규약으로 폴백한다.
 	(void)TryDispatch_ProcessEvent_WithAttackSkillIndexParms(MainWeapon, FName(TEXT("DoAction")), CEAttackType::Skill, InSkillIndex);
@@ -1555,6 +1820,18 @@ void UCWeaponComponent::LegacyBp_DispatchMain_Skill(const int32 InSkillIndex)
 
 void UCWeaponComponent::LegacyBp_DispatchMain_EndSkill()
 {
+	if (IsValid(MainWeapon))
+	{
+		if (ACWeaponComboVisual* const VisualWeapon = Cast<ACWeaponComboVisual>(MainWeapon))
+		{
+			if (ICombatActionHost* const Host = Cast<ICombatActionHost>(VisualWeapon))
+			{
+				Host->Host_EndSkill();
+				return;
+			}
+		}
+	}
+
 	TryLegacyWeaponProcessEventIfBound(MainWeapon, FName(TEXT("End_Skill")));
 }
 

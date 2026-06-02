@@ -2,14 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "Weapons/CSkillWeapon.h"
-#include "CMagicYonduSkillContext.generated.h"
+#include "CMagicYondu.generated.h"
 
 /**
- * 레거시 Yondu 마법 컨텍스트 흐름 근사 — `ACMagicBombSkillContext` 와 동일하게 DoAction 에서 Idle/Riding 확인 후 PlayAction(0),
+ * 레거시 Yondu 마법 컨텍스트 흐름 근사 — `ACMagicBomb` 와 동일하게 DoAction 에서 Idle/Riding 확인 후 PlayAction(0),
  * `Begin_DoAction` 에서 마법 피격체 스폰 후 `Shoot` 호출(Yondu 는 방향 매개변수 없음).
  */
 UCLASS(Blueprintable)
-class YJJACTIONCPPUE5_API ACMagicYonduSkillContext : public ACMagicSkillContext
+class YJJACTIONCPPUE5_API ACMagicYondu : public ACMagic
 {
 	GENERATED_BODY()
 

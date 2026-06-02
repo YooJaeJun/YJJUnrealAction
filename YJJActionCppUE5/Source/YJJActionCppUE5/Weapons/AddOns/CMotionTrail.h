@@ -7,7 +7,7 @@ class UPoseableMeshComponent;
 class ACCommonCharacter;
 class UMaterialInstanceDynamic;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API ACMotionTrail : public AActor
 {
 	GENERATED_BODY()

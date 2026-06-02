@@ -274,7 +274,7 @@ void ACSkillBomb::Bomb_ApplyDamageAoEScratch(UWorld* WorldScratch, const FVector
 
 	Hitted.Reset();
 
-	const ACMagicSkillContext* MagicScratch = Magic.Get();
+	const ACMagic* MagicScratch = Magic.Get();
 	ACCommonCharacter* MutableAttackerScratch = Character.Get();
 	if ((false == IsValid(MagicScratch)) || (false == IsValid(MutableAttackerScratch)))
 	{

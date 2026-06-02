@@ -10,6 +10,7 @@
 #include "Items/CWorldItemActor.h"
 #include "Widgets/CUserWidget_HUD.h"
 #include "Widgets/Player/CUserWidget_PlayerInfo.h"
+#include "Characters/Player/CPlayableCharacter.h"
 
 namespace
 {
@@ -129,6 +130,12 @@ void ACPlayerController::InitializeHUDForPawn(APawn* InPawn)
 	UCCharacterStatComponent* characterStatComp = InPawn->FindComponentByClass<UCCharacterStatComponent>();
 	if (IsValid(characterStatComp) && IsValid(hud->GetPlayerInfoWidget()))
 		hud->GetPlayerInfoWidget()->BindStats(characterStatComp);
+
+	ACPlayableCharacter* const playable = Cast<ACPlayableCharacter>(InPawn);
+	if (IsValid(playable))
+	{
+		playable->BindLocalPlayerUI();
+	}
 }
 
 void ACPlayerController::RequestPickup(ACWorldItemActor* WorldItem)

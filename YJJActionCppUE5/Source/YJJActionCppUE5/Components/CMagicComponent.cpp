@@ -57,7 +57,7 @@ void UCMagicComponent::SpawnMagicActorsAndHideAll()
 		if (spawnIndexLocal >= MagicClasses.Num())
 			continue;
 
-		const TSubclassOf<ACMagicSkillContext> subclass = MagicClasses[spawnIndexLocal];
+		const TSubclassOf<ACMagic> subclass = MagicClasses[spawnIndexLocal];
 		if (nullptr == subclass.Get())
 			continue;
 
@@ -65,7 +65,7 @@ void UCMagicComponent::SpawnMagicActorsAndHideAll()
 		spawnParameters.Owner = owningActor;
 		spawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		ACMagicSkillContext* spawnedMagic = world->SpawnActor<ACMagicSkillContext>(
+		ACMagic* spawnedMagic = world->SpawnActor<ACMagic>(
 			subclass.Get(), FVector::ZeroVector, FRotator::ZeroRotator, spawnParameters);
 
 		if (false == IsValid(spawnedMagic))
@@ -164,7 +164,7 @@ void UCMagicComponent::SetMode(CEMagicType InType)
 		const int32 slotChosenIndex = static_cast<int32>(InType);
 		if (Magics.IsValidIndex(slotChosenIndex))
 		{
-			ACMagicSkillContext* equipTargetMagic = Magics[slotChosenIndex].Get();
+			ACMagic* equipTargetMagic = Magics[slotChosenIndex].Get();
 			if (IsValid(equipTargetMagic))
 				equipTargetMagic->Equip();
 		}
@@ -244,7 +244,7 @@ void UCMagicComponent::ApplyMagicActorsVisibilityFromSlot()
 
 	for (int32 hideIndexLocal = 0; hideIndexLocal < lastIndexLocal; ++hideIndexLocal)
 	{
-		ACMagicSkillContext* eachMagic = Magics[hideIndexLocal].Get();
+		ACMagic* eachMagic = Magics[hideIndexLocal].Get();
 		if (false == IsValid(eachMagic))
 			continue;
 
@@ -257,7 +257,7 @@ void UCMagicComponent::ApplyMagicActorsVisibilityFromSlot()
 	if ((false == Magics.IsValidIndex(chosenSlotLocal)) || false == IsValid(Magics[chosenSlotLocal].Get()))
 		return;
 
-	ACMagicSkillContext* visibleMagic = Magics[chosenSlotLocal].Get();
+	ACMagic* visibleMagic = Magics[chosenSlotLocal].Get();
 	visibleMagic->SetActorHiddenInGame(false);
 	ActiveMagic = visibleMagic;
 }
@@ -276,7 +276,7 @@ void UCMagicComponent::SyncEquippedMagicAfterWeaponPipeline(CEMagicType CurrentM
 		const int32 weaponSyncSlotChosenIndex = static_cast<int32>(CurrentMagic);
 		if (Magics.IsValidIndex(weaponSyncSlotChosenIndex))
 		{
-			ACMagicSkillContext* weaponSyncEquipTargetMagic = Magics[weaponSyncSlotChosenIndex].Get();
+			ACMagic* weaponSyncEquipTargetMagic = Magics[weaponSyncSlotChosenIndex].Get();
 			if (IsValid(weaponSyncEquipTargetMagic))
 				weaponSyncEquipTargetMagic->Equip();
 		}

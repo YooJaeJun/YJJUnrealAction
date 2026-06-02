@@ -7,6 +7,7 @@
 
 class ACCommonCharacter;
 class ACAttachment;
+class ACWeapon;
 class UCEquipment;
 class UCAct;
 class UCSkill;
@@ -118,6 +119,12 @@ private:
 	void SpawnConfiguredWeapons();
 
 public:
+	/** CBP_PlayableCharacter WeaponComp 에 MainWeaponClasses 가 비었을 때 Combo_Fist 등 기본 슬롯을 채운다. */
+	void EnsureDefaultMainWeaponClasses();
+
+	/** SetMode(Fist 등) 후 MainWeapon 슬롯 액터와 PhysicalType 을 맞춘다(BP MainWeapon=None 방지). */
+	void EnsureSpawnedWeaponMatchesPhysicalType();
+
 	/** DataAssets 비어 있으면 동료 WeaponComp·/Game/Weapons/CDA_* 에서 채운다. */
 	void EnsureDataAssets();
 
@@ -242,6 +249,9 @@ public:
 	/** 블루프린트 MainType — 물리 슬롯 전환 때만 동기화(마법 장착은 PhysicalType 만 Unarmed 로 두고 레이아웃 참고값으로 유지될 수 있음). */
 	FORCEINLINE constexpr CEWeaponType GetMainWeaponLaneType() const { return MainType; }
 
+	/** BT Task 등 — private MainWeapon 슬롯 조회(스폰된 주 무기 액터). */
+	FORCEINLINE ACWeapon* GetMainWeapon() const { return MainWeapon.Get(); }
+
 	/** 블루프린트 SubType — 현재 코드 경로에서는 직전 주무기 레이어(애니 SubWeaponType 블렌딩 근사)로 갱신한다. */
 	FORCEINLINE constexpr CEWeaponType GetSubWeaponLaneType() const { return SubType; }
 
@@ -354,25 +364,25 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons|Blueprint", meta = (AllowPrivateAccess = "true"))
 	CEWeaponType SubType = CEWeaponType::Unarmed;
 
-	// 블루프린트 /Game/Weapons/Weapon.Weapon_C 레퍼런스용 클래스 배열(BP 무기 블루프린트를 그대로 담는다).
+	// 블루프린트 /Game/Weapons/Weapon.Weapon_C 레퍼런스용 클래스 배열(BP 무기 블루프린트는 ACWeapon 파생).
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons|Blueprint", meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<AActor>> MainWeaponClasses;
+	TArray<TSubclassOf<ACWeapon>> MainWeaponClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons|Blueprint", meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<AActor>> SubWeaponClasses;
+	TArray<TSubclassOf<ACWeapon>> SubWeaponClasses;
 
-	// 활성 무기 액터(네이티브는 ACAttachment 로 분해되어 있지만, 레거시 BP 무기 오브젝트 슬롯은 유지).
+	// 활성 무기 액터 — 레거시 BP 무기 슬롯과 동일하지만 타입은 ACWeapon 으로 좁힌다.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons|Blueprint", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<AActor> MainWeapon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons|Blueprint", meta = (AllowPrivateAccess = "true"))
-	TArray<TObjectPtr<AActor>> MainWeapons;
+	TObjectPtr<ACWeapon> MainWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons|Blueprint", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<AActor> SubWeapon;
+	TArray<TObjectPtr<ACWeapon>> MainWeapons;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons|Blueprint", meta = (AllowPrivateAccess = "true"))
-	TArray<TObjectPtr<AActor>> SubWeapons;
+	TObjectPtr<ACWeapon> SubWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons|Blueprint", meta = (AllowPrivateAccess = "true"))
+	TArray<TObjectPtr<ACWeapon>> SubWeapons;
 
 	// 블루프린트 /Game/BPs/Armors/Armor.Armor_C 대응(아머 C++ 클래스가 생기면 TSubclassOf 로 좁히면 된다).
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Armor|Blueprint", meta = (AllowPrivateAccess = "true"))

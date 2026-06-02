@@ -18,6 +18,11 @@ void CLog::Log(const FString& InValue)
 	UE_LOG(YJJ, Warning, TEXT("%s"), *InValue);
 }
 
+void CLog::LogDisplay(const FString& InValue)
+{
+	UE_LOG(YJJ, Display, TEXT("%s"), *InValue);
+}
+
 void CLog::Log(const FVector& InValue)
 {
 	UE_LOG(YJJ, Warning, TEXT("%s"), *InValue.ToString());

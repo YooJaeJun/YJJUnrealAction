@@ -1,4 +1,4 @@
-#include "Weapons/CMagicYonduSkillContext.h"
+#include "Weapons/CMagicYondu.h"
 
 #include "Utilities/CLog.h"
 #include "Characters/CCommonCharacter.h"
@@ -7,7 +7,7 @@
 #include "GameFramework/Character.h"
 #include "Weapons/CSkillYondu.h"
 
-void ACMagicYonduSkillContext::DoAction_Implementation(CEAttackType const InAttackType, int32 const InSkillIndex)
+void ACMagicYondu::DoAction_Implementation(CEAttackType const InAttackType, int32 const InSkillIndex)
 {
 	Super::DoAction_Implementation(InAttackType, InSkillIndex);
 
@@ -27,7 +27,7 @@ void ACMagicYonduSkillContext::DoAction_Implementation(CEAttackType const InAtta
 	PlayAction(DoActionDatas, 0);
 }
 
-void ACMagicYonduSkillContext::Begin_DoAction_Implementation(CEAttackType const InAttackType)
+void ACMagicYondu::Begin_DoAction_Implementation(CEAttackType const InAttackType)
 {
 	Super::Begin_DoAction_Implementation(InAttackType);
 

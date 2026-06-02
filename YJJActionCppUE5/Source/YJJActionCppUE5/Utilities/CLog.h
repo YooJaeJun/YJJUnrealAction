@@ -13,6 +13,7 @@ public:
 	static void Log(const int32 InValue, const ELogVerbosity::Type InVerbosityType = ELogVerbosity::Type::Display);
 	static void Log(const float InValue);
 	static void Log(const FString& InValue);
+	static void LogDisplay(const FString& InValue);
 	static void Log(const FVector& InValue);
 	static void Log(const FRotator& InValue);
 	static void Log(const TObjectPtr<UObject> InValue);

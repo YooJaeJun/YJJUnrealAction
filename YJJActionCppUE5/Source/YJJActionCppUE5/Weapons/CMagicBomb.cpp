@@ -1,4 +1,4 @@
-#include "Weapons/CMagicBombSkillContext.h"
+#include "Weapons/CMagicBomb.h"
 
 #include "Utilities/CLog.h"
 #include "Characters/CCommonCharacter.h"
@@ -11,10 +11,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/World.h"
 
-const FName ACMagicBombSkillContext::BombAiBlackboardTargetKey(TEXT("Target"));
-const FName ACMagicBombSkillContext::BombSpawnSocketName(TEXT("Hand_FireBall"));
+const FName ACMagicBomb::BombAiBlackboardTargetKey(TEXT("Target"));
+const FName ACMagicBomb::BombSpawnSocketName(TEXT("Hand_FireBall"));
 
-void ACMagicBombSkillContext::DoAction_Implementation(CEAttackType const InAttackType, int32 const InSkillIndex)
+void ACMagicBomb::DoAction_Implementation(CEAttackType const InAttackType, int32 const InSkillIndex)
 {
 	(void)InAttackType;
 	(void)InSkillIndex;
@@ -34,7 +34,7 @@ void ACMagicBombSkillContext::DoAction_Implementation(CEAttackType const InAttac
 	PlayAction(DoActionDatas, 0);
 }
 
-void ACMagicBombSkillContext::Begin_DoAction_Implementation(CEAttackType const InAttackType)
+void ACMagicBomb::Begin_DoAction_Implementation(CEAttackType const InAttackType)
 {
 	Super::Begin_DoAction_Implementation(InAttackType);
 
@@ -121,7 +121,7 @@ void ACMagicBombSkillContext::Begin_DoAction_Implementation(CEAttackType const I
 	spawnedBomb->Shoot(BombDirection);
 }
 
-bool ACMagicBombSkillContext::Bomb_TryResolveDirectionFromBlackboard(FVector& OutDirection) const
+bool ACMagicBomb::Bomb_TryResolveDirectionFromBlackboard(FVector& OutDirection) const
 {
 	ACCommonCharacter* const ownerChar = Character.Get();
 	if (false == IsValid(ownerChar))

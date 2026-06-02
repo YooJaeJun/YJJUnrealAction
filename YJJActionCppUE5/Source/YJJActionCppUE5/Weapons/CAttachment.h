@@ -19,7 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAttachmentEndOverlap,
 	ACCommonCharacter*, InAttacker,
 		ACCommonCharacter*, InOther);
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API ACAttachment : public AActor
 {
 	GENERATED_BODY()

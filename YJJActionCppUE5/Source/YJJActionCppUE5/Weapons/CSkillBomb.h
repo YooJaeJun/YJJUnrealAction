@@ -16,7 +16,7 @@ class USphereComponent;
 
 /**
  * 레거시 `/Game/Magics/Bomb/Skill_Bomb` 블프 — `Skill_Magic` 상속 노드 포팅(`Shoot`, `Bomb`, `Destroy`).
- * `ACMagicBombSkillContext` 가 스폰 후 `Shoot`(방향) 호출한다.
+ * `ACMagicBomb` 가 스폰 후 `Shoot`(방향) 호출한다.
  *
  * 레거시 동작 근거(덤프):
  * - Shoot: `ActorsToIgnore` 에 Self·Character(+ 유효 시 CurInteractingActor) 누적, 퓨즈 `K2_SetTimer`("Bomb").

@@ -27,17 +27,17 @@ public:
 	void SyncEquippedMagicAfterWeaponPipeline(CEMagicType CurrentMagic, CEMagicType PreviousMagic);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Magic", meta = (DisplayName = "Magic Classes", ToolTip = "배열 인덱스는 CEMagicType 의 정수 순서(Unarmed=0…)와 동일해야 한다. 비워 두면 해당 슬롯은 스폰하지 않는다."))
-	TArray<TSubclassOf<ACMagicSkillContext>> MagicClasses;
+	TArray<TSubclassOf<ACMagic>> MagicClasses;
 
 	// 블루프린트 VarName 의 type — 현재 선택 EMagicType. DisplayName 만 BP 와 통일했다.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Magic", meta = (DisplayName = "Type"))
 	CEMagicType MagicTypeSlot = CEMagicType::Unarmed;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Magic")
-	TArray<TObjectPtr<ACMagicSkillContext>> Magics;
+	TArray<TObjectPtr<ACMagic>> Magics;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Magic", meta = (DisplayName = "Magic"))
-	TObjectPtr<ACMagicSkillContext> ActiveMagic;
+	TObjectPtr<ACMagic> ActiveMagic;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Magic")
 	FName AttachSocketName = NAME_None;

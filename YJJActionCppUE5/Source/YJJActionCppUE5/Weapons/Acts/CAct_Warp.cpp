@@ -21,13 +21,27 @@ void UCAct_Warp::BeginPlay(
 {
 	Super::BeginPlay(InOwner, InAttachment, InEquipment, InActData, InHitData);
 
-	Decal = YJJHelpers::GetComponent<UDecalComponent>(InAttachment.Get());
-	Controller = Owner->GetController();
+	if (InAttachment.IsValid())
+	{
+		Decal = YJJHelpers::GetComponent<UDecalComponent>(InAttachment.Get());
+	}
+	else
+	{
+		CLog::Log(FString::Printf(
+			TEXT("[Weapon][Act_Warp] Attachment 없음 — Decal 미바인드 Owner=%s"),
+			InOwner.IsValid() ? *InOwner->GetName() : TEXT("(null)")));
+	}
+
+	if (InOwner.IsValid())
+		Controller = InOwner->GetController();
 }
 
 void UCAct_Warp::Tick(float InDeltaTime)
 {
 	Super::Tick(InDeltaTime);
+
+	if (false == Decal.IsValid())
+		return;
 
 	FVector location = FVector::ZeroVector;
 	FRotator rotation = FRotator::ZeroRotator;

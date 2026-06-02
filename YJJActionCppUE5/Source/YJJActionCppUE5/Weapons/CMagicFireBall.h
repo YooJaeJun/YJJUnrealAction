@@ -4,14 +4,14 @@
 
 #include "Weapons/CSkillWeapon.h"
 
-#include "CMagicFireBallSkillContext.generated.h"
+#include "CMagicFireBall.generated.h"
 
 /**
- * 레거시 FireBall 마법 컨텍스트 — `CMagicBombSkillContext` 과 동형으로 Idle/Riding·DoActionRows 확인 후 PlayAction,
+ * 레거시 FireBall 마법 컨텍스트 — `CMagicBomb` 과 동형으로 Idle/Riding·DoActionRows 확인 후 PlayAction,
  * `Begin_DoAction` 에서 `Hand_FireBall` 소켓에 투사체 스폰 후 `Shoot`(컨트롤러 또는 블랙보드 Target 방향).
  */
-UCLASS(Blueprintable)
-class YJJACTIONCPPUE5_API ACMagicFireBallSkillContext : public ACMagicSkillContext
+UCLASS(Blueprintable, meta=(DisplayName="CMagicFireBall"))
+class YJJACTIONCPPUE5_API ACMagicFireBall : public ACMagic
 {
 	GENERATED_BODY()
 

@@ -27,6 +27,9 @@ public:
 	virtual void InputAction_ActivateEquipMenu() override;
 	virtual void InputAction_DeactivateEquipMenu() override;
 
+	/** HUD·SetMenuUI 이후 EquipMenu 캐시 재동기화(PC InitializeHUDForPawn·지연 바인딩용). */
+	void RefreshEquipMenuFromHud();
+
 private:
 	TWeakObjectPtr<ACCommonCharacter> Owner;
 	TWeakObjectPtr<UCUserWidget_EquipMenu> EquipMenu;

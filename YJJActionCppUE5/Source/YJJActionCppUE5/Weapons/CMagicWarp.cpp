@@ -1,4 +1,4 @@
-#include "Weapons/CMagicWarpSkillContext.h"
+#include "Weapons/CMagicWarp.h"
 
 #include "Utilities/CLog.h"
 #include "AIController.h"
@@ -17,9 +17,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-const FName ACMagicWarpSkillContext::WarpBlackboardEqLocationKey(TEXT("EQ_Location"));
+const FName ACMagicWarp::WarpBlackboardEqLocationKey(TEXT("EQ_Location"));
 
-ACMagicWarpSkillContext::ACMagicWarpSkillContext()
+ACMagicWarp::ACMagicWarp()
 {
 	WarpRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
 	SetRootComponent(WarpRoot);
@@ -41,13 +41,13 @@ ACMagicWarpSkillContext::ACMagicWarpSkillContext()
 	WarpDecal->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
 }
 
-void ACMagicWarpSkillContext::BeginPlay()
+void ACMagicWarp::BeginPlay()
 {
 	Super::BeginPlay();
 	Warp_ApplyVisualTemplates();
 }
 
-void ACMagicWarpSkillContext::Equip_Implementation()
+void ACMagicWarp::Equip_Implementation()
 {
 	Super::Equip_Implementation();
 
@@ -66,14 +66,14 @@ void ACMagicWarpSkillContext::Equip_Implementation()
 	Magic_FixCameraForOwnerMovement();
 }
 
-void ACMagicWarpSkillContext::Unequip_Implementation()
+void ACMagicWarp::Unequip_Implementation()
 {
 	Super::Unequip_Implementation();
 	Warp_UnFixCameraMatchLegacyUnequipBranch();
 	Warp_SetPreviewFxVisible(false);
 }
 
-void ACMagicWarpSkillContext::DoAction_Implementation(CEAttackType InAttackType, int32 InSkillIndex)
+void ACMagicWarp::DoAction_Implementation(CEAttackType InAttackType, int32 InSkillIndex)
 {
 	(void)InSkillIndex;
 
@@ -120,7 +120,7 @@ void ACMagicWarpSkillContext::DoAction_Implementation(CEAttackType InAttackType,
 	Warp_EndActionAndUnequipIfBusy();
 }
 
-void ACMagicWarpSkillContext::Begin_DoAction_Implementation(CEAttackType InAttackType)
+void ACMagicWarp::Begin_DoAction_Implementation(CEAttackType InAttackType)
 {
 	Super::Begin_DoAction_Implementation(InAttackType);
 
@@ -216,7 +216,7 @@ void ACMagicWarpSkillContext::Begin_DoAction_Implementation(CEAttackType InAttac
 	(void)InAttackType;
 }
 
-void ACMagicWarpSkillContext::Warp_ApplyVisualTemplates()
+void ACMagicWarp::Warp_ApplyVisualTemplates()
 {
 	if (IsValid(WarpParticleTemplate) && IsValid(WarpParticle))
 	{
@@ -229,7 +229,7 @@ void ACMagicWarpSkillContext::Warp_ApplyVisualTemplates()
 	}
 }
 
-APlayerController* ACMagicWarpSkillContext::Warp_ResolvePlayerController() const
+APlayerController* ACMagicWarp::Warp_ResolvePlayerController() const
 {
 	if (IsValid(WarpPlayerController))
 	{
@@ -244,7 +244,7 @@ APlayerController* ACMagicWarpSkillContext::Warp_ResolvePlayerController() const
 	return nullptr;
 }
 
-void ACMagicWarpSkillContext::Warp_SetPreviewFxVisible(const bool bVisible)
+void ACMagicWarp::Warp_SetPreviewFxVisible(const bool bVisible)
 {
 	if (IsValid(WarpDecal))
 	{
@@ -283,7 +283,7 @@ void ACMagicWarpSkillContext::Warp_SetPreviewFxVisible(const bool bVisible)
 	}
 }
 
-void ACMagicWarpSkillContext::Warp_UnFixCameraMatchLegacyUnequipBranch()
+void ACMagicWarp::Warp_UnFixCameraMatchLegacyUnequipBranch()
 {
 	if (false == IsValid(Character))
 	{
@@ -308,7 +308,7 @@ void ACMagicWarpSkillContext::Warp_UnFixCameraMatchLegacyUnequipBranch()
 	}
 }
 
-void ACMagicWarpSkillContext::Warp_MakeElevatedWarpPoint(FVector& OutPoint) const
+void ACMagicWarp::Warp_MakeElevatedWarpPoint(FVector& OutPoint) const
 {
 	OutPoint = WarpCandidateLocation;
 
@@ -341,7 +341,7 @@ void ACMagicWarpSkillContext::Warp_MakeElevatedWarpPoint(FVector& OutPoint) cons
 	OutPoint.Z = static_cast<float>(newZ);
 }
 
-bool ACMagicWarpSkillContext::Warp_LineTraceWarpAxis(
+bool ACMagicWarp::Warp_LineTraceWarpAxis(
 	UWorld* World,
 	const FVector& StartWorld,
 	const FVector& EndWorld,
@@ -372,7 +372,7 @@ bool ACMagicWarpSkillContext::Warp_LineTraceWarpAxis(
 	return true == bReturnedHit && true == OutHit.bBlockingHit;
 }
 
-void ACMagicWarpSkillContext::Warp_TryResolveAiWarpLocation(FVector& OutLocation, bool& bOutOk) const
+void ACMagicWarp::Warp_TryResolveAiWarpLocation(FVector& OutLocation, bool& bOutOk) const
 {
 	OutLocation = FVector::ZeroVector;
 	bOutOk = false;
@@ -412,7 +412,7 @@ void ACMagicWarpSkillContext::Warp_TryResolveAiWarpLocation(FVector& OutLocation
 	bOutOk = true;
 }
 
-void ACMagicWarpSkillContext::Warp_EndActionAndUnequipIfBusy()
+void ACMagicWarp::Warp_EndActionAndUnequipIfBusy()
 {
 	if (false == Magic_IsOwnerInAction())
 	{
@@ -423,7 +423,7 @@ void ACMagicWarpSkillContext::Warp_EndActionAndUnequipIfBusy()
 	Unequip();
 }
 
-void ACMagicWarpSkillContext::GetCursorLocationAndRotation(
+void ACMagicWarp::GetCursorLocationAndRotation(
 	bool& OutHit,
 	FVector& OutLocation,
 	FRotator& OutRotation)
@@ -455,7 +455,7 @@ void ACMagicWarpSkillContext::GetCursorLocationAndRotation(
 	}
 }
 
-void ACMagicWarpSkillContext::SetCandidate(const FVector& InLocation)
+void ACMagicWarp::SetCandidate(const FVector& InLocation)
 {
 	WarpCandidateLocation = InLocation;
 

@@ -47,19 +47,66 @@ void UCGameUIComponent::BeginPlay()
 
 	const TWeakObjectPtr<ACPlayableCharacter> playable = Cast<ACPlayableCharacter>(Owner.Get());
 	if (playable.IsValid())
+	{
 		playable->SetMenuUI();
+		RefreshEquipMenuFromHud();
+	}
 	else
 		CLog::Log(TEXT("[UI] CGameUIComponent::BeginPlay: ACPlayableCharacter 아님 — SetMenuUI 생략"));
 }
 
+void UCGameUIComponent::RefreshEquipMenuFromHud()
+{
+	if (false == Owner.IsValid() || false == Owner->IsLocallyControlled())
+	{
+		return;
+	}
+
+	APlayerController* playerControllerPtr = PlayerController.Get();
+	if (false == IsValid(playerControllerPtr))
+	{
+		playerControllerPtr = Cast<APlayerController>(Owner->GetController());
+	}
+
+	ACPlayerController* const yjjPlayerController = Cast<ACPlayerController>(playerControllerPtr);
+	if (false == IsValid(yjjPlayerController))
+	{
+		return;
+	}
+
+	UCUserWidget_HUD* const hud = yjjPlayerController->EnsureHUD();
+	if (false == IsValid(hud))
+	{
+		return;
+	}
+
+	hud->SetChildren();
+
+	UCUserWidget_EquipMenu* const resolvedEquipMenu = hud->GetEquipMenuWidget();
+	if (IsValid(resolvedEquipMenu))
+	{
+		EquipMenu = resolvedEquipMenu;
+	}
+}
+
 void UCGameUIComponent::InputAction_ActivateEquipMenu()
 {
+	if (false == EquipMenu.IsValid())
+	{
+		RefreshEquipMenuFromHud();
+	}
+
 	CheckNull(EquipMenu);
 	EquipMenu->Activate(0.1f);
 }
 
 void UCGameUIComponent::InputAction_DeactivateEquipMenu()
 {
+	if (false == EquipMenu.IsValid())
+	{
+		RefreshEquipMenuFromHud();
+	}
+
 	CheckNull(EquipMenu);
 	EquipMenu->Deactivate(1.0f);
 }

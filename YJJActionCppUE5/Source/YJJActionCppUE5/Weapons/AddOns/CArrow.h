@@ -14,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FArrowHit,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FArrowEndPlay, 
 	ACArrow*, InDestroyer);
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API ACArrow : public AActor
 {
 	GENERATED_BODY()

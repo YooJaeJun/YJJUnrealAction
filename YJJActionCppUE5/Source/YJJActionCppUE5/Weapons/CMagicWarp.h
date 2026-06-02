@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Weapons/CSkillWeapon.h"
 #include "Engine/HitResult.h"
-#include "CMagicWarpSkillContext.generated.h"
+#include "CMagicWarp.generated.h"
 
 class UDecalComponent;
 class UMaterialInterface;
@@ -13,16 +13,16 @@ class USceneComponent;
 class APlayerController;
 
 /**
- * 레거시 `/Game/Magics/Warp/Magic_Warp` — CMagicSkillContext(Magic) 계열.
+ * 레거시 `/Game/Magics/Warp/Magic_Warp` — ACMagic 계열.
  * 프리뷰용 Decal·Particle 은 기본 비가시·티크 꺼진 상태(블루프린트 디폴트와 동일 경향).
  */
 UCLASS(Blueprintable)
-class YJJACTIONCPPUE5_API ACMagicWarpSkillContext : public ACMagicSkillContext
+class YJJACTIONCPPUE5_API ACMagicWarp : public ACMagic
 {
 	GENERATED_BODY()
 
 public:
-	ACMagicWarpSkillContext();
+	ACMagicWarp();
 
 protected:
 	virtual void BeginPlay() override;

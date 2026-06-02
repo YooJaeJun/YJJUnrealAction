@@ -5,7 +5,7 @@
 
 class ACCommonCharacter;
 
-UCLASS()
+UCLASS(Blueprintable)
 class YJJACTIONCPPUE5_API ACSkillCollider : public AActor
 {
 	GENERATED_BODY()

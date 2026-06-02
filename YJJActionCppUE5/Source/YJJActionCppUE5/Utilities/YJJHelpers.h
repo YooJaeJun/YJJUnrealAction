@@ -157,12 +157,18 @@ public:
 	template<typename T>
 	static TObjectPtr<T> GetComponent(TObjectPtr<AActor> InActor)
 	{
+		if (false == IsValid(InActor))
+			return nullptr;
+
 		return Cast<T>(InActor->GetComponentByClass(T::StaticClass()));
 	}
 
 	template<typename T>
 	static TObjectPtr<T> GetComponent(TObjectPtr<AActor> InActor, const FString& InName)
 	{
+		if (false == IsValid(InActor))
+			return nullptr;
+
 		TArray<TObjectPtr<T>> components;
 		InActor->GetComponents<T>(components);
 
